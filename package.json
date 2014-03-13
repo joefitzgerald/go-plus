@@ -10,7 +10,7 @@
     "goimports",
     "gocode"
   ],
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "./lib/go-plus",
   "license": "Apache2",
   "engines": {
