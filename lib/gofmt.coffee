@@ -8,6 +8,9 @@ class Gofmt
     atom.workspace.eachEditor (editor) =>
       @handleBufferEvents(editor)
 
+  destroy: ->
+    @unsubscribe
+
   handleBufferEvents: (editor) ->
     buffer = editor.getBuffer()
     buffer.on 'saved', =>
