@@ -1,6 +1,6 @@
 {
   "name": "go-plus",
-  "description": "The go-plus package adds gofmt and goimports support for the go language. In the future it will add go build, go test, gocode and other functionality.",
+  "description": "The go-plus package adds gofmt and goimports support for the go language (golang). In the future it will add go build, go test, gocode and other functionality.",
   "version": "0.2.0",
   "main": "./lib/go-plus",
   "license": "Apache2",
