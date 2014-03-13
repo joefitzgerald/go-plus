@@ -1,0 +1,19 @@
+{
+  "name": "go-plus",
+  "description": "The go-plus package adds gofmt and goimports support for the go language. In the future it will add go build, go test, gocode and other functionality.",
+  "version": "0.1.0",
+  "main": "./lib/go-plus",
+  "license": "Apache2",
+  "engines": {
+    "atom": ">0.70.0",
+    "node": "*"
+  },
+  "homepage": "https://atom.io/packages/go-plus",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joefitzgerald/go-plus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joefitzgerald/go-plus/issues"
+  },
+}
