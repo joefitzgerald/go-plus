@@ -4,7 +4,8 @@
     'submenu': [
       'label': 'Go Plus'
       'submenu': [
-        { 'label': 'Format File', 'command': 'golang:gofmt' }
+        { 'label': 'Format File', 'command': 'golang:gofmt' },
+        { 'label': 'Vet File', 'command': 'golang:govet' }
       ]
     ]
   }

@@ -1,6 +1,6 @@
 Gofmt = require './gofmt'
 {Subscriber} = require 'emissary'
-# Govet = require './govet'
+Govet = require './govet'
 _ = require 'underscore-plus'
 $ = require('atom').$
 
@@ -10,15 +10,18 @@ class Dispatch
 
   constructor: ->
     @gofmt = new Gofmt()
-    # @govet = new Govet()
+    @govet = new Govet()
     @gofmt.on 'gofmt-errors', (errors) =>
+      @updatePane(errors)
+      @updateGutter(errors)
+    @govet.on 'govet-errors', (errors) =>
       @updatePane(errors)
       @updateGutter(errors)
     atom.workspace.eachEditor (editor) => @handleBufferEvents(editor)
 
   destroy: ->
     @unsubscribe
-    # @govet.destroy()
+    @govet.destroy()
     @gofmt.destroy()
 
   handleBufferEvents: (editor) ->
@@ -32,27 +35,36 @@ class Dispatch
     return if grammar.scopeName isnt 'source.go'
     @resetState(editor)
     @gofmt.formatBuffer(buffer, editor, true)
+    @govet.checkBuffer(buffer, editor, true)
 
   resetState: (editor) ->
-    @updateGutter([])
-    @updatePane([])
-    @updateStatus(false)
+    @resetGutter([])
+    @resetPane([])
+    # @updateStatus(false)
+
+  resetGutter: ->
+    atom.workspaceView.eachEditorView (editorView) =>
+      return unless editorView.active
+      gutter = editorView.gutter
+      gutter.removeClassFromAllLines('go-plus-error')
 
   updateGutter: (errors) ->
     atom.workspaceView.eachEditorView (editorView) =>
       return unless editorView.active
       gutter = editorView.gutter
-      gutter.removeClassFromAllLines('go-plus-error')
       gutter.addClassToLine error[0] - 1, 'go-plus-error' for error in errors
 
-  updatePane: (errors) ->
+  resetPane: ->
     $('#go-plus-status-pane').remove()
+
+  updatePane: (errors) ->
     return unless errors?
     return if errors.length <= 0
     return unless atom.config.get('go-plus.showErrorPanel')
     html = $('<div id="go-plus-status-pane" class="go-plus-pane" style="height:">');
     for error in errors
-      html.append('Line: ' + error[0] + ' Char: ' + error[1] + ' – ' + error[2])
+      msg = if error[1] isnt false then 'Line: ' + error[0] + ' Char: ' + error[1] + ' – ' + error[2] else 'Line: ' + error[0] + ' – ' + error[2]
+      html.append(msg)
       html.append('<br/>')
     atom.workspaceView.prependToBottom(html)
 
