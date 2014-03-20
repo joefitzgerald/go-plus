@@ -1,3 +1,11 @@
+## v0.5.2 (March 20th, 2014)
+
+* :abc: Add examples and demo gif
+
+## v0.5.1 (March 19th, 2014)
+
+* :abc: Update README and package metadata
+
 ## v0.5.0 (March 19th, 2014)
 
 * :new: `go vet` support (fixes #5)
