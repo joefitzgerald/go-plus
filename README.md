@@ -6,6 +6,10 @@ This package adds the following functionality to the go language:
 * `goimports` support (change the `Gofmt Path` preference to target `goimports`)
 * `go vet` support
 
+### Example
+
+![A screenshot of go-plus in action](http://cl.ly/image/422w3W3F171G/go-plus-example.gif)
+
 ### Defaults
 
 The preferences for this package default to values that match the way `go` is
