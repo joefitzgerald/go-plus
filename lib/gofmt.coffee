@@ -16,31 +16,41 @@ class Gofmt
     @emit "reset"
 
   formatCurrentBuffer: ->
+    # TODO: Figure Out How To Get Active EditorView
     editor = atom.workspace.getActiveEditor()
     @reset
-    @formatBuffer(editor.getBuffer(), editor, false)
+    @formatBuffer(editor, false)
 
-  formatBuffer: (buffer, editor, saving) ->
+  formatBuffer: (editorView, saving) ->
+    editor = editorView.getEditor()
     grammar = editor.getGrammar()
     return if saving and not atom.config.get('go-plus.formatOnSave')
     return if grammar.scopeName isnt 'source.go'
-    args = ["-w", buffer.getPath()]
+    args = ["-w", editor.getBuffer().getPath()]
     fmtCmd = atom.config.get('go-plus.gofmtPath')
     fmt = spawn(fmtCmd, args)
     fmt.on 'error', (error) -> console.log 'go-plus: error launching format command [' + fmtCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
-    fmt.stderr.on 'data', (data) => @mapErrors(buffer, editor, data)
+    fmt.stderr.on 'data', (data) => @mapErrors(editorView, data)
     fmt.stdout.on 'data', (data) -> console.log 'go-plus: format – ' + data if data?
     fmt.on 'close', (code) -> console.log fmtCmd + 'go-plus: format – exited with code [' + code + ']' if code isnt 0
 
-  mapErrors: (buffer, editor, data) ->
-    pattern = /^(.*?):(\d*?):(\d*?):\s(.*)$/img
+  mapErrors: (editorView, data) ->
+    pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
     errors = []
     extract = (matchLine) ->
       return unless matchLine?
-      error = [matchLine[2], matchLine[3], matchLine[4]]
+      error = switch
+        when matchLine[4]?
+          line: matchLine[2]
+          column: matchLine[4]
+          msg: matchLine[5]
+        else
+          line: matchLine[2]
+          column: false
+          msg: matchLine[5]
       errors.push error
     loop
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit "gofmt-errors", errors
+    @emit "gofmt-errors", editorView, errors

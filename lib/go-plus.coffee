@@ -13,3 +13,7 @@ module.exports =
 
   deactivate: ->
     @dispatch.destroy()
+
+  # class GoPlusError
+  #   constructor: (options) ->
+  #     {@line, @column, @msg} = options
