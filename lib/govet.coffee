@@ -2,12 +2,12 @@ spawn = require('child_process').spawn
 {Subscriber, Emitter} = require 'emissary'
 
 module.exports =
-class Gofmt
+class Govet
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
   constructor: ->
-    atom.workspaceView.command "golang:gofmt", => @gofmt.formatCurrentBuffer()
+    atom.workspaceView.command "golang:govet", => @govet.checkCurrentBuffer()
 
   destroy: ->
     @unsubscribe
@@ -15,24 +15,24 @@ class Gofmt
   reset: ->
     @emit "reset"
 
-  formatCurrentBuffer: ->
+  checkCurrentBuffer: ->
     # TODO: Figure Out How To Get Active EditorView
     editor = atom.workspace.getActiveEditor()
     @reset
-    @formatBuffer(editor, false)
+    @checkBuffer(editor, false)
 
-  formatBuffer: (editorView, saving) ->
+  checkBuffer: (editorView, saving) ->
     editor = editorView.getEditor()
     grammar = editor.getGrammar()
-    return if saving and not atom.config.get('go-plus.formatOnSave')
+    return if saving and not atom.config.get('go-plus.vetOnSave')
     return if grammar.scopeName isnt 'source.go'
-    args = ["-w", editor.getBuffer().getPath()]
-    fmtCmd = atom.config.get('go-plus.gofmtPath')
-    fmt = spawn(fmtCmd, args)
-    fmt.on 'error', (error) -> console.log 'go-plus: error launching format command [' + fmtCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
-    fmt.stderr.on 'data', (data) => @mapErrors(editorView, data)
-    fmt.stdout.on 'data', (data) -> console.log 'go-plus: format – ' + data if data?
-    fmt.on 'close', (code) -> console.log fmtCmd + 'go-plus: format – exited with code [' + code + ']' if code isnt 0
+    args = ["vet", editor.getBuffer().getPath()]
+    vetCmd = atom.config.get('go-plus.goPath')
+    vet = spawn(vetCmd, args)
+    vet.on 'error', (error) -> console.log 'go-plus: error launching vet command [' + vetCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
+    vet.stderr.on 'data', (data) => @mapErrors(editorView, data)
+    vet.stdout.on 'data', (data) -> console.log 'go-plus: vet – ' + data if data?
+    vet.on 'close', (code) -> console.log vetCmd + 'go-plus: vet – exited with code [' + code + ']' if code isnt 0
 
   mapErrors: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
@@ -53,4 +53,4 @@ class Gofmt
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit "gofmt-errors", editorView, errors
+    @emit "govet-errors", editorView, errors

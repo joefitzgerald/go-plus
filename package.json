@@ -24,5 +24,11 @@
   },
   "bugs": {
     "url": "https://github.com/joefitzgerald/go-plus/issues"
+  },
+  "dependencies": {
+    "emissary": "1.x",
+    "fs-plus": "2.x",
+    "temp": "~0.6.0",
+    "underscore-plus": "1.x"
   }
 }

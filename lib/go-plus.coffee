@@ -1,14 +1,19 @@
-Gofmt = require './gofmt'
+Dispatch = require './dispatch'
 
 module.exports =
   configDefaults:
     formatOnSave: true
+    vetOnSave: true
+    goPath: "/usr/local/go/bin/go"
     gofmtPath: "/usr/local/go/bin/gofmt"
     showErrorPanel: true
 
   activate: (state) ->
-    @gofmt = new Gofmt()
-    atom.workspaceView.command "golang:gofmt", => @gofmt.formatCurrentBuffer()
+    @dispatch = new Dispatch()
 
   deactivate: ->
-    @gofmt.destroy()
+    @dispatch.destroy()
+
+  # class GoPlusError
+  #   constructor: (options) ->
+  #     {@line, @column, @msg} = options
