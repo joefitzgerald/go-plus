@@ -4,7 +4,7 @@ fs = require 'fs-plus'
 temp = require 'temp'
 _ = require 'underscore-plus'
 
-describe "Dispatch", ->
+describe "format", ->
   [editor, buffer, filePath] = []
 
   beforeEach ->
