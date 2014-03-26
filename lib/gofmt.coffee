@@ -24,15 +24,19 @@ class Gofmt
   formatBuffer: (editorView, saving) ->
     editor = editorView.getEditor()
     grammar = editor.getGrammar()
-    return if saving and not atom.config.get('go-plus.formatOnSave')
     return if grammar.scopeName isnt 'source.go'
+    if saving and not atom.config.get('go-plus.formatOnSave')
+      @emit 'fmt-complete', editorView, saving
+      return
     args = ["-w", editor.getBuffer().getPath()]
     fmtCmd = atom.config.get('go-plus.gofmtPath')
     fmt = spawn(fmtCmd, args)
-    fmt.on 'error', (error) -> console.log 'go-plus: error launching format command [' + fmtCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
+    fmt.on 'error', (error) => console.log 'fmt: error launching format command [' + fmtCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
     fmt.stderr.on 'data', (data) => @mapErrors(editorView, data)
-    fmt.stdout.on 'data', (data) -> console.log 'go-plus: format – ' + data if data?
-    fmt.on 'close', (code) -> console.log fmtCmd + 'go-plus: format – exited with code [' + code + ']' if code isnt 0
+    fmt.stdout.on 'data', (data) => console.log 'fmt: ' + data if data?
+    fmt.on 'close', (code) =>
+      console.log fmtCmd + 'fmt: [' + fmtCmd + '] exited with code [' + code + ']' if code isnt 0
+      @emit 'fmt-complete', editorView, saving
 
   mapErrors: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
@@ -53,4 +57,4 @@ class Gofmt
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit "gofmt-errors", editorView, errors
+    @emit "fmt-errors", editorView, errors

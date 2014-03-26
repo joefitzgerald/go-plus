@@ -1,5 +1,5 @@
 Gofmt = require './gofmt'
-{Subscriber} = require 'emissary'
+{Subscriber, Emitter} = require 'emissary'
 Govet = require './govet'
 _ = require 'underscore-plus'
 $ = require('atom').$
@@ -7,25 +7,33 @@ $ = require('atom').$
 module.exports =
 class Dispatch
   Subscriber.includeInto(this)
-  errorCollection = []
+  Emitter.includeInto(this)
+
   constructor: ->
+    @errorCollection = []
     @gofmt = new Gofmt()
     @govet = new Govet()
-    @gofmt.on 'gofmt-errors', (editorView, errors) =>
+    @gofmt.on 'fmt-complete', (editorView, saving) =>
+      @emit 'fmt-complete', editorView, saving
+      @govet.checkBuffer(editorView, saving)
+    @govet.on 'vet-complete', (editorView, saving) =>
+      @emit 'vet-complete', editorView, saving
+      @emit 'dispatch-complete', editorView
+    @gofmt.on 'fmt-errors', (editorView, errors) =>
       @collectErrors(errors)
-      @updatePane(editorView, errorCollection)
-      @updateGutter(editorView, errorCollection)
-    @govet.on 'govet-errors', (editorView, errors) =>
+    @govet.on 'vet-errors', (editorView, errors) =>
       @collectErrors(errors)
-      @updatePane(editorView, errorCollection)
-      @updateGutter(editorView, errorCollection)
+    @on 'dispatch-complete', (editorView) =>
+      @updatePane(editorView, @errorCollection)
+      @updateGutter(editorView, @errorCollection)
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPane()
 
   collectErrors: (errors) ->
-    errorCollection = _.union(errorCollection, errors)
-    errorCollection = _.uniq errorCollection, (element, index, list) ->
+    @errorCollection = _.union(@errorCollection, errors)
+    @errorCollection = _.uniq @errorCollection, (element, index, list) ->
       return element.line + ":" + element.column + ":" + element.msg
+    @emit 'errors-collected', _.size(@errorCollection)
 
   destroy: ->
     @unsubscribe
@@ -35,20 +43,18 @@ class Dispatch
   handleEvents: (editorView) ->
     editor = editorView.getEditor()
     buffer = editor.getBuffer()
-    buffer.on 'saved', => @handleBufferSave(buffer, editorView, true)
+    buffer.on 'saved', => @handleBufferSave(editorView, true)
     editor.on 'destroyed', => buffer.off 'saved'
 
-  handleBufferSave: (buffer, editorView, saving) ->
+  handleBufferSave: (editorView, saving) ->
     editor = editorView.getEditor()
     grammar = editor.getGrammar()
-    return if saving and not atom.config.get('go-plus.formatOnSave')
     return if grammar.scopeName isnt 'source.go'
     @resetState(editorView)
     @gofmt.formatBuffer(editorView, saving)
-    @govet.checkBuffer(editorView, saving)
 
   resetState: (editorView) ->
-    errorCollection = []
+    @errorCollection = []
     @resetGutter(editorView)
     @resetPane()
 
@@ -78,7 +84,7 @@ class Dispatch
       # Errors Scoped To The Relevent Editor Rather Than The Entire Workspace
       atom.workspaceView.prependToBottom(newErrorPane)
       errorPane = $('#go-plus-status-pane')
-    sortedErrors = _.sortBy errorCollection, (element, index, list) ->
+    sortedErrors = _.sortBy @errorCollection, (element, index, list) ->
       return parseInt(element.line, 10)
     for error in sortedErrors
       msg = switch

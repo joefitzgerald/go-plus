@@ -2,7 +2,7 @@ path = require 'path'
 fs = require 'fs-plus'
 {WorkspaceView} = require 'atom'
 temp = require 'temp'
-Gofmt = require '../lib/gofmt'
+_ = require 'underscore-plus'
 
 describe "Dispatch", ->
   [editor, buffer, filePath] = []
@@ -35,10 +35,32 @@ describe "Dispatch", ->
       done = false
       runs ->
         console.log 'Test File: ' + filePath
-        buffer.setText("package main\n\nfunc main()  {\n}\n")
-        buffer.on 'reloaded', ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
+          expect(dispatch.errorCollection?).toBe true
+          expect(_.size(dispatch.errorCollection)).toBe 0
           done = true
+        buffer.setText("package main\n\nfunc main()  {\n}\n")
+        buffer.save()
+
+      waitsFor ->
+        done is true
+
+    it "collects errors when the input is invalid", ->
+      done = false
+      runs ->
+        console.log 'Test File: ' + filePath
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.on 'dispatch-complete', (editorView) =>
+          expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main(!)  {\n}\n"
+          expect(dispatch.errorCollection?).toBe true
+          expect(_.size(dispatch.errorCollection)).toBe 1
+          expect(dispatch.errorCollection[0].column).toBe "11"
+          expect(dispatch.errorCollection[0].line).toBe "3"
+          expect(dispatch.errorCollection[0].msg).toBe "expected type, found '!'"
+          done = true
+        buffer.setText("package main\n\nfunc main(!)  {\n}\n")
         buffer.save()
 
       waitsFor ->
@@ -56,15 +78,14 @@ describe "Dispatch", ->
       done = false
       runs ->
         console.log 'Test File: ' + filePath
-        buffer.setText("package main\n\nfunc main()  {\n}\n")
-        buffer.on 'saved', ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main()  {\n}\n"
+          expect(dispatch.errorCollection?).toBe true
+          expect(_.size(dispatch.errorCollection)).toBe 0
           done = true
+        buffer.setText("package main\n\nfunc main()  {\n}\n")
         buffer.save()
-
-      waits 500
-
-      runs -> expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main()  {\n}\n"
 
       waitsFor ->
         done is true

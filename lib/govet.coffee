@@ -24,15 +24,19 @@ class Govet
   checkBuffer: (editorView, saving) ->
     editor = editorView.getEditor()
     grammar = editor.getGrammar()
-    return if saving and not atom.config.get('go-plus.vetOnSave')
     return if grammar.scopeName isnt 'source.go'
+    if saving and not atom.config.get('go-plus.vetOnSave')
+      @emit 'vet-complete', editorView, saving
+      return
     args = ["vet", editor.getBuffer().getPath()]
     vetCmd = atom.config.get('go-plus.goPath')
     vet = spawn(vetCmd, args)
-    vet.on 'error', (error) -> console.log 'go-plus: error launching vet command [' + vetCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
+    vet.on 'error', (error) => console.log 'vet: error launching vet command [' + vetCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
     vet.stderr.on 'data', (data) => @mapErrors(editorView, data)
-    vet.stdout.on 'data', (data) -> console.log 'go-plus: vet – ' + data if data?
-    vet.on 'close', (code) -> console.log vetCmd + 'go-plus: vet – exited with code [' + code + ']' if code isnt 0
+    vet.stdout.on 'data', (data) => console.log 'vet: ' + data if data?
+    vet.on 'close', (code) =>
+      console.log vetCmd + 'vet: [' + vetCmd + '] exited with code [' + code + ']' if code isnt 0
+      @emit 'vet-complete', editorView, saving
 
   mapErrors: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
@@ -53,4 +57,4 @@ class Govet
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit "govet-errors", editorView, errors
+    @emit "vet-errors", editorView, errors
