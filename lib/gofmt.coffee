@@ -35,7 +35,7 @@ class Gofmt
     fmt.stderr.on 'data', (data) => @mapErrors(editorView, data)
     fmt.stdout.on 'data', (data) => console.log 'fmt: ' + data if data?
     fmt.on 'close', (code) =>
-      console.log fmtCmd + 'fmt: [' + fmtCmd + '] exited with code [' + code + ']' if code isnt 0
+      console.log 'fmt: [' + fmtCmd + '] exited with code [' + code + ']' if code isnt 0
       @emit 'fmt-complete', editorView, saving
 
   mapErrors: (editorView, data) ->

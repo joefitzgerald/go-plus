@@ -29,13 +29,13 @@ class Govet
       @emit 'vet-complete', editorView, saving
       return
     args = ["vet", editor.getBuffer().getPath()]
-    vetCmd = atom.config.get('go-plus.goPath')
+    vetCmd = atom.config.get('go-plus.goExecutablePath')
     vet = spawn(vetCmd, args)
     vet.on 'error', (error) => console.log 'vet: error launching vet command [' + vetCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
     vet.stderr.on 'data', (data) => @mapErrors(editorView, data)
     vet.stdout.on 'data', (data) => console.log 'vet: ' + data if data?
     vet.on 'close', (code) =>
-      console.log vetCmd + 'vet: [' + vetCmd + '] exited with code [' + code + ']' if code isnt 0
+      console.log 'vet: [' + vetCmd + '] exited with code [' + code + ']' if code isnt 0
       @emit 'vet-complete', editorView, saving
 
   mapErrors: (editorView, data) ->

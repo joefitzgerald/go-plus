@@ -2,9 +2,12 @@ Dispatch = require './dispatch'
 
 module.exports =
   configDefaults:
+    environmentOverridesConfiguration: true
+    syntaxCheckOnSave: false
     formatOnSave: true
     vetOnSave: true
-    goPath: "/usr/local/go/bin/go"
+    goPath: ""
+    goExecutablePath: "/usr/local/go/bin/go"
     gofmtPath: "/usr/local/go/bin/gofmt"
     showErrorPanel: true
 

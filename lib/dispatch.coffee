@@ -1,6 +1,7 @@
-Gofmt = require './gofmt'
 {Subscriber, Emitter} = require 'emissary'
+Gofmt = require './gofmt'
 Govet = require './govet'
+Gobuild = require './gobuild'
 _ = require 'underscore-plus'
 $ = require('atom').$
 
@@ -13,15 +14,21 @@ class Dispatch
     @errorCollection = []
     @gofmt = new Gofmt()
     @govet = new Govet()
+    @gobuild = new Gobuild()
     @gofmt.on 'fmt-complete', (editorView, saving) =>
       @emit 'fmt-complete', editorView, saving
       @govet.checkBuffer(editorView, saving)
     @govet.on 'vet-complete', (editorView, saving) =>
       @emit 'vet-complete', editorView, saving
+      @gobuild.checkBuffer(editorView, saving)
+    @gobuild.on 'syntaxcheck-complete', (editorView, saving) =>
+      @emit 'syntaxcheck-complete', editorView, saving
       @emit 'dispatch-complete', editorView
     @gofmt.on 'fmt-errors', (editorView, errors) =>
       @collectErrors(errors)
     @govet.on 'vet-errors', (editorView, errors) =>
+      @collectErrors(errors)
+    @gobuild.on 'syntaxcheck-errors', (editorView, errors) =>
       @collectErrors(errors)
     @on 'dispatch-complete', (editorView) =>
       @updatePane(editorView, @errorCollection)
@@ -87,9 +94,11 @@ class Dispatch
     sortedErrors = _.sortBy @errorCollection, (element, index, list) ->
       return parseInt(element.line, 10)
     for error in sortedErrors
-      msg = switch
-        when error.column isnt false then 'Line: ' + error.line + ' Char: ' + error.column + ' – ' + error.msg
-        else 'Line: ' + error.line + ' – ' + error.msg
+      prefix = switch
+        when error.line isnt false and error.column isnt false then 'Line: ' + error.line + ' Char: ' + error.column
+        when error.line isnt false and error.column is false then 'Line: ' + error.line
+        else ''
+      msg = if prefix is '' then error.msg else prefix + ' – ' + error.msg
       errorPane.append(msg)
       errorPane.append('<br/>')
 

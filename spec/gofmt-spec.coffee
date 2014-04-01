@@ -27,7 +27,7 @@ describe "format", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", true)
       atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.goPath", "/usr/local/go/bin/go")
+      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
       atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
       atom.config.set("go-plus.showErrorPanel", false)
 
@@ -70,7 +70,7 @@ describe "format", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.goPath", "/usr/local/go/bin/go")
+      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
       atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
       atom.config.set("go-plus.showErrorPanel", false)
 
