@@ -1,6 +1,6 @@
 {
   "name": "go-plus",
-  "description": "The go-plus package adds gofmt, goimports and go vet support for the go language. In the future it will add go build, go test, gocode and other functionality.",
+  "description": "Adds `gofmt`, `goimports`, `go vet`, `go build` and `go test` functionality for the go language.",
   "keywords": [
     "go",
     "golang",

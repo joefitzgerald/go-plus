@@ -1,3 +1,11 @@
+## v0.6.0 (April 1st, 2014)
+
+* :new: Syntax checking using `go build` and `go test` – in both cases, any output will be automatically cleaned up (fixes #1)
+* :lipstick: Clean up logging
+* :lipstick: Emit events so that external actors (e.g. tests, or other package authors) may trigger actions based on go-plus lifecycle events
+* :lipstick: Tests for errors
+* :bug: Fixed issue where vet support would not work if format on save was not enabled (#8)
+
 ## v0.5.2 (March 20th, 2014)
 
 * :abc: Add examples and demo gif
