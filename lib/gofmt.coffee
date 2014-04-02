@@ -7,19 +7,18 @@ class Gofmt
   Emitter.includeInto(this)
 
   constructor: ->
-    atom.workspaceView.command "golang:gofmt", => @gofmt.formatCurrentBuffer()
+    atom.workspaceView.command "golang:gofmt", => @formatCurrentBuffer()
 
   destroy: ->
     @unsubscribe
 
-  reset: ->
-    @emit "reset"
+  reset: (editorView) ->
+    @emit "reset", editorView
 
   formatCurrentBuffer: ->
-    # TODO: Figure Out How To Get Active EditorView
-    editor = atom.workspace.getActiveEditor()
-    @reset
-    @formatBuffer(editor, false)
+    editorView = atom.workspaceView.getActiveView()
+    @reset editorView
+    @formatBuffer(editorView, false)
 
   formatBuffer: (editorView, saving) ->
     editor = editorView.getEditor()

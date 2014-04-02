@@ -9,20 +9,19 @@ class Gobuild
   Emitter.includeInto(this)
 
   constructor: (dispatch) ->
-    atom.workspaceView.command "golang:gobuild", => @gobuild.checkCurrentBuffer()
+    atom.workspaceView.command "golang:gobuild", => @checkCurrentBuffer()
     @dispatch = dispatch
 
   destroy: ->
     @unsubscribe
 
-  reset: ->
-    @emit "reset"
+  reset: (editorView) ->
+    @emit "reset", editorView
 
   checkCurrentBuffer: ->
-    # TODO: Figure Out How To Get Active EditorView
-    editor = atom.workspace.getActiveEditor()
-    @reset
-    @checkBuffer(editor, false)
+    editorView = atom.workspaceView.getActiveView()
+    @reset editorView
+    @checkBuffer(editorView, false)
 
   checkBuffer: (editorView, saving) ->
     editor = editorView.getEditor()

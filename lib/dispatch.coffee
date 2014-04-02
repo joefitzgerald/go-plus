@@ -17,18 +17,25 @@ class Dispatch
     @govet = new Govet()
     @golint = new Golint(this)
     @gobuild = new Gobuild(this)
+
+    # Pipeline For Processing Buffer
     @gofmt.on 'fmt-complete', (editorView, saving) =>
       @emit 'fmt-complete', editorView, saving
-      @govet.checkBuffer(editorView, saving)
+      @govet.checkBuffer(editorView, saving) if saving
+      @emit 'dispatch-complete', editorView if not saving
     @govet.on 'vet-complete', (editorView, saving) =>
       @emit 'vet-complete', editorView, saving
-      @golint.checkBuffer(editorView, saving)
+      @golint.checkBuffer(editorView, saving) if saving
+      @emit 'dispatch-complete', editorView if not saving
     @golint.on 'lint-complete', (editorView, saving) =>
       @emit 'lint-complete', editorView, saving
-      @gobuild.checkBuffer(editorView, saving)
+      @gobuild.checkBuffer(editorView, saving) if saving
+      @emit 'dispatch-complete', editorView if not saving
     @gobuild.on 'syntaxcheck-complete', (editorView, saving) =>
       @emit 'syntaxcheck-complete', editorView, saving
       @emit 'dispatch-complete', editorView
+
+    # Collect Errors
     @gofmt.on 'fmt-errors', (editorView, errors) =>
       @collectErrors(errors)
     @govet.on 'vet-errors', (editorView, errors) =>
@@ -37,6 +44,18 @@ class Dispatch
       @collectErrors(errors)
     @gobuild.on 'syntaxcheck-errors', (editorView, errors) =>
       @collectErrors(errors)
+
+    # Reset State If Requested
+    @gofmt.on 'reset', (editorView) =>
+      @resetState(editorView)
+    @golint.on 'reset', (editorView) =>
+      @resetState(editorView)
+    @govet.on 'reset', (editorView) =>
+      @resetState(editorView)
+    @gobuild.on 'reset', (editorView) =>
+      @resetState(editorView)
+
+    # Update Pane And Gutter With Errors
     @on 'dispatch-complete', (editorView) =>
       @updatePane(editorView, @errorCollection)
       @updateGutter(editorView, @errorCollection)
