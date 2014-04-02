@@ -17,6 +17,7 @@ class Gofmt
 
   formatCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
+    return unless editorView?
     @reset editorView
     @formatBuffer(editorView, false)
 
@@ -27,7 +28,11 @@ class Gofmt
     if saving and not atom.config.get('go-plus.formatOnSave')
       @emit 'fmt-complete', editorView, saving
       return
-    args = ["-w", editor.getBuffer().getPath()]
+    buffer = editor.getBuffer()
+    unless buffer?
+      @emit 'syntaxcheck-complete', editorView, saving
+      return
+    args = ["-w", buffer.getPath()]
     fmtCmd = atom.config.get('go-plus.gofmtPath')
     fmt = spawn(fmtCmd, args)
     fmt.on 'error', (error) => console.log 'fmt: error launching format command [' + fmtCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?

@@ -17,6 +17,7 @@ class Govet
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
+    return unless editorView?
     @reset editorView
     @checkBuffer(editorView, false)
 
@@ -27,7 +28,11 @@ class Govet
     if saving and not atom.config.get('go-plus.vetOnSave')
       @emit 'vet-complete', editorView, saving
       return
-    args = ["vet", editor.getBuffer().getPath()]
+    buffer = editor.getBuffer()
+    unless buffer?
+      @emit 'syntaxcheck-complete', editorView, saving
+      return
+    args = ["vet", buffer.getPath()]
     vetCmd = atom.config.get('go-plus.goExecutablePath')
     vet = spawn(vetCmd, args)
     vet.on 'error', (error) => console.log 'vet: error launching vet command [' + vetCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?

@@ -1,3 +1,7 @@
+## v0.7.2 (April 2nd, 2014)
+
+* :bug: Suppress console errors if no file is open and a menu command is run
+
 ## v0.7.1 (April 2nd, 2014)
 
 * :bug: Fixed menu commands so that you can run commands individually

@@ -18,6 +18,7 @@ class Golint
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
+    return unless editorView?
     @reset editorView
     @checkBuffer(editorView, false)
 
@@ -28,8 +29,12 @@ class Golint
     if saving and not atom.config.get('go-plus.lintOnSave')
       @emit 'lint-complete', editorView, saving
       return
+    buffer = editor.getBuffer()
+    unless buffer?
+      @emit 'syntaxcheck-complete', editorView, saving
+      return
     gopath = @dispatch.buildGoPath()
-    args = [editor.getBuffer().getPath()]
+    args = [buffer.getPath()]
     lintCmd = atom.config.get('go-plus.golintPath')
     lintCmd = lintCmd.replace(/^\$GOPATH\//i, gopath + '/') if gopath? and gopath isnt ''
     lint = spawn(lintCmd, args)

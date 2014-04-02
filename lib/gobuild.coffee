@@ -20,6 +20,7 @@ class Gobuild
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
+    return unless editorView?
     @reset editorView
     @checkBuffer(editorView, false)
 
@@ -31,6 +32,9 @@ class Gobuild
       @emit 'syntaxcheck-complete', editorView, saving
       return
     buffer = editor.getBuffer()
+    unless buffer?
+      @emit 'syntaxcheck-complete', editorView, saving
+      return
     gopath = @dispatch.buildGoPath()
     if not gopath? or gopath is ''
       errors = []

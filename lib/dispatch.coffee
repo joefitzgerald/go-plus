@@ -94,14 +94,16 @@ class Dispatch
     @resetPane()
 
   resetGutter: (editorView) ->
-    gutter = editorView.gutter
+    gutter = editorView?.gutter
+    return unless gutter?
     gutter.removeClassFromAllLines('go-plus-error')
 
   updateGutter: (editorView, errors) ->
     @resetGutter(editorView)
     return unless errors?
     return if errors.length <= 0
-    gutter = editorView.gutter
+    gutter = editorView?.gutter
+    return unless gutter?
     gutter.addClassToLine error.line - 1, 'go-plus-error' for error in errors
 
   resetPane: ->
