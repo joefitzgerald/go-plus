@@ -1,3 +1,7 @@
+## v0.7.1 (April 2nd, 2014)
+
+* :bug: Fixed menu commands so that you can run commands individually
+
 ## v0.7.0 (April 2nd, 2014)
 
 * :new: Add `golint` Support (fixes #7)
