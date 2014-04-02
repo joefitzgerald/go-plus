@@ -6,6 +6,7 @@ This package adds extra Atom functionality for the go language:
 * Formatting and managing imports using `goimports` (change the `Gofmt Path`
   preference to target `goimports`)
 * Code quality inspection using `go vet`
+* Linting using `golint`
 * Syntax checking using `go build` and `go test`
 
 ### Example
@@ -21,7 +22,7 @@ installed on OS X using the package installer:
 * `go` executables are found at `/usr/local/go/bin`
 
 Additionally `format on save` and `vet on save` are enabled by default. `syntax
-check on save` is disabled by default. You can override these defaults by
+check on save` and `lint on save` are disabled by default. You can override these defaults by
 updating the `go-plus` preferences.
 
 ### GOPATH
@@ -62,7 +63,6 @@ test` powered syntax checking.
 
 The following features will be added soon:
 
-* `go lint` integration ([#7](https://github.com/joefitzgerald/go-plus/issues/7))
 * Status bar text for errors ([#3](https://github.com/joefitzgerald/go-plus/issues/3))
 * `gocode` integration ([#2](https://github.com/joefitzgerald/go-plus/issues/2))
 * ... and others: https://github.com/joefitzgerald/go-plus/issues

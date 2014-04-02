@@ -1,3 +1,7 @@
+## v0.7.0 (April 2nd, 2014)
+
+* :new: Add `golint` Support (fixes #7)
+
 ## v0.6.0 (April 1st, 2014)
 
 * :new: Syntax checking using `go build` and `go test` – in both cases, any output will be automatically cleaned up (fixes #1)

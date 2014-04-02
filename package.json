@@ -1,6 +1,6 @@
 {
   "name": "go-plus",
-  "description": "Adds `gofmt`, `goimports`, `go vet`, `go build` and `go test` functionality for the go language.",
+  "description": "Adds `gofmt`, `goimports`, `go vet`, `golint`, `go build` and `go test` functionality for the go language.",
   "keywords": [
     "go",
     "golang",
