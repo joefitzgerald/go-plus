@@ -1,6 +1,7 @@
 {Subscriber, Emitter} = require 'emissary'
 Gofmt = require './gofmt'
 Govet = require './govet'
+Golint = require './golint'
 Gobuild = require './gobuild'
 _ = require 'underscore-plus'
 $ = require('atom').$
@@ -14,12 +15,16 @@ class Dispatch
     @errorCollection = []
     @gofmt = new Gofmt()
     @govet = new Govet()
-    @gobuild = new Gobuild()
+    @golint = new Golint(this)
+    @gobuild = new Gobuild(this)
     @gofmt.on 'fmt-complete', (editorView, saving) =>
       @emit 'fmt-complete', editorView, saving
       @govet.checkBuffer(editorView, saving)
     @govet.on 'vet-complete', (editorView, saving) =>
       @emit 'vet-complete', editorView, saving
+      @golint.checkBuffer(editorView, saving)
+    @golint.on 'lint-complete', (editorView, saving) =>
+      @emit 'lint-complete', editorView, saving
       @gobuild.checkBuffer(editorView, saving)
     @gobuild.on 'syntaxcheck-complete', (editorView, saving) =>
       @emit 'syntaxcheck-complete', editorView, saving
@@ -27,6 +32,8 @@ class Dispatch
     @gofmt.on 'fmt-errors', (editorView, errors) =>
       @collectErrors(errors)
     @govet.on 'vet-errors', (editorView, errors) =>
+      @collectErrors(errors)
+    @golint.on 'lint-errors', (editorView, errors) =>
       @collectErrors(errors)
     @gobuild.on 'syntaxcheck-errors', (editorView, errors) =>
       @collectErrors(errors)
@@ -44,6 +51,8 @@ class Dispatch
 
   destroy: ->
     @unsubscribe
+    @gobuild.destroy()
+    @golint.destroy()
     @govet.destroy()
     @gofmt.destroy()
 
@@ -101,6 +110,17 @@ class Dispatch
       msg = if prefix is '' then error.msg else prefix + ' – ' + error.msg
       errorPane.append(msg)
       errorPane.append('<br/>')
+
+  buildGoPath: ->
+    gopath = ''
+    gopathEnv = process.env.GOPATH
+    gopathConfig = atom.config.get('go-plus.goPath')
+    environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')
+    environmentOverridesConfig ?= true
+    gopath = gopathEnv if gopathEnv? and gopathEnv isnt ''
+    gopath = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig isnt ''
+    gopath = gopathConfig if gopath is ''
+    return gopath
 
   # updateStatus: (errors, row) ->
   #   msg = ''

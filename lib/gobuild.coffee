@@ -8,8 +8,9 @@ class Gobuild
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: ->
+  constructor: (dispatch) ->
     atom.workspaceView.command "golang:gobuild", => @gobuild.checkCurrentBuffer()
+    @dispatch = dispatch
 
   destroy: ->
     @unsubscribe
@@ -31,7 +32,7 @@ class Gobuild
       @emit 'syntaxcheck-complete', editorView, saving
       return
     buffer = editor.getBuffer()
-    gopath = @buildGoPath()
+    gopath = @dispatch.buildGoPath()
     if not gopath? or gopath is ''
       errors = []
       error =
@@ -69,17 +70,6 @@ class Gobuild
       if fs.existsSync(syntaxCheckOutputFile)
         fs.unlinkSync(syntaxCheckOutputFile)
       @emit 'syntaxcheck-complete', editorView, saving
-
-  buildGoPath: ->
-    gopath = ''
-    gopathEnv = process.env.GOPATH
-    gopathConfig = atom.config.get('go-plus.goPath')
-    environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')
-    environmentOverridesConfig ?= true
-    gopath = gopathEnv if gopathEnv? and gopathEnv isnt ''
-    gopath = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig isnt ''
-    gopath = gopathConfig if gopath is ''
-    return gopath
 
   mapErrors: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img

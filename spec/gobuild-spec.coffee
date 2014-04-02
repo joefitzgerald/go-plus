@@ -29,6 +29,7 @@ describe "build", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
+      atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", directory)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
       atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
