@@ -12,24 +12,6 @@ describe "build", ->
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
-    filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
-    secondFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "util.go")
-    thirdFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "strings.go")
-    testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
-    fs.writeFileSync(filePath, '')
-    fs.writeFileSync(secondFilePath, '')
-    fs.writeFileSync(thirdFilePath, '')
-    fs.writeFileSync(testFilePath, '')
-    editor = atom.workspace.openSync(filePath)
-    secondEditor = atom.workspace.openSync(secondFilePath)
-    thirdEditor = atom.workspace.openSync(thirdFilePath)
-    testEditor = atom.workspace.openSync(testFilePath)
-
-    waitsForPromise ->
-      atom.packages.activatePackage('language-go')
-
-    waitsForPromise ->
-      atom.packages.activatePackage('go-plus')
 
   describe "when syntax check on save is enabled", ->
     beforeEach ->
@@ -42,11 +24,24 @@ describe "build", ->
       atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
       atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
       atom.config.set("go-plus.showErrorPanel", true)
+      filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
+      testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
+      fs.writeFileSync(filePath, '')
+      fs.writeFileSync(testFilePath, '')
+      editor = atom.workspace.openSync(filePath)
+      testEditor = atom.workspace.openSync(testFilePath)
+
+      waitsForPromise ->
+        atom.packages.activatePackage('language-go')
+
+      waitsForPromise ->
+        atom.packages.activatePackage('go-plus')
 
     it "displays errors for unused code", ->
       done = false
       runs ->
         console.log 'Test File: ' + filePath
+        fs.unlinkSync(testFilePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
@@ -54,9 +49,9 @@ describe "build", ->
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n"
           expect(dispatch.errorCollection?).toBe true
           expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0].column).toBe false
-          expect(dispatch.errorCollection[0].line).toBe "6"
-          expect(dispatch.errorCollection[0].msg).toBe "42 evaluated but not used"
+          expect(dispatch.errorCollection[0]?.column).toBe false
+          expect(dispatch.errorCollection[0]?.line).toBe "6"
+          expect(dispatch.errorCollection[0]?.msg).toBe "42 evaluated but not used"
           done = true
         buffer.save()
 
@@ -67,6 +62,7 @@ describe "build", ->
       done = false
       runs ->
         console.log 'Test File: ' + testFilePath
+        fs.unlinkSync(filePath)
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\t42\n\tt.Error(\"Example Test\")\n}")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
@@ -74,14 +70,44 @@ describe "build", ->
           expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\t42\n\tt.Error(\"Example Test\")\n}"
           expect(dispatch.errorCollection?).toBe true
           expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0].column).toBe false
-          expect(dispatch.errorCollection[0].line).toBe "6"
-          expect(dispatch.errorCollection[0].msg).toBe "42 evaluated but not used"
+          expect(dispatch.errorCollection[0]?.column).toBe false
+          expect(dispatch.errorCollection[0]?.line).toBe "6"
+          expect(dispatch.errorCollection[0]?.msg).toBe "42 evaluated but not used"
           done = true
         testBuffer.save()
 
       waitsFor ->
         done is true
+
+  describe "when working with multiple files", ->
+    beforeEach ->
+      atom.config.set("go-plus.formatOnSave", false)
+      atom.config.set("go-plus.vetOnSave", false)
+      atom.config.set("go-plus.lintOnSave", false)
+      atom.config.set("go-plus.goPath", directory)
+      atom.config.set("go-plus.environmentOverridesConfiguration", false)
+      atom.config.set("go-plus.syntaxCheckOnSave", true)
+      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
+      atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
+      atom.config.set("go-plus.showErrorPanel", true)
+      filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
+      secondFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "util.go")
+      thirdFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "strings.go")
+      testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
+      fs.writeFileSync(filePath, '')
+      fs.writeFileSync(secondFilePath, '')
+      fs.writeFileSync(thirdFilePath, '')
+      fs.writeFileSync(testFilePath, '')
+      editor = atom.workspace.openSync(filePath)
+      secondEditor = atom.workspace.openSync(secondFilePath)
+      thirdEditor = atom.workspace.openSync(thirdFilePath)
+      testEditor = atom.workspace.openSync(testFilePath)
+
+      waitsForPromise ->
+        atom.packages.activatePackage('language-go')
+
+      waitsForPromise ->
+        atom.packages.activatePackage('go-plus')
 
     it "does not display errors for dependent functions spread across multiple files in the same package", ->
       done = false

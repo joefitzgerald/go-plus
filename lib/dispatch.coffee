@@ -119,8 +119,9 @@ class Dispatch
       newErrorPane = $('<div id="go-plus-status-pane" class="go-plus-pane" style="height:">')
       # TODO: When Atom API Supports It, Add This To The EditorView So We Can Keep
       # Errors Scoped To The Relevent Editor Rather Than The Entire Workspace
-      atom.workspaceView.prependToBottom(newErrorPane)
+      atom.workspaceView?.prependToBottom(newErrorPane)
       errorPane = $('#go-plus-status-pane')
+      return unless errorPane.length > 0
     sortedErrors = _.sortBy @errorCollection, (element, index, list) ->
       return parseInt(element.line, 10)
     for error in sortedErrors

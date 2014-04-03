@@ -61,11 +61,11 @@ class Gobuild
       args = ["test", "-c", buffer.getPath()]
     else
       output = '.go-plus-syntax-check'
-      args = ["build", "-o", output, buffer.getPath()]
+      args = ["build", "-o", output, "."]
     syntaxCheckCmd = atom.config.get('go-plus.goExecutablePath')
     syntaxCheck = spawn(syntaxCheckCmd, args, {cwd: cwd, env: env})
     syntaxCheck.on 'error', (error) => console.log 'syntaxcheck: error launching command [' + syntaxCheckCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
-    syntaxCheck.stderr.on 'data', (data) => @mapErrors(editorView, data)
+    syntaxCheck.stderr.on 'data', (data) => @mapErrors(editorView, data, buffer.getBaseName())
     syntaxCheck.stdout.on 'data', (data) => console.log 'syntaxcheck: ' + data if data?
     syntaxCheck.on 'close', (code) =>
       console.log 'syntaxcheck: [' + syntaxCheckCmd + '] exited with code [' + code + ']' if code isnt 0
@@ -74,20 +74,24 @@ class Gobuild
         fs.unlinkSync(syntaxCheckOutputFile)
       @emit 'syntaxcheck-complete', editorView, saving
 
-  mapErrors: (editorView, data) ->
-    pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
+  mapErrors: (editorView, data, filename) ->
+    pattern = /^(\.\/)?(.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?)/img
     errors = []
+    fre = new RegExp('^' + filename + '$', 'i')
     extract = (matchLine) ->
       return unless matchLine?
+      file = matchLine[2]?.replace(/^.*[\\\/]/, '')
+      if file?
+        return unless file.match(fre)
       error = switch
-        when matchLine[4]?
-          line: matchLine[2]
-          column: matchLine[4]
-          msg: matchLine[5]
+        when matchLine[5]?
+          line: matchLine[3]
+          column: matchLine[5]
+          msg: matchLine[6]
         else
-          line: matchLine[2]
+          line: matchLine[3]
           column: false
-          msg: matchLine[5]
+          msg: matchLine[6]
       errors.push error
     loop
       match = pattern.exec(data)
