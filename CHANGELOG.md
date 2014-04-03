@@ -1,3 +1,7 @@
+## v0.7.3 (April 3rd, 2014)
+
+* :bug: Ensure `go build` syntax checking compiles the entire package (fixes #10)
+
 ## v0.7.2 (April 2nd, 2014)
 
 * :bug: Suppress console errors if no file is open and a menu command is run
@@ -16,7 +20,7 @@
 * :lipstick: Clean up logging
 * :lipstick: Emit events so that external actors (e.g. tests, or other package authors) may trigger actions based on go-plus lifecycle events
 * :lipstick: Tests for errors
-* :bug: Fixed issue where vet support would not work if format on save was not enabled (#8)
+* :bug: Fixed issue where vet support would not work if format on save was not enabled (fixes #8)
 
 ## v0.5.2 (March 20th, 2014)
 
