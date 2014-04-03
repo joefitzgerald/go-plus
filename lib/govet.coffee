@@ -6,8 +6,9 @@ class Govet
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: ->
+  constructor: (dispatch) ->
     atom.workspaceView.command "golang:govet", => @checkCurrentBuffer()
+    @dispatch = dispatch
 
   destroy: ->
     @unsubscribe
@@ -22,15 +23,15 @@ class Govet
     @checkBuffer(editorView, false)
 
   checkBuffer: (editorView, saving) ->
-    editor = editorView.getEditor()
-    grammar = editor.getGrammar()
-    return if grammar.scopeName isnt 'source.go'
+    unless @dispatch.isValidEditorView(editorView)
+      @emit 'vet-complete', editorView, saving
+      return
     if saving and not atom.config.get('go-plus.vetOnSave')
       @emit 'vet-complete', editorView, saving
       return
-    buffer = editor.getBuffer()
+    buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
-      @emit 'syntaxcheck-complete', editorView, saving
+      @emit 'vet-complete', editorView, saving
       return
     args = ["vet", buffer.getPath()]
     vetCmd = atom.config.get('go-plus.goExecutablePath')

@@ -25,13 +25,13 @@ class Gobuild
     @checkBuffer(editorView, false)
 
   checkBuffer: (editorView, saving) ->
-    editor = editorView.getEditor()
-    grammar = editor.getGrammar()
-    return if grammar.scopeName isnt 'source.go'
+    unless @dispatch.isValidEditorView(editorView)
+      @emit 'syntaxcheck-complete', editorView, saving
+      return
     if saving and not atom.config.get('go-plus.syntaxCheckOnSave')
       @emit 'syntaxcheck-complete', editorView, saving
       return
-    buffer = editor.getBuffer()
+    buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
       @emit 'syntaxcheck-complete', editorView, saving
       return

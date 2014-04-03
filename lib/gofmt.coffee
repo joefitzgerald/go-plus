@@ -6,8 +6,9 @@ class Gofmt
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: ->
+  constructor: (dispatch) ->
     atom.workspaceView.command "golang:gofmt", => @formatCurrentBuffer()
+    @dispatch = dispatch
 
   destroy: ->
     @unsubscribe
@@ -22,15 +23,15 @@ class Gofmt
     @formatBuffer(editorView, false)
 
   formatBuffer: (editorView, saving) ->
-    editor = editorView.getEditor()
-    grammar = editor.getGrammar()
-    return if grammar.scopeName isnt 'source.go'
+    unless @dispatch.isValidEditorView(editorView)
+      @emit 'fmt-complete', editorView, saving
+      return
     if saving and not atom.config.get('go-plus.formatOnSave')
       @emit 'fmt-complete', editorView, saving
       return
-    buffer = editor.getBuffer()
+    buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
-      @emit 'syntaxcheck-complete', editorView, saving
+      @emit 'fmt-complete', editorView, saving
       return
     args = ["-w", buffer.getPath()]
     fmtCmd = atom.config.get('go-plus.gofmtPath')

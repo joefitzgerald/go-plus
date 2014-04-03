@@ -13,8 +13,8 @@ class Dispatch
 
   constructor: ->
     @errorCollection = []
-    @gofmt = new Gofmt()
-    @govet = new Govet()
+    @gofmt = new Gofmt(this)
+    @govet = new Govet(this)
     @golint = new Golint(this)
     @gobuild = new Gobuild(this)
 
@@ -143,6 +143,10 @@ class Dispatch
     gopath = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig isnt ''
     gopath = gopathConfig if gopath is ''
     return gopath
+
+  isValidEditorView: (editorView) ->
+    return false if editorView?.getEditor()?.getGrammar()?.scopeName isnt 'source.go'
+    return true
 
   # updateStatus: (errors, row) ->
   #   msg = ''

@@ -23,15 +23,15 @@ class Golint
     @checkBuffer(editorView, false)
 
   checkBuffer: (editorView, saving) ->
-    editor = editorView.getEditor()
-    grammar = editor.getGrammar()
-    return if grammar.scopeName isnt 'source.go'
+    unless @dispatch.isValidEditorView(editorView)
+      @emit 'lint-complete', editorView, saving
+      return
     if saving and not atom.config.get('go-plus.lintOnSave')
       @emit 'lint-complete', editorView, saving
       return
-    buffer = editor.getBuffer()
+    buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
-      @emit 'syntaxcheck-complete', editorView, saving
+      @emit 'lint-complete', editorView, saving
       return
     gopath = @dispatch.buildGoPath()
     args = [buffer.getPath()]
