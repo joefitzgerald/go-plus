@@ -145,8 +145,7 @@ class Dispatch
     return gopath
 
   isValidEditorView: (editorView) ->
-    return false if editorView?.getEditor()?.getGrammar()?.scopeName isnt 'source.go'
-    return true
+    editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'
 
   # updateStatus: (errors, row) ->
   #   msg = ''
