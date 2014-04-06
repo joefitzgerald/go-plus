@@ -7,14 +7,15 @@ class Golint
   Emitter.includeInto(this)
 
   constructor: (dispatch) ->
-    atom.workspaceView.command "golang:golint", => @checkCurrentBuffer()
+    atom.workspaceView.command 'golang:golint', => @checkCurrentBuffer()
     @dispatch = dispatch
+    @name = 'lint'
 
   destroy: ->
     @unsubscribe
 
   reset: (editorView) ->
-    @emit "reset", editorView
+    @emit 'reset', editorView
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
@@ -24,26 +25,35 @@ class Golint
 
   checkBuffer: (editorView, saving) ->
     unless @dispatch.isValidEditorView(editorView)
-      @emit 'lint-complete', editorView, saving
+      @emit @name + '-complete', editorView, saving
       return
     if saving and not atom.config.get('go-plus.lintOnSave')
-      @emit 'lint-complete', editorView, saving
+      @emit @name + '-complete', editorView, saving
       return
     buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
-      @emit 'lint-complete', editorView, saving
+      @emit @name + '-complete', editorView, saving
       return
     gopath = @dispatch.buildGoPath()
     args = [buffer.getPath()]
-    lintCmd = atom.config.get('go-plus.golintPath')
-    lintCmd = lintCmd.replace(/^\$GOPATH\//i, gopath + '/') if gopath? and gopath isnt ''
-    lint = spawn(lintCmd, args)
-    lint.on 'error', (error) => console.log 'lint: error launching lint command [' + lintCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
-    lint.stderr.on 'data', (data) => console.log 'lint: ' + data if data?
-    lint.stdout.on 'data', (data) => @mapErrors(editorView, data)
-    lint.on 'close', (code) =>
-      console.log 'lint: [' + lintCmd + '] exited with code [' + code + ']' if code isnt 0
-      @emit 'lint-complete', editorView, saving
+    cmd = atom.config.get('go-plus.golintPath')
+    cmd = cmd.replace(/^\$GOPATH\//i, gopath + '/') if gopath? and gopath isnt ''
+    errored = false
+    proc = spawn(cmd, args)
+    proc.on 'error', (error) =>
+      return unless error?
+      errored = true
+      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
+      errors = []
+      error = line: false, column: false, type: 'error', msg: 'Golint Executable Not Found @ ' + cmd + ' ($GOPATH: ' + gopath + ')'
+      errors.push error
+      @emit @name + '-errors', editorView, errors
+      @emit @name + '-complete', editorView, saving
+    proc.stderr.on 'data', (data) => console.log @name + ': ' + data if data?
+    proc.stdout.on 'data', (data) => @mapErrors(editorView, data)
+    proc.on 'close', (code) =>
+      console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
+      @emit @name + '-complete', editorView, saving unless errored
 
   mapErrors: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
@@ -66,4 +76,4 @@ class Golint
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit "lint-errors", editorView, errors
+    @emit @name + '-errors', editorView, errors

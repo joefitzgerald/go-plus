@@ -62,7 +62,9 @@ class Dispatch
       @updatePane(editorView, @errorCollection)
       @updateGutter(editorView, @errorCollection)
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
-    atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPanel()
+    atom.workspaceView.on 'pane-container:active-pane-item-changed', =>
+      @resetPanel()
+      @messagepanel.close()
 
   collectErrors: (errors) ->
     @errorCollection = _.union(@errorCollection, errors)
@@ -109,13 +111,15 @@ class Dispatch
     gutter.addClassToLine error.line - 1, 'go-plus-error' for error in errors
 
   resetPanel: ->
-    @messagepanel.close()
     @messagepanel.clear()
 
   updatePane: (editorView, errors) ->
     @resetPanel
     return unless errors?
-    return if errors.length <= 0
+    if errors.length <= 0
+      @messagepanel.add new PlainMessageView message: 'No Issues', className: 'text-success'
+      @messagepanel.attach()
+      return
     return unless atom.config.get('go-plus.showErrorPanel')
     sortedErrors = _.sortBy @errorCollection, (element, index, list) ->
       return parseInt(element.line, 10)

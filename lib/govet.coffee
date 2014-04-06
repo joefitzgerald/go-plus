@@ -7,14 +7,15 @@ class Govet
   Emitter.includeInto(this)
 
   constructor: (dispatch) ->
-    atom.workspaceView.command "golang:govet", => @checkCurrentBuffer()
+    atom.workspaceView.command 'golang:govet', => @checkCurrentBuffer()
     @dispatch = dispatch
+    @name = 'vet'
 
   destroy: ->
     @unsubscribe
 
   reset: (editorView) ->
-    @emit "reset", editorView
+    @emit 'reset', editorView
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
@@ -24,24 +25,33 @@ class Govet
 
   checkBuffer: (editorView, saving) ->
     unless @dispatch.isValidEditorView(editorView)
-      @emit 'vet-complete', editorView, saving
+      @emit @name + '-complete', editorView, saving
       return
     if saving and not atom.config.get('go-plus.vetOnSave')
-      @emit 'vet-complete', editorView, saving
+      @emit @name + '-complete', editorView, saving
       return
     buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
-      @emit 'vet-complete', editorView, saving
+      @emit @name + '-complete', editorView, saving
       return
-    args = ["vet", buffer.getPath()]
-    vetCmd = atom.config.get('go-plus.goExecutablePath')
-    vet = spawn(vetCmd, args)
-    vet.on 'error', (error) => console.log 'vet: error launching vet command [' + vetCmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']' if error?
-    vet.stderr.on 'data', (data) => @mapErrors(editorView, data)
-    vet.stdout.on 'data', (data) => console.log 'vet: ' + data if data?
-    vet.on 'close', (code) =>
-      console.log 'vet: [' + vetCmd + '] exited with code [' + code + ']' if code isnt 0
-      @emit 'vet-complete', editorView, saving
+    args = [@name, buffer.getPath()]
+    cmd = atom.config.get('go-plus.goExecutablePath')
+    errored = false
+    proc = spawn(cmd, args)
+    proc.on 'error', (error) =>
+      return unless error?
+      errored = true
+      console.log @name + ': error launching ' + @name + ' command [' + cmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
+      errors = []
+      error = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
+      errors.push error
+      @emit @name + '-errors', editorView, errors
+      @emit @name + '-complete', editorView, saving
+    proc.stderr.on 'data', (data) => @mapErrors(editorView, data)
+    proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
+    proc.on 'close', (code) =>
+      console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
+      @emit @name + '-complete', editorView, saving unless errored
 
   mapErrors: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
@@ -64,4 +74,4 @@ class Govet
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit "vet-errors", editorView, errors
+    @emit @name + '-errors', editorView, errors
