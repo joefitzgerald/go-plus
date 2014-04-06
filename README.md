@@ -63,8 +63,9 @@ test` powered syntax checking.
 
 The following features will be added soon:
 
-* Status bar text for errors ([#3](https://github.com/joefitzgerald/go-plus/issues/3))
 * `gocode` integration ([#2](https://github.com/joefitzgerald/go-plus/issues/2))
+* `go oracle` / `godef` integration ([#11](https://github.com/joefitzgerald/go-plus/issues/11))
+* `godoc` integration ([#12](https://github.com/joefitzgerald/go-plus/issues/12))
 * ... and others: https://github.com/joefitzgerald/go-plus/issues
 
 ### Contributing

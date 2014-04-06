@@ -1,3 +1,10 @@
+## v1.0.0 (April 6th, 2014)
+
+* :new: Use [atom-message-panel](https://github.com/tcarlsen/atom-message-panel) for error display (fixes #3, #14)
+* :new: It is now possible to use the `$GOPATH` variable in both `Gofmt Path` (e.g. `$GOPATH/bin/goimports`) and `Golint Path` (e.g. `$GOPATH/bin/golint`) (fixes #13)
+* :lipstick: Remove redundant code, ensure we don't trigger for views which are not EditorViews
+* :lipstick: Show an error if `Go Executable Path`, `Gofmt Path`, or `Golint Path` cannot be found
+
 ## v0.7.3 (April 3rd, 2014)
 
 * :bug: Ensure `go build` syntax checking compiles the entire package (fixes #10)
