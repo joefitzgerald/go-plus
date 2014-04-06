@@ -30,6 +30,7 @@
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
   "dependencies": {
+    "atom-message-panel": "https://github.com/joefitzgerald/atom-message-panel/tarball/fangel-5-clickable-lineno",
     "emissary": "1.x",
     "fs-plus": "2.x",
     "temp": "~0.6.0",

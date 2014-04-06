@@ -55,10 +55,12 @@ class Golint
           line: matchLine[2]
           column: matchLine[4]
           msg: matchLine[5]
+          type: 'warning'
         else
           line: matchLine[2]
           column: false
           msg: matchLine[5]
+          type: 'warning'
       errors.push error
     loop
       match = pattern.exec(data)

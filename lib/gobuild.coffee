@@ -88,10 +88,12 @@ class Gobuild
           line: matchLine[3]
           column: matchLine[5]
           msg: matchLine[6]
+          type: 'error'
         else
           line: matchLine[3]
           column: false
           msg: matchLine[6]
+          type: 'error'
       errors.push error
     loop
       match = pattern.exec(data)

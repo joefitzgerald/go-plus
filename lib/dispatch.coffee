@@ -5,6 +5,7 @@ Golint = require './golint'
 Gobuild = require './gobuild'
 _ = require 'underscore-plus'
 $ = require('atom').$
+{MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
 
 module.exports =
 class Dispatch
@@ -17,6 +18,7 @@ class Dispatch
     @govet = new Govet(this)
     @golint = new Golint(this)
     @gobuild = new Gobuild(this)
+    @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
 
     # Pipeline For Processing Buffer
     @gofmt.on 'fmt-complete', (editorView, saving) =>
@@ -60,7 +62,7 @@ class Dispatch
       @updatePane(editorView, @errorCollection)
       @updateGutter(editorView, @errorCollection)
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
-    atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPane()
+    atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPanel()
 
   collectErrors: (errors) ->
     @errorCollection = _.union(@errorCollection, errors)
@@ -91,7 +93,7 @@ class Dispatch
   resetState: (editorView) ->
     @errorCollection = []
     @resetGutter(editorView)
-    @resetPane()
+    @resetPanel()
 
   resetGutter: (editorView) ->
     gutter = editorView?.gutter
@@ -106,32 +108,33 @@ class Dispatch
     return unless gutter?
     gutter.addClassToLine error.line - 1, 'go-plus-error' for error in errors
 
-  resetPane: ->
-    $('#go-plus-status-pane').remove()
+  resetPanel: ->
+    @messagepanel.close()
+    @messagepanel.clear()
 
   updatePane: (editorView, errors) ->
-    @resetPane()
+    @resetPanel
     return unless errors?
     return if errors.length <= 0
     return unless atom.config.get('go-plus.showErrorPanel')
-    errorPane = $('#go-plus-status-pane')
-    unless errorPane.length > 0
-      newErrorPane = $('<div id="go-plus-status-pane" class="go-plus-pane" style="height:">')
-      # TODO: When Atom API Supports It, Add This To The EditorView So We Can Keep
-      # Errors Scoped To The Relevent Editor Rather Than The Entire Workspace
-      atom.workspaceView?.prependToBottom(newErrorPane)
-      errorPane = $('#go-plus-status-pane')
-      return unless errorPane.length > 0
     sortedErrors = _.sortBy @errorCollection, (element, index, list) ->
       return parseInt(element.line, 10)
     for error in sortedErrors
-      prefix = switch
-        when error.line isnt false and error.column isnt false then 'Line: ' + error.line + ' Char: ' + error.column
-        when error.line isnt false and error.column is false then 'Line: ' + error.line
-        else ''
-      msg = if prefix is '' then error.msg else prefix + ' – ' + error.msg
-      errorPane.append(msg)
-      errorPane.append('<br/>')
+      className = switch error.type
+        when 'error' then 'text-error'
+        when 'warning' then 'text-warning'
+        else 'text-info'
+
+      if error.line isnt false and error.column isnt false
+        # LineMessageView
+        @messagepanel.add new LineMessageView line: error.line, character: error.column, message: error.msg, className: className
+      else if error.line isnt false and error.column is false
+        # LineMessageView
+        @messagepanel.add new LineMessageView line: error.line, message: error.msg, className: className
+      else
+        # PlainMessageView
+        @messagepanel.add new PlainMessageView message: error.msg, className: className
+    @messagepanel.attach()
 
   buildGoPath: ->
     gopath = ''
