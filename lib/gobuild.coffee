@@ -1,6 +1,7 @@
 spawn = require('child_process').spawn
 fs = require 'fs-plus'
 path = require 'path'
+temp = require 'temp'
 {Subscriber, Emitter} = require 'emissary'
 
 module.exports =
@@ -12,6 +13,7 @@ class Gobuild
     atom.workspaceView.command 'golang:gobuild', => @checkCurrentBuffer()
     @dispatch = dispatch
     @name = 'syntaxcheck'
+    @tempDir = temp.mkdirSync()
 
   destroy: ->
     @unsubscribe
@@ -52,6 +54,7 @@ class Gobuild
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
     output = ''
+    outputPath = ''
     args = []
     if buffer.getPath().match(/_test.go$/i)
       pre = /^\w*package ([\d\w]+){1}\w*$/img # Need To Support Unicode Letters Also
@@ -62,7 +65,8 @@ class Gobuild
       args = ['test', '-c', buffer.getPath()]
     else
       output = '.go-plus-syntax-check'
-      args = ['build', '-o', output, '.']
+      outputPath = path.join(@tempDir, output)
+      args = ['build', '-o', outputPath, '.']
     cmd = atom.config.get('go-plus.goExecutablePath')
     errored = false
     proc = spawn(cmd, args, {cwd: cwd, env: env})
@@ -82,6 +86,8 @@ class Gobuild
       syntaxCheckOutputFile = path.join(cwd, output)
       if fs.existsSync(syntaxCheckOutputFile)
         fs.unlinkSync(syntaxCheckOutputFile)
+      if fs.existsSync(outputPath)
+        fs.unlinkSync(outputPath)
       @emit @name + '-complete', editorView, saving unless errored
 
   mapErrors: (editorView, data, filename) ->

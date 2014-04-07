@@ -1,3 +1,7 @@
+## v1.0.2 (April 7th, 2014)
+
+* :lipstick: Redirect build output to temporary directory (fixes #17)
+
 ## v1.0.1 (April 7th, 2014)
 
 * :lipstick: Disable display of panel and 'No Issues' by default, but allow it to be turned on (fixes #16)
