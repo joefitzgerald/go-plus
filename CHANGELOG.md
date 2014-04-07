@@ -1,3 +1,7 @@
+## v1.0.1 (April 7th, 2014)
+
+* :lipstick: Disable display of panel and 'No Issues' by default, but allow it to be turned on (fixes #16)
+
 ## v1.0.0 (April 6th, 2014)
 
 * :new: Use [atom-message-panel](https://github.com/tcarlsen/atom-message-panel) for error display (fixes #3, #14)

@@ -12,6 +12,7 @@ module.exports =
     gofmtPath: "/usr/local/go/bin/gofmt"
     golintPath: "$GOPATH/bin/golint"
     showErrorPanel: true
+    showErrorPanelWhenNoIssuesExist: false
 
   activate: (state) ->
     @dispatch = new Dispatch()

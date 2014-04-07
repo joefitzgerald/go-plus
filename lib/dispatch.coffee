@@ -111,15 +111,17 @@ class Dispatch
     gutter.addClassToLine error.line - 1, 'go-plus-error' for error in errors
 
   resetPanel: ->
+    @messagepanel.close()
     @messagepanel.clear()
 
   updatePane: (editorView, errors) ->
     @resetPanel
     return unless errors?
-    if errors.length <= 0
+    if errors.length <= 0 and atom.config.get('go-plus.showErrorPanelWhenNoIssuesExist')
       @messagepanel.add new PlainMessageView message: 'No Issues', className: 'text-success'
       @messagepanel.attach()
       return
+    return unless errors.length > 0
     return unless atom.config.get('go-plus.showErrorPanel')
     sortedErrors = _.sortBy @errorCollection, (element, index, list) ->
       return parseInt(element.line, 10)
