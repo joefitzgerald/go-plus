@@ -1,7 +1,7 @@
 spawn = require('child_process').spawn
 fs = require 'fs-plus'
 path = require 'path'
-temp = require 'temp'
+temp = require('temp')
 {Subscriber, Emitter} = require 'emissary'
 
 module.exports =
@@ -13,7 +13,6 @@ class Gobuild
     atom.workspaceView.command 'golang:gobuild', => @checkCurrentBuffer()
     @dispatch = dispatch
     @name = 'syntaxcheck'
-    @tempDir = temp.mkdirSync()
 
   destroy: ->
     @unsubscribe
@@ -28,6 +27,7 @@ class Gobuild
     @checkBuffer(editorView, false)
 
   checkBuffer: (editorView, saving) ->
+    @tempDir = temp.mkdirSync()
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
       return
@@ -62,7 +62,8 @@ class Gobuild
       testPackage = match[1]
       testPackage = testPackage.replace(/_test$/i, '')
       output = testPackage + '.test'
-      args = ['test', '-c', buffer.getPath()]
+      outputPath = @tempDir
+      args = ['test', '-copybinary', '-outputdir', outputPath,'-c', buffer.getPath()]
     else
       output = '.go-plus-syntax-check'
       outputPath = path.join(@tempDir, output)
@@ -87,7 +88,10 @@ class Gobuild
       if fs.existsSync(syntaxCheckOutputFile)
         fs.unlinkSync(syntaxCheckOutputFile)
       if fs.existsSync(outputPath)
-        fs.unlinkSync(outputPath)
+        if fs.lstatSync(outputPath).isDirectory()
+          fs.rmdirSync(outputPath)
+        else
+          fs.unlinkSync(outputPath)
       @emit @name + '-complete', editorView, saving unless errored
 
   mapErrors: (editorView, data, filename) ->

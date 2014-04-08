@@ -68,6 +68,11 @@ The following features will be added soon:
 * `godoc` integration ([#12](https://github.com/joefitzgerald/go-plus/issues/12))
 * ... and others: https://github.com/joefitzgerald/go-plus/issues
 
+### Contributors
+
+* Scott Barron [@rubyist](https://github.com/rubyist) – Gofmt integration (https://github.com/atom/language-go/pull/3)
+* Matt Aimonetti [@mattetti](https://github.com/mattetti) - Syntax checking (https://github.com/atom/language-go/pull/11)
+
 ### Contributing
 
 Contributions are greatly appreciated. Please fork this repository, make your

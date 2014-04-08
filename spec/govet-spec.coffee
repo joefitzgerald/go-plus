@@ -1,7 +1,7 @@
 path = require 'path'
 fs = require 'fs-plus'
+temp = require('temp').track()
 {WorkspaceView} = require 'atom'
-temp = require 'temp'
 _ = require 'underscore-plus'
 
 describe "vet", ->
