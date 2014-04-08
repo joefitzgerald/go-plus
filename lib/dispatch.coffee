@@ -151,7 +151,27 @@ class Dispatch
     gopath = gopathEnv if gopathEnv? and gopathEnv isnt ''
     gopath = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig isnt ''
     gopath = gopathConfig if gopath is ''
-    return gopath
+    return @replaceTokensInPath(gopath, true)
+
+  replaceTokensInPath: (path, skipGoPath) ->
+    return '' unless path?
+    unless skipGoPath or path.toUpperCase().indexOf('$GOPATH') is -1
+      path = @replaceGoPathToken(path)
+    unless path.indexOf('~') is -1
+      home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
+      path = path.replace(/~/i, home)
+    unless path.toUpperCase().indexOf('$HOME') is -1
+      home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
+      path = path.replace(/\$HOME/i, home)
+    return path
+
+  replaceGoPathToken: (path) ->
+    gopath = @buildGoPath()
+    return path unless gopath? and gopath isnt ''
+    return path.replace(/^\$GOPATH\//i, gopath.replace(/^\s+|\s+$/g, "") + '/') if path.indexOf(':') is -1
+    gopaths = gopath.split(':')
+    return path.replace(/^\$GOPATH\//i, gopaths[0].replace(/^\s+|\s+$/g, "") + '/') if gopaths? and _.size(gopaths) > 0 and gopaths[0]? and gopaths[0] isnt ''
+    return path
 
   isValidEditorView: (editorView) ->
     editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'

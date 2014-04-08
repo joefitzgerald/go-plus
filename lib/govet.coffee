@@ -36,6 +36,7 @@ class Govet
       return
     args = [@name, buffer.getPath()]
     cmd = atom.config.get('go-plus.goExecutablePath')
+    cmd = @dispatch.replaceTokensInPath(cmd, true)
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>

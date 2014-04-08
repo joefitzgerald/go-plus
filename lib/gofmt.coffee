@@ -37,7 +37,7 @@ class Gofmt
     gopath = @dispatch.buildGoPath()
     args = ['-w', buffer.getPath()]
     cmd = atom.config.get('go-plus.gofmtPath')
-    cmd = cmd.replace(/^\$GOPATH\//i, gopath + '/') if gopath? and gopath isnt ''
+    cmd = @dispatch.replaceTokensInPath(cmd)
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>

@@ -1,3 +1,9 @@
+## v1.0.3 (April 7th, 2014)
+
+* :bug: Handle GOPATH with multiple entries (fixes #18)
+* :lipstick: Replace `~` and `$HOME` in paths with appropriate value
+* :lipstick: Enhance fix for #17 with patch to go (https://code.google.com/p/go/issues/detail?id=7724)
+
 ## v1.0.2 (April 7th, 2014)
 
 * :lipstick: Redirect build output to temporary directory (fixes #17)

@@ -37,7 +37,7 @@ class Golint
     gopath = @dispatch.buildGoPath()
     args = [buffer.getPath()]
     cmd = atom.config.get('go-plus.golintPath')
-    cmd = cmd.replace(/^\$GOPATH\//i, gopath + '/') if gopath? and gopath isnt ''
+    cmd = @dispatch.replaceTokensInPath(cmd)
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>
