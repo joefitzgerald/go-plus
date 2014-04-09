@@ -1,3 +1,8 @@
+## v1.0.4 (April 8th, 2014)
+
+* :bug: Ensure that a `GOPATH` with multiple values is handled correctly
+* :lipstick: Remove user-specific paths from tests (fixes #19)
+
 ## v1.0.3 (April 7th, 2014)
 
 * :bug: Handle GOPATH with multiple entries (fixes #18)

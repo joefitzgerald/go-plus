@@ -168,7 +168,7 @@ class Dispatch
   replaceGoPathToken: (path) ->
     gopath = @buildGoPath()
     return path unless gopath? and gopath isnt ''
-    return path.replace(/^\$GOPATH\//i, gopath.replace(/^\s+|\s+$/g, "") + '/') if path.indexOf(':') is -1
+    return path.replace(/^\$GOPATH\//i, gopath.replace(/^\s+|\s+$/g, "") + '/') if gopath.indexOf(':') is -1
     gopaths = gopath.split(':')
     return path.replace(/^\$GOPATH\//i, gopaths[0].replace(/^\s+|\s+$/g, "") + '/') if gopaths? and _.size(gopaths) > 0 and gopaths[0]? and gopaths[0] isnt ''
     return path

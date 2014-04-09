@@ -28,7 +28,7 @@ describe "lint", ->
       atom.config.set("go-plus.formatOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", true)
-      atom.config.set("go-plus.goPath", "/Users/jfitzgerald/go")
+      atom.config.set("go-plus.goPath", "~/go")
       atom.config.set("go-plus.environmentOverridesConfiguration", false)
       atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
       atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
