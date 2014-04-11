@@ -35,7 +35,11 @@ class Gofmt
       @emit @name + '-complete', editorView, saving
       return
     gopath = @dispatch.buildGoPath()
-    args = ['-w', buffer.getPath()]
+    args = ['-w']
+    if atom.config.get('editor.softTabs')
+      args.push('-tabs=false')
+      args.push('-tabwidth=' + atom.config.get('editor.tabLength'))
+    args.push(buffer.getPath())
     cmd = atom.config.get('go-plus.gofmtPath')
     cmd = @dispatch.replaceTokensInPath(cmd)
     errored = false
