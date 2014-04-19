@@ -3,6 +3,7 @@ Gofmt = require './gofmt'
 Govet = require './govet'
 Golint = require './golint'
 Gobuild = require './gobuild'
+GoOracle = require './gooracle'
 _ = require 'underscore-plus'
 $ = require('atom').$
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
@@ -18,6 +19,7 @@ class Dispatch
     @govet = new Govet(this)
     @golint = new Golint(this)
     @gobuild = new Gobuild(this)
+    @gooracle = new GoOracle(this)
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
 
     # Pipeline For Processing Buffer

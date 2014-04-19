@@ -8,6 +8,7 @@
         { 'label': 'Vet File', 'command': 'golang:govet' },
         { 'label': 'Lint File', 'command': 'golang:golint' },
         { 'label': 'Check File Syntax', 'command': 'golang:gobuild' }
+        { 'label': 'Oracle', 'command': 'golang:oracle' }
       ]
     ]
   }

@@ -3,6 +3,7 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/stylesheets/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
+@import "octicon-mixins";
 
 .go-plus {
 }
@@ -33,4 +34,28 @@
   max-height: 80px;
   border-top: 1px solid @tool-panel-border-color;
   padding: 0 12.5px;
+}
+
+.go-oracle {
+  .oracle-data {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .title {
+    .octicon(eye)
+  }
+
+  .oracle-data li {
+    .octicon(chevron-right)
+  }
+
+  .loading {
+    .octicon(sync)
+  }
+
+  .source {
+    cursor: pointer;
+  }
 }

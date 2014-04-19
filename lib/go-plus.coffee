@@ -11,6 +11,7 @@ module.exports =
     goExecutablePath: "/usr/local/go/bin/go"
     gofmtPath: "/usr/local/go/bin/gofmt"
     golintPath: "$GOPATH/bin/golint"
+    oraclePath: "$GOPATH/bin/oracle"
     showErrorPanel: true
     showErrorPanelWhenNoIssuesExist: false
 
