@@ -18,36 +18,11 @@ class GoOracle extends View
   initialize: (dispatch) ->
     @dispatch = dispatch
     @data.on 'click', '.source', (event) =>
-      # Files usually end in: foo.go:70:31            - line 70, col 31
-      # Sometemes end in a range: foo.go:84.21-84.31  - line 84, cols 21 - 31
-      normal = /(.+):(\d+):(\d+)$/
-      range  = /(.+):(\d+)\.(\d+)-(?:\d+)(?:\.\d+)$/
-
-      fileURL = $(event.target).data('uri')
-      matches = normal.exec(fileURL) || range.exec(fileURL)
-      file = matches[1]
-      line = parseInt(matches[2]) - 1
-      col = parseInt(matches[3]) - 1
-
-      newEditor = atom.workspaceView.openSync(file)
-      newEditor.setCursorBufferPosition([line, col])
-
+      @navigateTo($(event.target).data('uri'))
 
     @oracle = new OracleCommand(@dispatch)
     @oracle.on 'oracle-complete', (command, data) =>
-      @find('.loading').hide()
-
-      @modes.empty()
-      for mode in @availableModes
-        @modes.append("<option value=\"#{mode}\">#{mode}</option>")
-      @modes.val(command)
-
-      @data.html $$ ->
-        @ul class: 'oracle-data', =>
-          for line in String(data).split("\n")
-            continue if line == ""
-            parts = line.split(": ")
-            @li class: 'source', "data-uri": parts[0], parts[1]
+      @displayOracle(command, data)
 
     @oracle.on 'what-complete', (data) =>
       @availableModes = data.what.modes
@@ -67,6 +42,35 @@ class GoOracle extends View
   destroy: ->
     @unsubscribe
     @detach()
+
+  navigateTo: (fileURL) ->
+    # Files usually end in: foo.go:70:31            - line 70, col 31
+    # Sometemes end in a range: foo.go:84.21-84.31  - line 84, cols 21 - 31
+    normal = /(.+):(\d+):(\d+)$/
+    range  = /(.+):(\d+)\.(\d+)-(?:\d+)(?:\.\d+)$/
+
+    matches = normal.exec(fileURL) || range.exec(fileURL)
+    file = matches[1]
+    line = parseInt(matches[2]) - 1
+    col = parseInt(matches[3]) - 1
+
+    newEditor = atom.workspaceView.openSync(file)
+    newEditor.setCursorBufferPosition([line, col])
+
+  displayOracle: (command, data) ->
+    @find('.loading').hide()
+
+    @modes.empty()
+    for mode in @availableModes
+      @modes.append("<option value=\"#{mode}\">#{mode}</option>")
+    @modes.val(command)
+
+    @data.html $$ ->
+      @ul class: 'oracle-data', =>
+        for line in String(data).split("\n")
+          continue if line == ""
+          parts = line.split(": ")
+          @li class: 'source', "data-uri": parts[0], parts[1]
 
   openOracle: ->
     atom.workspaceView.prependToBottom(this)
