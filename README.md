@@ -1,5 +1,7 @@
 # go-plus – Improved Go Experience In Atom
 
+[![Build Status](https://travis-ci.org/joefitzgerald/go-plus.png?branch=master)](https://travis-ci.org/joefitzgerald/go-plus)
+
 This package adds extra Atom functionality for the go language:
 
 * Formatting source using `gofmt`
