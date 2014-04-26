@@ -35,12 +35,16 @@
   padding: 0 12.5px;
 }
 
-.gocov-marker .region {
-  background-color: #FF0021;
-}
-
 .editor .gocov-marker .region {
   position: absolute;
   pointer-events: none;
   z-index: -1;
+}
+
+.region.uncovered {
+  background-color: #FF0021;
+}
+
+.region.covered {
+  background-color: #00FF21;
 }

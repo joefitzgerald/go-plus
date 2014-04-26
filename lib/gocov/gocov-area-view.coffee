@@ -7,16 +7,16 @@ class GocovAreaView extends View
   @content: ->
     @div class: 'golang-gocov'
 
-  initialize: (editorView, dispatch) ->
+  initialize: (editorView, gocov) ->
     @views = []
     @editorView = editorView
-    @dispatch = dispatch
+    @gocov = gocov
 
   attach: =>
     @editorView.underlayer.append(this)
     atom.workspaceView.on 'pane:item-removed', @destroy
 
-    if @dispatch.isValidEditorView(@editorView) and @dispatch.coverageEnabled()
+    if @gocov.isValidEditorView(@editorView) and @gocov.coverageEnabled()
       @processCoverageFile()
 
   destroy: =>
@@ -37,17 +37,18 @@ class GocovAreaView extends View
     atom.workspace.getActiveEditor()
 
   processCoverageFile: =>
-    return unless @dispatch.isValidEditorView(@editorView)
+    return unless @gocov.isValidEditorView(@editorView)
     @removeMarkers()
 
     return unless editor = @getActiveEditor()
 
-    # Need to build @ranges
-    # The file we process is 1 based, we're expecting 0 based line numbers.
-    @ranges = []
+    buffer = @editorView?.getEditor()?.getBuffer()
+    return unless buffer?
+    path = buffer.getPath()
 
-    for range in @ranges
-      view = new GocovMarkerView(range, this, @getEditorView())
+    ranges = @gocov.rangesForFile(path)
+    for range in ranges
+      view = new GocovMarkerView(range.range, range.count, this, @getEditorView())
       @append view.element
       @views.push view
 

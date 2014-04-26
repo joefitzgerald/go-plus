@@ -3,10 +3,11 @@
 module.exports =
 class GocovMarkerView
 
-  constructor: (range, parent, editor) ->
+  constructor: (range, count, parent, editor) ->
     @range = range
     @parent = parent
     @editor = editor
+    @count = count
     @element = document.createElement('div')
     @element.className = 'gocov-marker'
     rowSpan = range.end.row - range.start.row
@@ -29,7 +30,11 @@ class GocovMarkerView
       css.right = 0
 
     region = document.createElement('div')
-    region.className = 'region'
+    if @count == 0
+      region.className = 'region uncovered'
+    else
+      region.className = 'region covered'
+
     for name, value of css
       region.style[name] = value + 'px'
 

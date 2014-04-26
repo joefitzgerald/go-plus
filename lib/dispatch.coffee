@@ -179,9 +179,6 @@ class Dispatch
   isValidEditorView: (editorView) ->
     editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'
 
-  coverageEnabled: ->
-    @gocov.coverageEnabled()
-
   # updateStatus: (errors, row) ->
   #   msg = ''
   #   return if not errors? or errors == false
