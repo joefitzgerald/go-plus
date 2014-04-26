@@ -69,7 +69,7 @@ class Gobuild
       outputPath = path.join(@tempDir, output)
       args = ['build', '-o', outputPath, '.']
     cmd = atom.config.get('go-plus.goExecutablePath')
-    cmd = @dispatch.replaceTokensInPath(cmd, true)
+    cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args, {cwd: cwd, env: env})
     proc.on 'error', (error) =>

@@ -29,9 +29,9 @@ describe "lint", ->
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", true)
       atom.config.set("go-plus.goPath", "~/go")
-      atom.config.set("go-plus.environmentOverridesConfiguration", false)
-      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
-      atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
+      atom.config.set("go-plus.environmentOverridesConfiguration", true)
+      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
+      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
       atom.config.set("go-plus.showErrorPanel", true)
 
     it "displays errors for missing documentation", ->

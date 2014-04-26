@@ -5,13 +5,18 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 
 describe "build", ->
-  [editor, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath] = []
+  [editor, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
+    oldGoPath = process.env.GOPATH
+    process.env['GOPATH']=directory
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
+
+  afterEach ->
+    process.env['GOPATH']=oldGoPath
 
   describe "when syntax check on save is enabled", ->
     beforeEach ->
@@ -19,10 +24,10 @@ describe "build", ->
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", directory)
-      atom.config.set("go-plus.environmentOverridesConfiguration", false)
+      atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
-      atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
+      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
+      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
       atom.config.set("go-plus.showErrorPanel", true)
       filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
       testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
@@ -85,10 +90,10 @@ describe "build", ->
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", directory)
-      atom.config.set("go-plus.environmentOverridesConfiguration", false)
+      atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
-      atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
+      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
+      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
       atom.config.set("go-plus.showErrorPanel", true)
       filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
       secondFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "util.go")
