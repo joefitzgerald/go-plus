@@ -55,4 +55,4 @@ describe "dispatch", ->
     it "replaces the $GOPATH token with the first element from the gopath", ->
       cmd = atom.config.get('go-plus.gofmtPath')
       cmd = dispatch.replaceTokensInPath(cmd)
-      expect(cmd).toBe path.join(process.env.HOME, "go", "bin", "goimports")
+      expect(cmd).toBe path.join(dispatch.buildGoPath(), "bin", "goimports")
