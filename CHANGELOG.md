@@ -1,3 +1,7 @@
+## v1.0.5 (April 26th, 2014)
+
+* :new: Specify arbitrary arguments for `gofmt`, `goimports`, `golint`, `go vet`
+
 ## v1.0.4 (April 8th, 2014)
 
 * :bug: Ensure that a `GOPATH` with multiple values is handled correctly
