@@ -1,5 +1,6 @@
 spawn = require('child_process').spawn
 {Subscriber, Emitter} = require 'emissary'
+_ = require 'underscore-plus'
 
 module.exports =
 class Golint
@@ -36,6 +37,8 @@ class Golint
       return
     gopath = @dispatch.buildGoPath()
     args = [buffer.getPath()]
+    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.golintArgs'))
+    args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
     cmd = atom.config.get('go-plus.golintPath')
     cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false

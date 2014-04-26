@@ -3,6 +3,7 @@ fs = require 'fs-plus'
 path = require 'path'
 temp = require('temp')
 {Subscriber, Emitter} = require 'emissary'
+_ = require 'underscore-plus'
 
 module.exports =
 class Gobuild

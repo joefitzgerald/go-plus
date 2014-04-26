@@ -184,6 +184,11 @@ class Dispatch
   isValidEditorView: (editorView) ->
     editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'
 
+  splitToArray: (arg) ->
+    return [] unless arg? and arg.length > 0
+    arr = arg.split(/[\s]+/)
+    arr = _.filter arr, (item) -> return item? and item.length > 0 and item isnt ''
+
   # updateStatus: (errors, row) ->
   #   msg = ''
   #   return if not errors? or errors == false
