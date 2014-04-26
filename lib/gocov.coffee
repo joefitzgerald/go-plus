@@ -1,6 +1,6 @@
 spawn = require('child_process').spawn
 {Subscriber, Emitter} = require 'emissary'
-GocovAreaView = require './gocov-area-view'
+GocovAreaView = require './gocov/gocov-area-view'
 
 areas = []
 
@@ -10,20 +10,35 @@ class Gocov
   Emitter.includeInto(this)
 
   constructor: (dispatch) ->
+    atom.workspaceView.command 'golang:gocov', => @toggleCoverage()
     atom.workspaceView.eachEditorView (editorView) ->
-      area = new GocovAreaView(editorView)
+      area = new GocovAreaView(editorView, dispatch)
       area.attach()
-      areas.push = area
+      areas.push area
 
-    #atom.workspaceView.command 'golang:gofmt', => @formatCurrentBuffer()
     @dispatch = dispatch
     @name = 'cov'
+    @covering = false
 
   destroy: ->
     @unsubscribe
     for area in areas
       area.destroy()
 
-  runCoverage: (editorView) ->
-    # Set up some fake views and such
-    console.log "Running gocov"
+  coverageEnabled: ->
+    @covering
+
+  toggleCoverage: =>
+    @covering = !@covering
+    if @covering
+      @runCoverage()
+    else
+      @resetCoverage()
+
+  runCoverage: =>
+    for area in areas
+      area.processCoverageFile()
+
+  resetCoverage: =>
+    for area in areas
+      area.removeMarkers()

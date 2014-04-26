@@ -7,14 +7,17 @@ class GocovAreaView extends View
   @content: ->
     @div class: 'golang-gocov'
 
-  initialize: (editorView) ->
+  initialize: (editorView, dispatch) ->
     @views = []
     @editorView = editorView
+    @dispatch = dispatch
 
   attach: =>
     @editorView.underlayer.append(this)
     atom.workspaceView.on 'pane:item-removed', @destroy
-    # @processCoverageFile()
+
+    if @dispatch.isValidEditorView(@editorView) and @dispatch.coverageEnabled()
+      @processCoverageFile()
 
   destroy: =>
     found = false
@@ -33,8 +36,8 @@ class GocovAreaView extends View
   getActiveEditor: ->
     atom.workspace.getActiveEditor()
 
-  # TODO what this is called
   processCoverageFile: =>
+    return unless @dispatch.isValidEditorView(@editorView)
     @removeMarkers()
 
     return unless editor = @getActiveEditor()
