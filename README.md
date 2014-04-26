@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/joefitzgerald/go-plus.svg?branch=master)](https://travis-ci.org/joefitzgerald/go-plus)
 
+You can install `go-plus` by opening Atom, going to `Preferences` > `Packages`, and searching for `go-plus`. Alternatively, run `apm install go-plus` in your terminal.
+
 This package adds extra Atom functionality for the go language:
 
 * Formatting source using `gofmt`
