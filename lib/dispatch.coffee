@@ -2,6 +2,7 @@
 Gofmt = require './gofmt'
 Govet = require './govet'
 Golint = require './golint'
+Gopath = require './gopath'
 Gobuild = require './gobuild'
 _ = require 'underscore-plus'
 $ = require('atom').$
@@ -17,6 +18,7 @@ class Dispatch
     @gofmt = new Gofmt(this)
     @govet = new Govet(this)
     @golint = new Golint(this)
+    @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
 
@@ -31,6 +33,10 @@ class Dispatch
       @emit 'dispatch-complete', editorView if not saving
     @golint.on 'lint-complete', (editorView, saving) =>
       @emit 'lint-complete', editorView, saving
+      @gopath.check(editorView, saving) if saving
+      @emit 'dispatch-complete', editorView if not saving
+    @gopath.on 'gopath-complete', (editorView, saving) =>
+      @emit 'gopath-complete', editorView, saving
       @gobuild.checkBuffer(editorView, saving) if saving
       @emit 'dispatch-complete', editorView if not saving
     @gobuild.on 'syntaxcheck-complete', (editorView, saving) =>
@@ -44,6 +50,8 @@ class Dispatch
       @collectErrors(errors)
     @golint.on 'lint-errors', (editorView, errors) =>
       @collectErrors(errors)
+    @gopath.on 'gopath-errors', (editorView, errors) =>
+      @collectErrors(errors)
     @gobuild.on 'syntaxcheck-errors', (editorView, errors) =>
       @collectErrors(errors)
 
@@ -53,6 +61,8 @@ class Dispatch
     @golint.on 'reset', (editorView) =>
       @resetState(editorView)
     @govet.on 'reset', (editorView) =>
+      @resetState(editorView)
+    @gopath.on 'reset', (editorView) =>
       @resetState(editorView)
     @gobuild.on 'reset', (editorView) =>
       @resetState(editorView)
@@ -77,6 +87,7 @@ class Dispatch
     @gobuild.destroy()
     @golint.destroy()
     @govet.destroy()
+    @gopath.destroy()
     @gofmt.destroy()
 
   handleEvents: (editorView) ->
