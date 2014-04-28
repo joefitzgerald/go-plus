@@ -27,7 +27,7 @@ class GocovParser
         [startRow, startCol] = start.split(".")
         [endRow, endCol] = end.split(".")
 
-        range = new Range([parseInt(startRow)-1, parseInt(startCol)-1], [parseInt(endRow)-1, parseInt(endCol)+1])
+        range = new Range([parseInt(startRow)-1, parseInt(startCol)-1], [parseInt(endRow)-1, parseInt(endCol)-1])
         ranges.push range: range, count: parseInt(count)
 
     ranges
