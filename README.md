@@ -15,7 +15,7 @@ This package adds extra Atom functionality for the go language:
 
 ### Example
 
-![A screenshot of go-plus in action](http://cl.ly/image/0V1Q0J1M1a1d/go-plus-example.gif)
+![A screenshot of go-plus in action](http://cl.ly/image/392z2L0f0E41/go-plus-example.gif)
 
 ### Defaults
 
@@ -80,4 +80,4 @@ The following features will be added soon:
 ### Contributing
 
 Contributions are greatly appreciated. Please fork this repository, make your
-changes, and open a pull request.
+changes, and open a pull request. See [Contributing](https://github.com/joefitzgerald/go-plus/wiki/Contributing) for detailed instructions.

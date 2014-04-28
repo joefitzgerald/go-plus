@@ -1,3 +1,7 @@
+## v1.0.9 (April 28th, 2014)
+
+* :abc: Update examples, add documentation describing how to contribute (fixes #20)
+
 ## v1.0.8 (April 28th, 2014)
 
 * :abc: Update examples, add golint example
