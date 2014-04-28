@@ -1,0 +1,13 @@
+language: objective-c
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change
+
+before_script: ./travis-bootstrap.sh
+
+script:
+  - export GOROOT=`pwd`/.go/go
+  - export GOPATH=`pwd`/.go/gopath
+  - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'

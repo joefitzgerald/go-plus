@@ -28,8 +28,9 @@ describe "format", ->
       atom.config.set("go-plus.formatOnSave", true)
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
-      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
-      atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
+      atom.config.set("go-plus.environmentOverridesConfiguration", true)
+      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
+      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
       atom.config.set("go-plus.showErrorPanel", false)
 
     it "reformats the file", ->
@@ -72,8 +73,9 @@ describe "format", ->
       atom.config.set("go-plus.formatOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
-      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
-      atom.config.set("go-plus.gofmtPath", "/usr/local/go/bin/gofmt")
+      atom.config.set("go-plus.environmentOverridesConfiguration", true)
+      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
+      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
       atom.config.set("go-plus.showErrorPanel", false)
 
     it "does not reformat the file", ->
