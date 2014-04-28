@@ -40,6 +40,7 @@ class Gocov
 
   runCoverage: =>
     tempDir = temp.mkdirSync()
+    tempFile = tempDir + "/coverage.out"
     gopath = @dispatch.buildGoPath()
     editorView = atom.workspaceView.getActiveView()
     buffer = editorView?.getEditor()?.getBuffer()
@@ -49,14 +50,15 @@ class Gocov
     cwd = buffer.getPath().replace(re, '')
     cmd = atom.config.get('go-plus.goExecutablePath')
     cmd = @dispatch.replaceTokensInPath(cmd, true)
-    console.log cmd, "test -coverprofile=#{tempDir}/coverage.out"
-    proc = spawn(cmd, ["test", "-coverprofile=#{tempDir}/coverage.out"], {cwd: cwd, env: env})
+    console.log cmd, "test -coverprofile=#{tempFile}"
+    proc = spawn(cmd, ["test", "-coverprofile=#{tempFile}"], {cwd: cwd, env: env})
     proc.on 'error', (error) =>
       return unless error?
       console.log @name + ': error launching command [go] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
     proc.stderr.on 'data', (data) => console.log 'go test: ' + data if data?
     proc.stdout.on 'data', (data) => console.log 'go test: ' + data if data?
     proc.on 'close', (code) =>
+      @parser.setDataFile(tempFile)
       console.log 'gocov: [go test] exited with code [' + code + ']' if code isnt 0
       for area in areas
         area.processCoverageFile()
