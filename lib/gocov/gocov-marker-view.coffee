@@ -22,10 +22,10 @@ class GocovMarkerView
 
   appendRegion: (rows, start, end) ->
     { lineHeight, charWidth } = @editor
-    css = @editor.pixelPositionForScreenPosition(start)
+    css = @editor.pixelPositionForBufferPosition(start)
     css.height = lineHeight * rows
     if end
-      css.width = @editor.pixelPositionForScreenPosition(end).left - css.left
+      css.width = @editor.pixelPositionForBufferPosition(end).left - css.left
     else
       css.right = 0
 
