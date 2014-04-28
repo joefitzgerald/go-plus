@@ -1,3 +1,7 @@
+## v1.0.7 (April 28th, 2014)
+
+* :new: Warn when GOPATH is unset, is non-existent, or does not contain a `src` folder
+
 ## v1.0.6 (April 28th, 2014)
 
 * :lipstick: Rename `FmtArgs` preference to `GoFmtArgs`

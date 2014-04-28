@@ -36,20 +36,23 @@ class Gopath
           line: false
           column: false
           msg: 'Warning: GOPATH is not set – either set the GOPATH environment variable or define the Go Path in go-plus package preferences'
+          type: 'warning'
       errors.push error
 
-    unless fs.existsSync(gopath)
+    if errors? and _.size(errors) is 0 and not fs.existsSync(gopath)
       error =
           line: false
           column: false
           msg: 'Warning: GOPATH [' + gopath + '] does not exist'
+          type: 'warning'
       errors.push error
 
-    unless fs.existsSync(path.join(gopath, 'src'))
+    if errors? and _.size(errors) is 0 and not fs.existsSync(path.join(gopath, 'src'))
       error =
           line: false
           column: false
           msg: 'Warning: GOPATH [' + gopath + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
+          type: 'warning'
       errors.push error
 
     if errors? and _.size(errors) > 0
