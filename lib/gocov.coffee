@@ -39,6 +39,8 @@ class Gocov
       @resetCoverage()
 
   runCoverage: =>
+    return unless @coverageEnabled()
+    
     tempDir = temp.mkdirSync()
     tempFile = tempDir + "/coverage.out"
     gopath = @dispatch.buildGoPath()
