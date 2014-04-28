@@ -1,3 +1,7 @@
+## v1.0.8 (April 28th, 2014)
+
+* :abc: Update examples, add golint example
+
 ## v1.0.7 (April 28th, 2014)
 
 * :new: Warn when GOPATH is unset, is non-existent, or does not contain a `src` folder

@@ -15,7 +15,7 @@ This package adds extra Atom functionality for the go language:
 
 ### Example
 
-![A screenshot of go-plus in action](http://cl.ly/image/422w3W3F171G/go-plus-example.gif)
+![A screenshot of go-plus in action](http://cl.ly/image/0V1Q0J1M1a1d/go-plus-example.gif)
 
 ### Defaults
 
