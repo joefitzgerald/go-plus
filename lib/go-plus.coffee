@@ -5,7 +5,7 @@ module.exports =
     environmentOverridesConfiguration: true
     syntaxCheckOnSave: false
     formatOnSave: true
-    fmtArgs: "-w"
+    gofmtArgs: "-w"
     vetOnSave: true
     vetArgs: ""
     lintOnSave: false

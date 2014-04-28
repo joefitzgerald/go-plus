@@ -1,3 +1,7 @@
+## v1.0.6 (April 28th, 2014)
+
+* :lipstick: Rename `FmtArgs` preference to `GoFmtArgs`
+
 ## v1.0.5 (April 26th, 2014)
 
 * :new: Specify arbitrary arguments for `gofmt`, `goimports`, `golint`, `go vet`
