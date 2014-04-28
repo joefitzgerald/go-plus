@@ -84,6 +84,7 @@ class Dispatch
   handleEvents: (editorView) ->
     editor = editorView.getEditor()
     buffer = editor.getBuffer()
+    buffer.on 'changed', => @handleBufferChanged(editorView)
     buffer.on 'saved', => @handleBufferSave(editorView, true)
     editor.on 'destroyed', => buffer.off 'saved'
 
@@ -94,6 +95,9 @@ class Dispatch
     @resetState(editorView)
     @gofmt.formatBuffer(editorView, saving)
     @gocov.runCoverage(editorView)
+
+  handleBufferChanged: (editorView) ->
+    @gocov.resetCoverage()
 
   resetState: (editorView) ->
     @errorCollection = []
