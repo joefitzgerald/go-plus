@@ -1,7 +1,7 @@
-spawn = require('child_process').spawn
+{spawn} = require 'child_process'
 fs = require 'fs-plus'
 path = require 'path'
-temp = require('temp')
+temp = require 'temp'
 {Subscriber, Emitter} = require 'emissary'
 _ = require 'underscore-plus'
 
@@ -16,7 +16,7 @@ class Gobuild
     @name = 'syntaxcheck'
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
 
   reset: (editorView) ->
     @emit 'reset', editorView

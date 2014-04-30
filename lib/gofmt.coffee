@@ -13,7 +13,7 @@ class Gofmt
     @name = 'fmt'
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
 
   reset: (editorView) ->
     @emit 'reset', editorView

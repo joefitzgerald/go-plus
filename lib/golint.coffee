@@ -1,4 +1,4 @@
-spawn = require('child_process').spawn
+{spawn} = require 'child_process'
 {Subscriber, Emitter} = require 'emissary'
 _ = require 'underscore-plus'
 
@@ -13,7 +13,7 @@ class Golint
     @name = 'lint'
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
 
   reset: (editorView) ->
     @emit 'reset', editorView

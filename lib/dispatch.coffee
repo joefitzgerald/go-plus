@@ -83,7 +83,7 @@ class Dispatch
     @emit 'errors-collected', _.size(@errorCollection)
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
     @gobuild.destroy()
     @golint.destroy()
     @govet.destroy()

@@ -13,7 +13,7 @@ class Gopath
     @name = 'gopath'
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
 
   reset: (editorView) ->
     @emit 'reset', editorView
