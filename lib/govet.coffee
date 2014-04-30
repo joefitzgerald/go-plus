@@ -1,5 +1,6 @@
 spawn = require('child_process').spawn
 {Subscriber, Emitter} = require 'emissary'
+_ = require 'underscore-plus'
 
 module.exports =
 class Govet
@@ -34,9 +35,12 @@ class Govet
     unless buffer?
       @emit @name + '-complete', editorView, saving
       return
-    args = [@name, buffer.getPath()]
+    args = [@name]
+    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.vetArgs'))
+    args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
+    args = args.concat([buffer.getPath()])
     cmd = atom.config.get('go-plus.goExecutablePath')
-    cmd = @dispatch.replaceTokensInPath(cmd, true)
+    cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>

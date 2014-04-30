@@ -31,7 +31,7 @@ describe "dispatch", ->
       atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", "~/go:/path/to/someother/gopath")
       atom.config.set("go-plus.environmentOverridesConfiguration", false)
-      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
+      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOPATH/bin/goimports")
       atom.config.set("go-plus.showErrorPanel", true)
 
@@ -47,12 +47,12 @@ describe "dispatch", ->
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", "~/go")
-      atom.config.set("go-plus.environmentOverridesConfiguration", false)
-      atom.config.set("go-plus.goExecutablePath", "/usr/local/go/bin/go")
+      atom.config.set("go-plus.environmentOverridesConfiguration", true)
+      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOPATH/bin/goimports")
       atom.config.set("go-plus.showErrorPanel", true)
 
     it "replaces the $GOPATH token with the first element from the gopath", ->
       cmd = atom.config.get('go-plus.gofmtPath')
       cmd = dispatch.replaceTokensInPath(cmd)
-      expect(cmd).toBe path.join(process.env.HOME, "go", "bin", "goimports")
+      expect(cmd).toBe path.join(dispatch.buildGoPath(), "bin", "goimports")

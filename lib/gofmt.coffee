@@ -1,5 +1,6 @@
 spawn = require('child_process').spawn
 {Subscriber, Emitter} = require 'emissary'
+_ = require 'underscore-plus'
 
 module.exports =
 class Gofmt
@@ -35,9 +36,12 @@ class Gofmt
       @emit @name + '-complete', editorView, saving
       return
     gopath = @dispatch.buildGoPath()
-    args = ['-w', buffer.getPath()]
+    args = ['-w']
+    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.fmtArgs'))
+    args = args.concat(configArgs) if configArgs? and _.size(configArgs) > 0
+    args = args.concat([buffer.getPath()])
     cmd = atom.config.get('go-plus.gofmtPath')
-    cmd = @dispatch.replaceTokensInPath(cmd)
+    cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>

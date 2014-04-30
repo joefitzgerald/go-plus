@@ -155,9 +155,14 @@ class Dispatch
     gopath = gopathConfig if gopath is ''
     return @replaceTokensInPath(gopath, true)
 
-  replaceTokensInPath: (path, skipGoPath) ->
+  buildGoRoot: ->
+    goroot = process.env.GOROOT
+    goroot = '/usr/local/go' unless goroot? and goroot isnt ''
+    return @replaceTokensInPath(goroot, true)
+
+  replaceTokensInPath: (path, skipGoTokens) ->
     return '' unless path?
-    unless skipGoPath or path.toUpperCase().indexOf('$GOPATH') is -1
+    unless skipGoTokens or path.toUpperCase().indexOf('$GOPATH') is -1
       path = @replaceGoPathToken(path)
     unless path.indexOf('~') is -1
       home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
@@ -165,6 +170,9 @@ class Dispatch
     unless path.toUpperCase().indexOf('$HOME') is -1
       home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
       path = path.replace(/\$HOME/i, home)
+    unless skipGoTokens or path.toUpperCase().indexOf('$GOROOT') is -1
+      goroot = @buildGoRoot()
+      path = path.replace(/\$GOROOT/i, goroot) if goroot? and goroot isnt ''
     return path
 
   replaceGoPathToken: (path) ->
@@ -177,6 +185,11 @@ class Dispatch
 
   isValidEditorView: (editorView) ->
     editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'
+
+  splitToArray: (arg) ->
+    return [] unless arg? and arg.length > 0
+    arr = arg.split(/[\s]+/)
+    arr = _.filter arr, (item) -> return item? and item.length > 0 and item isnt ''
 
   # updateStatus: (errors, row) ->
   #   msg = ''
