@@ -25,7 +25,7 @@ class OracleCommand
   constructor: (dispatch) ->
     @dispatch = dispatch
 
-    this.on 'what-complete', (whatData) =>
+    @on 'what-complete', (whatData) =>
       cmd = @oracleCommand(@nextCommand, "plain", whatData.what.importpath)
       parsedData = ''
       cmd.stdout.on 'data', (data) =>
