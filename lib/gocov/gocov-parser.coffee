@@ -12,8 +12,10 @@ class GocovParser
 
   # TODO disgusting - fix this parsing, regex
   rangesForFile: (file) ->
-    # TODO Ensure we have a data file and it exists
-    data = fs.readFileSync @dataFile, {encoding: "utf8"}
+    try
+      data = fs.readFileSync @dataFile, {encoding: "utf8"}
+    catch error
+      return []
 
     ranges = []
 
