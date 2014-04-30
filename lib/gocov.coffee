@@ -1,5 +1,6 @@
 spawn = require('child_process').spawn
 temp = require('temp')
+fs = require 'fs-plus'
 {Subscriber, Emitter} = require 'emissary'
 GocovAreaView = require './gocov/gocov-area-view'
 GocovParser = require './gocov/gocov-parser'
@@ -25,6 +26,7 @@ class Gocov
 
   destroy: ->
     @unsubscribe
+    @removeCoverageFile()
     for area in areas
       area.destroy()
 
@@ -38,11 +40,20 @@ class Gocov
     else
       @resetCoverage()
 
+  removeCoverageFile: =>
+    if @coverageFile
+      # Remove the coverage file
+      fs.unlink @coverageFile
+
+  createCoverageFile: =>
+    @removeCoverageFile()
+    tempDir = temp.mkdirSync()
+    @coverageFile = tempDir + "/coverage.out"
+
   runCoverage: =>
     return unless @coverageEnabled()
-    
-    tempDir = temp.mkdirSync()
-    tempFile = tempDir + "/coverage.out"
+    tempFile = @createCoverageFile()
+
     gopath = @dispatch.buildGoPath()
     editorView = atom.workspaceView.getActiveView()
     buffer = editorView?.getEditor()?.getBuffer()
