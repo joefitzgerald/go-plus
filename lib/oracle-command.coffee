@@ -1,4 +1,4 @@
-spawn = require('child_process').spawn
+{spawn} = require('child_process').spawn
 {Subscriber, Emitter} = require 'emissary'
 
 module.exports =
@@ -48,7 +48,7 @@ class OracleCommand
     @what()
 
   getPath: ->
-    return atom.workspaceView.getActiveView()?.getEditor()?.getPath()
+    return atom.workspaceView.getActiveEditor()?.getPath()
 
   getPosition: ->
     editorView = atom.workspaceView.getActiveView()

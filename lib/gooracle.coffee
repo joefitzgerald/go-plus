@@ -4,9 +4,6 @@ OracleCommand = require "./oracle-command"
 
 module.exports =
 class GoOracle extends View
-  Subscriber.includeInto(this)
-  Emitter.includeInto(this)
-
   @content: ->
     @div class: 'go-oracle tool-panel pannel panel-bottom padding', =>
       @h4 class: 'header', =>
@@ -15,8 +12,7 @@ class GoOracle extends View
       @div " Loading", class: "loading"
       @div outlet: 'data', class: 'panel-body padded'
 
-  initialize: (dispatch) ->
-    @dispatch = dispatch
+  initialize: (@dispatch) ->
     @data.on 'click', '.source', (event) =>
       @navigateTo($(event.target).data('uri'))
 
@@ -40,7 +36,7 @@ class GoOracle extends View
 
   # Tear down any state and detach
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
     @detach()
 
   navigateTo: (fileURL) ->
@@ -54,8 +50,8 @@ class GoOracle extends View
     line = parseInt(matches[2]) - 1
     col = parseInt(matches[3]) - 1
 
-    newEditor = atom.workspaceView.openSync(file)
-    newEditor.setCursorBufferPosition([line, col])
+    atom.workspace.open(file).then (newEditor) ->
+      newEditor.setCursorBufferPosition([line, col])
 
   displayOracle: (command, data) ->
     @find('.loading').hide()
