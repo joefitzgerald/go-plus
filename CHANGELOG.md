@@ -1,3 +1,19 @@
+## v1.0.9 (April 28th, 2014)
+
+* :abc: Update examples, add documentation describing how to contribute (fixes #20)
+
+## v1.0.8 (April 28th, 2014)
+
+* :abc: Update examples, add golint example
+
+## v1.0.7 (April 28th, 2014)
+
+* :new: Warn when GOPATH is unset, is non-existent, or does not contain a `src` folder
+
+## v1.0.6 (April 28th, 2014)
+
+* :lipstick: Rename `FmtArgs` preference to `GoFmtArgs`
+
 ## v1.0.5 (April 26th, 2014)
 
 * :new: Specify arbitrary arguments for `gofmt`, `goimports`, `golint`, `go vet`

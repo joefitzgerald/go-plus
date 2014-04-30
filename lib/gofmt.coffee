@@ -1,4 +1,4 @@
-spawn = require('child_process').spawn
+{spawn} = require 'child_process'
 {Subscriber, Emitter} = require 'emissary'
 _ = require 'underscore-plus'
 
@@ -13,7 +13,7 @@ class Gofmt
     @name = 'fmt'
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
 
   reset: (editorView) ->
     @emit 'reset', editorView
@@ -37,7 +37,7 @@ class Gofmt
       return
     gopath = @dispatch.buildGoPath()
     args = ['-w']
-    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.fmtArgs'))
+    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.gofmtArgs'))
     args = args.concat(configArgs) if configArgs? and _.size(configArgs) > 0
     args = args.concat([buffer.getPath()])
     cmd = atom.config.get('go-plus.gofmtPath')

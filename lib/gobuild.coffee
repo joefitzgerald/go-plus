@@ -1,7 +1,7 @@
-spawn = require('child_process').spawn
+{spawn} = require 'child_process'
 fs = require 'fs-plus'
 path = require 'path'
-temp = require('temp')
+temp = require 'temp'
 {Subscriber, Emitter} = require 'emissary'
 _ = require 'underscore-plus'
 
@@ -16,7 +16,7 @@ class Gobuild
     @name = 'syntaxcheck'
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
 
   reset: (editorView) ->
     @emit 'reset', editorView
@@ -41,13 +41,6 @@ class Gobuild
       return
     gopath = @dispatch.buildGoPath()
     if not gopath? or gopath is ''
-      errors = []
-      error =
-          line: false
-          column: false
-          msg: 'Warning: GOPATH is not set – either set the GOPATH environment variable or define the Go Path in go-plus package preferences'
-      errors.push error
-      @emit @name + '-errors', editorView, errors
       @emit @name + '-complete', editorView, saving
       return
     env = process.env
