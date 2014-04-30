@@ -48,6 +48,9 @@ class Dispatch
       @collectErrors(errors)
     @gobuild.on 'syntaxcheck-errors', (editorView, errors) =>
       @collectErrors(errors)
+    @gocov.on 'gocov-errors', (editorView, errors) =>
+      @collectErrors(errors)
+      @emit 'dispatch-complete', editorView
 
     # Reset State If Requested
     @gofmt.on 'reset', (editorView) =>

@@ -14,7 +14,7 @@ class Gocov
 
   constructor: (dispatch) ->
     @dispatch = dispatch
-    @name = 'cov'
+    @name = 'gocov'
     @covering = false
     @parser = new GocovParser(dispatch)
 
@@ -42,8 +42,10 @@ class Gocov
 
   removeCoverageFile: =>
     if @coverageFile
-      # Remove the coverage file
-      fs.unlink @coverageFile
+      try
+        fs.unlinkSync @coverageFile
+      catch
+        return
 
   createCoverageFile: =>
     @removeCoverageFile()
@@ -65,16 +67,23 @@ class Gocov
     cmd = @dispatch.replaceTokensInPath(cmd, true)
     console.log cmd, "test -coverprofile=#{tempFile}"
     proc = spawn(cmd, ["test", "-coverprofile=#{tempFile}"], {cwd: cwd, env: env})
+    output = ''
     proc.on 'error', (error) =>
       return unless error?
       console.log @name + ': error launching command [go] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
     proc.stderr.on 'data', (data) => console.log 'go test: ' + data if data?
-    proc.stdout.on 'data', (data) => console.log 'go test: ' + data if data?
+    proc.stdout.on 'data', (data) =>
+      output += data if data?
+      console.log 'go test: ' + data if data?
     proc.on 'close', (code) =>
-      @parser.setDataFile(tempFile)
-      console.log 'gocov: [go test] exited with code [' + code + ']' if code isnt 0
-      for area in areas
-        area.processCoverageFile()
+      if code isnt 0
+        console.log 'gocov: [go test] exited with code [' + code + ']'
+        errors = [{line:false, col: false, msg:output}]
+        @emit @name + '-errors', editorView, errors
+      else
+        @parser.setDataFile(tempFile)
+        for area in areas
+          area.processCoverageFile()
 
   resetCoverage: =>
     for area in areas
