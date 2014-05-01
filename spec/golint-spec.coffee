@@ -37,7 +37,6 @@ describe "lint", ->
     it "displays errors for missing documentation", ->
       done = false
       runs ->
-        console.log 'Test File: ' + filePath
         buffer.setText("package main\n\nimport \"fmt\"\n\ntype T int\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>

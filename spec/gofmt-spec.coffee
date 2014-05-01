@@ -36,7 +36,6 @@ describe "format", ->
     it "reformats the file", ->
       done = false
       runs ->
-        console.log 'Test File: ' + filePath
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
@@ -52,7 +51,6 @@ describe "format", ->
     it "collects errors when the input is invalid", ->
       done = false
       runs ->
-        console.log 'Test File: ' + filePath
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', (editorView) =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main(!)  {\n}\n"
@@ -81,7 +79,6 @@ describe "format", ->
     it "does not reformat the file", ->
       done = false
       runs ->
-        console.log 'Test File: ' + filePath
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main()  {\n}\n"

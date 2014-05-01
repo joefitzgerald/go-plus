@@ -36,7 +36,6 @@ describe "vet", ->
     it "displays errors for unreachable code", ->
       done = false
       runs ->
-        console.log 'Test File: ' + filePath
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
@@ -65,7 +64,6 @@ describe "vet", ->
     it "formats the file and displays errors for unreachable code", ->
       done = false
       runs ->
-        console.log 'Test File: ' + filePath
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>

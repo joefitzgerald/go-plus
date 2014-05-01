@@ -45,7 +45,6 @@ describe "build", ->
     it "displays errors for unused code", ->
       done = false
       runs ->
-        console.log 'Test File: ' + filePath
         fs.unlinkSync(testFilePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n")
@@ -66,7 +65,6 @@ describe "build", ->
     it "displays errors for unused code in a test file", ->
       done = false
       runs ->
-        console.log 'Test File: ' + testFilePath
         fs.unlinkSync(filePath)
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\t42\n\tt.Error(\"Example Test\")\n}")
@@ -117,7 +115,6 @@ describe "build", ->
     it "does not display errors for dependent functions spread across multiple files in the same package", ->
       done = false
       runs ->
-        console.log 'Test Directory: ' + directory
         buffer = editor.getBuffer()
         secondBuffer = secondEditor.getBuffer()
         thirdBuffer = thirdEditor.getBuffer()
