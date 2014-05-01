@@ -5,7 +5,6 @@ Golint = require './golint'
 Gopath = require './gopath'
 Gobuild = require './gobuild'
 _ = require 'underscore-plus'
-$ = require('atom').$
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
 
 module.exports =
