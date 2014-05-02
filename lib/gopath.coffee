@@ -29,7 +29,6 @@ class Gopath
       return
 
     gopath = @dispatch.buildGoPath()
-    console.log 'checking GOPATH: ' + gopath
     errors = []
     unless gopath? and gopath isnt ''
       error =

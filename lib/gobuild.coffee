@@ -1,5 +1,6 @@
 {spawn} = require 'child_process'
 fs = require 'fs-plus'
+glob = require 'glob'
 path = require 'path'
 temp = require 'temp'
 {Subscriber, Emitter} = require 'emissary'
@@ -79,9 +80,11 @@ class Gobuild
     proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
     proc.on 'close', (code) =>
       console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
-      syntaxCheckOutputFile = path.join(cwd, output)
-      if fs.existsSync(syntaxCheckOutputFile)
-        fs.unlinkSync(syntaxCheckOutputFile)
+      pattern = cwd + '/*' + output
+      glob pattern, {mark: false, sync:true}, (er, files) ->
+        for file in files
+          do (file) ->
+            fs.unlinkSync(file)
       if fs.existsSync(outputPath)
         if fs.lstatSync(outputPath).isDirectory()
           fs.rmdirSync(outputPath)

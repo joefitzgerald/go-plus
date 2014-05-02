@@ -33,6 +33,7 @@
     "atom-message-panel": ">=1.0.0",
     "emissary": "1.x",
     "fs-plus": "2.x",
+    "glob": "3.x",
     "temp": ">=0.7.0",
     "underscore-plus": "1.x"
   }

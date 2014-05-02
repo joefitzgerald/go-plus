@@ -1,3 +1,7 @@
+## v1.0.10 (May 2nd, 2014)
+
+* :bug: Ensure test binary is cleaned up when hyphenated package import is used
+
 ## v1.0.9 (April 28th, 2014)
 
 * :abc: Update examples, add documentation describing how to contribute (fixes #20)
