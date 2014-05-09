@@ -99,7 +99,8 @@ class Dispatch
     return if grammar.scopeName isnt 'source.go'
     @resetState(editorView)
     @gofmt.formatBuffer(editorView, saving)
-    @gocov.runCoverage(editorView)
+    if atom.config.get('go-plus.runCoverageOnSave')
+      @gocov.runCoverage(editorView)
 
   handleBufferChanged: (editorView) ->
     @gocov.resetCoverage()
