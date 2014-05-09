@@ -36,6 +36,8 @@ class Gocov
   toggleCoverage: =>
     @covering = !@covering
     if @covering
+      @emitCoverageIndicator()
+      @dispatch.emit 'dispatch-complete'
       @runCoverage()
     else
       @resetCoverage()
@@ -52,13 +54,25 @@ class Gocov
     tempDir = temp.mkdirSync()
     @coverageFile = tempDir + "/coverage.out"
 
+  emitCoverageIndicator: =>
+    editorView = atom.workspaceView.getActiveView()
+    messages = []
+    message =
+      line: false
+      column: false
+      msg: 'Running coverage analysis'
+    messages.push message
+    @emit @name + '-errors', editorView, messages
+
   runCoverage: =>
     return unless @coverageEnabled()
-    tempFile = @createCoverageFile()
 
-    gopath = @dispatch.buildGoPath()
+    @emitCoverageIndicator()
+
     editorView = atom.workspaceView.getActiveView()
     buffer = editorView?.getEditor()?.getBuffer()
+    tempFile = @createCoverageFile()
+    gopath = @dispatch.buildGoPath()
     env = process.env
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
@@ -84,6 +98,7 @@ class Gocov
         @parser.setDataFile(tempFile)
         for area in areas
           area.processCoverageFile()
+        @emit 'reset'
 
   resetCoverage: =>
     for area in areas

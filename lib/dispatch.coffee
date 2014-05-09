@@ -40,6 +40,8 @@ class Dispatch
       @emit 'dispatch-complete', editorView
 
     # Collect Errors
+    @gocov.on 'gocov-errors', (editorView, errors) =>
+      @collectErrors(errors)
     @gofmt.on 'fmt-errors', (editorView, errors) =>
       @collectErrors(errors)
     @govet.on 'vet-errors', (editorView, errors) =>
@@ -47,8 +49,6 @@ class Dispatch
     @golint.on 'lint-errors', (editorView, errors) =>
       @collectErrors(errors)
     @gobuild.on 'syntaxcheck-errors', (editorView, errors) =>
-      @collectErrors(errors)
-    @gocov.on 'gocov-errors', (editorView, errors) =>
       @collectErrors(errors)
       @emit 'dispatch-complete', editorView
 
@@ -60,6 +60,8 @@ class Dispatch
     @govet.on 'reset', (editorView) =>
       @resetState(editorView)
     @gobuild.on 'reset', (editorView) =>
+      @resetState(editorView)
+    @gocov.on 'reset', (editorView) =>
       @resetState(editorView)
 
     # Update Pane And Gutter With Errors
