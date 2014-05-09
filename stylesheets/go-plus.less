@@ -34,3 +34,19 @@
   border-top: 1px solid @tool-panel-border-color;
   padding: 0 12.5px;
 }
+
+.editor .gocov-marker .region {
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.region.uncovered {
+  background-color: #FF6969;
+  opacity: 0.25;
+}
+
+.region.covered {
+  background-color: #69FF69;
+  opacity: 0.25;
+}

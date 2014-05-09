@@ -14,6 +14,7 @@ module.exports =
     gofmtPath: "/usr/local/go/bin/gofmt"
     golintPath: "$GOPATH/bin/golint"
     golintArgs: ""
+    runCoverageOnSave: false
     showErrorPanel: true
     showErrorPanelWhenNoIssuesExist: false
 
