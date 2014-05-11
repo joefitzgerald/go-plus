@@ -4,6 +4,7 @@ Govet = require './govet'
 Golint = require './golint'
 Gopath = require './gopath'
 Gobuild = require './gobuild'
+Gocov = require './gocov'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
 
@@ -19,6 +20,7 @@ class Dispatch
     @golint = new Golint(this)
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
+    @gocov = new Gocov(this)
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
 
     # Pipeline For Processing Buffer
@@ -43,6 +45,8 @@ class Dispatch
       @emit 'dispatch-complete', editorView
 
     # Collect Errors
+    @gocov.on 'gocov-errors', (editorView, errors) =>
+      @collectErrors(errors)
     @gofmt.on 'fmt-errors', (editorView, errors) =>
       @collectErrors(errors)
     @govet.on 'vet-errors', (editorView, errors) =>
@@ -53,6 +57,7 @@ class Dispatch
       @collectErrors(errors)
     @gobuild.on 'syntaxcheck-errors', (editorView, errors) =>
       @collectErrors(errors)
+      @emit 'dispatch-complete', editorView
 
     # Reset State If Requested
     @gofmt.on 'reset', (editorView) =>
@@ -64,6 +69,8 @@ class Dispatch
     @gopath.on 'reset', (editorView) =>
       @resetState(editorView)
     @gobuild.on 'reset', (editorView) =>
+      @resetState(editorView)
+    @gocov.on 'reset', (editorView) =>
       @resetState(editorView)
 
     # Update Pane And Gutter With Errors
@@ -92,6 +99,7 @@ class Dispatch
   handleEvents: (editorView) ->
     editor = editorView.getEditor()
     buffer = editor.getBuffer()
+    buffer.on 'changed', => @handleBufferChanged(editorView)
     buffer.on 'saved', => @handleBufferSave(editorView, true)
     editor.on 'destroyed', => buffer.off 'saved'
 
@@ -101,6 +109,11 @@ class Dispatch
     return if grammar.scopeName isnt 'source.go'
     @resetState(editorView)
     @gofmt.formatBuffer(editorView, saving)
+    if atom.config.get('go-plus.runCoverageOnSave')
+      @gocov.runCoverage(editorView)
+
+  handleBufferChanged: (editorView) ->
+    @gocov.resetCoverage()
 
   resetState: (editorView) ->
     @errorCollection = []
