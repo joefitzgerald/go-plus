@@ -12,6 +12,7 @@ This package adds extra Atom functionality for the go language:
 * Code quality inspection using `go vet`
 * Linting using `golint`
 * Syntax checking using `go build` and `go test`
+* Display of test coverage using `go test -coverprofile`
 
 ### Example
 
@@ -26,7 +27,7 @@ installed on OS X using the package installer:
 * `go` executables are found at `/usr/local/go/bin`
 
 Additionally `format on save` and `vet on save` are enabled by default. `syntax
-check on save` and `lint on save` are disabled by default. You can override these defaults by
+check on save`, `lint on save` and `run coverage on save` are disabled by default. You can override these defaults by
 updating the `go-plus` preferences.
 
 ### GOPATH
@@ -74,7 +75,9 @@ The following features will be added soon:
 
 ### Contributors
 
-* Scott Barron [@rubyist](https://github.com/rubyist) – Gofmt integration (https://github.com/atom/language-go/pull/3)
+* Scott Barron [@rubyist](https://github.com/rubyist)
+    * Gofmt integration (https://github.com/atom/language-go/pull/3)
+    * Display test coverage (https://github.com/joefitzgerald/go-plus/pull/27)
 * Matt Aimonetti [@mattetti](https://github.com/mattetti) - Syntax checking (https://github.com/atom/language-go/pull/11)
 
 ### Contributing

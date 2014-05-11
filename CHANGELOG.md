@@ -1,3 +1,7 @@
+## v1.1.0 (May 11th, 2014)
+
+* :new: Test Coverage using `go test -coverprofile` via @rubyist (fixes #25, #27)
+
 ## v1.0.10 (May 2nd, 2014)
 
 * :bug: Ensure test binary is cleaned up when hyphenated package import is used
