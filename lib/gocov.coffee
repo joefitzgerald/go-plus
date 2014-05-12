@@ -1,5 +1,5 @@
-spawn = require('child_process').spawn
-temp = require('temp')
+{spawn} = require 'child_process'
+temp = require 'temp'
 fs = require 'fs-plus'
 {Subscriber, Emitter} = require 'emissary'
 GocovAreaView = require './gocov/gocov-area-view'
@@ -25,7 +25,7 @@ class Gocov
       areas.push area
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
     @removeCoverageFile()
     for area in areas
       area.destroy()

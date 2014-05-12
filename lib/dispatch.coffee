@@ -15,6 +15,8 @@ class Dispatch
 
   constructor: ->
     @errorCollection = []
+    @dispatching = false
+    @saveactions = []
     @gofmt = new Gofmt(this)
     @govet = new Govet(this)
     @golint = new Golint(this)
@@ -90,6 +92,7 @@ class Dispatch
 
   destroy: ->
     @unsubscribe()
+    @gocov.destroy()
     @gobuild.destroy()
     @golint.destroy()
     @govet.destroy()
