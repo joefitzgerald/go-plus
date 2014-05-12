@@ -47,23 +47,23 @@ class Govet
       return unless error?
       errored = true
       console.log @name + ': error launching ' + @name + ' command [' + cmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
-      errors = []
-      error = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
-      errors.push error
-      @emit @name + '-errors', editorView, errors
+      messages = []
+      message = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
+      messages.push message
+      @emit @name + '-messages', editorView, messages
       @emit @name + '-complete', editorView, saving
-    proc.stderr.on 'data', (data) => @mapErrors(editorView, data)
+    proc.stderr.on 'data', (data) => @mapMessages(editorView, data)
     proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
     proc.on 'close', (code) =>
       console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
       @emit @name + '-complete', editorView, saving unless errored
 
-  mapErrors: (editorView, data) ->
+  mapMessages: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
-    errors = []
+    messages = []
     extract = (matchLine) ->
       return unless matchLine?
-      error = switch
+      message = switch
         when matchLine[4]?
           line: matchLine[2]
           column: matchLine[4]
@@ -74,9 +74,9 @@ class Govet
           column: false
           msg: matchLine[5]
           type: 'warning'
-      errors.push error
+      messages.push message
     loop
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit @name + '-errors', editorView, errors
+    @emit @name + '-messages', editorView, messages

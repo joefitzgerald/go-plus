@@ -62,7 +62,7 @@ class Gocov
       column: false
       msg: 'Running coverage analysis'
     messages.push message
-    @emit @name + '-errors', editorView, messages
+    @emit @name + '-messages', editorView, messages
 
   runCoverage: =>
     return unless @coverageEnabled()
@@ -92,8 +92,8 @@ class Gocov
     proc.on 'close', (code) =>
       if code isnt 0
         console.log 'gocov: [go test] exited with code [' + code + ']'
-        errors = [{line:false, col: false, msg:output}]
-        @emit @name + '-errors', editorView, errors
+        messages = [{line:false, col: false, msg:output, type:'error'}]
+        @emit @name + '-messages', editorView, messages
       else
         @parser.setDataFile(tempFile)
         for area in areas
