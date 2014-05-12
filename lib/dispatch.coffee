@@ -14,9 +14,12 @@ class Dispatch
   Emitter.includeInto(this)
 
   constructor: ->
-    @errorCollection = []
+    # Manage Save Pipeline
     @dispatching = false
-    @saveactions = []
+    @actionqueue = []
+    @collectionqueue = []
+    @messages = []
+
     @gofmt = new Gofmt(this)
     @govet = new Govet(this)
     @golint = new Golint(this)
@@ -46,19 +49,19 @@ class Dispatch
       @emit 'syntaxcheck-complete', editorView, saving
       @emit 'dispatch-complete', editorView
 
-    # Collect Errors
-    @gocov.on 'gocov-errors', (editorView, errors) =>
-      @collectErrors(errors)
-    @gofmt.on 'fmt-errors', (editorView, errors) =>
-      @collectErrors(errors)
-    @govet.on 'vet-errors', (editorView, errors) =>
-      @collectErrors(errors)
-    @golint.on 'lint-errors', (editorView, errors) =>
-      @collectErrors(errors)
-    @gopath.on 'gopath-errors', (editorView, errors) =>
-      @collectErrors(errors)
-    @gobuild.on 'syntaxcheck-errors', (editorView, errors) =>
-      @collectErrors(errors)
+    # Collect Messages
+    @gocov.on 'gocov-messages', (editorView, messages) =>
+      @collectMessages(messages)
+    @gofmt.on 'fmt-messages', (editorView, messages) =>
+      @collectMessages(messages)
+    @govet.on 'vet-messages', (editorView, messages) =>
+      @collectMessages(messages)
+    @golint.on 'lint-messages', (editorView, messages) =>
+      @collectMessages(messages)
+    @gopath.on 'gopath-messages', (editorView, messages) =>
+      @collectMessages(messages)
+    @gobuild.on 'syntaxcheck-messages', (editorView, messages) =>
+      @collectMessages(messages)
       @emit 'dispatch-complete', editorView
 
     # Reset State If Requested
@@ -75,20 +78,20 @@ class Dispatch
     @gocov.on 'reset', (editorView) =>
       @resetState(editorView)
 
-    # Update Pane And Gutter With Errors
+    # Update Pane And Gutter With Messages
     @on 'dispatch-complete', (editorView) =>
-      @updatePane(editorView, @errorCollection)
-      @updateGutter(editorView, @errorCollection)
+      @updatePane(editorView, @messages)
+      @updateGutter(editorView, @messages)
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     atom.workspaceView.on 'pane-container:active-pane-item-changed', =>
       @resetPanel()
       @messagepanel.close()
 
-  collectErrors: (errors) ->
-    @errorCollection = _.union(@errorCollection, errors)
-    @errorCollection = _.uniq @errorCollection, (element, index, list) ->
+  collectMessages: (messages) ->
+    @messages = _.union(@messages, messages)
+    @messages = _.uniq @messages, (element, index, list) ->
       return element.line + ":" + element.column + ":" + element.msg
-    @emit 'errors-collected', _.size(@errorCollection)
+    @emit 'messages-collected', _.size(@messages)
 
   destroy: ->
     @unsubscribe()
@@ -119,53 +122,53 @@ class Dispatch
     @gocov.resetCoverage()
 
   resetState: (editorView) ->
-    @errorCollection = []
+    @messages = []
     @resetGutter(editorView)
     @resetPanel()
 
   resetGutter: (editorView) ->
     gutter = editorView?.gutter
     return unless gutter?
-    gutter.removeClassFromAllLines('go-plus-error')
+    gutter.removeClassFromAllLines('go-plus-message')
 
-  updateGutter: (editorView, errors) ->
+  updateGutter: (editorView, messages) ->
     @resetGutter(editorView)
-    return unless errors?
-    return if errors.length <= 0
+    return unless messages?
+    return if messages.length <= 0
     gutter = editorView?.gutter
     return unless gutter?
-    gutter.addClassToLine error.line - 1, 'go-plus-error' for error in errors
+    gutter.addClassToLine message.line - 1, 'go-plus-message' for message in messages
 
   resetPanel: ->
     @messagepanel.close()
     @messagepanel.clear()
 
-  updatePane: (editorView, errors) ->
+  updatePane: (editorView, messages) ->
     @resetPanel
-    return unless errors?
-    if errors.length <= 0 and atom.config.get('go-plus.showErrorPanelWhenNoIssuesExist')
+    return unless messages?
+    if messages.length <= 0 and atom.config.get('go-plus.showPanelWhenNoIssuesExist')
       @messagepanel.add new PlainMessageView message: 'No Issues', className: 'text-success'
       @messagepanel.attach()
       return
-    return unless errors.length > 0
-    return unless atom.config.get('go-plus.showErrorPanel')
-    sortedErrors = _.sortBy @errorCollection, (element, index, list) ->
+    return unless messages.length > 0
+    return unless atom.config.get('go-plus.showPanel')
+    sortedMessages = _.sortBy @messages, (element, index, list) ->
       return parseInt(element.line, 10)
-    for error in sortedErrors
-      className = switch error.type
+    for message in sortedMessages
+      className = switch message.type
         when 'error' then 'text-error'
         when 'warning' then 'text-warning'
         else 'text-info'
 
-      if error.line isnt false and error.column isnt false
+      if message.line isnt false and message.column isnt false
         # LineMessageView
-        @messagepanel.add new LineMessageView line: error.line, character: error.column, message: error.msg, className: className
-      else if error.line isnt false and error.column is false
+        @messagepanel.add new LineMessageView line: message.line, character: message.column, message: message.msg, className: className
+      else if message.line isnt false and message.column is false
         # LineMessageView
-        @messagepanel.add new LineMessageView line: error.line, message: error.msg, className: className
+        @messagepanel.add new LineMessageView line: message.line, message: message.msg, className: className
       else
         # PlainMessageView
-        @messagepanel.add new PlainMessageView message: error.msg, className: className
+        @messagepanel.add new PlainMessageView message: message.msg, className: className
     @messagepanel.attach()
 
   buildGoPath: ->
@@ -214,13 +217,3 @@ class Dispatch
     return [] unless arg? and arg.length > 0
     arr = arg.split(/[\s]+/)
     arr = _.filter arr, (item) -> return item? and item.length > 0 and item isnt ''
-
-  # updateStatus: (errors, row) ->
-  #   msg = ''
-  #   return if not errors? or errors == false
-  #   return if errors.length <= 0
-  #   lineErrors = _.filter(errors, (error) -> error[0] is row + 1)
-  #   return if not lineErrors?
-  #   return if lineErrors.length <= 0
-  #   msg = 'Error: ' + lineErrors[0][0] + ':' + lineErrors[0][1] + ' ' + lineErrors[0][2]
-  #   atom.workspaceView.statusBar.appendLeft('<span id="go-plus-status" class="inline-block">' + msg + '</span>')
