@@ -44,7 +44,7 @@ class Gobuild
     if not gopath? or gopath is ''
       @emit @name + '-complete', editorView, saving
       return
-    env = process.env
+    env = @dispatch.env()
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
@@ -70,13 +70,13 @@ class Gobuild
     proc.on 'error', (error) =>
       return unless error?
       errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
-      errors = []
-      error = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
-      errors.push error
-      @emit @name + '-errors', editorView, errors
+      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + env.PATH + ']'
+      messages = []
+      message = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
+      messages.push message
+      @emit @name + '-messages', editorView, messages
       @emit @name + '-complete', editorView, saving
-    proc.stderr.on 'data', (data) => @mapErrors(editorView, data, buffer.getBaseName())
+    proc.stderr.on 'data', (data) => @mapMessages(editorView, data, buffer.getBaseName())
     proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
     proc.on 'close', (code) =>
       console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
@@ -92,16 +92,16 @@ class Gobuild
           fs.unlinkSync(outputPath)
       @emit @name + '-complete', editorView, saving unless errored
 
-  mapErrors: (editorView, data, filename) ->
+  mapMessages: (editorView, data, filename) ->
     pattern = /^(\.\/)?(.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?)/img
-    errors = []
+    messages = []
     fre = new RegExp('^' + filename + '$', 'i')
     extract = (matchLine) ->
       return unless matchLine?
       file = matchLine[2]?.replace(/^.*[\\\/]/, '')
       if file?
         return unless file.match(fre)
-      error = switch
+      message = switch
         when matchLine[5]?
           line: matchLine[3]
           column: matchLine[5]
@@ -112,9 +112,9 @@ class Gobuild
           column: false
           msg: matchLine[6]
           type: 'error'
-      errors.push error
+      messages.push message
     loop
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit @name + '-errors', editorView, errors
+    @emit @name + '-messages', editorView, messages

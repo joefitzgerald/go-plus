@@ -15,8 +15,8 @@ module.exports =
     golintPath: "$GOPATH/bin/golint"
     golintArgs: ""
     runCoverageOnSave: false
-    showErrorPanel: true
-    showErrorPanelWhenNoIssuesExist: false
+    showPanel: true
+    showPanelWhenNoIssuesExist: false
 
   activate: (state) ->
     @dispatch = new Dispatch()

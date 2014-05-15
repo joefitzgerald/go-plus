@@ -33,7 +33,7 @@ describe "dispatch", ->
       atom.config.set("go-plus.environmentOverridesConfiguration", false)
       atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOPATH/bin/goimports")
-      atom.config.set("go-plus.showErrorPanel", true)
+      atom.config.set("go-plus.showPanel", true)
 
     it "replaces the $GOPATH token with the first element from the gopath", ->
       cmd = atom.config.get('go-plus.gofmtPath')
@@ -50,7 +50,7 @@ describe "dispatch", ->
       atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOPATH/bin/goimports")
-      atom.config.set("go-plus.showErrorPanel", true)
+      atom.config.set("go-plus.showPanel", true)
 
     it "replaces the $GOPATH token with the first element from the gopath", ->
       cmd = atom.config.get('go-plus.gofmtPath')

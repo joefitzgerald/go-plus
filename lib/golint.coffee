@@ -35,7 +35,6 @@ class Golint
     unless buffer?
       @emit @name + '-complete', editorView, saving
       return
-    gopath = @dispatch.buildGoPath()
     args = [buffer.getPath()]
     configArgs = @dispatch.splitToArray(atom.config.get('go-plus.golintArgs'))
     args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
@@ -46,24 +45,24 @@ class Golint
     proc.on 'error', (error) =>
       return unless error?
       errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
-      errors = []
-      error = line: false, column: false, type: 'error', msg: 'Golint Executable Not Found @ ' + cmd + ' ($GOPATH: ' + gopath + ')'
-      errors.push error
-      @emit @name + '-errors', editorView, errors
+      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
+      messages = []
+      message = line: false, column: false, type: 'error', msg: 'Golint Executable Not Found @ ' + cmd + ' ($GOPATH: ' + @dispatch.buildGoPath() + ')'
+      messages.push message
+      @emit @name + '-messages', editorView, messages
       @emit @name + '-complete', editorView, saving
     proc.stderr.on 'data', (data) => console.log @name + ': ' + data if data?
-    proc.stdout.on 'data', (data) => @mapErrors(editorView, data)
+    proc.stdout.on 'data', (data) => @mapMessages(editorView, data)
     proc.on 'close', (code) =>
       console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
       @emit @name + '-complete', editorView, saving unless errored
 
-  mapErrors: (editorView, data) ->
+  mapMessages: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
-    errors = []
+    messages = []
     extract = (matchLine) ->
       return unless matchLine?
-      error = switch
+      message = switch
         when matchLine[4]?
           line: matchLine[2]
           column: matchLine[4]
@@ -74,9 +73,9 @@ class Golint
           column: false
           msg: matchLine[5]
           type: 'warning'
-      errors.push error
+      messages.push message
     loop
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit @name + '-errors', editorView, errors
+    @emit @name + '-messages', editorView, messages

@@ -1,5 +1,5 @@
-spawn = require('child_process').spawn
-temp = require('temp')
+{spawn} = require 'child_process'
+temp = require 'temp'
 fs = require 'fs-plus'
 {Subscriber, Emitter} = require 'emissary'
 GocovAreaView = require './gocov/gocov-area-view'
@@ -25,7 +25,7 @@ class Gocov
       areas.push area
 
   destroy: ->
-    @unsubscribe
+    @unsubscribe()
     @removeCoverageFile()
     for area in areas
       area.destroy()
@@ -62,7 +62,7 @@ class Gocov
       column: false
       msg: 'Running coverage analysis'
     messages.push message
-    @emit @name + '-errors', editorView, messages
+    @emit @name + '-messages', editorView, messages
 
   runCoverage: =>
     return unless @coverageEnabled()
@@ -73,7 +73,7 @@ class Gocov
     buffer = editorView?.getEditor()?.getBuffer()
     tempFile = @createCoverageFile()
     gopath = @dispatch.buildGoPath()
-    env = process.env
+    env = @dispatch.env()
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
@@ -84,7 +84,7 @@ class Gocov
     output = ''
     proc.on 'error', (error) =>
       return unless error?
-      console.log @name + ': error launching command [go] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
+      console.log @name + ': error launching command [go] – ' + error  + ' – current PATH: [' + env.PATH + ']'
     proc.stderr.on 'data', (data) => console.log 'go test: ' + data if data?
     proc.stdout.on 'data', (data) =>
       output += data if data?
@@ -92,8 +92,8 @@ class Gocov
     proc.on 'close', (code) =>
       if code isnt 0
         console.log 'gocov: [go test] exited with code [' + code + ']'
-        errors = [{line:false, col: false, msg:output}]
-        @emit @name + '-errors', editorView, errors
+        messages = [{line:false, col: false, msg:output, type:'error'}]
+        @emit @name + '-messages', editorView, messages
       else
         @parser.setDataFile(tempFile)
         for area in areas

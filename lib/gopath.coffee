@@ -29,33 +29,33 @@ class Gopath
       return
 
     gopath = @dispatch.buildGoPath()
-    errors = []
+    messages = []
     unless gopath? and gopath isnt ''
-      error =
+      message =
           line: false
           column: false
           msg: 'Warning: GOPATH is not set – either set the GOPATH environment variable or define the Go Path in go-plus package preferences'
           type: 'warning'
-      errors.push error
+      messages.push message
 
-    if errors? and _.size(errors) is 0 and not fs.existsSync(gopath)
-      error =
+    if messages? and _.size(messages) is 0 and gopath.indexOf(':') is -1 and not fs.existsSync(gopath)
+      message =
           line: false
           column: false
           msg: 'Warning: GOPATH [' + gopath + '] does not exist'
           type: 'warning'
-      errors.push error
+      messages.push message
 
-    if errors? and _.size(errors) is 0 and not fs.existsSync(path.join(gopath, 'src'))
-      error =
+    if messages? and _.size(messages) is 0 and gopath.indexOf(':') is -1 and not fs.existsSync(path.join(gopath, 'src'))
+      message =
           line: false
           column: false
           msg: 'Warning: GOPATH [' + gopath + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
           type: 'warning'
-      errors.push error
+      messages.push message
 
-    if errors? and _.size(errors) > 0
-      @emit @name + '-errors', editorView, errors
+    if messages? and _.size(messages) > 0
+      @emit @name + '-messages', editorView, messages
 
     @emit @name + '-complete', editorView, saving
     return
