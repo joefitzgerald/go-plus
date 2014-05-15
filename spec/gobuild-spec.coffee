@@ -10,6 +10,7 @@ describe "build", ->
   beforeEach ->
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
+    oldGoPath = "~/go" unless process.env.GOPATH?
     process.env['GOPATH']=directory
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()
@@ -28,7 +29,7 @@ describe "build", ->
       atom.config.set("go-plus.syntaxCheckOnSave", true)
       atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showErrorPanel", true)
+      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
       testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
       fs.writeFileSync(filePath, '')
@@ -51,11 +52,11 @@ describe "build", ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n"
-          expect(dispatch.errorCollection?).toBe true
-          expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0]?.column).toBe false
-          expect(dispatch.errorCollection[0]?.line).toBe "6"
-          expect(dispatch.errorCollection[0]?.msg).toBe "42 evaluated but not used"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0]?.column).toBe false
+          expect(dispatch.messages[0]?.line).toBe "6"
+          expect(dispatch.messages[0]?.msg).toBe "42 evaluated but not used"
           done = true
         buffer.save()
 
@@ -71,11 +72,11 @@ describe "build", ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\t42\n\tt.Error(\"Example Test\")\n}"
-          expect(dispatch.errorCollection?).toBe true
-          expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0]?.column).toBe false
-          expect(dispatch.errorCollection[0]?.line).toBe "6"
-          expect(dispatch.errorCollection[0]?.msg).toBe "42 evaluated but not used"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0]?.column).toBe false
+          expect(dispatch.messages[0]?.line).toBe "6"
+          expect(dispatch.messages[0]?.msg).toBe "42 evaluated but not used"
           done = true
         testBuffer.save()
 
@@ -92,7 +93,7 @@ describe "build", ->
       atom.config.set("go-plus.syntaxCheckOnSave", true)
       atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showErrorPanel", true)
+      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
       secondFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "util.go")
       thirdFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "strings.go")
@@ -127,8 +128,8 @@ describe "build", ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe "package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}"
-          expect(dispatch.errorCollection?).toBe true
-          expect(_.size(dispatch.errorCollection)).toBe 0
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 0
           done = true
         secondBuffer.save()
 

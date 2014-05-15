@@ -31,7 +31,7 @@ describe "vet", ->
       atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showErrorPanel", true)
+      atom.config.set("go-plus.showPanel", true)
 
     it "displays errors for unreachable code", ->
       done = false
@@ -40,11 +40,11 @@ describe "vet", ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n"
-          expect(dispatch.errorCollection?).toBe true
-          expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0].column).toBe false
-          expect(dispatch.errorCollection[0].line).toBe "7"
-          expect(dispatch.errorCollection[0].msg).toBe "unreachable code"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0].column).toBe false
+          expect(dispatch.messages[0].line).toBe "7"
+          expect(dispatch.messages[0].msg).toBe "unreachable code"
           done = true
         buffer.save()
 
@@ -59,7 +59,7 @@ describe "vet", ->
       atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showErrorPanel", true)
+      atom.config.set("go-plus.showPanel", true)
 
     it "formats the file and displays errors for unreachable code", ->
       done = false
@@ -68,11 +68,11 @@ describe "vet", ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main() {\n\treturn\n\tfmt.Println(\"Unreachable...\")\n}\n"
-          expect(dispatch.errorCollection?).toBe true
-          expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0].column).toBe false
-          expect(dispatch.errorCollection[0].line).toBe "7"
-          expect(dispatch.errorCollection[0].msg).toBe "unreachable code"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0].column).toBe false
+          expect(dispatch.messages[0].line).toBe "7"
+          expect(dispatch.messages[0].msg).toBe "unreachable code"
           done = true
         buffer.save()
 

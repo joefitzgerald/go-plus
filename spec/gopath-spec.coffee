@@ -28,7 +28,7 @@ describe "gopath", ->
       atom.config.set("go-plus.syntaxCheckOnSave", true)
       atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showErrorPanel", true)
+      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "wrongsrc", "github.com", "testuser", "example", "go-plus.go")
       fs.writeFileSync(filePath, '')
       editor = atom.workspace.openSync(filePath)
@@ -48,12 +48,12 @@ describe "gopath", ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
-          expect(dispatch.errorCollection?).toBe true
-          expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0]?.column).toBe false
-          expect(dispatch.errorCollection[0]?.line).toBe false
-          expect(dispatch.errorCollection[0]?.msg).toBe "Warning: GOPATH [" + directory + "] does not contain a \"src\" directory - please review http://golang.org/doc/code.html#Workspaces"
-          expect(dispatch.errorCollection[0]?.type).toBe 'warning'
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0]?.column).toBe false
+          expect(dispatch.messages[0]?.line).toBe false
+          expect(dispatch.messages[0]?.msg).toBe "Warning: GOPATH [" + directory + "] does not contain a \"src\" directory - please review http://golang.org/doc/code.html#Workspaces"
+          expect(dispatch.messages[0]?.type).toBe 'warning'
           done = true
         buffer.save()
 
@@ -70,12 +70,12 @@ describe "gopath", ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
-          expect(dispatch.errorCollection?).toBe true
-          expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0]?.column).toBe false
-          expect(dispatch.errorCollection[0]?.line).toBe false
-          expect(dispatch.errorCollection[0]?.msg).toBe "Warning: GOPATH [" + path.join(directory, 'nonexistent') + "] does not exist"
-          expect(dispatch.errorCollection[0]?.type).toBe 'warning'
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0]?.column).toBe false
+          expect(dispatch.messages[0]?.line).toBe false
+          expect(dispatch.messages[0]?.msg).toBe "Warning: GOPATH [" + path.join(directory, 'nonexistent') + "] does not exist"
+          expect(dispatch.messages[0]?.type).toBe 'warning'
           done = true
         buffer.save()
 
@@ -92,7 +92,7 @@ describe "gopath", ->
       atom.config.set("go-plus.syntaxCheckOnSave", true)
       atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
       atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showErrorPanel", true)
+      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "wrongsrc", "github.com", "testuser", "example", "go-plus.go")
       fs.writeFileSync(filePath, '')
       editor = atom.workspace.openSync(filePath)
@@ -113,12 +113,12 @@ describe "gopath", ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.on 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
-          expect(dispatch.errorCollection?).toBe true
-          expect(_.size(dispatch.errorCollection)).toBe 1
-          expect(dispatch.errorCollection[0]?.column).toBe false
-          expect(dispatch.errorCollection[0]?.line).toBe false
-          expect(dispatch.errorCollection[0]?.msg).toBe "Warning: GOPATH is not set – either set the GOPATH environment variable or define the Go Path in go-plus package preferences"
-          expect(dispatch.errorCollection[0]?.type).toBe 'warning'
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0]?.column).toBe false
+          expect(dispatch.messages[0]?.line).toBe false
+          expect(dispatch.messages[0]?.msg).toBe "Warning: GOPATH is not set – either set the GOPATH environment variable or define the Go Path in go-plus package preferences"
+          expect(dispatch.messages[0]?.type).toBe 'warning'
           done = true
         buffer.save()
 

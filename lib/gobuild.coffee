@@ -44,7 +44,7 @@ class Gobuild
     if not gopath? or gopath is ''
       @emit @name + '-complete', editorView, saving
       return
-    env = process.env
+    env = @dispatch.env()
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
@@ -70,7 +70,7 @@ class Gobuild
     proc.on 'error', (error) =>
       return unless error?
       errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
+      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + env.PATH + ']'
       messages = []
       message = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
       messages.push message

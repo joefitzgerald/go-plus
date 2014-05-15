@@ -73,7 +73,7 @@ class Gocov
     buffer = editorView?.getEditor()?.getBuffer()
     tempFile = @createCoverageFile()
     gopath = @dispatch.buildGoPath()
-    env = process.env
+    env = @dispatch.env()
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
@@ -84,7 +84,7 @@ class Gocov
     output = ''
     proc.on 'error', (error) =>
       return unless error?
-      console.log @name + ': error launching command [go] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
+      console.log @name + ': error launching command [go] – ' + error  + ' – current PATH: [' + env.PATH + ']'
     proc.stderr.on 'data', (data) => console.log 'go test: ' + data if data?
     proc.stdout.on 'data', (data) =>
       output += data if data?

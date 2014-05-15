@@ -7,6 +7,7 @@ Gobuild = require './gobuild'
 Gocov = require './gocov'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
+{$} = require 'atom'
 
 module.exports =
 class Dispatch
@@ -172,8 +173,9 @@ class Dispatch
     @messagepanel.attach()
 
   buildGoPath: ->
+    env = @env()
     gopath = ''
-    gopathEnv = process.env.GOPATH
+    gopathEnv = env.GOPATH
     gopathConfig = atom.config.get('go-plus.goPath')
     environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')
     environmentOverridesConfig ?= true
@@ -188,14 +190,15 @@ class Dispatch
     return @replaceTokensInPath(goroot, true)
 
   replaceTokensInPath: (path, skipGoTokens) ->
+    env = @env()
     return '' unless path?
     unless skipGoTokens or path.toUpperCase().indexOf('$GOPATH') is -1
       path = @replaceGoPathToken(path)
     unless path.indexOf('~') is -1
-      home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
+      home = env.HOME || env.HOMEPATH || env.USERPROFILE
       path = path.replace(/~/i, home)
     unless path.toUpperCase().indexOf('$HOME') is -1
-      home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
+      home = env.HOME || env.HOMEPATH || env.USERPROFILE
       path = path.replace(/\$HOME/i, home)
     unless skipGoTokens or path.toUpperCase().indexOf('$GOROOT') is -1
       goroot = @buildGoRoot()
@@ -217,3 +220,6 @@ class Dispatch
     return [] unless arg? and arg.length > 0
     arr = arg.split(/[\s]+/)
     arr = _.filter arr, (item) -> return item? and item.length > 0 and item isnt ''
+  env: ->
+    envCopy = $.extend(true, {}, process.env)
+    envCopy

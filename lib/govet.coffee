@@ -46,7 +46,7 @@ class Govet
     proc.on 'error', (error) =>
       return unless error?
       errored = true
-      console.log @name + ': error launching ' + @name + ' command [' + cmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
+      console.log @name + ': error launching ' + @name + ' command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
       messages = []
       message = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
       messages.push message

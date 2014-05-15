@@ -35,7 +35,6 @@ class Golint
     unless buffer?
       @emit @name + '-complete', editorView, saving
       return
-    gopath = @dispatch.buildGoPath()
     args = [buffer.getPath()]
     configArgs = @dispatch.splitToArray(atom.config.get('go-plus.golintArgs'))
     args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
@@ -46,9 +45,9 @@ class Golint
     proc.on 'error', (error) =>
       return unless error?
       errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + process.env.PATH + ']'
+      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
       messages = []
-      message = line: false, column: false, type: 'error', msg: 'Golint Executable Not Found @ ' + cmd + ' ($GOPATH: ' + gopath + ')'
+      message = line: false, column: false, type: 'error', msg: 'Golint Executable Not Found @ ' + cmd + ' ($GOPATH: ' + @dispatch.buildGoPath() + ')'
       messages.push message
       @emit @name + '-messages', editorView, messages
       @emit @name + '-complete', editorView, saving
