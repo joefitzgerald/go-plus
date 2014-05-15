@@ -38,7 +38,7 @@ class Gopath
           type: 'warning'
       messages.push message
 
-    if messages? and _.size(messages) is 0 and not fs.existsSync(gopath)
+    if messages? and _.size(messages) is 0 and gopath.indexOf(':') is -1 and not fs.existsSync(gopath)
       message =
           line: false
           column: false
@@ -46,7 +46,7 @@ class Gopath
           type: 'warning'
       messages.push message
 
-    if messages? and _.size(messages) is 0 and not fs.existsSync(path.join(gopath, 'src'))
+    if messages? and _.size(messages) is 0 and gopath.indexOf(':') is -1 and not fs.existsSync(path.join(gopath, 'src'))
       message =
           line: false
           column: false
