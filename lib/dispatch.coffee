@@ -83,10 +83,13 @@ class Dispatch
     @on 'dispatch-complete', (editorView) =>
       @updatePane(editorView, @messages)
       @updateGutter(editorView, @messages)
+      @dispatching = false
+      @emit 'display-complete'
+
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     atom.workspaceView.on 'pane-container:active-pane-item-changed', =>
-      @resetPanel()
-      @messagepanel.close()
+        @resetPanel()
+        @messagepanel.close()
 
   collectMessages: (messages) ->
     @messages = _.union(@messages, messages)
@@ -107,7 +110,10 @@ class Dispatch
     editor = editorView.getEditor()
     buffer = editor.getBuffer()
     buffer.on 'changed', => @handleBufferChanged(editorView)
-    buffer.on 'saved', => @handleBufferSave(editorView, true)
+    buffer.on 'saved', =>
+      return unless not @dispatching
+      @dispatching = true
+      @handleBufferSave(editorView, true)
     editor.on 'destroyed', => buffer.off 'saved'
 
   handleBufferSave: (editorView, saving) ->
