@@ -38,19 +38,22 @@ class Gopath
           type: 'warning'
       messages.push message
 
-    if messages? and _.size(messages) is 0 and gopath.indexOf(':') is -1 and not fs.existsSync(gopath)
+    gopathelem = gopath
+    gopathelem = gopath.split(':')[0] if gopath.indexOf(':') isnt -1
+
+    if messages? and _.size(messages) is 0 and not fs.existsSync(gopathelem)
       message =
           line: false
           column: false
-          msg: 'Warning: GOPATH [' + gopath + '] does not exist'
+          msg: 'Warning: GOPATH [' + gopathelem + '] does not exist'
           type: 'warning'
       messages.push message
 
-    if messages? and _.size(messages) is 0 and gopath.indexOf(':') is -1 and not fs.existsSync(path.join(gopath, 'src'))
+    if messages? and _.size(messages) is 0 and not fs.existsSync(path.join(gopathelem, 'src'))
       message =
           line: false
           column: false
-          msg: 'Warning: GOPATH [' + gopath + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
+          msg: 'Warning: GOPATH [' + gopathelem + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
           type: 'warning'
       messages.push message
 

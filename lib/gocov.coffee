@@ -52,7 +52,7 @@ class Gocov
   createCoverageFile: =>
     @removeCoverageFile()
     tempDir = temp.mkdirSync()
-    @coverageFile = tempDir + "/coverage.out"
+    @coverageFile = path.join(tempDir, 'coverage.out')
 
   emitCoverageIndicator: =>
     editorView = atom.workspaceView.getActiveView()

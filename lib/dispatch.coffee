@@ -8,6 +8,7 @@ Gocov = require './gocov'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
 {$} = require 'atom'
+path = require 'path'
 
 module.exports =
 class Dispatch
@@ -195,29 +196,31 @@ class Dispatch
     goroot = '/usr/local/go' unless goroot? and goroot isnt ''
     return @replaceTokensInPath(goroot, true)
 
-  replaceTokensInPath: (path, skipGoTokens) ->
+  replaceTokensInPath: (p, skipGoTokens) ->
     env = @env()
-    return '' unless path?
-    unless skipGoTokens or path.toUpperCase().indexOf('$GOPATH') is -1
-      path = @replaceGoPathToken(path)
-    unless path.indexOf('~') is -1
+    return '' unless p?
+    unless skipGoTokens or p.toUpperCase().indexOf('$GOPATH') is -1
+      p = @replaceGoPathToken(p)
+    unless p.indexOf('~') is -1
       home = env.HOME || env.HOMEPATH || env.USERPROFILE
-      path = path.replace(/~/i, home)
-    unless path.toUpperCase().indexOf('$HOME') is -1
+      p = p.replace(/~/i, home)
+    unless p.toUpperCase().indexOf('$HOME') is -1
       home = env.HOME || env.HOMEPATH || env.USERPROFILE
-      path = path.replace(/\$HOME/i, home)
-    unless skipGoTokens or path.toUpperCase().indexOf('$GOROOT') is -1
+      p = p.replace(/\$HOME/i, home)
+    unless skipGoTokens or p.toUpperCase().indexOf('$GOROOT') is -1
       goroot = @buildGoRoot()
-      path = path.replace(/\$GOROOT/i, goroot) if goroot? and goroot isnt ''
-    return path
+      p = p.replace(/\$GOROOT/i, goroot) if goroot? and goroot isnt ''
+    return path.normalize(p) unless p.trim() is ''
+    return p
 
-  replaceGoPathToken: (path) ->
+  replaceGoPathToken: (p) ->
     gopath = @buildGoPath()
-    return path unless gopath? and gopath isnt ''
-    return path.replace(/^\$GOPATH\//i, gopath.replace(/^\s+|\s+$/g, "") + '/') if gopath.indexOf(':') is -1
+    return p unless gopath? and gopath isnt ''
+    return p.replace(/^\$GOPATH\//i, gopath.replace(/^\s+|\s+$/g, "") + '/') if gopath.indexOf(':') is -1
     gopaths = gopath.split(':')
-    return path.replace(/^\$GOPATH\//i, gopaths[0].replace(/^\s+|\s+$/g, "") + '/') if gopaths? and _.size(gopaths) > 0 and gopaths[0]? and gopaths[0] isnt ''
-    return path
+    return p.replace(/^\$GOPATH\//i, gopaths[0].replace(/^\s+|\s+$/g, "") + '/') if gopaths? and _.size(gopaths) > 0 and gopaths[0]? and gopaths[0] isnt ''
+    return path.normalize(p) unless p.trim() is ''
+    return p
 
   isValidEditorView: (editorView) ->
     editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'

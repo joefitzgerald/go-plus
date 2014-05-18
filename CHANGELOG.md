@@ -1,3 +1,12 @@
+## v1.1.2 (May 15th, 2014)
+
+* :lipstick: Use path.normalize wherever possible to make Windows paths kinda sorta work (#29)
+
+## v1.1.1 (May 15th, 2014)
+
+* :dog: Ensure that holding ⌘-S doesn't cause weirdness (fixes #28)
+* :bug: Ensure GOPATH warnings don't trigger for multi-element GOPATH (fixes #30)
+
 ## v1.1.0 (May 11th, 2014)
 
 * :new: Test Coverage using `go test -coverprofile` via @rubyist (fixes #25, #27)
