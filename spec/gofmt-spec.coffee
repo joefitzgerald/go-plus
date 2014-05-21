@@ -37,7 +37,7 @@ describe "format", ->
       done = false
       runs ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 0
@@ -51,7 +51,7 @@ describe "format", ->
     it "reformats the file after multiple saves", ->
       done = false
       displayDone = false
-      
+
       runs ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>

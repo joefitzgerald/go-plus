@@ -50,7 +50,7 @@ describe "build", ->
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1
@@ -70,7 +70,7 @@ describe "build", ->
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\t42\n\tt.Error(\"Example Test\")\n}")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\t42\n\tt.Error(\"Example Test\")\n}"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1
@@ -126,7 +126,7 @@ describe "build", ->
         secondBuffer.save()
         thirdBuffer.save()
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe "package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 0

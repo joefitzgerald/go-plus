@@ -5,6 +5,7 @@ Golint = require './golint'
 Gopath = require './gopath'
 Gobuild = require './gobuild'
 Gocov = require './gocov'
+GoExecutable = require './goexecutable'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
 {$} = require 'atom'
@@ -22,12 +23,15 @@ class Dispatch
     @collectionqueue = []
     @messages = []
 
+    @processEnv = process.env
+
     @gofmt = new Gofmt(this)
     @govet = new Govet(this)
     @golint = new Golint(this)
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocov = new Gocov(this)
+    @goexecutable = new GoExecutable(this)
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
 
     # Pipeline For Processing Buffer
@@ -86,6 +90,8 @@ class Dispatch
       @updateGutter(editorView, @messages)
       @dispatching = false
       @emit 'display-complete'
+
+    @goexecutable.detect()
 
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     atom.workspaceView.on 'pane-container:active-pane-item-changed', =>
@@ -177,7 +183,7 @@ class Dispatch
       else
         # PlainMessageView
         @messagepanel.add new PlainMessageView message: message.msg, className: className
-    @messagepanel.attach()
+    @messagepanel.attach() if atom?.workspaceView?
 
   buildGoPath: ->
     env = @env()
@@ -230,5 +236,5 @@ class Dispatch
     arr = arg.split(/[\s]+/)
     arr = _.filter arr, (item) -> return item? and item.length > 0 and item isnt ''
   env: ->
-    envCopy = $.extend(true, {}, process.env)
+    envCopy = $.extend(true, {}, @processEnv)
     envCopy

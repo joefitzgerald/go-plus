@@ -20,21 +20,25 @@ class GocovAreaView extends View
       @processCoverageFile()
 
   destroy: =>
-    found = false
-    for editor in atom.workspaceView.getEditorViews()
-      found = true if editor.id is @editorView.id
-    return if found
-    atom.workspaceView.off 'pane:item-removed', @destroy
+    return if @editorViewFound()
+    atom.workspaceView.off 'pane:item-removed', @destroy if atom?.workspaceView?
     @unsubscribe()
     @remove()
     @detach()
 
+  editorViewFound: ->
+    found = false
+    return unless atom?.workspaceView?
+    for editor in atom.workspaceView.getEditorViews()
+      found = true if editor.id is @editorView.id
+    return found
+
   getEditorView: ->
-    activeView = atom.workspaceView.getActiveView()
+    activeView = atom?.workspaceView?.getActiveView()
     if activeView instanceof EditorView then activeView else null
 
   getActiveEditor: ->
-    atom.workspace.getActiveEditor()
+    atom?.workspace?.getActiveEditor()
 
   processCoverageFile: =>
     return unless @gocov.isValidEditorView(@editorView)

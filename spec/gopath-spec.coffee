@@ -46,7 +46,7 @@ describe "gopath", ->
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1
@@ -68,7 +68,7 @@ describe "gopath", ->
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1
@@ -111,7 +111,7 @@ describe "gopath", ->
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1
