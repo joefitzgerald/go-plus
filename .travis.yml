@@ -8,6 +8,7 @@ notifications:
 before_script:
   - pushd ./../../
   - bash < <(curl -s -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  - source /Users/travis/.gvm/scripts/gvm
   - gvm get
   - gvm update && source $HOME/.gvm/scripts/gvm
   - gvm install go1.2.1
