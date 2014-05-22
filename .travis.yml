@@ -6,6 +6,7 @@ notifications:
     on_failure: change
 
 before_script:
+  - pushd ./../../
   - bash < <(curl -s -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
   - gvm get
   - gvm update && source $HOME/.gvm/scripts/gvm
@@ -15,6 +16,7 @@ before_script:
   - go get code.google.com/p/go.tools/cmd/goimports
   - go get code.google.com/p/go.tools/cmd/vet
   - go get code.google.com/p/go.tools/cmd/godoc
+  - popd
 
 script:
   - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
