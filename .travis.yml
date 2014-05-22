@@ -5,9 +5,15 @@ notifications:
     on_success: never
     on_failure: change
 
-before_script: ./travis-bootstrap.sh
+before_script:
+  - gvm get
+  - gvm update && source $HOME/.gvm/scripts/gvm
+  - gvm install go1.2.1
+  - gvm use go1.2.1
+  - go get github.com/golang/lint/golint
+  - go get code.google.com/p/go.tools/cmd/goimports
+  - go get code.google.com/p/go.tools/cmd/vet
+  - go get code.google.com/p/go.tools/cmd/godoc
 
 script:
-  - export GOROOT=`pwd`/.go/go
-  - export GOPATH=`pwd`/.go/gopath
   - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
