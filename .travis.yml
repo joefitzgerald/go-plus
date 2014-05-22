@@ -6,14 +6,10 @@ notifications:
     on_failure: change
 
 before_script:
-  - pushd ./../../
-  - bash < <(curl -s -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-  - source $HOME/.gvm/scripts/gvm
-  - gvm get
-  - gvm install go1.2.1
-  - gvm update && source $HOME/.gvm/scripts/gvm
-  - gvm install go1.2.1
-  - gvm use go1.2.1
+  - pushd $HOME
+  - mkdir -p go
+  - export GOPATH=`$HOME/go`
+  - brew install go
   - go get github.com/golang/lint/golint
   - go get code.google.com/p/go.tools/cmd/goimports
   - go get code.google.com/p/go.tools/cmd/vet
