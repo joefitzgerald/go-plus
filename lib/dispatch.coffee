@@ -5,6 +5,7 @@ Golint = require './golint'
 Gopath = require './gopath'
 Gobuild = require './gobuild'
 Gocov = require './gocov'
+Executor = require './executor'
 GoExecutable = require './goexecutable'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
@@ -24,6 +25,7 @@ class Dispatch
     @messages = []
 
     @processEnv = process.env
+    @executor = new Executor()
 
     @gofmt = new Gofmt(this)
     @govet = new Govet(this)
@@ -31,7 +33,7 @@ class Dispatch
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocov = new Gocov(this)
-    @goexecutable = new GoExecutable(this)
+    @goexecutable = new GoExecutable()
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
 
     # Pipeline For Processing Buffer
@@ -91,7 +93,7 @@ class Dispatch
       @dispatching = false
       @emit 'display-complete'
 
-    @goexecutable.detect()
+    #@goexecutable.detect()
 
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     atom.workspaceView.on 'pane-container:active-pane-item-changed', =>

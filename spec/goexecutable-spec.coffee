@@ -9,7 +9,7 @@ describe "go executable", ->
   [goexecutable] = []
 
   beforeEach ->
-    goexecutable = new GoExecutable()
+    goexecutable = new GoExecutable(process.env)
 
   describe "when user has the go executable in their path", ->
     beforeEach ->
@@ -31,5 +31,7 @@ describe "go executable", ->
         expect(goexecutable).toBeDefined
         expect(go).toBeDefined
         expect(go).toBeTruthy
-        #expect(go).toBe
-        expect(go.version).toBe 'go1.2.1'
+        expect(go.name.substring(0,2)).toBe 'go'
+        expect(go.version.substring(0,2)).toBe 'go'
+        expect(go.arch).toBe 'amd64'
+        expect(go.executable.substring(go.executable.length - 2, go.executable.length)).toBe 'go'

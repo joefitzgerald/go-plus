@@ -4,7 +4,7 @@ fs = require 'fs-plus'
 os = require 'os'
 Go = require './go'
 _ = require 'underscore-plus'
-{exec} = require 'child_process'
+Executor = require './executor'
 {Subscriber, Emitter} = require 'emissary'
 
 module.exports =
@@ -12,9 +12,10 @@ class GoExecutable
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: ->
+  constructor: (@env) ->
     @gos = []
     @currentgo = ''
+    @executor = new Executor()
 
   destroy: ->
     @unsubscribe()
@@ -30,39 +31,48 @@ class GoExecutable
     target = this
     switch os.platform()
       when 'darwin', 'freebsd', 'linux', 'sunos'
+        # PATH
+        if @env.PATH?
+          elements = @env.PATH.split(':')
+          for element in elements
+            executables.push path.normalize(path.join(element, 'go'))
+
         # Binary Distribution
         executables.push path.normalize(path.join('/usr', 'local', 'go', 'bin', 'go'))
         # Homebrew
         executables.push path.normalize(path.join('/usr', 'local', 'bin', 'go', ))
+        # Non-Existent
+        executables.push path.normalize(path.join('/usr', 'nonexistent', 'bin', 'go', ))
       when 'win32'
         executables.push path.normalize(path.join('C:','go', 'bin', 'go'))
 
     # De-duplicate entries
     executables = _.uniq(executables)
-    async.filter executables, fs.exists, (results) ->
+    async.filter executables, fs.exists, (results) =>
       executables = results
-    async.map executables, @introspect, (err, results) =>
-      console.log 'Error mapping go:' + err if err?
-      @gos = results
-      @emit('detect-complete', @current())
+      async.map executables, @introspect, (err, results) =>
+        console.log 'Error mapping go: ' + err if err?
+        @gos = results
+        @emit('detect-complete', @current())
 
   introspect: (executable, outercallback) =>
     absoluteExecutable = path.resolve(executable)
 
     go = new Go(absoluteExecutable)
     async.series([
-      (callback) ->
-        cmd = absoluteExecutable + ' version'
-        exec cmd, (err, stdout, stderr) =>
+      (callback) =>
+        done = (err, stdout, stderr) =>
           unless stderr? and stderr isnt ''
             if stdout? and stdout isnt ''
               components = stdout.split(' ')
               go.name = components[2] + ' ' + components[3]
               go.version = components[2]
+          console.log 'Error running go version: ' + err if err?
+          console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(err)
-      (callback) ->
-        cmd = absoluteExecutable + ' env'
-        exec cmd, (err, stdout, stderr) =>
+        @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, 'version')
+      (callback) =>
+        done = (err, stdout, stderr) =>
           unless stderr? and stderr isnt ''
             if stdout? and stdout isnt ''
               items = stdout.split("\n")
@@ -78,7 +88,10 @@ class GoExecutable
                     when 'GOPATH' then go.gopath = value
                     when 'GOROOT' then go.goroot = value
                     when 'GOTOOLDIR' then go.gotooldir = value
+          console.log 'Error running go env: ' + err if err?
+          console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(err)
+        @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, 'env')
     ], (err, results) =>
       outercallback(err, go)
     )
