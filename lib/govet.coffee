@@ -39,7 +39,8 @@ class Govet
     configArgs = @dispatch.splitToArray(atom.config.get('go-plus.vetArgs'))
     args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
     args = args.concat([buffer.getPath()])
-    cmd = atom.config.get('go-plus.goExecutablePath')
+    go = @dispatch.goexecutable.current()
+    cmd = go.executable
     cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args)
