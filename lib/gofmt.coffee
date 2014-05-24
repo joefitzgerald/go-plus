@@ -40,7 +40,8 @@ class Gofmt
     configArgs = @dispatch.splitToArray(atom.config.get('go-plus.gofmtArgs'))
     args = args.concat(configArgs) if configArgs? and _.size(configArgs) > 0
     args = args.concat([buffer.getPath()])
-    cmd = atom.config.get('go-plus.gofmtPath')
+    go = @dispatch.goexecutable.current()
+    cmd = go.gofmt()
     cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args)

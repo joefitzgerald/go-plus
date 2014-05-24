@@ -1,3 +1,6 @@
+fs = require 'fs-plus'
+path = require 'path'
+
 module.exports =
 class Go
   name: '' # Name of this go
