@@ -3,16 +3,15 @@ Dispatch = require './dispatch'
 module.exports =
   configDefaults:
     environmentOverridesConfiguration: true
-    syntaxCheckOnSave: false
+    syntaxCheckOnSave: true
     formatOnSave: true
+    formatWithGoImports: true
+    getMissingTools: true
     gofmtArgs: "-w"
     vetOnSave: true
     vetArgs: ""
-    lintOnSave: false
+    lintOnSave: true
     goPath: ""
-    goExecutablePath: "/usr/local/go/bin/go"
-    gofmtPath: "/usr/local/go/bin/gofmt"
-    golintPath: "$GOPATH/bin/golint"
     golintArgs: ""
     runCoverageOnSave: false
     showPanel: true
