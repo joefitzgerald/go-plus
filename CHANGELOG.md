@@ -1,3 +1,7 @@
+## v1.1.3 (May 24th, 2014)
+
+* :bug: Fix duplicate message issue
+
 ## v1.1.2 (May 15th, 2014)
 
 * :lipstick: Use path.normalize wherever possible to make Windows paths kinda sorta work (#29)

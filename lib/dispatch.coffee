@@ -75,7 +75,6 @@ class Dispatch
       @collectMessages(messages)
     @gobuild.on 'syntaxcheck-messages', (editorView, messages) =>
       @collectMessages(messages)
-      @emit 'dispatch-complete', editorView
 
     # Reset State If Requested
     @gofmt.on 'reset', (editorView) =>
