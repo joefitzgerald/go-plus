@@ -4,8 +4,8 @@ temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
 
-describe "CLI User", ->
-  [editor, buffer, filePath, dispatch] = []
+describe "User Guarantees", ->
+  [editor, dispatch, buffer, filePath, dispatch] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -23,6 +23,13 @@ describe "CLI User", ->
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
 
+    runs ->
+      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch.goexecutable.detect()
+
+    waitsFor ->
+      dispatch.ready is true
+
   describe "when user has the go executable in their path", ->
     beforeEach ->
       dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
@@ -36,4 +43,3 @@ describe "CLI User", ->
       atom.config.set("go-plus.showPanel", true)
 
     it "determines the current go version", ->
-      

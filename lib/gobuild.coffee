@@ -11,9 +11,8 @@ class Gobuild
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: (dispatch) ->
+  constructor: (@dispatch) ->
     atom.workspaceView.command 'golang:gobuild', => @checkCurrentBuffer()
-    @dispatch = dispatch
     @name = 'syntaxcheck'
 
   destroy: ->
@@ -63,7 +62,8 @@ class Gobuild
       output = '.go-plus-syntax-check'
       outputPath = path.join(@tempDir, output)
       args = ['build', '-o', outputPath, '.']
-    cmd = atom.config.get('go-plus.goExecutablePath')
+    go = @dispatch.goexecutable.current()
+    cmd = go.executable
     cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args, {cwd: cwd, env: env})

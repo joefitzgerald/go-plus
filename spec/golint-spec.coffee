@@ -5,7 +5,7 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 
 describe "lint", ->
-  [editor, buffer, filePath] = []
+  [editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -23,6 +23,13 @@ describe "lint", ->
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
 
+    runs ->
+      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch.goexecutable.detect()
+
+    waitsFor ->
+      dispatch.ready is true
+
   describe "when lint on save is enabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
@@ -39,7 +46,6 @@ describe "lint", ->
       done = false
       runs ->
         buffer.setText("package main\n\nimport \"fmt\"\n\ntype T int\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\ntype T int\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n"
           expect(dispatch.messages?).toBe true

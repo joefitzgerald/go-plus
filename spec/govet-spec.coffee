@@ -5,7 +5,7 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 
 describe "vet", ->
-  [editor, buffer, filePath] = []
+  [editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -23,6 +23,13 @@ describe "vet", ->
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
 
+    runs ->
+      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch.goexecutable.detect()
+
+    waitsFor ->
+      dispatch.ready is true
+
   describe "when vet on save is enabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
@@ -37,7 +44,6 @@ describe "vet", ->
       done = false
       runs ->
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n"
           expect(dispatch.messages?).toBe true
@@ -66,7 +72,6 @@ describe "vet", ->
       done = false
       runs ->
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main() {\n\treturn\n\tfmt.Println(\"Unreachable...\")\n}\n"
           expect(dispatch.messages?).toBe true

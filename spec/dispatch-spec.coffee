@@ -5,7 +5,7 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 
 describe "dispatch", ->
-  [editor, buffer, filePath, dispatch] = []
+  [editor, dispatch, buffer, filePath, dispatch] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -23,9 +23,15 @@ describe "dispatch", ->
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
 
+    runs ->
+      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch.goexecutable.detect()
+
+    waitsFor ->
+      dispatch.ready is true
+
   describe "when gopath has multiple values and gofmtPath has a $GOPATH token", ->
     beforeEach ->
-      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       atom.config.set("go-plus.formatOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
@@ -42,7 +48,6 @@ describe "dispatch", ->
 
   describe "when gopath has a single value and gofmtPath has a $GOPATH token", ->
     beforeEach ->
-      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       atom.config.set("go-plus.formatOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)

@@ -20,12 +20,18 @@ class Dispatch
   constructor: ->
     # Manage Save Pipeline
     @dispatching = false
+    @ready = false
     @actionqueue = []
     @collectionqueue = []
     @messages = []
 
     @processEnv = process.env
     @executor = new Executor()
+    @goexecutable = new GoExecutable(@processEnv)
+    @goexecutable.on 'detect-complete', =>
+      @ready = true
+      @emit 'ready'
+    @goexecutable.detect()
 
     @gofmt = new Gofmt(this)
     @govet = new Govet(this)
@@ -33,7 +39,6 @@ class Dispatch
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocov = new Gocov(this)
-    @goexecutable = new GoExecutable()
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
 
     # Pipeline For Processing Buffer

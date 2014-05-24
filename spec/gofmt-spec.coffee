@@ -5,7 +5,7 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 
 describe "format", ->
-  [editor, buffer, filePath] = []
+  [editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -23,6 +23,13 @@ describe "format", ->
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
 
+    runs ->
+      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch.goexecutable.detect()
+
+    waitsFor ->
+      dispatch.ready is true
+
   describe "when format on save is enabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", true)
@@ -36,7 +43,6 @@ describe "format", ->
     it "reformats the file", ->
       done = false
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
           expect(dispatch.messages?).toBe true
@@ -53,7 +59,6 @@ describe "format", ->
       displayDone = false
 
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
           expect(dispatch.messages?).toBe true
@@ -72,7 +77,6 @@ describe "format", ->
 
       runs ->
         done = false
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
           expect(dispatch.messages?).toBe true
@@ -87,7 +91,6 @@ describe "format", ->
     it "collects errors when the input is invalid", ->
       done = false
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', (editorView) =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main(!)  {\n}\n"
           expect(dispatch.messages?).toBe true
@@ -115,7 +118,6 @@ describe "format", ->
     it "does not reformat the file", ->
       done = false
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main()  {\n}\n"
           expect(dispatch.messages?).toBe true

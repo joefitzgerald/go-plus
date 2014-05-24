@@ -5,7 +5,7 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 
 describe "build", ->
-  [editor, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath] = []
+  [editor, dispatch, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -20,6 +20,7 @@ describe "build", ->
     process.env['GOPATH']=oldGoPath
 
   describe "when syntax check on save is enabled", ->
+    ready = false
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
@@ -42,6 +43,13 @@ describe "build", ->
 
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
+
+      runs ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.goexecutable.detect()
+
+      waitsFor ->
+        dispatch.ready is true
 
     it "displays errors for unused code", ->
       done = false
@@ -112,6 +120,13 @@ describe "build", ->
 
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
+
+      runs ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.goexecutable.detect()
+
+      waitsFor ->
+        dispatch.ready is true
 
     it "does not display errors for dependent functions spread across multiple files in the same package", ->
       done = false

@@ -4,7 +4,7 @@ temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 
 describe "Go Plus", ->
-  [editor, buffer, filePath] = []
+  [editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -21,6 +21,13 @@ describe "Go Plus", ->
 
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
+
+    runs ->
+      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch.goexecutable.detect()
+
+    waitsFor ->
+      dispatch.ready is true
 
   describe "when the editor is destroyed", ->
     beforeEach ->

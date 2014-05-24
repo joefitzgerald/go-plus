@@ -5,7 +5,7 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 
 describe "gopath", ->
-  [editor, directory, filePath, oldGoPath] = []
+  [editor, dispatch, directory, filePath, oldGoPath] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -39,13 +39,19 @@ describe "gopath", ->
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
 
+      runs ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.goexecutable.detect()
+
+      waitsFor ->
+        dispatch.ready is true
+
     it "displays a warning for a GOPATH without 'src' directory", ->
       done = false
       runs ->
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
@@ -67,7 +73,6 @@ describe "gopath", ->
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
@@ -103,6 +108,13 @@ describe "gopath", ->
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
 
+      runs ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.goexecutable.detect()
+
+      waitsFor ->
+        dispatch.ready is true
+
     it "displays warnings for an unset GOPATH", ->
       done = false
       runs ->
@@ -110,7 +122,6 @@ describe "gopath", ->
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
