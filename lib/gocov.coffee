@@ -1,5 +1,6 @@
 {spawn} = require 'child_process'
 temp = require 'temp'
+path = require 'path'
 fs = require 'fs-plus'
 {Subscriber, Emitter} = require 'emissary'
 GocovAreaView = require './gocov/gocov-area-view'
