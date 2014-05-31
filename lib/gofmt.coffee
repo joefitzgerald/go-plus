@@ -35,14 +35,12 @@ class Gofmt
     unless buffer?
       @emit @name + '-complete', editorView, saving
       return
-    gopath = @dispatch.buildGoPath()
     args = ['-w']
-    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.gofmtArgs'))
+    configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gofmtArgs'))
     args = args.concat(configArgs) if configArgs? and _.size(configArgs) > 0
     args = args.concat([buffer.getPath()])
     go = @dispatch.goexecutable.current()
     cmd = go.gofmt()
-    cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>
@@ -50,7 +48,7 @@ class Gofmt
       errored = true
       console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
       messages = []
-      message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + gopath + ')'
+      message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + go.buildgopath() + ')'
       messages.push message
       @emit @name + '-messages', editorView, messages
       @emit @name + '-complete', editorView, saving

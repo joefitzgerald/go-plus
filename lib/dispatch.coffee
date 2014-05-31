@@ -7,6 +7,7 @@ Gobuild = require './gobuild'
 Gocov = require './gocov'
 Executor = require './executor'
 GoExecutable = require './goexecutable'
+SplicerSplitter = require './util/splicersplitter'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
 {$} = require 'atom'
@@ -27,6 +28,7 @@ class Dispatch
 
     @processEnv = process.env
     @executor = new Executor()
+    @splicersplitter = new SplicerSplitter()
     @goexecutable = new GoExecutable(@processEnv)
     @goexecutable.on 'detect-complete', =>
       @ready = true
@@ -96,8 +98,6 @@ class Dispatch
       @updateGutter(editorView, @messages)
       @dispatching = false
       @emit 'display-complete'
-
-    #@goexecutable.detect()
 
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     atom.workspaceView.on 'pane-container:active-pane-item-changed', =>
@@ -191,56 +191,9 @@ class Dispatch
         @messagepanel.add new PlainMessageView message: message.msg, className: className
     @messagepanel.attach() if atom?.workspaceView?
 
-  buildGoPath: ->
-    env = @env()
-    gopath = ''
-    gopathEnv = env.GOPATH
-    gopathConfig = atom.config.get('go-plus.goPath')
-    environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')
-    environmentOverridesConfig ?= true
-    gopath = gopathEnv if gopathEnv? and gopathEnv isnt ''
-    gopath = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig isnt ''
-    gopath = gopathConfig if gopath is ''
-    return @replaceTokensInPath(gopath, true)
-
-  buildGoRoot: ->
-    goroot = process.env.GOROOT
-    goroot = '/usr/local/go' unless goroot? and goroot isnt ''
-    return @replaceTokensInPath(goroot, true)
-
-  replaceTokensInPath: (p, skipGoTokens) ->
-    env = @env()
-    return '' unless p?
-    unless skipGoTokens or p.toUpperCase().indexOf('$GOPATH') is -1
-      p = @replaceGoPathToken(p)
-    unless p.indexOf('~') is -1
-      home = env.HOME || env.HOMEPATH || env.USERPROFILE
-      p = p.replace(/~/i, home)
-    unless p.toUpperCase().indexOf('$HOME') is -1
-      home = env.HOME || env.HOMEPATH || env.USERPROFILE
-      p = p.replace(/\$HOME/i, home)
-    unless skipGoTokens or p.toUpperCase().indexOf('$GOROOT') is -1
-      goroot = @buildGoRoot()
-      p = p.replace(/\$GOROOT/i, goroot) if goroot? and goroot isnt ''
-    return path.normalize(p) unless p.trim() is ''
-    return p
-
-  replaceGoPathToken: (p) ->
-    gopath = @buildGoPath()
-    return p unless gopath? and gopath isnt ''
-    return p.replace(/^\$GOPATH\//i, gopath.replace(/^\s+|\s+$/g, "") + '/') if gopath.indexOf(':') is -1
-    gopaths = gopath.split(':')
-    return p.replace(/^\$GOPATH\//i, gopaths[0].replace(/^\s+|\s+$/g, "") + '/') if gopaths? and _.size(gopaths) > 0 and gopaths[0]? and gopaths[0] isnt ''
-    return path.normalize(p) unless p.trim() is ''
-    return p
-
   isValidEditorView: (editorView) ->
     editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'
 
-  splitToArray: (arg) ->
-    return [] unless arg? and arg.length > 0
-    arr = arg.split(/[\s]+/)
-    arr = _.filter arr, (item) -> return item? and item.length > 0 and item isnt ''
   env: ->
     envCopy = $.extend(true, {}, @processEnv)
     envCopy

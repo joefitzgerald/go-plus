@@ -36,10 +36,9 @@ class Golint
       @emit @name + '-complete', editorView, saving
       return
     args = [buffer.getPath()]
-    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.golintArgs'))
+    configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.golintArgs'))
     args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
     cmd = atom.config.get('go-plus.golintPath')
-    cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>

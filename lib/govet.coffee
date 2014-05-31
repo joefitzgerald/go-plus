@@ -36,7 +36,7 @@ class Govet
       @emit @name + '-complete', editorView, saving
       return
     args = [@name]
-    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.vetArgs'))
+    configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
     args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
     args = args.concat([buffer.getPath()])
     go = @dispatch.goexecutable.current()

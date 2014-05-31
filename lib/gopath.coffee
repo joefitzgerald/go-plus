@@ -28,7 +28,7 @@ class Gopath
       @emit @name + '-complete', editorView, saving
       return
 
-    gopath = @dispatch.buildGoPath()
+    gopath = @dispatch.goexecutable.current().buildgopath()
     messages = []
     unless gopath? and gopath isnt ''
       message =

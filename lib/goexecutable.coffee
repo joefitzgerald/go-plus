@@ -5,6 +5,7 @@ os = require 'os'
 Go = require './go'
 _ = require 'underscore-plus'
 Executor = require './executor'
+PathExpander = require './util/pathexpander'
 {Subscriber, Emitter} = require 'emissary'
 
 module.exports =
@@ -14,8 +15,14 @@ class GoExecutable
 
   constructor: (@env) ->
     @gos = []
+    @gofmts = []
+    @govets = []
+    @goimportses = []
+    @golints = []
+    @gocovers = []
     @currentgo = ''
     @executor = new Executor()
+    @pathexpander = new PathExpander(@env)
 
   destroy: ->
     @unsubscribe()
@@ -23,6 +30,11 @@ class GoExecutable
 
   reset: ->
     @gos = []
+    @gofmts = []
+    @govets = []
+    @goimportses = []
+    @golints = []
+    @gocovers = []
     @currentgo = ''
     @emit 'reset'
 
@@ -58,21 +70,22 @@ class GoExecutable
   introspect: (executable, outercallback) =>
     absoluteExecutable = path.resolve(executable)
 
-    go = new Go(absoluteExecutable)
+    go = new Go(absoluteExecutable, @pathexpander)
     async.series([
       (callback) =>
-        done = (err, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) =>
           unless stderr? and stderr isnt ''
             if stdout? and stdout isnt ''
               components = stdout.split(' ')
               go.name = components[2] + ' ' + components[3]
               go.version = components[2]
+              go.env = @env
           console.log 'Error running go version: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
-          callback(err)
-        @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, 'version')
+          callback(null)
+        @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, ['version'])
       (callback) =>
-        done = (err, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) =>
           unless stderr? and stderr isnt ''
             if stdout? and stdout isnt ''
               items = stdout.split("\n")
@@ -90,8 +103,8 @@ class GoExecutable
                     when 'GOTOOLDIR' then go.gotooldir = value
           console.log 'Error running go env: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
-          callback(err)
-        @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, 'env')
+          callback(null)
+        @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, ['env'])
     ], (err, results) =>
       outercallback(err, go)
     )
@@ -99,6 +112,7 @@ class GoExecutable
   current: =>
     return @gos[0] if _.size(@gos) is 1
     for go in @gos
-      return go if go.name is @currentgo
+      console.log go.executable
+      return go if go.executable is @currentgo
 
     return @gos[0]

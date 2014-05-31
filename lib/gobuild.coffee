@@ -39,7 +39,9 @@ class Gobuild
     unless buffer?
       @emit @name + '-complete', editorView, saving
       return
-    gopath = @dispatch.buildGoPath()
+
+    go = @dispatch.goexecutable.current()
+    gopath = go.buildgopath()
     if not gopath? or gopath is ''
       @emit @name + '-complete', editorView, saving
       return
@@ -62,9 +64,7 @@ class Gobuild
       output = '.go-plus-syntax-check'
       outputPath = path.join(@tempDir, output)
       args = ['build', '-o', outputPath, '.']
-    go = @dispatch.goexecutable.current()
     cmd = go.executable
-    cmd = @dispatch.replaceTokensInPath(cmd, false)
     errored = false
     proc = spawn(cmd, args, {cwd: cwd, env: env})
     proc.on 'error', (error) =>
