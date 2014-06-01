@@ -36,6 +36,7 @@ class Gopath
           column: false
           msg: 'Warning: GOPATH is not set – either set the GOPATH environment variable or define the Go Path in go-plus package preferences'
           type: 'warning'
+          source: 'gopath'
       messages.push message
 
     gopathelem = gopath
@@ -47,6 +48,7 @@ class Gopath
           column: false
           msg: 'Warning: GOPATH [' + gopathelem + '] does not exist'
           type: 'warning'
+          source: 'gopath'
       messages.push message
 
     if messages? and _.size(messages) is 0 and not fs.existsSync(path.join(gopathelem, 'src'))
@@ -55,6 +57,7 @@ class Gopath
           column: false
           msg: 'Warning: GOPATH [' + gopathelem + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
           type: 'warning'
+          source: 'gopath'
       messages.push message
 
     if messages? and _.size(messages) > 0

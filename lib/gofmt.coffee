@@ -69,11 +69,13 @@ class Gofmt
           column: matchLine[4]
           msg: matchLine[5]
           type: 'error'
+          source: 'fmt'
         else
           line: matchLine[2]
           column: false
           msg: matchLine[5]
           type: 'error'
+          source: 'fmt'
       messages.push message
     loop
       match = pattern.exec(data)

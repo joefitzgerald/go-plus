@@ -70,11 +70,13 @@ class Govet
           column: matchLine[4]
           msg: matchLine[5]
           type: 'warning'
+          source: 'vet'
         else
           line: matchLine[2]
           column: false
           msg: matchLine[5]
           type: 'warning'
+          source: 'vet'
       messages.push message
     loop
       match = pattern.exec(data)

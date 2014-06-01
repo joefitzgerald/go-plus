@@ -33,6 +33,7 @@ describe "format", ->
   describe "when format on save is enabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", true)
+      atom.config.set("go-plus.syntaxCheckOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.environmentOverridesConfiguration", true)
@@ -94,6 +95,9 @@ describe "format", ->
         dispatch.once 'dispatch-complete', (editorView) =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main(!)  {\n}\n"
           expect(dispatch.messages?).toBe true
+          console.log 'testdebug'
+          for message in dispatch.messages
+            console.log message
           expect(_.size(dispatch.messages)).toBe 1
           expect(dispatch.messages[0].column).toBe "11"
           expect(dispatch.messages[0].line).toBe "3"

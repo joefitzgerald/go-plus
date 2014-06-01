@@ -94,7 +94,7 @@ class Gocov
     proc.on 'close', (code) =>
       if code isnt 0
         console.log 'gocov: [go test] exited with code [' + code + ']'
-        messages = [{line:false, col: false, msg:output, type:'error'}]
+        messages = [{line:false, col: false, msg:output, type:'error', source: 'gocov'}]
         @emit @name + '-messages', editorView, messages
       else
         @parser.setDataFile(tempFile)
