@@ -1,3 +1,7 @@
+## v1.1.4 (May 31st, 2014)
+
+* :bug: Fix issue preventing display of coverage (#34)
+
 ## v1.1.3 (May 24th, 2014)
 
 * :bug: Fix duplicate message issue
