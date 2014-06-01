@@ -8,6 +8,16 @@ class PathExpander
 
   expand: (p, gopath) ->
     return '' unless p? and p.trim() isnt ''
+    return @expandItem(p, gopath) if p.indexOf(':') is -1
+    paths = p.split(':')
+    result = ''
+    for pathItem in paths
+      pathItem = @expandItem(pathItem, gopath)
+      result = if result is '' then pathItem else result + ':' + pathItem
+    return result
+
+  expandItem: (p, gopath) ->
+    return '' unless p? and p.trim() isnt ''
     p = @replaceGoPathToken(p, gopath)
     switch os.platform()
       when 'darwin', 'freebsd', 'linux', 'sunos'
