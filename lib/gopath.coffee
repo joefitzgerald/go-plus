@@ -28,9 +28,9 @@ class Gopath
       @emit @name + '-complete', editorView, saving
       return
 
-    gopath = @dispatch.goexecutable.current().buildgopath()
+    gopaths = @dispatch.goexecutable.current().splitgopath()
     messages = []
-    unless gopath? and gopath isnt ''
+    unless gopaths? and _.size(gopaths) > 0
       message =
           line: false
           column: false
@@ -39,23 +39,21 @@ class Gopath
           source: 'gopath'
       messages.push message
 
-    gopathelem = gopath
-    gopathelem = gopath.split(':')[0] if gopath.indexOf(':') isnt -1
 
-    if messages? and _.size(messages) is 0 and not fs.existsSync(gopathelem)
+    if messages? and _.size(messages) is 0 and not fs.existsSync(gopaths[0])
       message =
           line: false
           column: false
-          msg: 'Warning: GOPATH [' + gopathelem + '] does not exist'
+          msg: 'Warning: GOPATH [' + gopaths[0] + '] does not exist'
           type: 'warning'
           source: 'gopath'
       messages.push message
 
-    if messages? and _.size(messages) is 0 and not fs.existsSync(path.join(gopathelem, 'src'))
+    if messages? and _.size(messages) is 0 and not fs.existsSync(path.join(gopaths[0], 'src'))
       message =
           line: false
           column: false
-          msg: 'Warning: GOPATH [' + gopathelem + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
+          msg: 'Warning: GOPATH [' + gopaths[0] + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
           type: 'warning'
           source: 'gopath'
       messages.push message

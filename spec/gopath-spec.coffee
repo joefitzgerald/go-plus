@@ -26,8 +26,6 @@ describe "gopath", ->
       atom.config.set("go-plus.goPath", directory)
       atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
       atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "wrongsrc", "github.com", "testuser", "example", "go-plus.go")
       fs.writeFileSync(filePath, '')
@@ -69,7 +67,7 @@ describe "gopath", ->
     it "displays a warning for a non-existent GOPATH", ->
       done = false
       runs ->
-        process.env['GOPATH']=path.join(directory, 'nonexistent')
+        dispatch.goexecutable.current().gopath=path.join(directory, 'nonexistent')
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
@@ -118,7 +116,7 @@ describe "gopath", ->
     it "displays warnings for an unset GOPATH", ->
       done = false
       runs ->
-        process.env['GOPATH']=''
+        dispatch.goexecutable.current().gopath=''
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")

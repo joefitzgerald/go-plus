@@ -35,13 +35,9 @@ class Govet
     unless buffer?
       @emit @name + '-complete', editorView, saving
       return
-    args = [@name]
-    configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
-    args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
+    args = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
     args = args.concat([buffer.getPath()])
-    go = @dispatch.goexecutable.current()
-    cmd = go.executable
-    cmd = @dispatch.replaceTokensInPath(cmd, false)
+    cmd = @dispatch.goexecutable.current().vet()
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>

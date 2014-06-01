@@ -1,5 +1,6 @@
 fs = require 'fs-plus'
 path = require 'path'
+_ = require 'underscore-plus'
 
 module.exports =
 class Go
@@ -40,7 +41,9 @@ class Go
     return @pathexpander.expand(result, '')
 
   splitgopath: ->
-    return @buildgopath()?.split(':')
+    result = @buildgopath()
+    return [] unless result? and result isnt ''
+    return result.split(':')
 
   gofmt: ->
     return false unless @goroot? and @goroot isnt ''
@@ -54,14 +57,31 @@ class Go
     return false unless fs.existsSync(result)
     return result
 
-  govet: ->
+  vet: ->
     return false unless @gotooldir? and @gotooldir isnt ''
     result = path.join(@gotooldir, 'vet')
     return false unless fs.existsSync(result)
     return result
 
-  gocover: ->
+  cover: ->
     return false unless @gotooldir? and @gotooldir isnt ''
     result = path.join(@gotooldir, 'cover')
     return false unless fs.existsSync(result)
     return result
+
+  goimports: ->
+    return @gopathBinItem('goimports')
+
+  golint: ->
+    return @gopathBinItem('golint')
+
+  gocov: ->
+    return @gopathBinItem('gocov')
+
+  gopathBinItem: (name) ->
+    gopaths = @splitgopath()
+    return false unless gopaths? and _.size(gopaths) > 0
+    for item in gopaths
+      result = path.resolve(path.normalize(path.join(item, 'bin', name)))
+      return result if fs.existsSync(result)
+    return false

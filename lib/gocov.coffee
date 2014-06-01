@@ -78,9 +78,7 @@ class Gocov
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
-    go = @dispatch.goexecutable.current()
-    cmd = go.executable
-    cmd = @dispatch.replaceTokensInPath(cmd, true)
+    cmd = @dispatch.goexecutable.current().executable
     console.log cmd, "test -coverprofile=#{tempFile}"
     proc = spawn(cmd, ["test", "-coverprofile=#{tempFile}"], {cwd: cwd, env: env})
     output = ''

@@ -38,7 +38,7 @@ class Golint
     args = [buffer.getPath()]
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.golintArgs'))
     args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
-    cmd = atom.config.get('go-plus.golintPath')
+    cmd = @dispatch.goexecutable.current().golint()
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>
