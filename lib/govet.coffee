@@ -35,9 +35,9 @@ class Govet
     unless buffer?
       @emit @name + '-complete', editorView, saving
       return
-    args = [@name]
+    args = ['tool', @name]
     configArgs = @dispatch.splitToArray(atom.config.get('go-plus.vetArgs'))
-    args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
+    args = args.concat(configArgs) if configArgs? and _.size(configArgs) > 0
     args = args.concat([buffer.getPath()])
     cmd = atom.config.get('go-plus.goExecutablePath')
     cmd = @dispatch.replaceTokensInPath(cmd, false)
