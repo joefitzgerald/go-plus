@@ -41,6 +41,17 @@ class Gofmt
     args = args.concat([buffer.getPath()])
     go = @dispatch.goexecutable.current()
     cmd = go.gofmt()
+    done = (exitcode, stdout, stderr) =>
+      unless stderr? and stderr isnt ''
+        if stdout? and stdout isnt ''
+          components = stdout.split(' ')
+          go.name = components[2] + ' ' + components[3]
+          go.version = components[2]
+          go.env = @env
+      console.log 'Error running go version: ' + err if err?
+      console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
+      # callback(null)
+    @dispatch.executor.exec(cmd, false, @dispatch?.env(), done, args)
     errored = false
     proc = spawn(cmd, args)
     proc.on 'error', (error) =>

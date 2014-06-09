@@ -15,7 +15,6 @@ class SplicerSplitter
     result = _.filter result, (item) -> item? and item.length > 0 and item isnt ''
 
   spliceAndSquash: (args...) ->
-    console.log args
     return '' unless args? and args.length > 0
     args = _.map args..., (item) ->
       return '' unless item?
