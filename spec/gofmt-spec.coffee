@@ -36,10 +36,9 @@ describe "format", ->
       atom.config.set("go-plus.syntaxCheckOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
+      atom.config.set("go-plus.runCoverageOnSave", false)
       atom.config.set("go-plus.environmentOverridesConfiguration", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", false)
+      atom.config.set("go-plus.showPanel", true)
 
     it "reformats the file", ->
       done = false
@@ -95,7 +94,8 @@ describe "format", ->
         dispatch.once 'dispatch-complete', (editorView) =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main(!)  {\n}\n"
           expect(dispatch.messages?).toBe true
-          console.log 'testdebug'
+          console.log 'dispatchmessages'
+          console.log dispatch.messages
           for message in dispatch.messages
             console.log message
           expect(_.size(dispatch.messages)).toBe 1
@@ -112,12 +112,12 @@ describe "format", ->
   describe "when format on save is disabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
+      atom.config.set("go-plus.syntaxCheckOnSave", false)
       atom.config.set("go-plus.vetOnSave", false)
       atom.config.set("go-plus.lintOnSave", false)
+      atom.config.set("go-plus.runCoverageOnSave", false)
       atom.config.set("go-plus.environmentOverridesConfiguration", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", false)
+      atom.config.set("go-plus.showPanel", true)
 
     it "does not reformat the file", ->
       done = false

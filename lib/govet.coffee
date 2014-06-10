@@ -24,36 +24,40 @@ class Govet
     @reset editorView
     @checkBuffer(editorView, false)
 
-  checkBuffer: (editorView, saving) ->
+  checkBuffer: (editorView, saving, callback) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     if saving and not atom.config.get('go-plus.vetOnSave')
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     args = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
     args = args.concat([buffer.getPath()])
     cmd = @dispatch.goexecutable.current().vet()
-    errored = false
-    proc = spawn(cmd, args)
-    proc.on 'error', (error) =>
-      return unless error?
-      errored = true
-      console.log @name + ': error launching ' + @name + ' command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
+    done = (exitcode, stdout, stderr) =>
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout isnt ''
+      console.log @name + ' - stderr: ' + stderr if stderr? and stderr isnt ''
       messages = []
-      message = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
-      messages.push message
-      @emit @name + '-messages', editorView, messages
+      messages = @mapMessages(editorView, stderr) if stderr? and stderr isnt ''
+      console.log @name + ': [' + cmd + '] exited with code [' + exitcode + ']' if exitcode isnt 0
+
+      # TODO:
+      # console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
+      # messages = []
+      # message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + go.buildgopath() + ')'
+      # messages.push message
+      # @emit @name + '-messages', editorView, messages
+      # @emit @name + '-complete', editorView, saving
       @emit @name + '-complete', editorView, saving
-    proc.stderr.on 'data', (data) => @mapMessages(editorView, data)
-    proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
-    proc.on 'close', (code) =>
-      console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
-      @emit @name + '-complete', editorView, saving unless errored
+      callback(null, messages)
+    @dispatch.executor.exec(cmd, null, null, done, args)
 
   mapMessages: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
@@ -79,3 +83,4 @@ class Govet
       extract(match)
       break unless match?
     @emit @name + '-messages', editorView, messages
+    return messages

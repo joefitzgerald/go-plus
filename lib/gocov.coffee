@@ -65,7 +65,8 @@ class Gocov
     messages.push message
     @emit @name + '-messages', editorView, messages
 
-  runCoverage: =>
+  runCoverage: (editorView, saving, callback) =>
+    callback(null)
     return unless @coverageEnabled()
 
     @emitCoverageIndicator()

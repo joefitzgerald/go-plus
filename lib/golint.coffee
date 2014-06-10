@@ -24,37 +24,42 @@ class Golint
     @reset editorView
     @checkBuffer(editorView, false)
 
-  checkBuffer: (editorView, saving) ->
+  checkBuffer: (editorView, saving, callback) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     if saving and not atom.config.get('go-plus.lintOnSave')
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     args = [buffer.getPath()]
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.golintArgs'))
     args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
     cmd = @dispatch.goexecutable.current().golint()
-    errored = false
-    proc = spawn(cmd, args)
-    proc.on 'error', (error) =>
-      return unless error?
-      errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
+
+    done = (exitcode, stdout, stderr) =>
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout isnt ''
+      console.log @name + ' - stderr: ' + stderr if stderr? and stderr isnt ''
       messages = []
-      message = line: false, column: false, type: 'error', msg: 'Golint Executable Not Found @ ' + cmd + ' ($GOPATH: ' + @dispatch.buildGoPath() + ')'
-      messages.push message
-      @emit @name + '-messages', editorView, messages
+      messages = @mapMessages(editorView, stdout) if stdout? and stdout isnt ''
+      console.log @name + ': [' + cmd + '] exited with code [' + exitcode + ']' if exitcode isnt 0
+
+      # TODO:
+      # console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
+      # messages = []
+      # message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + go.buildgopath() + ')'
+      # messages.push message
+      # @emit @name + '-messages', editorView, messages
+      # @emit @name + '-complete', editorView, saving
       @emit @name + '-complete', editorView, saving
-    proc.stderr.on 'data', (data) => console.log @name + ': ' + data if data?
-    proc.stdout.on 'data', (data) => @mapMessages(editorView, data)
-    proc.on 'close', (code) =>
-      console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
-      @emit @name + '-complete', editorView, saving unless errored
+      callback(null, messages)
+    @dispatch.executor.exec(cmd, null, null, done, args)
 
   mapMessages: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
@@ -80,3 +85,4 @@ class Golint
       extract(match)
       break unless match?
     @emit @name + '-messages', editorView, messages
+    return messages

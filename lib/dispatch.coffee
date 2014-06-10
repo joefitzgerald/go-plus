@@ -12,6 +12,7 @@ _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
 {$} = require 'atom'
 path = require 'path'
+async = require 'async'
 
 module.exports =
 class Dispatch
@@ -22,8 +23,6 @@ class Dispatch
     # Manage Save Pipeline
     @dispatching = false
     @ready = false
-    @actionqueue = []
-    @collectionqueue = []
     @messages = []
 
     @processEnv = process.env
@@ -42,41 +41,6 @@ class Dispatch
     @gobuild = new Gobuild(this)
     @gocov = new Gocov(this)
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
-
-    # Pipeline For Processing Buffer
-    @gofmt.on 'fmt-complete', (editorView, saving) =>
-      @emit 'fmt-complete', editorView, saving
-      @govet.checkBuffer(editorView, saving) if saving
-      @emit 'dispatch-complete', editorView if not saving
-    @govet.on 'vet-complete', (editorView, saving) =>
-      @emit 'vet-complete', editorView, saving
-      @golint.checkBuffer(editorView, saving) if saving
-      @emit 'dispatch-complete', editorView if not saving
-    @golint.on 'lint-complete', (editorView, saving) =>
-      @emit 'lint-complete', editorView, saving
-      @gopath.check(editorView, saving) if saving
-      @emit 'dispatch-complete', editorView if not saving
-    @gopath.on 'gopath-complete', (editorView, saving) =>
-      @emit 'gopath-complete', editorView, saving
-      @gobuild.checkBuffer(editorView, saving) if saving
-      @emit 'dispatch-complete', editorView if not saving
-    @gobuild.on 'syntaxcheck-complete', (editorView, saving) =>
-      @emit 'syntaxcheck-complete', editorView, saving
-      @emit 'dispatch-complete', editorView
-
-    # Collect Messages
-    @gocov.on 'gocov-messages', (editorView, messages) =>
-      @collectMessages(messages)
-    @gofmt.on 'fmt-messages', (editorView, messages) =>
-      @collectMessages(messages)
-    @govet.on 'vet-messages', (editorView, messages) =>
-      @collectMessages(messages)
-    @golint.on 'lint-messages', (editorView, messages) =>
-      @collectMessages(messages)
-    @gopath.on 'gopath-messages', (editorView, messages) =>
-      @collectMessages(messages)
-    @gobuild.on 'syntaxcheck-messages', (editorView, messages) =>
-      @collectMessages(messages)
 
     # Reset State If Requested
     @gofmt.on 'reset', (editorView) =>
@@ -105,9 +69,14 @@ class Dispatch
         @messagepanel.close()
 
   collectMessages: (messages) ->
+    messages = _.flatten(messages) if messages? and _.size(messages) > 0
+    messages = _.filter messages, (element, index, list) ->
+      return element?
+    return unless messages?
+    messages = _.filter messages, (message) -> message?
     @messages = _.union(@messages, messages)
     @messages = _.uniq @messages, (element, index, list) ->
-      return element.line + ":" + element.column + ":" + element.msg
+      return element?.line + ":" + element?.column + ":" + element?.msg
     @emit 'messages-collected', _.size(@messages)
 
   destroy: ->
@@ -129,14 +98,36 @@ class Dispatch
       @handleBufferSave(editorView, true)
     editor.on 'destroyed', => buffer.off 'saved'
 
+  triggerPipeline: (editorView, saving) ->
+    async.series([
+      (callback) =>
+        @gofmt.formatBuffer(editorView, saving, callback)
+    ], (err, modifymessages) =>
+      @collectMessages(modifymessages)
+      async.series([
+        (callback) =>
+          @govet.checkBuffer(editorView, saving, callback)
+        (callback) =>
+          @golint.checkBuffer(editorView, saving, callback)
+        (callback) =>
+          @gopath.check(editorView, saving, callback)
+        (callback) =>
+          @gobuild.checkBuffer(editorView, saving, callback)
+        # (callback) =>
+        #   @gocov.runCoverage(editorView, saving, callback)
+      ], (err, checkmessages) =>
+        @collectMessages(checkmessages)
+        @emit 'dispatch-complete', editorView
+      )
+    )
+
   handleBufferSave: (editorView, saving) ->
+    return unless @ready? and @ready
     editor = editorView.getEditor()
     grammar = editor.getGrammar()
     return if grammar.scopeName isnt 'source.go'
     @resetState(editorView)
-    @gofmt.formatBuffer(editorView, saving)
-    if atom.config.get('go-plus.runCoverageOnSave')
-      @gocov.runCoverage(editorView)
+    @triggerPipeline(editorView, saving)
 
   handleBufferChanged: (editorView) ->
     @gocov.resetCoverage()

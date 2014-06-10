@@ -24,16 +24,19 @@ class Gofmt
     @reset editorView
     @formatBuffer(editorView, false)
 
-  formatBuffer: (editorView, saving) ->
+  formatBuffer: (editorView, saving, callback) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     if saving and not atom.config.get('go-plus.formatOnSave')
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     args = ['-w']
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gofmtArgs'))
@@ -42,36 +45,28 @@ class Gofmt
     go = @dispatch.goexecutable.current()
     cmd = go.gofmt()
     done = (exitcode, stdout, stderr) =>
-      unless stderr? and stderr isnt ''
-        if stdout? and stdout isnt ''
-          components = stdout.split(' ')
-          go.name = components[2] + ' ' + components[3]
-          go.version = components[2]
-          go.env = @env
-      console.log 'Error running go version: ' + err if err?
-      console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
-      # callback(null)
-    @dispatch.executor.exec(cmd, false, @dispatch?.env(), done, args)
-    errored = false
-    proc = spawn(cmd, args)
-    proc.on 'error', (error) =>
-      return unless error?
-      errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout isnt ''
+      console.log @name + ' - stderr: ' + stderr if stderr? and stderr isnt ''
       messages = []
-      message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + go.buildgopath() + ')'
-      messages.push message
-      @emit @name + '-messages', editorView, messages
+      messages = @mapMessages(editorView, stderr) if stderr? and stderr isnt ''
+      console.log @name + ': [' + cmd + '] exited with code [' + exitcode + ']' if exitcode isnt 0
+      # TODO:
+      # console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
+      # messages = []
+      # message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + go.buildgopath() + ')'
+      # messages.push message
+      # @emit @name + '-messages', editorView, messages
+      # @emit @name + '-complete', editorView, saving
       @emit @name + '-complete', editorView, saving
-    proc.stderr.on 'data', (data) => @mapMessages(editorView, data)
-    proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
-    proc.on 'close', (code) =>
-      console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
-      @emit @name + '-complete', editorView, saving unless errored
+      console.log 'gofmt messages'
+      console.log messages
+      callback(null, messages)
+    @dispatch.executor.exec(cmd, false, @dispatch?.env(), done, args)
 
   mapMessages: (editorView, data) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
     messages = []
+    return messages unless data? and data isnt ''
     extract = (matchLine) ->
       return unless matchLine?
       message = switch
@@ -92,4 +87,4 @@ class Gofmt
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit @name + '-messages', editorView, messages
+    return messages

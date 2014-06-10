@@ -18,14 +18,16 @@ class Gopath
   reset: (editorView) ->
     @emit 'reset', editorView
 
-  check: (editorView, saving) ->
+  check: (editorView, saving, callback) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
 
     # Only Check GOPATH If Syntax Checking (For Now)
     unless atom.config.get('go-plus.syntaxCheckOnSave')
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
 
     gopaths = @dispatch.goexecutable.current().splitgopath()
@@ -60,6 +62,9 @@ class Gopath
 
     if messages? and _.size(messages) > 0
       @emit @name + '-messages', editorView, messages
+      callback(null, messages)
+      return
 
     @emit @name + '-complete', editorView, saving
+    callback(null)
     return

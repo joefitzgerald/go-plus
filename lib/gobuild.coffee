@@ -27,31 +27,36 @@ class Gobuild
     @reset editorView
     @checkBuffer(editorView, false)
 
-  checkBuffer: (editorView, saving) ->
-    @tempDir = temp.mkdirSync()
+  checkBuffer: (editorView, saving, callback) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     if saving and not atom.config.get('go-plus.syntaxCheckOnSave')
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
 
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     env = @dispatch.env()
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
+    console.log 'gobuild-cwd: ' + cwd
     output = ''
     outputPath = ''
     args = []
+    @tempDir = temp.mkdirSync()
     if buffer.getPath().match(/_test.go$/i)
       pre = /^\w*package ([\d\w]+){1}\w*$/img # Need To Support Unicode Letters Also
       match = pre.exec(buffer.getText())
@@ -65,21 +70,12 @@ class Gobuild
       outputPath = path.join(@tempDir, output)
       args = ['build', '-o', outputPath, '.']
     cmd = go.executable
-    errored = false
-    proc = spawn(cmd, args, {cwd: cwd, env: env})
-    proc.on 'error', (error) =>
-      return unless error?
-      errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + env.PATH + ']'
+    done = (exitcode, stdout, stderr) =>
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout isnt ''
+      console.log @name + ' - stderr: ' + stderr if stderr? and stderr isnt ''
       messages = []
-      message = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
-      messages.push message
-      @emit @name + '-messages', editorView, messages
-      @emit @name + '-complete', editorView, saving
-    proc.stderr.on 'data', (data) => @mapMessages(editorView, data, buffer.getBaseName())
-    proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
-    proc.on 'close', (code) =>
-      console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
+      messages = @mapMessages(editorView, stderr, buffer.getBaseName()) if stderr? and stderr isnt ''
+      console.log @name + ': [' + cmd + '] exited with code [' + exitcode + ']' if exitcode isnt 0
       pattern = cwd + '/*' + output
       glob pattern, {mark: false, sync:true}, (er, files) ->
         for file in files
@@ -90,7 +86,16 @@ class Gobuild
           fs.rmdirSync(outputPath)
         else
           fs.unlinkSync(outputPath)
-      @emit @name + '-complete', editorView, saving unless errored
+      # TODO:
+      # console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
+      # messages = []
+      # message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + go.buildgopath() + ')'
+      # messages.push message
+      # @emit @name + '-messages', editorView, messages
+      # @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editorView, saving
+      callback(null, messages)
+    @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   mapMessages: (editorView, data, filename) ->
     pattern = /^(\.\/)?(.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?)/img
@@ -120,3 +125,4 @@ class Gobuild
       extract(match)
       break unless match?
     @emit @name + '-messages', editorView, messages
+    return messages
