@@ -52,7 +52,6 @@ class Gobuild
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
-    console.log 'gobuild-cwd: ' + cwd
     output = ''
     outputPath = ''
     args = []
@@ -71,11 +70,8 @@ class Gobuild
       args = ['build', '-o', outputPath, '.']
     cmd = go.executable
     done = (exitcode, stdout, stderr) =>
-      console.log @name + ' - stdout: ' + stdout if stdout? and stdout isnt ''
-      console.log @name + ' - stderr: ' + stderr if stderr? and stderr isnt ''
-      messages = []
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(editorView, stderr, buffer.getBaseName()) if stderr? and stderr isnt ''
-      console.log @name + ': [' + cmd + '] exited with code [' + exitcode + ']' if exitcode isnt 0
       pattern = cwd + '/*' + output
       glob pattern, {mark: false, sync:true}, (er, files) ->
         for file in files
@@ -86,13 +82,6 @@ class Gobuild
           fs.rmdirSync(outputPath)
         else
           fs.unlinkSync(outputPath)
-      # TODO:
-      # console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
-      # messages = []
-      # message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + go.buildgopath() + ')'
-      # messages.push message
-      # @emit @name + '-messages', editorView, messages
-      # @emit @name + '-complete', editorView, saving
       @emit @name + '-complete', editorView, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)

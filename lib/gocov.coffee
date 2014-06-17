@@ -66,13 +66,27 @@ class Gocov
     @emit @name + '-messages', editorView, messages
 
   runCoverage: (editorView, saving, callback) =>
-    callback(null)
-    return unless @coverageEnabled()
+    unless @dispatch.isValidEditorView(editorView)
+      @emit @name + '-complete', editorView, saving
+      callback(null)
+      return
+    if saving and not atom.config.get('go-plus.formatOnSave')
+      @emit @name + '-complete', editorView, saving
+      callback(null)
+      return
+    buffer = editorView?.getEditor()?.getBuffer()
+    unless buffer?
+      @emit @name + '-complete', editorView, saving
+      callback(null)
+      return
+
+    unless @coverageEnabled()
+      @emit @name + '-complete', editorView, saving
+      callback(null)
+      return
 
     @emitCoverageIndicator()
 
-    editorView = atom.workspaceView.getActiveView()
-    buffer = editorView?.getEditor()?.getBuffer()
     tempFile = @createCoverageFile()
     gopath = @dispatch.buildGoPath()
     env = @dispatch.env()
@@ -80,26 +94,22 @@ class Gocov
     re = new RegExp(buffer.getBaseName() + '$')
     cwd = buffer.getPath().replace(re, '')
     cmd = @dispatch.goexecutable.current().executable
-    console.log cmd, "test -coverprofile=#{tempFile}"
-    proc = spawn(cmd, ["test", "-coverprofile=#{tempFile}"], {cwd: cwd, env: env})
-    output = ''
-    proc.on 'error', (error) =>
-      return unless error?
-      console.log @name + ': error launching command [go] – ' + error  + ' – current PATH: [' + env.PATH + ']'
-    proc.stderr.on 'data', (data) => console.log 'go test: ' + data if data?
-    proc.stdout.on 'data', (data) =>
-      output += data if data?
-      console.log 'go test: ' + data if data?
-    proc.on 'close', (code) =>
-      if code isnt 0
-        console.log 'gocov: [go test] exited with code [' + code + ']'
-        messages = [{line:false, col: false, msg:output, type:'error', source: 'gocov'}]
+    args = ["test", "-coverprofile=#{tempFile}"]
+    done = (exitcode, stdout, stderr, messages) =>
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+      console.log @name + ' - stderr: ' + stderr if stderr? and stderr.trim() isnt ''
+      if exitcode isnt 0
+        messages = [{line:false, col: false, msg:stdout + stderr, type:'error', source: @name}]
         @emit @name + '-messages', editorView, messages
       else
         @parser.setDataFile(tempFile)
         for area in areas
           area.processCoverageFile()
         @emit 'reset'
+      @emit @name + '-complete', editorView, saving
+      callback(null, messages)
+    @dispatch.executor.exec(cmd, cwd, env, done, args)
+    console.log cmd, " test -coverprofile=#{tempFile}"
 
   resetCoverage: =>
     for area in areas

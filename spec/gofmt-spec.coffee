@@ -94,10 +94,6 @@ describe "format", ->
         dispatch.once 'dispatch-complete', (editorView) =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main(!)  {\n}\n"
           expect(dispatch.messages?).toBe true
-          console.log 'dispatchmessages'
-          console.log dispatch.messages
-          for message in dispatch.messages
-            console.log message
           expect(_.size(dispatch.messages)).toBe 1
           expect(dispatch.messages[0].column).toBe "11"
           expect(dispatch.messages[0].line).toBe "3"

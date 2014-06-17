@@ -112,7 +112,5 @@ class GoExecutable
   current: =>
     return @gos[0] if _.size(@gos) is 1
     for go in @gos
-      console.log go.executable
       return go if go.executable is @currentgo
-
     return @gos[0]

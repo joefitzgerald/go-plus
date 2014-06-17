@@ -41,20 +41,9 @@ class Govet
     args = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
     args = args.concat([buffer.getPath()])
     cmd = @dispatch.goexecutable.current().vet()
-    done = (exitcode, stdout, stderr) =>
-      console.log @name + ' - stdout: ' + stdout if stdout? and stdout isnt ''
-      console.log @name + ' - stderr: ' + stderr if stderr? and stderr isnt ''
-      messages = []
-      messages = @mapMessages(editorView, stderr) if stderr? and stderr isnt ''
-      console.log @name + ': [' + cmd + '] exited with code [' + exitcode + ']' if exitcode isnt 0
-
-      # TODO:
-      # console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
-      # messages = []
-      # message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + go.buildgopath() + ')'
-      # messages.push message
-      # @emit @name + '-messages', editorView, messages
-      # @emit @name + '-complete', editorView, saving
+    done = (exitcode, stdout, stderr, messages) =>
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+      messages = @mapMessages(editorView, stderr) if stderr? and stderr.trim() isnt ''
       @emit @name + '-complete', editorView, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, null, null, done, args)

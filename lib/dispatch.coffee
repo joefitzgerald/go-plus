@@ -113,8 +113,8 @@ class Dispatch
           @gopath.check(editorView, saving, callback)
         (callback) =>
           @gobuild.checkBuffer(editorView, saving, callback)
-        # (callback) =>
-        #   @gocov.runCoverage(editorView, saving, callback)
+        (callback) =>
+          @gocov.runCoverage(editorView, saving, callback)
       ], (err, checkmessages) =>
         @collectMessages(checkmessages)
         @emit 'dispatch-complete', editorView
@@ -186,5 +186,4 @@ class Dispatch
     editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'
 
   env: ->
-    envCopy = $.extend(true, {}, @processEnv)
-    envCopy
+    _.clone(@processEnv)

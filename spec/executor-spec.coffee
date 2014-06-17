@@ -1,3 +1,4 @@
+_ = require 'underscore-plus'
 path = require 'path'
 Executor = require './../lib/executor'
 
@@ -52,6 +53,25 @@ describe "executor", ->
           testenv: 'testing'
 
         result = executor.exec('env', null, env, done, null)
+
+      waitsFor =>
+        complete is true
+
+    it "returns a message if the command was not found", ->
+      complete = false
+      runs =>
+        done = (exitcode, stdout, stderr, messages) =>
+          expect(exitcode).toBeDefined
+          expect(exitcode).not.toBe 0
+          expect(exitcode).toBe 127
+          expect(_.size(messages)).toBe 1
+          expect(messages[0]).toBeDefined
+          expect(messages[0].msg).toBe 'No file or directory: [nonexistentcommand]'
+          expect(stdout).toBeUndefined
+          expect(stderr).toBeUndefined
+          complete = true
+
+        result = executor.exec('nonexistentcommand', null, null, done, null)
 
       waitsFor =>
         complete is true
