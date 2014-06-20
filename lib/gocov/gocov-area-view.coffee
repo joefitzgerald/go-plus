@@ -14,8 +14,6 @@ class GocovAreaView extends View
 
   attach: =>
     return unless @gocov.isValidEditorView(@editorView)
-    console.log @editorView
-    console.log @editorView.underlayer
     @editorView.underlayer.append(this)
     atom.workspaceView.on 'pane:item-removed', @destroy
 

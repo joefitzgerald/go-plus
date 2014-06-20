@@ -79,7 +79,6 @@ class Gocov
       return
 
     if @covering
-      console.log 'coverage not enabled'
       @emit @name + '-complete', editorView, saving
       callback(null)
       return
