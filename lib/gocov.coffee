@@ -18,8 +18,9 @@ class Gocov
     @name = 'gocov'
     @covering = false
     @parser = new GocovParser(dispatch)
+    @coverageFile = false
 
-    atom.workspaceView.command 'golang:gocov', => @toggleCoverage()
+    atom.workspaceView.command 'golang:gocov', => @runCoverageForCurrentEditorView()
     atom.workspaceView.eachEditorView (editorView) =>
       area = new GocovAreaView(editorView, this)
       area.attach()
@@ -31,17 +32,8 @@ class Gocov
     for area in areas
       area.destroy()
 
-  coverageEnabled: ->
-    @covering
-
-  toggleCoverage: =>
-    @covering = !@covering
-    if @covering
-      @emitCoverageIndicator()
-      @dispatch.emit 'dispatch-complete'
-      @runCoverage()
-    else
-      @resetCoverage()
+  reset: (editorView) ->
+    @emit 'reset', editorView
 
   removeCoverageFile: =>
     if @coverageFile
@@ -65,12 +57,18 @@ class Gocov
     messages.push message
     @emit @name + '-messages', editorView, messages
 
-  runCoverage: (editorView, saving, callback) =>
+  runCoverageForCurrentEditorView: =>
+    editorView = atom.workspaceView.getActiveView()
+    return unless editorView?
+    @reset editorView
+    @runCoverage(editorView, false)
+
+  runCoverage: (editorView, saving, callback = ->) =>
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
       callback(null)
       return
-    if saving and not atom.config.get('go-plus.formatOnSave')
+    if saving and not atom.config.get('go-plus.runCoverageOnSave')
       @emit @name + '-complete', editorView, saving
       callback(null)
       return
@@ -80,15 +78,23 @@ class Gocov
       callback(null)
       return
 
-    unless @coverageEnabled()
+    if @covering
+      console.log 'coverage not enabled'
       @emit @name + '-complete', editorView, saving
       callback(null)
       return
 
-    @emitCoverageIndicator()
+    @covering = true
+    console.log 'emitting coverage indicator'
+    #@emitCoverageIndicator()
 
     tempFile = @createCoverageFile()
-    gopath = @dispatch.buildGoPath()
+    go = @dispatch.goexecutable.current()
+    gopath = go.buildgopath()
+    if not gopath? or gopath is ''
+      @emit @name + '-complete', editorView, saving
+      callback(null)
+      return
     env = @dispatch.env()
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
@@ -104,8 +110,10 @@ class Gocov
       else
         @parser.setDataFile(tempFile)
         for area in areas
+          console.log 'processing coverage file: ' + tempFile
           area.processCoverageFile()
         @emit 'reset'
+      @covering = false
       @emit @name + '-complete', editorView, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)

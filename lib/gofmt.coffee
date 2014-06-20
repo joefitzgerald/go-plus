@@ -24,7 +24,7 @@ class Gofmt
     @reset editorView
     @formatBuffer(editorView, false)
 
-  formatBuffer: (editorView, saving, callback) ->
+  formatBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
       callback(null)
@@ -45,8 +45,8 @@ class Gofmt
     go = @dispatch.goexecutable.current()
     cmd = go.gofmt()
     done = (exitcode, stdout, stderr, messages) =>
-      console.log @name + ' - stdout: ' + stdout if stdout? and stdout isnt ''
-      messages = @mapMessages(editorView, stderr) if stderr? and stderr isnt ''
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+      messages = @mapMessages(editorView, stderr) if stderr? and stderr.trim() isnt ''
       @emit @name + '-complete', editorView, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, false, @dispatch?.env(), done, args)

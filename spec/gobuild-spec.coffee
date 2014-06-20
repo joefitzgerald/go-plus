@@ -3,11 +3,14 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
+AtomConfig = require './util/atomconfig'
 
 describe "build", ->
   [editor, dispatch, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath] = []
 
   beforeEach ->
+    atomconfig = new AtomConfig()
+    atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
     oldGoPath = "~/go" unless process.env.GOPATH?
@@ -22,26 +25,23 @@ describe "build", ->
   describe "when syntax check on save is enabled", ->
     ready = false
     beforeEach ->
-      atom.config.set("go-plus.formatOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", directory)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
       testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
       fs.writeFileSync(filePath, '')
       fs.writeFileSync(testFilePath, '')
-      editor = atom.workspace.openSync(filePath)
-      testEditor = atom.workspace.openSync(testFilePath)
+      editorPromise = atom.workspace.open(filePath)
+      testEditorPromise = atom.workspace.open(testFilePath)
+
+      waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
+
+      waitsForPromise -> atom.workspace.open(testFilePath).then (e) -> testEditor = e
 
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      waitsForPromise ->
+      runs ->
         atom.packages.activatePackage('go-plus')
 
       runs ->
@@ -93,15 +93,8 @@ describe "build", ->
 
   describe "when working with multiple files", ->
     beforeEach ->
-      atom.config.set("go-plus.formatOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", directory)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
       secondFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "util.go")
       thirdFilePath = path.join(directory, "src", "github.com", "testuser", "example", "util", "strings.go")
@@ -110,10 +103,14 @@ describe "build", ->
       fs.writeFileSync(secondFilePath, '')
       fs.writeFileSync(thirdFilePath, '')
       fs.writeFileSync(testFilePath, '')
-      editor = atom.workspace.openSync(filePath)
-      secondEditor = atom.workspace.openSync(secondFilePath)
-      thirdEditor = atom.workspace.openSync(thirdFilePath)
-      testEditor = atom.workspace.openSync(testFilePath)
+
+      waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
+
+      waitsForPromise -> atom.workspace.open(secondFilePath).then (e) -> secondEditor = e
+
+      waitsForPromise -> atom.workspace.open(thirdFilePath).then (e) -> thirdEditor = e
+
+      waitsForPromise -> atom.workspace.open(testFilePath).then (e) -> testEditor = e
 
       waitsForPromise ->
         atom.packages.activatePackage('language-go')

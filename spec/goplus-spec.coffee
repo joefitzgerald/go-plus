@@ -2,19 +2,22 @@ path = require 'path'
 fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
+AtomConfig = require './util/atomconfig'
 
 describe "Go Plus", ->
   [editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
+    atomconfig = new AtomConfig()
+    atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
     filePath = path.join(directory, 'go-plus.go')
     fs.writeFileSync(filePath, '')
-    editor = atom.workspace.openSync(filePath)
-    buffer = editor.getBuffer()
+
+    waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
     waitsForPromise ->
       atom.packages.activatePackage('language-go')
@@ -23,6 +26,7 @@ describe "Go Plus", ->
       atom.packages.activatePackage('go-plus')
 
     runs ->
+      buffer = editor.getBuffer()
       dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       dispatch.goexecutable.detect()
 
@@ -31,6 +35,7 @@ describe "Go Plus", ->
 
   describe "when the editor is destroyed", ->
     beforeEach ->
+      atom.config.set("go-plus.formatOnSave", true)
       editor.destroy()
 
     it "unsubscribes from the buffer", ->

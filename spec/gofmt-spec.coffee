@@ -3,19 +3,22 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
+AtomConfig = require './util/atomconfig'
 
 describe "format", ->
   [editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
+    atomconfig = new AtomConfig()
+    atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
     filePath = path.join(directory, 'go-plus.go')
     fs.writeFileSync(filePath, '')
-    editor = atom.workspace.openSync(filePath)
-    buffer = editor.getBuffer()
+
+    waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
     waitsForPromise ->
       atom.packages.activatePackage('language-go')
@@ -24,6 +27,7 @@ describe "format", ->
       atom.packages.activatePackage('go-plus')
 
     runs ->
+      buffer = editor.getBuffer()
       dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       dispatch.goexecutable.detect()
 
@@ -33,12 +37,6 @@ describe "format", ->
   describe "when format on save is enabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", true)
-      atom.config.set("go-plus.syntaxCheckOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
-      atom.config.set("go-plus.runCoverageOnSave", false)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
-      atom.config.set("go-plus.showPanel", true)
 
     it "reformats the file", ->
       done = false
@@ -108,12 +106,6 @@ describe "format", ->
   describe "when format on save is disabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
-      atom.config.set("go-plus.syntaxCheckOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
-      atom.config.set("go-plus.runCoverageOnSave", false)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
-      atom.config.set("go-plus.showPanel", true)
 
     it "does not reformat the file", ->
       done = false

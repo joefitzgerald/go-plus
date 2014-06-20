@@ -24,7 +24,7 @@ class Golint
     @reset editorView
     @checkBuffer(editorView, false)
 
-  checkBuffer: (editorView, saving, callback) ->
+  checkBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
       callback(null)

@@ -13,10 +13,13 @@ class GocovAreaView extends View
     @gocov = gocov
 
   attach: =>
+    return unless @gocov.isValidEditorView(@editorView)
+    console.log @editorView
+    console.log @editorView.underlayer
     @editorView.underlayer.append(this)
     atom.workspaceView.on 'pane:item-removed', @destroy
 
-    if @gocov.isValidEditorView(@editorView) and @gocov.coverageEnabled()
+    if @gocov.isValidEditorView(@editorView) and @gocov.coverageFile?
       @processCoverageFile()
 
   destroy: =>

@@ -30,8 +30,9 @@ describe "gocov", ->
       testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
       fs.writeFileSync(filePath, '')
       fs.writeFileSync(testFilePath, '')
-      editor = atom.workspace.openSync(filePath)
-      testEditor = atom.workspace.openSync(testFilePath)
+      waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
+
+      waitsForPromise -> atom.workspace.open(testFilePath).then (e) -> testEditor = e
 
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
@@ -55,13 +56,13 @@ describe "gocov", ->
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != \"Hello, 世界\" {\n\t\tt.Errorf(\"Expected %s - got %s\", \"Hello, 世界\", result)\n\t}\n}")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
-          console.log 'main saved'
           expect(dispatch.messages?).toBe true
-          expect(_.size(dispatch.messages)).toBe 0
-          dispatch.gocov.once 'gocov-complete', =>
-            done = true
+          expect(_.size(dispatch.messages)).toBe 1
           dispatch.once 'dispatch-complete', =>
-            console.log 'test saved'
+            expect(dispatch.messages?).toBe true
+            console.log dispatch.messages
+            expect(_.size(dispatch.messages)).toBe 0
+            done = true
           testBuffer.save()
         buffer.save()
 

@@ -4,9 +4,9 @@ set -o errexit
 
 mkdir -p .go
 cd .go
-[ ! -f go1.2.1.darwin-amd64-osx10.8.tar.gz ] && wget https://go.googlecode.com/files/go1.2.1.darwin-amd64-osx10.8.tar.gz
+[ ! -f go1.3.0.darwin-amd64-osx10.8.tar.gz ] && wget https://go.googlecode.com/files/go1.3.0.darwin-amd64-osx10.8.tar.gz
 [ -d go ] && rm -rf go
-tar zxf go1.2.1.darwin-amd64-osx10.8.tar.gz
+tar zxf go1.3.0.darwin-amd64-osx10.8.tar.gz
 cd go
 GOROOT=`pwd`
 echo "GOROOT=$GOROOT"

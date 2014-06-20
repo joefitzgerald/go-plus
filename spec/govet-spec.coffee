@@ -3,19 +3,22 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
+AtomConfig = require './util/atomconfig'
 
 describe "vet", ->
   [editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
+    atomconfig = new AtomConfig()
+    atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
     filePath = path.join(directory, 'go-plus.go')
     fs.writeFileSync(filePath, '')
-    editor = atom.workspace.openSync(filePath)
-    buffer = editor.getBuffer()
+
+    waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
     waitsForPromise ->
       atom.packages.activatePackage('language-go')
@@ -24,6 +27,7 @@ describe "vet", ->
       atom.packages.activatePackage('go-plus')
 
     runs ->
+      buffer = editor.getBuffer()
       dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       dispatch.goexecutable.detect()
 
@@ -32,13 +36,7 @@ describe "vet", ->
 
   describe "when vet on save is enabled", ->
     beforeEach ->
-      atom.config.set("go-plus.formatOnSave", false)
       atom.config.set("go-plus.vetOnSave", true)
-      atom.config.set("go-plus.lintOnSave", false)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", true)
 
     it "displays errors for unreachable code", ->
       done = false
@@ -62,11 +60,6 @@ describe "vet", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", true)
       atom.config.set("go-plus.vetOnSave", true)
-      atom.config.set("go-plus.lintOnSave", false)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", true)
 
     it "formats the file and displays errors for unreachable code", ->
       done = false

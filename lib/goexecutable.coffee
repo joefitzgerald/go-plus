@@ -15,11 +15,6 @@ class GoExecutable
 
   constructor: (@env) ->
     @gos = []
-    @gofmts = []
-    @govets = []
-    @goimportses = []
-    @golints = []
-    @gocovers = []
     @currentgo = ''
     @executor = new Executor()
     @pathexpander = new PathExpander(@env)
@@ -30,11 +25,6 @@ class GoExecutable
 
   reset: ->
     @gos = []
-    @gofmts = []
-    @govets = []
-    @goimportses = []
-    @golints = []
-    @gocovers = []
     @currentgo = ''
     @emit 'reset'
 
@@ -107,6 +97,27 @@ class GoExecutable
         @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, ['env'])
     ], (err, results) =>
       outercallback(err, go)
+    )
+
+  getmissingtools: (go) =>
+    gogetenv = _.clone(@env)
+    console.log 'getting missing tools'
+    gogetenv['GOPATH'] = go.buildgopath()
+    done = (exitcode, stdout, stderr, messages) =>
+      console.log exitcode + ':' + stdout + ':' + stderr
+    async.series([
+      (callback) =>
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/godoc']) unless go.godoc?
+      (callback) =>
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/vet']) unless go.vet?
+      (callback) =>
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/cover']) unless go.cover?
+      (callback) =>
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/goimports']) unless go.goimports?
+      (callback) =>
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'github.com/golang/lint/golint']) unless go.golint?
+    ], (err, results) =>
+      @emit 'tools-complete'
     )
 
   current: =>

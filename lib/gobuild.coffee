@@ -27,7 +27,7 @@ class Gobuild
     @reset editorView
     @checkBuffer(editorView, false)
 
-  checkBuffer: (editorView, saving, callback) ->
+  checkBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
       callback(null)
@@ -69,7 +69,7 @@ class Gobuild
       outputPath = path.join(@tempDir, output)
       args = ['build', '-o', outputPath, '.']
     cmd = go.executable
-    done = (exitcode, stdout, stderr) =>
+    done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(editorView, stderr, buffer.getBaseName()) if stderr? and stderr isnt ''
       pattern = cwd + '/*' + output

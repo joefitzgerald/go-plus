@@ -30,6 +30,8 @@ class Dispatch
     @splicersplitter = new SplicerSplitter()
     @goexecutable = new GoExecutable(@processEnv)
     @goexecutable.on 'detect-complete', =>
+      @gettools if atom.config.get('go-plus.getMissingTools')
+      #unless atom.config.get('go-plus.getMissingTools')
       @ready = true
       @emit 'ready'
     @goexecutable.detect()
@@ -187,3 +189,10 @@ class Dispatch
 
   env: ->
     _.clone(@processEnv)
+
+  gettools: =>
+    return unless atom.config.get('go-plus.getMissingTools')
+    @goexecutable.on 'tools-complete', =>
+      @ready = true
+      @emit 'ready'
+    @goexecutable.getmissingtools(@goexecutable.current())

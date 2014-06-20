@@ -3,11 +3,14 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
+AtomConfig = require './util/atomconfig'
 
 describe "gopath", ->
   [editor, dispatch, directory, filePath, oldGoPath] = []
 
   beforeEach ->
+    atomconfig = new AtomConfig()
+    atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
     process.env['GOPATH']=directory
@@ -20,16 +23,12 @@ describe "gopath", ->
 
   describe "when syntax check on save is enabled and goPath is set", ->
     beforeEach ->
-      atom.config.set("go-plus.formatOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", directory)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "wrongsrc", "github.com", "testuser", "example", "go-plus.go")
       fs.writeFileSync(filePath, '')
-      editor = atom.workspace.openSync(filePath)
+
+      waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
@@ -87,18 +86,12 @@ describe "gopath", ->
 
   describe "when syntax check on save is enabled and GOPATH is not set", ->
     beforeEach ->
-      atom.config.set("go-plus.formatOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", "")
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "wrongsrc", "github.com", "testuser", "example", "go-plus.go")
       fs.writeFileSync(filePath, '')
-      editor = atom.workspace.openSync(filePath)
+
+      waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
