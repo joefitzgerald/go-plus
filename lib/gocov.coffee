@@ -27,7 +27,9 @@ class Gocov
       area.attach()
       areas.push area
       editorView.on 'destroyed', =>
-        areas = _.filter areas, (a) -> a isnt area
+        old = _.find areas, (a) -> a.editorView is editorView
+        areas = _.filter areas, (a) -> a isnt old
+        old.destroy()
 
   destroy: ->
     @unsubscribe()
