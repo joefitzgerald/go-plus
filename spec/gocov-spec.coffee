@@ -60,8 +60,9 @@ describe "gocov", ->
           expect(_.size(dispatch.messages)).toBe 1
           dispatch.once 'dispatch-complete', =>
             expect(dispatch.messages?).toBe true
-            console.log dispatch.messages
             expect(_.size(dispatch.messages)).toBe 0
+            # TODO: Actually Determine If Coverage Was Shown
+            # May Wait To Implement After React Editor Is Default
             done = true
           testBuffer.save()
         buffer.save()

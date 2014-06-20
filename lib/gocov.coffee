@@ -5,6 +5,7 @@ fs = require 'fs-plus'
 {Subscriber, Emitter} = require 'emissary'
 GocovAreaView = require './gocov/gocov-area-view'
 GocovParser = require './gocov/gocov-parser'
+_ = require 'underscore-plus'
 
 areas = []
 
@@ -25,6 +26,8 @@ class Gocov
       area = new GocovAreaView(editorView, this)
       area.attach()
       areas.push area
+      editorView.on 'destroyed', =>
+        areas = _.filter areas, (a) -> a isnt area
 
   destroy: ->
     @unsubscribe()
@@ -109,7 +112,6 @@ class Gocov
       else
         @parser.setDataFile(tempFile)
         for area in areas
-          console.log 'processing coverage file: ' + tempFile
           area.processCoverageFile()
         @emit 'reset'
       @covering = false
