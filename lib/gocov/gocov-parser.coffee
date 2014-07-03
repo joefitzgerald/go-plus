@@ -4,13 +4,9 @@ fs = require 'fs-plus'
 
 module.exports =
 class GocovParser
-  constructor: (dispatch) ->
-    @dispatch = dispatch
-
   setDataFile: (file) ->
     @dataFile = file
 
-  # TODO disgusting - fix this parsing, regex
   rangesForFile: (file) ->
     try
       data = fs.readFileSync @dataFile, {encoding: "utf8"}
@@ -19,17 +15,20 @@ class GocovParser
 
     ranges = []
 
-    for line in data.split("\n")
-      line = line.trim()
-      continue if line == "mode: set" || line == ""
-      [fileLinesCols, statements, count] = line.split(" ")
-      [filePath, linesCols] = fileLinesCols.split(":")
-      if _.endsWith(file, filePath)
-        [start, end] = linesCols.split(",")
-        [startRow, startCol] = start.split(".")
-        [endRow, endCol] = end.split(".")
+    # https://code.google.com/p/go/source/browse/cmd/cover/profile.go?repo=tools&name=a2a0f87c4b38&r=92b0a64343bc62160c1c10d335d375b0defa4c18#113
+    pattern = /^(.+):(\d+).(\d+),(\d+).(\d+) (\d+) (\d+)$/img
 
-        range = new Range([parseInt(startRow)-1, parseInt(startCol)-1], [parseInt(endRow)-1, parseInt(endCol)-1])
-        ranges.push range: range, count: parseInt(count)
+    extract = (match) ->
+      return unless match?
+      filePath = match[1]
+      if _.endsWith(file, filePath)
+        statements = match[6]
+        count = match[7]
+        range = new Range([parseInt(match[2])-1, parseInt(match[3])-1], [parseInt(match[4])-1, parseInt(match[5])-1])
+        ranges.push range: range, count: parseInt(count), file: filePath
+    loop
+      match = pattern.exec(data)
+      extract(match)
+      break unless match?
 
     ranges

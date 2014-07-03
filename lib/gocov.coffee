@@ -18,7 +18,7 @@ class Gocov
     @dispatch = dispatch
     @name = 'gocov'
     @covering = false
-    @parser = new GocovParser(dispatch)
+    @parser = new GocovParser()
     @coverageFile = false
 
     atom.workspaceView.command 'golang:gocov', => @runCoverageForCurrentEditorView()
@@ -89,7 +89,6 @@ class Gocov
       return
 
     @covering = true
-    console.log 'emitting coverage indicator'
     #@emitCoverageIndicator()
 
     tempFile = @createCoverageFile()
@@ -106,8 +105,6 @@ class Gocov
     cmd = @dispatch.goexecutable.current().executable
     args = ["test", "-coverprofile=#{tempFile}"]
     done = (exitcode, stdout, stderr, messages) =>
-      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
-      console.log @name + ' - stderr: ' + stderr if stderr? and stderr.trim() isnt ''
       if exitcode isnt 0
         messages = [{line:false, col: false, msg:stdout + stderr, type:'error', source: @name}]
         @emit @name + '-messages', editorView, messages
@@ -120,7 +117,6 @@ class Gocov
       @emit @name + '-complete', editorView, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
-    console.log cmd, " test -coverprofile=#{tempFile}"
 
   resetCoverage: =>
     for area in areas
