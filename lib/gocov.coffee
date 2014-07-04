@@ -3,7 +3,6 @@ temp = require 'temp'
 path = require 'path'
 fs = require 'fs-plus'
 {Subscriber, Emitter} = require 'emissary'
-GocovAreaView = require './gocov/gocov-area-view'
 GocovParser = require './gocov/gocov-parser'
 _ = require 'underscore-plus'
 
@@ -20,22 +19,46 @@ class Gocov
     @covering = false
     @parser = new GocovParser()
     @coverageFile = false
+    @ranges = false
 
     atom.workspaceView.command 'golang:gocov', => @runCoverageForCurrentEditorView()
-    atom.workspaceView.eachEditorView (editorView) =>
-      area = new GocovAreaView(editorView, this)
-      area.attach()
-      areas.push area
-      editorView.on 'destroyed', =>
-        old = _.find areas, (a) -> a.editorView is editorView
-        areas = _.filter areas, (a) -> a isnt old
-        old.destroy()
+    atom.workspace.eachEditor (editor) =>
+      if atom.config.get('core.useReactEditor')?
+        @addMarkersToEditor(editor)
 
   destroy: ->
     @unsubscribe()
     @removeCoverageFile()
-    for area in areas
-      area.destroy()
+
+  addMarkersToEditors: =>
+    editors = atom.workspace.getEditors()
+    for editor in editors
+      @addMarkersToEditor(editor)
+
+  addMarkersToEditor: (editor) =>
+    return unless editor?
+    file = editor.getPath()
+    buffer = editor.getBuffer()
+    return unless file? and buffer?
+
+    # Clear current markers
+    @clearMarkers(editor)
+
+    # Add new markers
+    return unless @ranges? and @ranges and _.size(@ranges) > 0
+    editorRanges = _.filter @ranges, (r) -> _.endsWith(file, r.file)
+    for range in editorRanges
+      marker = buffer.markRange(range.range, class: 'gocov', gocovcount: range.count, invalidate: 'touch')
+      clazz = if range.count > 0 then 'covered' else 'uncovered'
+      editor.addDecorationForMarker(marker, type: 'highlight', class: clazz, onlyNonEmpty: true)
+
+  clearMarkers: (editor) =>
+    return unless editor?
+    # Find current markers
+    markers = editor.getBuffer()?.findMarkers(class: 'gocov')
+    return unless markers? and _.size(markers) > 0
+    # Remove markers
+    marker.destroy() for marker in markers
 
   reset: (editorView) ->
     @emit 'reset', editorView
@@ -51,16 +74,6 @@ class Gocov
     @removeCoverageFile()
     tempDir = temp.mkdirSync()
     @coverageFile = path.join(tempDir, 'coverage.out')
-
-  emitCoverageIndicator: =>
-    editorView = atom.workspaceView.getActiveView()
-    messages = []
-    message =
-      line: false
-      column: false
-      msg: 'Running coverage analysis'
-    messages.push message
-    @emit @name + '-messages', editorView, messages
 
   runCoverageForCurrentEditorView: =>
     editorView = atom.workspaceView.getActiveView()
@@ -89,7 +102,6 @@ class Gocov
       return
 
     @covering = true
-    #@emitCoverageIndicator()
 
     tempFile = @createCoverageFile()
     go = @dispatch.goexecutable.current()
@@ -105,25 +117,16 @@ class Gocov
     cmd = @dispatch.goexecutable.current().executable
     args = ["test", "-coverprofile=#{tempFile}"]
     done = (exitcode, stdout, stderr, messages) =>
-      if exitcode isnt 0
-        messages = [{line:false, col: false, msg:stdout + stderr, type:'error', source: @name}]
-        @emit @name + '-messages', editorView, messages
-      else
-        @parser.setDataFile(tempFile)
-        for area in areas
-          area.processCoverageFile()
-        @emit 'reset'
+      if exitcode is 0
+        @ranges = @parser.ranges(tempFile)
+        if atom.config.get('core.useReactEditor')?
+          @addMarkersToEditors()
       @covering = false
       @emit @name + '-complete', editorView, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   resetCoverage: =>
-    for area in areas
-      area.removeMarkers()
-
-  isValidEditorView: (editorView) =>
-    @dispatch.isValidEditorView(editorView)
-
-  rangesForFile: (path) =>
-    @parser.rangesForFile(path)
+    unless atom.config.get('core.useReactEditor')?
+      for area in areas
+        area.removeMarkers()

@@ -8,8 +8,12 @@ class GocovParser
     @dataFile = file
 
   rangesForFile: (file) ->
+    ranges = @ranges(@dataFile)
+    _.filter ranges, (r) -> _.endsWith(file, r.file)
+
+  ranges: (dataFile) ->
     try
-      data = fs.readFileSync @dataFile, {encoding: "utf8"}
+      data = fs.readFileSync dataFile, {encoding: "utf8"}
     catch error
       return []
 
@@ -21,11 +25,10 @@ class GocovParser
     extract = (match) ->
       return unless match?
       filePath = match[1]
-      if _.endsWith(file, filePath)
-        statements = match[6]
-        count = match[7]
-        range = new Range([parseInt(match[2])-1, parseInt(match[3])-1], [parseInt(match[4])-1, parseInt(match[5])-1])
-        ranges.push range: range, count: parseInt(count), file: filePath
+      statements = match[6]
+      count = match[7]
+      range = new Range([parseInt(match[2])-1, parseInt(match[3])-1], [parseInt(match[4])-1, parseInt(match[5])-1])
+      ranges.push range: range, count: parseInt(count), file: filePath
     loop
       match = pattern.exec(data)
       extract(match)

@@ -55,14 +55,27 @@ describe "gocov", ->
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != \"Hello, 世界\" {\n\t\tt.Errorf(\"Expected %s - got %s\", \"Hello, 世界\", result)\n\t}\n}")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.once 'dispatch-complete', =>
+        dispatch.once 'coverage-complete', =>
           expect(dispatch.messages?).toBe true
-          expect(_.size(dispatch.messages)).toBe 1
-          dispatch.once 'dispatch-complete', =>
+          expect(_.size(dispatch.messages)).toBe 0
+          dispatch.once 'coverage-complete', =>
             expect(dispatch.messages?).toBe true
             expect(_.size(dispatch.messages)).toBe 0
-            # TODO: Actually Determine If Coverage Was Shown
-            # May Wait To Implement After React Editor Is Default
+            markers = buffer.findMarkers(class: 'gocov')
+            expect(markers).toBeDefined()
+            expect(_.size(markers)).toBe 2
+            expect(markers[0]).toBeDefined
+            expect(markers[0].range).toBeDefined
+            expect(markers[0].range.start.row).toBe 4
+            expect(markers[0].range.start.column).toBe 13
+            expect(markers[0].range.end.row).toBe 6
+            expect(markers[0].range.end.column).toBe 1
+            expect(markers[1]).toBeDefined
+            expect(markers[1].range).toBeDefined
+            expect(markers[1].range.start.row).toBe 8
+            expect(markers[1].range.start.column).toBe 20
+            expect(markers[1].range.end.row).toBe 10
+            expect(markers[1].range.end.column).toBe 1
             done = true
           testBuffer.save()
         buffer.save()

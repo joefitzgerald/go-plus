@@ -42,8 +42,6 @@ describe "gocov parser", ->
     args = ["test", "-coverprofile=#{tempFile}"]
     cwd = path.join(directory, "src", "github.com", "testuser", "example")
     done = (exitcode, stdout, stderr, messages) =>
-      # console.log 'gocov-parser-spec - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
-      # console.log 'gocov-parser-spec - stderr: ' + stderr if stderr? and stderr.trim() isnt ''
       expect(exitcode).toBe 0
       if exitcode is 0
         gocovparser.setDataFile(tempFile)

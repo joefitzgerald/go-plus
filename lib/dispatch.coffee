@@ -106,7 +106,7 @@ class Dispatch
         @gofmt.formatBuffer(editorView, saving, callback)
     ], (err, modifymessages) =>
       @collectMessages(modifymessages)
-      async.series([
+      async.parallel([
         (callback) =>
           @govet.checkBuffer(editorView, saving, callback)
         (callback) =>
@@ -115,12 +115,17 @@ class Dispatch
           @gopath.check(editorView, saving, callback)
         (callback) =>
           @gobuild.checkBuffer(editorView, saving, callback)
-        (callback) =>
-          @gocov.runCoverage(editorView, saving, callback)
       ], (err, checkmessages) =>
         @collectMessages(checkmessages)
         @emit 'dispatch-complete', editorView
       )
+    )
+
+    async.series([
+      (callback) =>
+        @gocov.runCoverage(editorView, saving, callback)
+    ], (err, modifymessages) =>
+      @emit 'coverage-complete'
     )
 
   handleBufferSave: (editorView, saving) ->
