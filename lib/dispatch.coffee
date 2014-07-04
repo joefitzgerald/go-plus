@@ -145,17 +145,33 @@ class Dispatch
     @resetPanel()
 
   resetGutter: (editorView) ->
-    gutter = editorView?.gutter
-    return unless gutter?
-    gutter.removeClassFromAllLines('go-plus-message')
+    return unless @isValidEditorView(editorView)
+    if atom.config.get('core.useReactEditor')?
+      return unless editorView.getEditor()?
+      # Find current markers
+      markers = editorView.getEditor().getBuffer()?.findMarkers(class: 'go-plus')
+      return unless markers? and _.size(markers) > 0
+      # Remove markers
+      marker.destroy() for marker in markers
+    else
+      gutter = editorView?.gutter
+      return unless gutter?
+      gutter.removeClassFromAllLines('go-plus-message')
 
   updateGutter: (editorView, messages) ->
     @resetGutter(editorView)
-    return unless messages?
-    return if messages.length <= 0
-    gutter = editorView?.gutter
-    return unless gutter?
-    gutter.addClassToLine message.line - 1, 'go-plus-message' for message in messages
+    return unless messages? and messages.length > 0
+    if atom.config.get('core.useReactEditor')?
+      buffer = editorView?.getEditor()?.getBuffer()
+      return unless buffer?
+      for message in messages
+        if message?.line? and message.line >= 0
+          marker = buffer.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
+          editorView.getEditor().addDecorationForMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
+    else
+      gutter = editorView?.gutter
+      return unless gutter?
+      gutter.addClassToLine message.line - 1, 'go-plus-message' for message in messages
 
   resetPanel: ->
     @messagepanel.close()
