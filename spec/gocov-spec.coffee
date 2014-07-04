@@ -11,6 +11,7 @@ describe "gocov", ->
   beforeEach ->
     atomconfig = new AtomConfig()
     atomconfig.allfunctionalitydisabled()
+    atom.config.set('core.useReactEditor', true)
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
     oldGoPath = "~/go" unless process.env.GOPATH?

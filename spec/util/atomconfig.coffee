@@ -11,7 +11,7 @@ class AtomConfig
     atom.config.set('go-plus.showPanel', true)
     atom.config.set('go-plus.showPanelWhenNoIssuesExist', false)
 
-  allfunctionalitydisabled: ->
+  allfunctionalitydisabled: =>
     @defaults()
     atom.config.set("go-plus.syntaxCheckOnSave", false)
     atom.config.set("go-plus.formatOnSave", false)
