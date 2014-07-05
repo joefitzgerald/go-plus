@@ -5,7 +5,7 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 AtomConfig = require './util/atomconfig'
 
-describe "gocov", ->
+describe "gocover", ->
   [atomconfig, editor, dispatch, testEditor, directory, filePath, testFilePath, oldGoPath] = []
 
   beforeEach ->
@@ -62,7 +62,7 @@ describe "gocov", ->
           dispatch.once 'coverage-complete', =>
             expect(dispatch.messages?).toBe true
             expect(_.size(dispatch.messages)).toBe 0
-            markers = buffer.findMarkers(class: 'gocov')
+            markers = buffer.findMarkers(class: 'gocover')
             expect(markers).toBeDefined()
             expect(_.size(markers)).toBe 2
             expect(markers[0]).toBeDefined

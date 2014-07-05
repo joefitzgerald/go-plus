@@ -4,7 +4,7 @@ Govet = require './govet'
 Golint = require './golint'
 Gopath = require './gopath'
 Gobuild = require './gobuild'
-Gocov = require './gocov'
+Gocover = require './gocover'
 Executor = require './executor'
 GoExecutable = require './goexecutable'
 SplicerSplitter = require './util/splicersplitter'
@@ -41,7 +41,7 @@ class Dispatch
     @golint = new Golint(this)
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
-    @gocov = new Gocov(this)
+    @gocover = new Gocover(this)
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
 
     # Reset State If Requested
@@ -55,7 +55,7 @@ class Dispatch
       @resetState(editorView)
     @gobuild.on 'reset', (editorView) =>
       @resetState(editorView)
-    @gocov.on 'reset', (editorView) =>
+    @gocover.on 'reset', (editorView) =>
       @resetState(editorView)
 
     # Update Pane And Gutter With Messages
@@ -83,7 +83,7 @@ class Dispatch
 
   destroy: ->
     @unsubscribe()
-    @gocov.destroy()
+    @gocover.destroy()
     @gobuild.destroy()
     @golint.destroy()
     @govet.destroy()
@@ -123,7 +123,7 @@ class Dispatch
 
     async.series([
       (callback) =>
-        @gocov.runCoverage(editorView, saving, callback)
+        @gocover.runCoverage(editorView, saving, callback)
     ], (err, modifymessages) =>
       @emit 'coverage-complete'
     )
@@ -137,7 +137,7 @@ class Dispatch
     @triggerPipeline(editorView, saving)
 
   handleBufferChanged: (editorView) ->
-    @gocov.resetCoverage()
+    @gocover.resetCoverage()
 
   resetState: (editorView) ->
     @messages = []

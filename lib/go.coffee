@@ -75,9 +75,6 @@ class Go
   golint: ->
     return @gopathBinItem('golint')
 
-  gocov: ->
-    return @gopathBinItem('gocov')
-
   gopathBinItem: (name) ->
     gopaths = @splitgopath()
     return false unless gopaths? and _.size(gopaths) > 0

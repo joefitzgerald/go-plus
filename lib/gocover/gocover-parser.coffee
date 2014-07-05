@@ -3,7 +3,7 @@ _ = require 'underscore-plus'
 fs = require 'fs-plus'
 
 module.exports =
-class GocovParser
+class GocoverParser
   setDataFile: (file) ->
     @dataFile = file
 

@@ -3,16 +3,16 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 _ = require 'underscore-plus'
 GoExecutable = require './../../lib/goexecutable'
-GocovParser = require './../../lib/gocov/gocov-parser'
+GocoverParser = require './../../lib/gocover/gocover-parser'
 Executor = require './../../lib/executor'
 
-describe "gocov parser", ->
-  [done, gocovparser, executor, goexecutable, go, env, directory, filePath, testFilePath] = []
+describe "gocover parser", ->
+  [done, gocoverparser, executor, goexecutable, go, env, directory, filePath, testFilePath] = []
 
   beforeEach ->
     done = false
     executor = new Executor()
-    gocovparser = new GocovParser()
+    gocoverparser = new GocoverParser()
     directory = temp.mkdirSync()
     env = _.clone(process.env)
     env['GOPATH']=directory
@@ -44,7 +44,7 @@ describe "gocov parser", ->
     done = (exitcode, stdout, stderr, messages) =>
       expect(exitcode).toBe 0
       if exitcode is 0
-        gocovparser.setDataFile(tempFile)
+        gocoverparser.setDataFile(tempFile)
         done = true
 
     runs ->
@@ -56,7 +56,7 @@ describe "gocov parser", ->
     runs ->
       re = new RegExp('^' + path.join(directory, 'src') + path.sep)
       packagePath = filePath.replace(re, '')
-      result = gocovparser.rangesForFile(filePath)
+      result = gocoverparser.rangesForFile(filePath)
       expect(result).toBeDefined()
 
       expect(_.size(result)).toBe 2

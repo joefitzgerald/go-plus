@@ -8,4 +8,4 @@
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
 '.workspace':
-  'ctrl-alt-c': 'golang:gocov'
+  'ctrl-alt-c': 'golang:gocover'
