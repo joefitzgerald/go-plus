@@ -40,7 +40,7 @@ class Golint
       return
     args = [buffer.getPath()]
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.golintArgs'))
-    args = configArgs.concat(args) if configArgs? and _.size(configArgs) > 0
+    args = _.union(configArgs, args) if configArgs? and _.size(configArgs) > 0
     cmd = @dispatch.goexecutable.current().golint()
 
     done = (exitcode, stdout, stderr, messages) =>

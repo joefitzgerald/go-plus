@@ -39,7 +39,7 @@ class Govet
       callback(null)
       return
     args = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
-    args = args.concat([buffer.getPath()])
+    args = _.union(args, [buffer.getPath()])
     cmd = @dispatch.goexecutable.current().vet()
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''

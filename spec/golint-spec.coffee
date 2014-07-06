@@ -54,3 +54,21 @@ describe "lint", ->
 
       waitsFor ->
         done is true
+
+    it "allows lint args to be specified", ->
+      done = false
+      runs ->
+        atom.config.set("go-plus.golintArgs", "-min_confidence=0.8")
+        buffer.setText("package main\n\nimport \"fmt\"\n\ntype T int\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n")
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\ntype T int\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0].column).toBe "6"
+          expect(dispatch.messages[0].line).toBe "5"
+          expect(dispatch.messages[0].msg).toBe "exported type T should have comment or be unexported"
+          done = true
+        buffer.save()
+
+      waitsFor ->
+        done is true

@@ -40,10 +40,10 @@ class Gofmt
       return
     args = ['-w']
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gofmtArgs'))
-    args = args.concat(configArgs) if configArgs? and _.size(configArgs) > 0
-    args = args.concat([buffer.getPath()])
+    args = _.union(args, configArgs) if configArgs? and _.size(configArgs) > 0
+    args = _.union(args, [buffer.getPath()])
     go = @dispatch.goexecutable.current()
-    cmd = go.gofmt()
+    cmd = if atom.config.get('go-plus.formatWithGoImports')? then go.goimports() else go.gofmt()
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(editorView, stderr) if stderr? and stderr.trim() isnt ''

@@ -103,6 +103,21 @@ describe "format", ->
       waitsFor ->
         done is true
 
+    it "uses goimports to reorganize imports if enabled", ->
+      done = false
+      runs ->
+        atom.config.set("go-plus.formatWithGoImports", true)
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, 世界\")\n}\n"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 0
+          done = true
+        buffer.setText("package main\n\nfunc main()  {\n\tfmt.Println(\"Hello, 世界\")\n}\n")
+        buffer.save()
+
+      waitsFor ->
+        done is true
+
   describe "when format on save is disabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
