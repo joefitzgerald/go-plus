@@ -78,7 +78,7 @@ class Dispatch
     messages = _.filter messages, (message) -> message?
     @messages = _.union(@messages, messages)
     @messages = _.uniq @messages, (element, index, list) ->
-      return element?.line + ":" + element?.column + ":" + element?.msg
+      return element?.line + ':' + element?.column + ':' + element?.msg
     @emit 'messages-collected', _.size(@messages)
 
   destroy: ->

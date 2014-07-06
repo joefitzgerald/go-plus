@@ -7,12 +7,12 @@ module.exports =
     formatOnSave: true
     formatWithGoImports: true
     getMissingTools: true
-    gofmtArgs: "-w"
+    gofmtArgs: '-w'
     vetOnSave: true
-    vetArgs: ""
+    vetArgs: ''
     lintOnSave: true
-    goPath: ""
-    golintArgs: ""
+    goPath: ''
+    golintArgs: ''
     runCoverageOnSave: false
     showPanel: true
     showPanelWhenNoIssuesExist: false

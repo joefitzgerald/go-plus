@@ -56,6 +56,25 @@ describe "vet", ->
       waitsFor ->
         done is true
 
+    it "allows vet args to be specified", ->
+      done = false
+      runs ->
+        atom.config.set('go-plus.vetArgs', '-unreachable=true')
+        buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n")
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\nreturn\nfmt.Println(\"Unreachable...\")}\n"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0]).toBeDefined()
+          expect(dispatch.messages[0].column).toBe false
+          expect(dispatch.messages[0].line).toBe "7"
+          expect(dispatch.messages[0].msg).toBe "unreachable code"
+          done = true
+        buffer.save()
+
+      waitsFor ->
+        done is true
+
   describe "when vet on save and format on save are enabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", true)

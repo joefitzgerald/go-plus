@@ -13,7 +13,7 @@ class GocoverParser
 
   ranges: (dataFile) ->
     try
-      data = fs.readFileSync dataFile, {encoding: "utf8"}
+      data = fs.readFileSync dataFile, {encoding: 'utf8'}
     catch error
       return []
 
