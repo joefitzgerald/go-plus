@@ -91,6 +91,21 @@ describe "build", ->
       waitsFor ->
         done is true
 
+    it "cleans up test file", ->
+      done = false
+      runs ->
+        fs.unlinkSync(filePath)
+        testBuffer = testEditor.getBuffer()
+        testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\tt.Error(\"Example Test\")\n}")
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.existsSync(path.join(directory, "src", "github.com", "testuser", "example", "example.test"))).toBe false
+          done = true
+        testBuffer.save()
+
+      waitsFor ->
+        done is true
+
   describe "when working with multiple files", ->
     beforeEach ->
       atom.config.set("go-plus.goPath", directory)
