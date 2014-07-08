@@ -71,12 +71,12 @@ class Gocover
     @emit 'reset', editorView
 
   removeCoverageFile: =>
+    @ranges = []
     if @coverageFile
       try
         fs.unlinkSync @coverageFile
       catch
         return
-    @ranges = []
 
   createCoverageFile: =>
     @removeCoverageFile()
