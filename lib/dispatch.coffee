@@ -167,7 +167,7 @@ class Dispatch
       for message in messages
         if message?.line? and message.line >= 0
           marker = buffer.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
-          editorView.getEditor().addDecorationForMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
+          editorView.getEditor().decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
     else
       gutter = editorView?.gutter
       return unless gutter?

@@ -8,6 +8,7 @@ class SplicerSplitter
     result = switch delimeter
       when ' ' then arg.split(/[\s]+/)
       when ':' then arg.split(/[:]+/)
+      when ';' then arg.split(/[;]+/)
       else []
     result = _.map result, (item) ->
       return '' unless item?

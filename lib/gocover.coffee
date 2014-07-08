@@ -50,7 +50,7 @@ class Gocover
     for range in editorRanges
       marker = buffer.markRange(range.range, class: 'gocover', gocovercount: range.count, invalidate: 'touch')
       clazz = if range.count > 0 then 'covered' else 'uncovered'
-      editor.addDecorationForMarker(marker, type: 'highlight', class: clazz, onlyNonEmpty: true)
+      editor.decorateMarker(marker, type: 'highlight', class: clazz, onlyNonEmpty: true)
 
   clearMarkers: (editor) =>
     return unless editor?

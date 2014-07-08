@@ -34,7 +34,7 @@ describe "pathexpander", ->
   describe "when working with a multi-item path", ->
     it "joins the command with the path", ->
       runs =>
-        path = path.join('~', 'go', 'bin') + ':' + path.join('~', 'othergo', 'bin')
+        path = path.join('~', 'go', 'bin') + path.delimiter + path.join('~', 'othergo', 'bin')
         result = pathexpander.joinCommandWithPath(path, 'goimports')
         expect(result).toBeDefined
         expect(result).toBeTruthy

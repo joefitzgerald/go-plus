@@ -43,7 +43,7 @@ class Go
   splitgopath: ->
     result = @buildgopath()
     return [] unless result? and result isnt ''
-    return result.split(':')
+    return result.split(path.delimiter)
 
   gofmt: ->
     return false unless @goroot? and @goroot isnt ''

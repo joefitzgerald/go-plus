@@ -35,7 +35,7 @@ class GoExecutable
       when 'darwin', 'freebsd', 'linux', 'sunos'
         # PATH
         if @env.PATH?
-          elements = @env.PATH.split(':')
+          elements = @env.PATH.split(path.delimiter)
           for element in elements
             executables.push path.normalize(path.join(element, 'go'))
 
@@ -43,8 +43,6 @@ class GoExecutable
         executables.push path.normalize(path.join('/usr', 'local', 'go', 'bin', 'go'))
         # Homebrew
         executables.push path.normalize(path.join('/usr', 'local', 'bin', 'go', ))
-        # Non-Existent
-        executables.push path.normalize(path.join('/usr', 'nonexistent', 'bin', 'go', ))
       when 'win32'
         executables.push path.normalize(path.join('C:','go', 'bin', 'go'))
 
@@ -99,23 +97,24 @@ class GoExecutable
       outercallback(err, go)
     )
 
-  getmissingtools: (go) =>
+  gettools: (go, updateExistingTools) =>
     gogetenv = _.clone(@env)
-    console.log 'getting missing tools'
+    message = if updateExistingTools? then 'Updating existing tools...' else 'Getting missing tools...'
+    console.log message
     gogetenv['GOPATH'] = go.buildgopath()
     done = (exitcode, stdout, stderr, messages) =>
       console.log exitcode + ':' + stdout + ':' + stderr
     async.series([
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/godoc']) unless go.godoc?
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/godoc']) unless go.godoc? and not updateExistingTools?
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/vet']) unless go.vet?
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/vet']) unless go.vet? and not updateExistingTools?
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/cover']) unless go.cover?
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/cover']) unless go.cover? and not updateExistingTools?
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/goimports']) unless go.goimports?
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/goimports']) unless go.goimports? and not updateExistingTools?
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'github.com/golang/lint/golint']) unless go.golint?
+        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'github.com/golang/lint/golint']) unless go.golint? and not updateExistingTools?
     ], (err, results) =>
       @emit 'tools-complete'
     )

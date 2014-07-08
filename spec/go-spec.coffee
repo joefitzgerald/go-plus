@@ -39,7 +39,7 @@ describe "go", ->
         result = go.buildgopath()
         expect(result).toBeDefined
         expect(result).toBeTruthy
-        expect(result).toBe path.join(process.env.HOME, 'go') + ':' + path.join(process.env.HOME, 'go2') + ':/usr/local/go'
+        expect(result).toBe path.join(process.env.HOME, 'go') + path.delimiter + path.join(process.env.HOME, 'go2') + ':/usr/local/go'
 
     it "splits the path", ->
       runs =>

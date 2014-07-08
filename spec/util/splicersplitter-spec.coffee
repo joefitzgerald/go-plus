@@ -1,4 +1,5 @@
 _ = require 'underscore-plus'
+path = require 'path'
 SplicerSplitter = require './../../lib/util/splicersplitter'
 
 describe "splicersplitter", ->
@@ -62,7 +63,7 @@ describe "splicersplitter", ->
 
     it "splits the text into an array", ->
       runs =>
-        result = splicersplitter.splitAndSquashToArray(':', ': -v : -b:')
+        result = splicersplitter.splitAndSquashToArray(path.delimiter, ': -v : -b:')
         expect(result).toBeDefined
         expect(result).toBeTruthy
         expect(_.size(result)).toBe 2

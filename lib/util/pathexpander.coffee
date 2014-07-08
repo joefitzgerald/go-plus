@@ -8,12 +8,12 @@ class PathExpander
 
   expand: (p, gopath) ->
     return '' unless p? and p.trim() isnt ''
-    return @expandItem(p, gopath) if p.indexOf(':') is -1
-    paths = p.split(':')
+    return @expandItem(p, gopath) if p.indexOf(path.delimiter) is -1
+    paths = p.split(path.delimiter)
     result = ''
     for pathItem in paths
       pathItem = @expandItem(pathItem, gopath)
-      result = if result is '' then pathItem else result + ':' + pathItem
+      result = if result is '' then pathItem else result + path.delimiter + pathItem
     return result
 
   expandItem: (p, gopath) ->
@@ -47,7 +47,7 @@ class PathExpander
 
   replaceGoPathToken: (p, gopath) ->
     return p unless gopath? and gopath isnt ''
-    gopath = if gopath.indexOf(':') is -1 then gopath.trim() else gopath.split(':')[0].trim()
+    gopath = if gopath.indexOf(path.delimiter) is -1 then gopath.trim() else gopath.split(path.delimiter)[0].trim()
     p = p.replace(/^\$GOPATH\//i, gopath.trim() + '/')
     p = p.replace(/^%GOPATH%/i, gopath.trim())
     return '' if not p? or p.trim() is ''
@@ -57,7 +57,7 @@ class PathExpander
     return '' unless p? and p.trim() isnt ''
     return '' unless command? and command.trim() isnt ''
     checkExists = false unless delim?
-    delim = ':' unless delim? and delim.trim() isnt ''
+    delim = path.delimiter unless delim? and delim.trim() isnt ''
 
     result = p.split(delim)
     result = _.map result, (item) ->
