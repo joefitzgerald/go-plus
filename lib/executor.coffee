@@ -19,7 +19,6 @@ class Executor
     stderr = (data) -> error += data
     exit = (data) ->
       code = data
-      # console.log '[' + command + '] exited with code: ' + code if code isnt 0
       callback(code, output, error, messages)
     bufferedprocess = new BufferedProcess({command, args, options, stdout, stderr, exit})
     bufferedprocess.process.on 'error', (err) =>

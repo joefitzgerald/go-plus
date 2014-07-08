@@ -33,8 +33,8 @@ class Go
   buildgopath: ->
     result = ''
     gopathConfig = atom.config.get('go-plus.goPath')
-    environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')
-    environmentOverridesConfig ?= true
+    environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')?
+    result = @env.GOPATH if @env.GOPATH? and @env.GOPATH isnt ''
     result = @gopath if @gopath? and @gopath isnt ''
     result = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig isnt ''
     result = gopathConfig if @gopath is ''

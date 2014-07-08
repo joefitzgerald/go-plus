@@ -71,7 +71,7 @@ class GoExecutable
           console.log 'Error running go version: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(null)
-        @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, ['version'])
+        @executor.exec(absoluteExecutable, false, @env, done, ['version'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           unless stderr? and stderr isnt ''
@@ -92,31 +92,53 @@ class GoExecutable
           console.log 'Error running go env: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(null)
-        @executor.exec(absoluteExecutable, false, @dispatch?.env(), done, ['env'])
+        @executor.exec(absoluteExecutable, false, @env, done, ['env'])
     ], (err, results) =>
       outercallback(err, go)
     )
 
   gettools: (go, updateExistingTools) =>
+    return unless go?
     gogetenv = _.clone(@env)
-    message = if updateExistingTools? then 'Updating existing tools...' else 'Getting missing tools...'
-    console.log message
     gogetenv['GOPATH'] = go.buildgopath()
-    done = (exitcode, stdout, stderr, messages) =>
-      console.log exitcode + ':' + stdout + ':' + stderr
     async.series([
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/godoc']) unless go.godoc? and not updateExistingTools?
+        done = (exitcode, stdout, stderr) =>
+          callback(null)
+        if go.godoc()? and not updateExistingTools?
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/godoc'])
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/vet']) unless go.vet? and not updateExistingTools?
+        done = (exitcode, stdout, stderr) =>
+          callback(null)
+        if go.vet()? and not updateExistingTools?
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/vet'])
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/cover']) unless go.cover? and not updateExistingTools?
+        done = (exitcode, stdout, stderr) =>
+          callback(null)
+        if go.cover()? and not updateExistingTools?
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/cover'])
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'code.google.com/p/go.tools/cmd/goimports']) unless go.goimports? and not updateExistingTools?
+        done = (exitcode, stdout, stderr) =>
+          callback(null)
+        if go.goimports()? and not updateExistingTools?
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/goimports'])
       (callback) =>
-        @executor.exec(go.executable, false, gogetenv, callback(), ['get', '-u', 'github.com/golang/lint/golint']) unless go.golint? and not updateExistingTools?
+        done = (exitcode, stdout, stderr) =>
+          callback(null)
+        if go.golint()? and not updateExistingTools?
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'github.com/golang/lint/golint'])
     ], (err, results) =>
-      @emit 'tools-complete'
+      @emit 'gettools-complete'
     )
 
   current: =>

@@ -6,27 +6,25 @@ _ = require 'underscore-plus'
 GoExecutable = require './../lib/goexecutable'
 
 describe "go executable", ->
-  [goexecutable] = []
+  [goexecutable, directory, env, go] = []
 
   beforeEach ->
-    goexecutable = new GoExecutable(process.env)
+    done = false
+    runs ->
+      directory = temp.mkdirSync()
+      env = _.clone(process.env)
+      env['GOPATH'] = directory
+      goexecutable = new GoExecutable(env)
+      goexecutable.once 'detect-complete', (thego) ->
+        go = thego
+        done = true
+      goexecutable.detect()
+
+    waitsFor ->
+      done is true
 
   describe "when user has the go executable in their path", ->
-    beforeEach ->
-
     it "determines the current go version", ->
-      done = false
-      go = false
-
-      runs ->
-        goexecutable.once 'detect-complete', (thego) ->
-          go = thego
-          done = true
-        goexecutable.detect()
-
-      waitsFor ->
-        done is true
-
       runs =>
         expect(goexecutable).toBeDefined
         expect(go).toBeDefined
@@ -35,3 +33,26 @@ describe "go executable", ->
         expect(go.version.substring(0,2)).toBe 'go'
         expect(go.arch).toBe 'amd64'
         expect(go.executable.substring(go.executable.length - 2, go.executable.length)).toBe 'go'
+
+    it "fetches missing tools if requested", -> # integration test
+      done = false
+      runs =>
+        expect(goexecutable).toBeDefined
+        expect(go).toBeDefined
+        expect(go).toBeTruthy
+        expect(go.gopath).toBe directory
+        expect(go.goimports()).toBe false
+        expect(go.golint()).toBe false
+        goexecutable.once 'gettools-complete', =>
+          go = goexecutable.current()
+          expect(go).toBeDefined
+          expect(go).toBeTruthy
+          expect(go.gopath).toBe directory
+          expect(go.goimports()).toBe path.join(directory, 'bin', 'goimports')
+          expect(go.golint()).toBe path.join(directory, 'bin', 'golint')
+          done = true
+        goexecutable.gettools(go, true)
+
+      waitsFor =>
+        done is true
+      , 60000 # Go getting takes a while (this will fail without internet)
