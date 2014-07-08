@@ -101,39 +101,39 @@ class GoExecutable
     return unless go?
     gogetenv = _.clone(@env)
     gogetenv['GOPATH'] = go.buildgopath()
-    async.series([
+    async.parallel([
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
-        if go.godoc()? and not updateExistingTools?
+        if go.godoc() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/godoc'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
-        if go.vet()? and not updateExistingTools?
+        if go.vet() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/vet'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
-        if go.cover()? and not updateExistingTools?
+        if go.cover() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/cover'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
-        if go.goimports()? and not updateExistingTools?
+        if go.goimports() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/goimports'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
-        if go.golint()? and not updateExistingTools?
+        if go.golint() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'github.com/golang/lint/golint'])

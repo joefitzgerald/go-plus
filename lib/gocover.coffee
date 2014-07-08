@@ -22,8 +22,9 @@ class Gocover
     @ranges = false
 
     atom.workspaceView.command 'golang:gocover', => @runCoverageForCurrentEditorView()
+    atom.workspaceView.command 'golang:cleargocover', => @clearMarkersFromEditors()
     atom.workspace.eachEditor (editor) =>
-      if atom.config.get('core.useReactEditor')?
+      if atom.config.get('core.useReactEditor')? and atom.config.get('core.useReactEditor')
         @addMarkersToEditor(editor)
 
   destroy: ->
@@ -34,6 +35,12 @@ class Gocover
     editors = atom.workspace.getEditors()
     for editor in editors
       @addMarkersToEditor(editor)
+
+  clearMarkersFromEditors: =>
+    @removeCoverageFile()
+    editors = atom.workspace.getEditors()
+    for editor in editors
+      @clearMarkers(editor)
 
   addMarkersToEditor: (editor) =>
     return unless editor?
@@ -69,6 +76,7 @@ class Gocover
         fs.unlinkSync @coverageFile
       catch
         return
+    @ranges = []
 
   createCoverageFile: =>
     @removeCoverageFile()
@@ -102,7 +110,7 @@ class Gocover
       return
 
     @covering = true
-
+    @clearMarkersFromEditors()
     tempFile = @createCoverageFile()
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
@@ -113,13 +121,25 @@ class Gocover
     env = @dispatch.env()
     env['GOPATH'] = gopath
     re = new RegExp(buffer.getBaseName() + '$')
+    go = @dispatch.goexecutable.current()
+    cover = go.cover()
+    if cover is false
+      message =
+        line: false
+        column: false
+        msg: 'Cover Tool Missing'
+        type: 'error'
+        source: @name
+      @covering = false
+      callback(null, [message])
+      return
     cwd = buffer.getPath().replace(re, '')
     cmd = @dispatch.goexecutable.current().executable
     args = ["test", "-coverprofile=#{tempFile}"]
     done = (exitcode, stdout, stderr, messages) =>
       if exitcode is 0
         @ranges = @parser.ranges(tempFile)
-        if atom.config.get('core.useReactEditor')?
+        if atom.config.get('core.useReactEditor')? and atom.config.get('core.useReactEditor')
           @addMarkersToEditors()
       @covering = false
       @emit @name + '-complete', editorView, saving
@@ -127,6 +147,6 @@ class Gocover
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   resetCoverage: =>
-    unless atom.config.get('core.useReactEditor')?
+    unless atom.config.get('core.useReactEditor')? and atom.config.get('core.useReactEditor')
       for area in areas
         area.removeMarkers()

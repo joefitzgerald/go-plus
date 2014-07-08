@@ -20,9 +20,11 @@ class Gofmt
 
   formatCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
-    return unless editorView?
+    return unless @dispatch.isValidEditorView(editorView)
     @reset editorView
-    @formatBuffer(editorView, false)
+    done = (err, messages) =>
+      @dispatch.resetAndDisplayMessages(editorView, messages)
+    @formatBuffer(editorView, false, done)
 
   formatBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)
@@ -43,7 +45,16 @@ class Gofmt
     args = _.union(args, configArgs) if configArgs? and _.size(configArgs) > 0
     args = _.union(args, [buffer.getPath()])
     go = @dispatch.goexecutable.current()
-    cmd = if atom.config.get('go-plus.formatWithGoImports')? then go.goimports() else go.gofmt()
+    cmd = go.format()
+    if cmd is false
+      message =
+        line: false
+        column: false
+        msg: 'Format Tool Missing'
+        type: 'error'
+        source: @name
+      callback(null, [message])
+      return
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(editorView, stderr) if stderr? and stderr.trim() isnt ''
@@ -51,11 +62,11 @@ class Gofmt
       callback(null, messages)
     @dispatch.executor.exec(cmd, false, @dispatch?.env(), done, args)
 
-  mapMessages: (editorView, data) ->
+  mapMessages: (editorView, data) =>
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
     messages = []
     return messages unless data? and data isnt ''
-    extract = (matchLine) ->
+    extract = (matchLine) =>
       return unless matchLine?
       message = switch
         when matchLine[4]?
@@ -63,13 +74,13 @@ class Gofmt
           column: matchLine[4]
           msg: matchLine[5]
           type: 'error'
-          source: 'fmt'
+          source: @name
         else
           line: matchLine[2]
           column: false
           msg: matchLine[5]
           type: 'error'
-          source: 'fmt'
+          source: @name
       messages.push message
     loop
       match = pattern.exec(data)

@@ -28,12 +28,11 @@ class Dispatch
     @processEnv = process.env
     @executor = new Executor()
     @splicersplitter = new SplicerSplitter()
-    @goexecutable = new GoExecutable(@processEnv)
+    @goexecutable = new GoExecutable(@env())
     @goexecutable.on 'detect-complete', =>
-      @gettools if atom.config.get('go-plus.getMissingTools')
-      #unless atom.config.get('go-plus.getMissingTools')
-      @ready = true
-      @emit 'ready'
+      @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools')
+      @emitReady(false) unless atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools')
+
     @goexecutable.detect()
 
     @gofmt = new Gofmt(this)
@@ -60,15 +59,43 @@ class Dispatch
 
     # Update Pane And Gutter With Messages
     @on 'dispatch-complete', (editorView) =>
-      @updatePane(editorView, @messages)
-      @updateGutter(editorView, @messages)
-      @dispatching = false
-      @emit 'display-complete'
+      @displayMessages(editorView)
 
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
-    atom.workspaceView.on 'pane-container:active-pane-item-changed', =>
-        @resetPanel()
-        @messagepanel.close()
+    atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPanel()
+    atom.config.observe 'go-plus.getMissingTools', => @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools') and @ready? and @ready
+    atom.config.observe 'go-plus.formatWithGoImports', => @displayGoInfo() if @ready? and @ready
+    atom.workspaceView.command 'golang:goinfo', => @displayGoInfo()
+    atom.workspaceView.command 'golang:getmissingtools', => @gettools(false)
+    atom.workspaceView.command 'golang:updatetools', => @gettools(true)
+
+  resetAndDisplayMessages: (editorView, msgs) =>
+    return unless @isValidEditorView(editorView)
+    @resetState(editorView)
+    @collectMessages(msgs)
+    @displayMessages(editorView)
+
+  displayMessages: (editorView) =>
+    @updatePane(editorView, @messages)
+    @updateGutter(editorView, @messages)
+    @dispatching = false
+    @emit 'display-complete'
+
+  emitReady: (displayInfo) =>
+    @displayGoInfo() if displayInfo? and displayInfo
+    @ready = true
+    @emit 'ready'
+
+  displayGoInfo: =>
+    @resetPanel()
+    go = @goexecutable.current()
+    @messagepanel.add new PlainMessageView message: 'Using Go: ' + go.name + ' (@' + go.executable + ')', className: 'text-success'
+    @messagepanel.add new PlainMessageView message: 'GOPATH: ' + go.gopath, className: 'text-success'
+    @messagepanel.add new PlainMessageView message: 'Cover Tool: ' + go.cover(), className: 'text-success'
+    @messagepanel.add new PlainMessageView message: 'Vet Tool: ' + go.vet(), className: 'text-success'
+    @messagepanel.add new PlainMessageView message: 'Format Tool: ' + go.format(), className: 'text-success'
+    @messagepanel.add new PlainMessageView message: 'Lint Tool: ' + go.golint(), className: 'text-success'
+    @messagepanel.attach()
 
   collectMessages: (messages) ->
     messages = _.flatten(messages) if messages? and _.size(messages) > 0
@@ -130,9 +157,7 @@ class Dispatch
 
   handleBufferSave: (editorView, saving) ->
     return unless @ready? and @ready
-    editor = editorView.getEditor()
-    grammar = editor.getGrammar()
-    return if grammar.scopeName isnt 'source.go'
+    return unless @isValidEditorView(editorView)
     @resetState(editorView)
     @triggerPipeline(editorView, saving)
 
@@ -146,7 +171,7 @@ class Dispatch
 
   resetGutter: (editorView) ->
     return unless @isValidEditorView(editorView)
-    if atom.config.get('core.useReactEditor')?
+    if atom.config.get('core.useReactEditor')
       return unless editorView.getEditor()?
       # Find current markers
       markers = editorView.getEditor().getBuffer()?.findMarkers(class: 'go-plus')
@@ -161,11 +186,11 @@ class Dispatch
   updateGutter: (editorView, messages) ->
     @resetGutter(editorView)
     return unless messages? and messages.length > 0
-    if atom.config.get('core.useReactEditor')?
+    if atom.config.get('core.useReactEditor')
       buffer = editorView?.getEditor()?.getBuffer()
       return unless buffer?
       for message in messages
-        if message?.line? and message.line >= 0
+        if message?.line? and message.line isnt false and message.line >= 0
           marker = buffer.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
           editorView.getEditor().decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
     else
@@ -211,9 +236,15 @@ class Dispatch
   env: ->
     _.clone(@processEnv)
 
-  gettools: =>
-    return unless atom.config.get('go-plus.getMissingTools')
-    @goexecutable.on 'tools-complete', =>
-      @ready = true
-      @emit 'ready'
-    @goexecutable.getmissingtools(@goexecutable.current())
+  gettools: (updateExistingTools) =>
+    updateExistingTools = updateExistingTools? and updateExistingTools
+    @ready = false
+    @resetPanel()
+    thego = @goexecutable.current()
+    unless thego.toolsAreMissing() or updateExistingTools
+      @emitReady(false)
+      return
+    @messagepanel.add new PlainMessageView message: 'Running `go get -u` for required tools...', className: 'text-success'
+    @messagepanel.attach()
+    @goexecutable.on 'gettools-complete', => @emitReady(true)
+    @goexecutable.gettools(thego, updateExistingTools)

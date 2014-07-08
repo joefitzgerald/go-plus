@@ -34,7 +34,7 @@ describe "go executable", ->
         expect(go.arch).toBe 'amd64'
         expect(go.executable.substring(go.executable.length - 2, go.executable.length)).toBe 'go'
 
-    it "fetches missing tools if requested", -> # integration test
+    xit "fetches missing tools if requested", -> # integration test
       done = false
       runs =>
         expect(goexecutable).toBeDefined

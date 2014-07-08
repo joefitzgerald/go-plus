@@ -23,9 +23,11 @@ class Gobuild
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
-    return unless editorView?
+    return unless @dispatch.isValidEditorView(editorView)
     @reset editorView
-    @checkBuffer(editorView, false)
+    done = (err, messages) =>
+      @dispatch.resetAndDisplayMessages(editorView, messages)
+    @checkBuffer(editorView, false, done)
 
   checkBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)

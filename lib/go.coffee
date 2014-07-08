@@ -33,7 +33,7 @@ class Go
   buildgopath: ->
     result = ''
     gopathConfig = atom.config.get('go-plus.goPath')
-    environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')?
+    environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')? and atom.config.get('go-plus.environmentOverridesConfiguration')
     result = @env.GOPATH if @env.GOPATH? and @env.GOPATH isnt ''
     result = @gopath if @gopath? and @gopath isnt ''
     result = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig isnt ''
@@ -50,6 +50,9 @@ class Go
     result = path.join(@goroot, 'bin', 'gofmt')
     return false unless fs.existsSync(result)
     return result
+
+  format: ->
+    if atom.config.get('go-plus.formatWithGoImports')? and atom.config.get('go-plus.formatWithGoImports') then @goimports() else @gofmt()
 
   godoc: ->
     return false unless @goroot? and @goroot isnt ''
@@ -81,4 +84,11 @@ class Go
     for item in gopaths
       result = path.resolve(path.normalize(path.join(item, 'bin', name)))
       return result if fs.existsSync(result)
+    return false
+
+  toolsAreMissing: ->
+    return true if @format() is false
+    return true if @golint() is false
+    return true if @vet() is false
+    return true if @cover() is false
     return false

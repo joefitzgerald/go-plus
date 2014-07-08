@@ -20,9 +20,11 @@ class Golint
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
-    return unless editorView?
+    return unless @dispatch.isValidEditorView(editorView)
     @reset editorView
-    @checkBuffer(editorView, false)
+    done = (err, messages) =>
+      @dispatch.resetAndDisplayMessages(editorView, messages)
+    @checkBuffer(editorView, false, done)
 
   checkBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)
@@ -42,7 +44,15 @@ class Golint
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.golintArgs'))
     args = _.union(configArgs, args) if configArgs? and _.size(configArgs) > 0
     cmd = @dispatch.goexecutable.current().golint()
-
+    if cmd is false
+      message =
+        line: false
+        column: false
+        msg: 'Lint Tool Missing'
+        type: 'error'
+        source: @name
+      callback(null, [message])
+      return
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stderr: ' + stderr if stderr? and stderr.trim() isnt ''
       messages = @mapMessages(editorView, stdout) if stdout? and stdout.trim() isnt ''

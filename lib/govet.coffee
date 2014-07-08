@@ -20,9 +20,11 @@ class Govet
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
-    return unless editorView?
+    return unless @dispatch.isValidEditorView(editorView)
     @reset editorView
-    @checkBuffer(editorView, false)
+    done = (err, messages) =>
+      @dispatch.resetAndDisplayMessages(editorView, messages)
+    @checkBuffer(editorView, false, done)
 
   checkBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)
@@ -41,6 +43,15 @@ class Govet
     args = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
     args = _.union(args, [buffer.getPath()])
     cmd = @dispatch.goexecutable.current().vet()
+    if cmd is false
+      message =
+        line: false
+        column: false
+        msg: 'Vet Tool Missing'
+        type: 'error'
+        source: @name
+      callback(null, [message])
+      return
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(editorView, stderr) if stderr? and stderr.trim() isnt ''
