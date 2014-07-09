@@ -98,9 +98,15 @@ class GoExecutable
     )
 
   gettools: (go, updateExistingTools) =>
-    return unless go?
+    unless go?
+      @emit 'gettools-complete'
+      return
     gogetenv = _.clone(@env)
-    gogetenv['GOPATH'] = go.buildgopath()
+    gopath = go.buildgopath()
+    unless gopath? and gopath.trim() isnt ''
+      @emit 'gettools-complete'
+      return
+    gogetenv['GOPATH'] = gopath
     async.parallel([
       (callback) =>
         done = (exitcode, stdout, stderr) =>
