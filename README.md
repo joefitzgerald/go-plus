@@ -14,7 +14,7 @@ This package adds extra Atom functionality for the go language:
 * Syntax checking using `go build` and `go test`
 * Display of test coverage using `go test -coverprofile`
 
-### Example
+### Example 
 
 ![A screenshot of go-plus in action](http://cl.ly/image/392z2L0f0E41/go-plus-example.gif)
 
