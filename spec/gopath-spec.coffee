@@ -66,7 +66,7 @@ describe "gopath", ->
     it "displays a warning for a non-existent GOPATH", ->
       done = false
       runs ->
-        dispatch.goexecutable.current().gopath=path.join(directory, 'nonexistent')
+        dispatch.goexecutable.current().gopath = path.join(directory, 'nonexistent')
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
@@ -109,7 +109,8 @@ describe "gopath", ->
     it "displays warnings for an unset GOPATH", ->
       done = false
       runs ->
-        dispatch.goexecutable.current().gopath=''
+        dispatch.goexecutable.current().env['GOPATH'] = ''
+        dispatch.goexecutable.current().gopath = ''
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")

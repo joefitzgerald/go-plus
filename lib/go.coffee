@@ -36,8 +36,8 @@ class Go
     environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')? and atom.config.get('go-plus.environmentOverridesConfiguration')
     result = @env.GOPATH if @env.GOPATH? and @env.GOPATH isnt ''
     result = @gopath if @gopath? and @gopath isnt ''
-    result = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig isnt ''
-    result = gopathConfig if @gopath is ''
+    result = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig.trim() isnt ''
+    result = gopathConfig if result is '' and gopathConfig? and gopathConfig.trim() isnt ''
     return @pathexpander.expand(result, '')
 
   splitgopath: ->

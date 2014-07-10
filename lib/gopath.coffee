@@ -41,7 +41,6 @@ class Gopath
           source: 'gopath'
       messages.push message
 
-
     if messages? and _.size(messages) is 0 and not fs.existsSync(gopaths[0])
       message =
           line: false

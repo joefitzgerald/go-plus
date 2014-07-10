@@ -64,7 +64,9 @@ class Dispatch
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPanel()
     atom.config.observe 'go-plus.getMissingTools', => @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools') and @ready? and @ready
-    atom.config.observe 'go-plus.formatWithGoImports', => @displayGoInfo() if @ready? and @ready
+    atom.config.observe 'go-plus.formatWithGoImports', => @displayGoInfo()
+    atom.config.observe 'go-plus.goPath', => @displayGoInfo()
+    atom.config.observe 'go-plus.environmentOverridesConfiguration', => @displayGoInfo()
     atom.workspaceView.command 'golang:goinfo', => @displayGoInfo()
     atom.workspaceView.command 'golang:getmissingtools', => @gettools(false)
     atom.workspaceView.command 'golang:updatetools', => @gettools(true)
@@ -89,12 +91,41 @@ class Dispatch
   displayGoInfo: =>
     @resetPanel()
     go = @goexecutable.current()
-    @messagepanel.add new PlainMessageView message: 'Using Go: ' + go.name + ' (@' + go.executable + ')', className: 'text-success'
-    @messagepanel.add new PlainMessageView message: 'GOPATH: ' + go.gopath, className: 'text-success'
-    @messagepanel.add new PlainMessageView message: 'Cover Tool: ' + go.cover(), className: 'text-success'
-    @messagepanel.add new PlainMessageView message: 'Vet Tool: ' + go.vet(), className: 'text-success'
-    @messagepanel.add new PlainMessageView message: 'Format Tool: ' + go.format(), className: 'text-success'
-    @messagepanel.add new PlainMessageView message: 'Lint Tool: ' + go.golint(), className: 'text-success'
+    if go? and go.executable? and go.executable.trim() isnt ''
+      @messagepanel.add new PlainMessageView message: 'Using Go: ' + go.name + ' (@' + go.executable + ')', className: 'text-success'
+
+      # gopath
+      gopath = go.buildgopath()
+      if gopath? and gopath.trim() isnt ''
+        @messagepanel.add new PlainMessageView message: 'GOPATH: ' + gopath, className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'GOPATH: Not Set', className: 'text-error'
+
+      # cover
+      if go.cover()? and go.cover() isnt false
+        @messagepanel.add new PlainMessageView message: 'Cover Tool: ' + go.cover(), className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'Cover Tool: Not Found', className: 'text-error'
+
+      # vet
+      if go.vet()? and go.vet() isnt false
+        @messagepanel.add new PlainMessageView message: 'Vet Tool: ' + go.vet(), className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'Vet Tool: Not Found', className: 'text-error'
+
+      # gofmt / goimports
+      if go.format()? and go.format() isnt false
+        @messagepanel.add new PlainMessageView message: 'Format Tool: ' + go.format(), className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'Format Tool: Not Found', className: 'text-error'
+
+      # golint
+      if go.golint()? and go.golint() isnt false
+        @messagepanel.add new PlainMessageView message: 'Lint Tool: ' + go.golint(), className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'Lint Tool: Not Found', className: 'text-error'
+    else
+      @messagepanel.add new PlainMessageView message: 'No Go Installations Were Found', className: 'text-error'
     @messagepanel.attach()
 
   collectMessages: (messages) ->
@@ -128,6 +159,11 @@ class Dispatch
     editor.on 'destroyed', => buffer.off 'saved'
 
   triggerPipeline: (editorView, saving) ->
+    go = @goexecutable.current()
+    unless go? and go.executable? and go.executable.trim() isnt ''
+      @displayGoInfo()
+      return
+
     async.series([
       (callback) =>
         @gofmt.formatBuffer(editorView, saving, callback)
@@ -241,6 +277,9 @@ class Dispatch
     @ready = false
     @resetPanel()
     thego = @goexecutable.current()
+    unless thego? and thego.executable? and thego.executable.trim() isnt ''
+      @displayGoInfo()
+      return
     unless thego.toolsAreMissing() or updateExistingTools
       @emitReady(false)
       return
