@@ -1,0 +1,48 @@
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: {build}
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Operating system (build VM template)
+os: Windows Server 2012 R2
+
+# clone directory
+clone_folder: c:\projects\go-plus
+
+# environment variables
+environment:
+  GOPATH: c:\gopath
+  PATH: %PATH%;c:\gopath\bin
+
+# scripts that run after cloning repository
+install:
+  - cmd: mkdir c:\gopath
+  - cmd: go get github.com/golang/lint/golint
+  - cmd: go get code.google.com/p/go.tools/cmd/cover
+  - cmd: go get code.google.com/p/go.tools/cmd/goimports
+  - cmd: go get code.google.com/p/go.tools/cmd/vet
+  - cmd: go get code.google.com/p/go.tools/cmd/godoc
+  - cmd: cinst nodejs
+  - cmd: cinst atom
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+  - cmd: c:\projects\go-plus
+  - cmd: apm test
+
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+# to disable deployment
+deploy: off
