@@ -23,6 +23,7 @@ environment:
 # scripts that run after cloning repository
 install:
   - cmd: mkdir c:\gopath
+  - cmd: mkdir c:\gopath\src
   - cmd: go get github.com/golang/lint/golint
   - cmd: go get code.google.com/p/go.tools/cmd/cover
   - cmd: go get code.google.com/p/go.tools/cmd/goimports
