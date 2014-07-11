@@ -14,7 +14,7 @@ describe "executor", ->
 
   describe "when executing a command", ->
 
-    xit "succeeds", ->
+    it "succeeds", ->
       complete = false
       runs =>
         command = if os.platform() is 'win32' then 'dir' else 'ls'
