@@ -44,7 +44,7 @@ class GoExecutable
         # Homebrew
         executables.push path.normalize(path.join('/usr', 'local', 'bin', 'go', ))
       when 'win32'
-        executables.push path.normalize(path.join('C:','go', 'bin', 'go'))
+        executables.push path.normalize(path.join('C:','go', 'bin', 'go.exe'))
 
     # De-duplicate entries
     executables = _.uniq(executables)
@@ -64,7 +64,7 @@ class GoExecutable
         done = (exitcode, stdout, stderr) =>
           unless stderr? and stderr isnt ''
             if stdout? and stdout isnt ''
-              components = stdout.split(' ')
+              components = stdout.replace(/\r?\n|\r/g, '').split(' ')
               go.name = components[2] + ' ' + components[3]
               go.version = components[2]
               go.env = @env
@@ -81,14 +81,22 @@ class GoExecutable
                 if item? and item isnt '' and item.trim() isnt ''
                   tuple = item.split('=')
                   key = tuple[0]
-                  value = ''
-                  value = tuple[1].substring(1, tuple[1].length - 1) if tuple[1].length > 2
-                  switch key
-                    when 'GOARCH' then go.arch = value
-                    when 'GOOS' then go.os = value
-                    when 'GOPATH' then go.gopath = value
-                    when 'GOROOT' then go.goroot = value
-                    when 'GOTOOLDIR' then go.gotooldir = value
+                  value = tuple[1]
+                  # value = tuple[1].substring(1, tuple[1].length - 1) if tuple[1].length > 2
+                  if os.platform() is 'win32'
+                    switch key
+                      when 'set GOARCH' then go.arch = value
+                      when 'set GOOS' then go.os = value
+                      when 'set GOPATH' then go.gopath = value
+                      when 'set GOROOT' then go.goroot = value
+                      when 'set GOTOOLDIR' then go.gotooldir = value
+                  else
+                    switch key
+                      when 'GOARCH' then go.arch = value
+                      when 'GOOS' then go.os = value
+                      when 'GOPATH' then go.gopath = value
+                      when 'GOROOT' then go.goroot = value
+                      when 'GOTOOLDIR' then go.gotooldir = value
           console.log 'Error running go env: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(null)
@@ -107,7 +115,7 @@ class GoExecutable
       @emit 'gettools-complete'
       return
     gogetenv['GOPATH'] = gopath
-    async.parallel([
+    async.series([
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)

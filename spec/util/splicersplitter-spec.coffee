@@ -58,12 +58,12 @@ describe "splicersplitter", ->
         expect(result.length).toBe 0
         expect(result).toBe ''
 
-  describe "when working with colon delimeted text", ->
+  describe "when working with delimited text", ->
     beforeEach ->
 
     it "splits the text into an array", ->
       runs =>
-        result = splicersplitter.splitAndSquashToArray(path.delimiter, ': -v : -b:')
+        result = splicersplitter.splitAndSquashToArray(path.delimiter, path.delimiter + ' -v ' + path.delimiter + ' -b' + path.delimiter)
         expect(result).toBeDefined
         expect(result).toBeTruthy
         expect(_.size(result)).toBe 2

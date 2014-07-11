@@ -1,5 +1,6 @@
 fs = require 'fs-plus'
 path = require 'path'
+os = require 'os'
 _ = require 'underscore-plus'
 
 module.exports =
@@ -21,6 +22,7 @@ class Go
     @gopath = options.gopath if options?.gopath?
     @goroot = options.goroot if options?.goroot?
     @gotooldir = options.gotooldir if options?.gotooldir?
+    @toolsuffix = if os.platform() is 'win32' then '.exe' else ''
 
   description: ->
     return @name + ' (@ ' + @goroot + ')'
@@ -47,7 +49,7 @@ class Go
 
   gofmt: ->
     return false unless @goroot? and @goroot isnt ''
-    result = path.join(@goroot, 'bin', 'gofmt')
+    result = path.join(@goroot, 'bin', 'gofmt' + @toolsuffix)
     return false unless fs.existsSync(result)
     return result
 
@@ -56,19 +58,19 @@ class Go
 
   godoc: ->
     return false unless @goroot? and @goroot isnt ''
-    result = path.join(@goroot, 'bin', 'godoc')
+    result = path.join(@goroot, 'bin', 'godoc' + @toolsuffix)
     return false unless fs.existsSync(result)
     return result
 
   vet: ->
     return false unless @gotooldir? and @gotooldir isnt ''
-    result = path.join(@gotooldir, 'vet')
+    result = path.join(@gotooldir, 'vet' + @toolsuffix)
     return false unless fs.existsSync(result)
     return result
 
   cover: ->
     return false unless @gotooldir? and @gotooldir isnt ''
-    result = path.join(@gotooldir, 'cover')
+    result = path.join(@gotooldir, 'cover' + @toolsuffix)
     return false unless fs.existsSync(result)
     return result
 
@@ -82,7 +84,7 @@ class Go
     gopaths = @splitgopath()
     return false unless gopaths? and _.size(gopaths) > 0
     for item in gopaths
-      result = path.resolve(path.normalize(path.join(item, 'bin', name)))
+      result = path.resolve(path.normalize(path.join(item, 'bin', name + @toolsuffix)))
       return result if fs.existsSync(result)
     return false
 

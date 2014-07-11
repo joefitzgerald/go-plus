@@ -1,6 +1,7 @@
 path = require 'path'
 fs = require 'fs-plus'
 temp = require('temp').track()
+os = require 'os'
 _ = require 'underscore-plus'
 GoExecutable = require './../../lib/goexecutable'
 GocoverParser = require './../../lib/gocover/gocover-parser'
@@ -54,7 +55,9 @@ describe "gocover parser", ->
       done is true
 
     runs ->
-      re = new RegExp('^' + path.join(directory, 'src') + path.sep)
+      retext = '^' + path.join(directory, 'src') + path.sep
+      retext = retext.replace(/\\/g, '\\\\') if os.platform() is 'win32'
+      re = new RegExp(retext)
       packagePath = filePath.replace(re, '')
       result = gocoverparser.rangesForFile(filePath)
       expect(result).toBeDefined()

@@ -1,5 +1,6 @@
 path = require 'path'
 fs = require 'fs-plus'
+os = require 'os'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
@@ -32,11 +33,15 @@ describe "go executable", ->
         expect(go.name.substring(0,2)).toBe 'go'
         expect(go.version.substring(0,2)).toBe 'go'
         expect(go.arch).toBe 'amd64'
-        expect(go.executable.substring(go.executable.length - 2, go.executable.length)).toBe 'go'
+        if os.platform() is 'win32'
+          expect(go.executable.substring(go.executable.length - 6, go.executable.length)).toBe 'go.exe'
+        else
+          expect(go.executable.substring(go.executable.length - 2, go.executable.length)).toBe 'go'
 
     xit "fetches missing tools if requested", -> # integration test
       done = false
       runs =>
+        suffix = if os.platform() is 'win32' then '.exe' else ''
         expect(goexecutable).toBeDefined
         expect(go).toBeDefined
         expect(go).toBeTruthy
@@ -48,8 +53,8 @@ describe "go executable", ->
           expect(go).toBeDefined
           expect(go).toBeTruthy
           expect(go.gopath).toBe directory
-          expect(go.goimports()).toBe path.join(directory, 'bin', 'goimports')
-          expect(go.golint()).toBe path.join(directory, 'bin', 'golint')
+          expect(go.goimports()).toBe path.join(directory, 'bin', 'goimports' + suffix)
+          expect(go.golint()).toBe path.join(directory, 'bin', 'golint' + suffix)
           done = true
         goexecutable.gettools(go, true)
 

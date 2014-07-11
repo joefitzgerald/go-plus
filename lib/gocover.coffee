@@ -43,7 +43,7 @@ class Gocover
       @clearMarkers(editor)
 
   addMarkersToEditor: (editor) =>
-    return unless editor?
+    return unless editor?.getGrammar()?.scopeName is 'source.go'
     file = editor.getPath()
     buffer = editor.getBuffer()
     return unless file? and buffer?
@@ -60,7 +60,7 @@ class Gocover
       editor.decorateMarker(marker, type: 'highlight', class: clazz, onlyNonEmpty: true)
 
   clearMarkers: (editor) =>
-    return unless editor?
+    return unless editor?.getGrammar()?.scopeName is 'source.go'
     # Find current markers
     markers = editor.getBuffer()?.findMarkers(class: 'gocover')
     return unless markers? and _.size(markers) > 0
