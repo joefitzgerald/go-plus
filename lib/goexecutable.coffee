@@ -93,6 +93,7 @@ class GoExecutable
                       when 'set GOPATH' then go.gopath = value
                       when 'set GOROOT' then go.goroot = value
                       when 'set GOTOOLDIR' then go.gotooldir = value
+                      when 'set GOEXE' then go.exe = value
                   else
                     switch key
                       when 'GOARCH' then go.arch = value
@@ -100,6 +101,7 @@ class GoExecutable
                       when 'GOPATH' then go.gopath = value
                       when 'GOROOT' then go.goroot = value
                       when 'GOTOOLDIR' then go.gotooldir = value
+                      when 'GOEXE' then go.exe = value
           console.log 'Error running go env: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(null)

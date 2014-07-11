@@ -7,6 +7,7 @@ module.exports =
 class Go
   name: '' # Name of this go
   os: '' # go env's GOOS
+  exe: ''
   arch: '' # go env's GOARCH
   version: '' # The result of 'go version'
   gopath: '' # go env's GOPATH
@@ -17,12 +18,12 @@ class Go
   constructor: (@executable, @pathexpander, options) ->
     @name = options.name if options?.name?
     @os = options.os if options?.os?
+    @exe = options.exe if options?.exe?
     @arch = options.arch if options?.arch?
     @version = options.version if options?.version?
     @gopath = options.gopath if options?.gopath?
     @goroot = options.goroot if options?.goroot?
     @gotooldir = options.gotooldir if options?.gotooldir?
-    @toolsuffix = if os.platform() is 'win32' then '.exe' else ''
 
   description: ->
     return @name + ' (@ ' + @goroot + ')'
@@ -49,7 +50,7 @@ class Go
 
   gofmt: ->
     return false unless @goroot? and @goroot isnt ''
-    result = path.join(@goroot, 'bin', 'gofmt' + @toolsuffix)
+    result = path.join(@goroot, 'bin', 'gofmt' + @exe)
     return false unless fs.existsSync(result)
     return result
 
@@ -58,19 +59,19 @@ class Go
 
   godoc: ->
     return false unless @goroot? and @goroot isnt ''
-    result = path.join(@goroot, 'bin', 'godoc' + @toolsuffix)
+    result = path.join(@goroot, 'bin', 'godoc' + @exe)
     return false unless fs.existsSync(result)
     return result
 
   vet: ->
     return false unless @gotooldir? and @gotooldir isnt ''
-    result = path.join(@gotooldir, 'vet' + @toolsuffix)
+    result = path.join(@gotooldir, 'vet' + @exe)
     return false unless fs.existsSync(result)
     return result
 
   cover: ->
     return false unless @gotooldir? and @gotooldir isnt ''
-    result = path.join(@gotooldir, 'cover' + @toolsuffix)
+    result = path.join(@gotooldir, 'cover' + @exe)
     return false unless fs.existsSync(result)
     return result
 
@@ -84,7 +85,7 @@ class Go
     gopaths = @splitgopath()
     return false unless gopaths? and _.size(gopaths) > 0
     for item in gopaths
-      result = path.resolve(path.normalize(path.join(item, 'bin', name + @toolsuffix)))
+      result = path.resolve(path.normalize(path.join(item, 'bin', name + @exe)))
       return result if fs.existsSync(result)
     return false
 
