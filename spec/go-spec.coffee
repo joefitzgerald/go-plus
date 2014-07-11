@@ -20,7 +20,6 @@ describe "go", ->
     it "expands the path", ->
       runs =>
         result = go.buildgopath()
-        expect(false).toBe true
         expect(result).toBeDefined
         expect(result).toBeTruthy
         expect(result).toBe path.join(pathhelper.home(), 'go')
