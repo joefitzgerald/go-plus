@@ -24,7 +24,7 @@ describe "executor", ->
           expect(stdout).toBeUndefined
           expect(stderr).toBeUndefined
           complete = true
-        result = executor.exec('dir', prefix, null, done, [pathhelper.home()])
+        result = executor.exec(command, prefix, null, done, [pathhelper.home()])
 
       waitsFor =>
         complete is true

@@ -18,6 +18,10 @@ class Executor
     stdout = (data) -> output += data
     stderr = (data) -> error += data
     exit = (data) ->
+      console.log output
+      console.log error
+      console.log data
+      console.log error.replace(/\r?\n|\r/g, '') is "\'\"" + command + "\"\' is not recognized as an internal or external command,operable program or batch file."
       if error? and error isnt '' and error.replace(/\r?\n|\r/g, '') is "\'\"" + command + "\"\' is not recognized as an internal or external command,operable program or batch file."
         message =
             line: false
@@ -31,6 +35,9 @@ class Executor
       code = data
       callback(code, output, error, messages)
     args = [] unless args?
+    console.log command
+    console.log args
+    console.log options
     bufferedprocess = new BufferedProcess({command, args, options, stdout, stderr, exit})
     bufferedprocess.process.on 'error', (err) =>
       if err.code is 'ENOENT'
@@ -41,6 +48,7 @@ class Executor
             type: 'error'
             source: 'executor'
         messages.push message
-      else
-        console.log err
+      #else
+      console.log err
+
       callback(127, output, error, messages)

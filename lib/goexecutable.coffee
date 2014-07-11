@@ -81,8 +81,11 @@ class GoExecutable
                 if item? and item isnt '' and item.trim() isnt ''
                   tuple = item.split('=')
                   key = tuple[0]
-                  value = tuple[1]
-                  # value = tuple[1].substring(1, tuple[1].length - 1) if tuple[1].length > 2
+                  value = ''
+                  if os.platform() is 'win32'
+                    value = tuple[1]
+                  else
+                    value = tuple[1].substring(1, tuple[1].length - 1) if tuple[1].length > 2
                   if os.platform() is 'win32'
                     switch key
                       when 'set GOARCH' then go.arch = value
