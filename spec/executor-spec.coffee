@@ -17,7 +17,8 @@ describe "executor", ->
     it "succeeds", ->
       complete = false
       runs =>
-        command = if os.platform() is 'win32' then 'dir' else 'ls'
+        command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe') else 'env'
+        console.log command
         done = (exitcode, stdout, stderr, messages) =>
           console.log exitcode
           console.log stdout
@@ -39,7 +40,7 @@ describe "executor", ->
     it "sets the working directory correctly", ->
       complete = false
       runs =>
-        command = if os.platform() is 'win32' then path.resolve(__dirname, 'pwd.exe') else 'pwd'
+        command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'pwd', 'pwd_windows_amd64.exe') else 'pwd'
         done = (exitcode, stdout, stderr, messages) =>
           expect(exitcode).toBeDefined
           expect(exitcode).toBe 0
@@ -56,7 +57,7 @@ describe "executor", ->
     it "sets the environment correctly", ->
       complete = false
       runs =>
-        command = if os.platform() is 'win32' then path.resolve(__dirname, 'env.exe') else 'env'
+        command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe') else 'env'
         done = (exitcode, stdout, stderr, messages) =>
           expect(exitcode).toBeDefined
           expect(exitcode).toBe 0
