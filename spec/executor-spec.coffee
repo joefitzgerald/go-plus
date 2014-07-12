@@ -32,7 +32,7 @@ describe "executor", ->
           expect(stderr).toBe ''
           expect(_.size(messages)).toBe 0
           complete = true
-        result = executor.exec(command, prefix, null, done, [pathhelper.home()])
+        result = executor.exec(command, prefix, null, done, [])
 
       waitsFor =>
         complete is true
