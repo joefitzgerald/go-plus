@@ -18,16 +18,35 @@ clone_folder: c:\projects\go-plus
 # environment variables
 environment:
   GOPATH: c:\gopath
-  PATH: %PATH%;c:\gopath\bin
 
 # scripts that run after cloning repository
 install:
-  - cmd: mkdir c:\gopath
-  - cmd: mkdir c:\gopath\src
-  - cmd: go get github.com/golang/lint/golint
-  - cmd: go get code.google.com/p/go.tools/cmd/cover
-  - cmd: go get code.google.com/p/go.tools/cmd/goimports
-  - cmd: go get code.google.com/p/go.tools/cmd/vet
-  - cmd: go get code.google.com/p/go.tools/cmd/godoc
-  - cmd: cinst nodejs
-  - cmd: cinst atom
+  - wmic OS get OSArchitecture
+  - ver
+  - go version
+  - cd c:\
+  - rmdir c:\go /s /q
+  - appveyor DownloadFile http://golang.org/dl/go1.3.windows-amd64.zip
+  - 7z x -y go1.3.windows-amd64.zip | FIND "ing archive"
+  - go version
+  - go env
+  - mkdir c:\gopath
+  - go get github.com/golang/lint/golint
+  - go get code.google.com/p/go.tools/cmd/cover
+  - go get code.google.com/p/go.tools/cmd/goimports
+  - go get code.google.com/p/go.tools/cmd/vet
+  - go get code.google.com/p/go.tools/cmd/godoc
+  - cinst atom
+  - cd c:\projects\go-plus
+  - apm install
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+  - cd c:\projects\go-plus
+  - apm test --path C:\Chocolatey\lib\Atom.0.115.0\tools\Atom\atom.exe
+
+# to disable automatic tests
+test: off
+
+# to disable deployment
+deploy: off
