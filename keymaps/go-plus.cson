@@ -1,5 +1,6 @@
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
 '.editor':
+  'ctrl-alt-o': 'golang:oracle'
   'ctrl-alt-c': 'golang:gocover'
   'ctrl-alt-shift-c': 'golang:cleargocover'

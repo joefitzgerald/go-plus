@@ -124,6 +124,12 @@ class Dispatch
         @messagepanel.add new PlainMessageView message: 'Lint Tool: ' + go.golint(), className: 'text-success'
       else
         @messagepanel.add new PlainMessageView message: 'Lint Tool: Not Found', className: 'text-error'
+
+      # oracle
+      if go.oracle()? and go.oracle() isnt false
+        @messagepanel.add new PlainMessageView message: 'Oracle Tool: ' + go.oracle(), className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'Oracle Tool: Not Found', className: 'text-error'
     else
       @messagepanel.add new PlainMessageView message: 'No Go Installations Were Found', className: 'text-error'
     @messagepanel.attach()

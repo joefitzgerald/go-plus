@@ -48,6 +48,7 @@ describe "go executable", ->
         expect(go.gopath).toBe directory
         expect(go.goimports()).toBe false
         expect(go.golint()).toBe false
+        expect(go.oracle()).toBe false
         goexecutable.once 'gettools-complete', =>
           go = goexecutable.current()
           expect(go).toBeDefined
@@ -55,6 +56,7 @@ describe "go executable", ->
           expect(go.gopath).toBe directory
           expect(go.goimports()).toBe path.join(directory, 'bin', 'goimports' + suffix)
           expect(go.golint()).toBe path.join(directory, 'bin', 'golint' + suffix)
+          expect(go.oracle()).toBe path.join(directory, 'bin', 'oracle' + suffix)
           done = true
         goexecutable.gettools(go, true)
 

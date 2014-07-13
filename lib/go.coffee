@@ -81,6 +81,9 @@ class Go
   golint: ->
     return @gopathBinItem('golint')
 
+  oracle: ->
+    return @gopathBinItem('oracle')
+
   gopathBinItem: (name) ->
     gopaths = @splitgopath()
     return false unless gopaths? and _.size(gopaths) > 0
@@ -94,4 +97,5 @@ class Go
     return true if @golint() is false
     return true if @vet() is false
     return true if @cover() is false
+    return true if @oracle() is false
     return false

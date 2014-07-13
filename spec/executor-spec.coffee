@@ -18,12 +18,7 @@ describe "executor", ->
       complete = false
       runs =>
         command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe') else 'env'
-        console.log command
         done = (exitcode, stdout, stderr, messages) =>
-          console.log exitcode
-          console.log stdout
-          console.log stderr
-          console.log messages
           expect(exitcode).toBeDefined
           expect(exitcode).toBe 0
           expect(stdout).toBeDefined
