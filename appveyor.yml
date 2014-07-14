@@ -1,19 +1,8 @@
-#---------------------------------#
-#      general configuration      #
-#---------------------------------#
-
 # version format
 version: "{build}"
 
-#---------------------------------#
-#    environment configuration    #
-#---------------------------------#
-
 # Operating system (build VM template)
 os: Windows Server 2012 R2
-
-# clone directory
-clone_folder: c:\projects\go-plus
 
 # environment variables
 environment:
@@ -21,13 +10,7 @@ environment:
 
 # scripts that run after cloning repository
 install:
-  - wmic OS get OSArchitecture
-  - ver
-  - go version
-  - cd c:\
-  - rmdir c:\go /s /q
-  - appveyor DownloadFile http://golang.org/dl/go1.3.windows-amd64.zip
-  - 7z x -y go1.3.windows-amd64.zip | FIND "ing archive"
+  - chdir
   - go version
   - go env
   - mkdir c:\gopath
@@ -37,12 +20,13 @@ install:
   - go get code.google.com/p/go.tools/cmd/vet
   - go get code.google.com/p/go.tools/cmd/godoc
   - cinst atom
-  - cd c:\projects\go-plus
+  - cd %APPVEYOR_BUILD_FOLDER%
   - apm install
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - cd c:\projects\go-plus
+  - chdir
+  - cd %APPVEYOR_BUILD_FOLDER%
   - apm test --path C:\Chocolatey\lib\Atom.0.115.0\tools\Atom\atom.exe
 
 # to disable automatic tests
