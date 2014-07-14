@@ -10,7 +10,6 @@ environment:
 
 # scripts that run after cloning repository
 install:
-  - chdir
   - go version
   - go env
   - mkdir c:\gopath
@@ -25,7 +24,6 @@ install:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - chdir
   - cd %APPVEYOR_BUILD_FOLDER%
   - apm test --path C:\Chocolatey\lib\Atom.0.115.0\tools\Atom\atom.exe
 
