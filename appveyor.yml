@@ -6,7 +6,7 @@ os: Windows Server 2012 R2
 
 init:
   - chocolatey version
-  - chocolatey install chocolatey -f
+  - chocolatey install chocolatey -force
 
 # environment variables
 environment:
