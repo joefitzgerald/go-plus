@@ -5,8 +5,9 @@ version: "{build}"
 os: Windows Server 2012 R2
 
 init:
-  - chocolatey version
-  - chocolatey install chocolatey -force
+  - choco version
+  - choco install chocolatey -force
+  - set
 
 # environment variables
 environment:
@@ -14,7 +15,7 @@ environment:
 
 # scripts that run after cloning repository
 install:
-  - chocolatey version
+  - choco version
   - go version
   - go env
   - mkdir c:\gopath
