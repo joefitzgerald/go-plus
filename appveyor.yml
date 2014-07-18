@@ -6,7 +6,7 @@ os: Windows Server 2012 R2
 
 init:
   - choco version
-  - choco install --debug chocolatey
+  - choco install -debug chocolatey
 
 # environment variables
 environment:
@@ -16,7 +16,7 @@ environment:
 install:
   - choco version
   - cd %APPVEYOR_BUILD_FOLDER%
-  - %APPVEYOR_BUILD_FOLDER%\spec\tools\env\env_windows_amd64.exe
+  - cmd /c %APPVEYOR_BUILD_FOLDER%\spec\tools\env\env_windows_amd64.exe
   - go version
   - go env
   - mkdir c:\gopath
