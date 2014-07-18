@@ -6,7 +6,7 @@ os: Windows Server 2012 R2
 
 init:
   - choco version
-  - choco install chocolatey
+  - choco install -debug chocolatey
 
 # environment variables
 environment:
@@ -14,8 +14,8 @@ environment:
 
 # scripts that run after cloning repository
 install:
-  - choco version
   - %APPVEYOR_BUILD_FOLDER%\spec\tools\env\env_windows_amd64.exe
+  - choco version
   - go version
   - go env
   - mkdir c:\gopath
