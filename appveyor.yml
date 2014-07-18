@@ -5,8 +5,7 @@ version: "{build}"
 os: Windows Server 2012 R2
 
 init:
-  - choco version
-  - choco install -debug chocolatey
+  - chocolatey update
 
 # environment variables
 environment:
