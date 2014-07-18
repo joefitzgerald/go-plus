@@ -14,8 +14,9 @@ environment:
 
 # scripts that run after cloning repository
 install:
-  - %APPVEYOR_BUILD_FOLDER%\spec\tools\env\env_windows_amd64.exe
   - choco version
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - %APPVEYOR_BUILD_FOLDER%\spec\tools\env\env_windows_amd64.exe
   - go version
   - go env
   - mkdir c:\gopath
@@ -25,7 +26,6 @@ install:
   - go get code.google.com/p/go.tools/cmd/vet
   - go get code.google.com/p/go.tools/cmd/godoc
   - cinst atom
-  - cd %APPVEYOR_BUILD_FOLDER%
   - apm install
 
 # to run your custom scripts instead of automatic MSBuild
