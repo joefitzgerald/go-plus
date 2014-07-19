@@ -15,8 +15,6 @@ environment:
 # scripts that run after cloning repository
 install:
   - choco version
-  - cd %APPVEYOR_BUILD_FOLDER%
-  - cmd /c %APPVEYOR_BUILD_FOLDER%\spec\tools\env\env_windows_amd64.exe
   - go version
   - go env
   - mkdir c:\gopath
