@@ -10,7 +10,7 @@ GoExecutable = require './goexecutable'
 SplicerSplitter = require './util/splicersplitter'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
-{$} = require 'atom'
+{$, SettingsView} = require 'atom'
 path = require 'path'
 async = require 'async'
 
@@ -29,11 +29,6 @@ class Dispatch
     @executor = new Executor()
     @splicersplitter = new SplicerSplitter()
     @goexecutable = new GoExecutable(@env())
-    @goexecutable.on 'detect-complete', =>
-      @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools')
-      @emitReady(false) unless atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools')
-
-    @goexecutable.detect()
 
     @gofmt = new Gofmt(this)
     @govet = new Govet(this)
@@ -42,6 +37,8 @@ class Dispatch
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
+
+    @detect()
 
     # Reset State If Requested
     @gofmt.on 'reset', (editorView) =>
@@ -64,12 +61,21 @@ class Dispatch
     atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPanel()
     atom.config.observe 'go-plus.getMissingTools', => @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools') and @ready? and @ready
-    atom.config.observe 'go-plus.formatWithGoImports', => @displayGoInfo()
-    atom.config.observe 'go-plus.goPath', => @displayGoInfo()
-    atom.config.observe 'go-plus.environmentOverridesConfiguration', => @displayGoInfo()
-    atom.workspaceView.command 'golang:goinfo', => @displayGoInfo()
+    atom.config.observe 'go-plus.formatWithGoImports', => @displayGoInfo(true) if @ready
+    atom.config.observe 'go-plus.goPath', => @displayGoInfo(true) if @ready
+    atom.config.observe 'go-plus.environmentOverridesConfiguration', => @displayGoInfo(true) if @ready
+    atom.config.observe 'go-plus.goInstallation', => @detect() if @ready
+    atom.workspaceView.command 'golang:goinfo', => @displayGoInfo(true) if @ready
     atom.workspaceView.command 'golang:getmissingtools', => @gettools(false)
     atom.workspaceView.command 'golang:updatetools', => @gettools(true)
+
+  detect: =>
+    @ready = false
+    @goexecutable.once 'detect-complete', =>
+      @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools')
+      @displayGoInfo(false)
+      @emitReady()
+    @goexecutable.detect()
 
   resetAndDisplayMessages: (editorView, msgs) =>
     return unless @isValidEditorView(editorView)
@@ -83,12 +89,16 @@ class Dispatch
     @dispatching = false
     @emit 'display-complete'
 
-  emitReady: (displayInfo) =>
-    @displayGoInfo() if displayInfo? and displayInfo
+  emitReady: =>
     @ready = true
     @emit 'ready'
 
-  displayGoInfo: =>
+  displayGoInfo: (force) =>
+    editorView = atom.workspaceView.getActiveView()
+    unless force
+      return unless editorView?.constructor?
+      return unless editorView.constructor?.name is 'SettingsView' or @isValidEditorView(editorView)
+
     @resetPanel()
     go = @goexecutable.current()
     if go? and go.executable? and go.executable.trim() isnt ''
@@ -167,7 +177,7 @@ class Dispatch
   triggerPipeline: (editorView, saving) ->
     go = @goexecutable.current()
     unless go? and go.executable? and go.executable.trim() isnt ''
-      @displayGoInfo()
+      @displayGoInfo(false)
       return
 
     async.series([
@@ -241,8 +251,8 @@ class Dispatch
       gutter.addClassToLine message.line - 1, 'go-plus-message' for message in messages
 
   resetPanel: ->
-    @messagepanel.close()
-    @messagepanel.clear()
+    @messagepanel?.close()
+    @messagepanel?.clear()
 
   updatePane: (editorView, messages) ->
     @resetPanel
@@ -281,15 +291,17 @@ class Dispatch
   gettools: (updateExistingTools) =>
     updateExistingTools = updateExistingTools? and updateExistingTools
     @ready = false
-    @resetPanel()
     thego = @goexecutable.current()
     unless thego? and thego.executable? and thego.executable.trim() isnt ''
-      @displayGoInfo()
+      @displayGoInfo(false)
       return
     unless thego.toolsAreMissing() or updateExistingTools
-      @emitReady(false)
+      @emitReady()
       return
-    @messagepanel.add new PlainMessageView message: 'Running `go get -u` for required tools...', className: 'text-success'
+    @resetPanel()
+    @messagepanel.add new PlainMessageView message: 'Running `go get -u` to get required tools...', className: 'text-success'
     @messagepanel.attach()
-    @goexecutable.on 'gettools-complete', => @emitReady(true)
+    @goexecutable.on 'gettools-complete', =>
+      @displayGoInfo(true)
+      @emitReady()
     @goexecutable.gettools(thego, updateExistingTools)

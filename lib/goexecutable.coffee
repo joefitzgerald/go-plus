@@ -30,9 +30,12 @@ class GoExecutable
 
   detect: =>
     executables = []
-    target = this
+    goinstallation = atom.config.get('go-plus.goInstallation')
     switch os.platform()
       when 'darwin', 'freebsd', 'linux', 'sunos'
+        # Configuration
+        executables.push path.normalize(goinstallation) if goinstallation? and goinstallation.trim() isnt '' and goinstallation.lastIndexOf(path.sep + 'go') is goinstallation.length - 3
+
         # PATH
         if @env.PATH?
           elements = @env.PATH.split(path.delimiter)
@@ -44,6 +47,10 @@ class GoExecutable
         # Homebrew
         executables.push path.normalize(path.join('/usr', 'local', 'bin', 'go', ))
       when 'win32'
+        # Configuration
+        executables.push path.normalize(goinstallation) if goinstallation? and goinstallation.trim() isnt '' and goinstallation.lastIndexOf(path.sep + 'go.exe') is goinstallation.length - 3
+
+        # Binary Distribution
         executables.push path.normalize(path.join('C:','go', 'bin', 'go.exe'))
 
     # De-duplicate entries
@@ -71,7 +78,11 @@ class GoExecutable
           console.log 'Error running go version: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(null)
-        @executor.exec(absoluteExecutable, false, @env, done, ['version'])
+        try
+          @executor.exec(absoluteExecutable, false, @env, done, ['version'])
+        catch error
+          console.log 'go [' + absoluteExecutable + '] is not a valid go'
+          go = null
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           unless stderr? and stderr isnt ''
@@ -105,7 +116,10 @@ class GoExecutable
           console.log 'Error running go env: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(null)
-        @executor.exec(absoluteExecutable, false, @env, done, ['env'])
+        try
+          @executor.exec(absoluteExecutable, false, @env, done, ['env']) unless go is null
+        catch error
+          console.log 'go [' + absoluteExecutable + '] is not a valid go'
     ], (err, results) =>
       outercallback(err, go)
     )

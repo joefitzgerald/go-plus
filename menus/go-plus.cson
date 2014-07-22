@@ -13,8 +13,6 @@
         { 'label': 'Check File Syntax', 'command': 'golang:gobuild' },
         { 'label': 'Show Test Coverage', 'command': 'golang:gocover' },
         { 'label': 'Clear Test Coverage', 'command': 'golang:cleargocover' }
-        { 'label': 'Show Oracle', 'command': 'golang:oracle' }
-        { 'label': 'Hide Oracle', 'command': 'golang:hideoracle' }
       ]
     ]
   }

@@ -8,8 +8,7 @@ You can install `go-plus` by opening Atom, going to `Preferences` > `Packages`, 
 This package adds extra Atom functionality for the go language:
 
 * Formatting source using `gofmt`
-* Formatting and managing imports using `goimports` (change the `Gofmt Path`
-  preference to target `goimports`)
+* Formatting and managing imports using `goimports`
 * Code quality inspection using `go vet`
 * Linting using `golint`
 * Syntax checking using `go build` and `go test`
@@ -19,17 +18,40 @@ This package adds extra Atom functionality for the go language:
 
 ![A screenshot of go-plus in action](http://cl.ly/image/392z2L0f0E41/go-plus-example.gif)
 
+### Platforms
+
+The package is currently known to work on OS X and Windows, and has CI jobs for those platforms.
+
 ### Defaults
 
-The preferences for this package default to values that match the way `go` is
-installed on OS X using the package installer:
+By default, the package has the following preferences enabled:
 
-* `go` is installed at `/usr/local/go`
-* `go` executables are found at `/usr/local/go/bin`
+* `Environment Overrides Configuration`: allow environment variables (e.g. `$GOPATH` or `%GOPATH%`) to override configured values (e.g. `Gopath`)
+* `Format On Save`: run `gofmt` or `goimports` on save
+* `Format With Go Imports`: use `goimports` instead of `gofmt`
+* `Get Missing Tools`: run `go get -u` on startup for all missing tools
+* `Lint On Save`: run `golint` on save
+* `Run Coverage On Save`: run `go test -coverprofile` & `cover` on save, and display coverage in the editor
+* `Show Panel`: show the message panel at the bottom of the screen if any errors or warnings are detected
+* `Syntax Check On Save`: run `go build` / `go test` on save to check for errors
+* `Vet On Save`: run `vet` on save to check for errors or warnings
 
-Additionally `format on save` and `vet on save` are enabled by default. `syntax
-check on save`, `lint on save` and `run coverage on save` are disabled by default. You can override these defaults by
-updating the `go-plus` preferences.
+Additionally, the following preferences can be optionally set:
+
+* `Golint Args`: specify the arguments that should be passed to `golint`
+* `Go Installation`: you should not need to specify this by default (!); allows you to specify a specific go installation instead of relying on inspection of the path and use of platform defaults
+* `Go Path`: this should usually be set in the environment, but you can specify your `GOPATH` here also to ensure Atom still works if you accidentally launch it via `Finder`, `Dock`, or `Spotlight` instead of the command line `atom` helper
+* `Show Panel When No Issues Exist`: show the message panel even if there are no errors or warnings
+* `Vet Args`: specify the arguments that should be passed to `vet`
+
+The package will search the following locations (in order) for a `go` executable:
+
+* All directories specified in the PATH environment variable
+* OS X: `/usr/local/go/bin` (package installer)
+* OS X: `/usr/local/bin` (Homebrew)
+* Windows: `C:\go\bin` (package installer)
+
+If you have go installed somewhere else, and *not available on the path*, specify the full path to the go executable in the `Go Installation` preference.
 
 ### GOPATH
 
@@ -61,7 +83,7 @@ Setting the `Go Path` preference will ensure that you have a sensible fallback
 for GOPATH if you have launched Atom without the `$GOPATH` environment variable
 set.
 
-If both the `Go Path` preference and the `$GOPATH` environment variable are
+If both the `Go Path` preference and the `$GOPATH` / `%GOPATH%` environment variable are
 empty, `go-plus` will display a warning and will not perform `go build` / `go
 test` powered syntax checking.
 

@@ -1,3 +1,31 @@
+## v2.0.0 (July 21st, 2014)
+
+### Major Changes
+
+* `go-plus` now requires Atom 0.116.0 or greater
+* :new: Works on Windows (https://ci.appveyor.com/project/joefitzgerald/go-plus)
+* :new: Takes a drastically different approach to finding go and related tools, leaning on the environment and `go env` rather than explicit configuration for each tool
+* :new: Support Homebrew-installed go on OS X
+* :new: Support finding go on the path
+* :new: Get missing tools for you on startup (can be disabled using the `Get Missing Tools` preference)
+* :new: Add menu options to get or update tools
+* :new: Support new Atom decorations API for displaying gutter and editor decorations
+* :rabbit2: Run nonmutative tools in parallel
+* :new: Switch between `goimports` (the default) and `gofmt` by toggling the `Format With GoImports` preference
+* :new: Add menu option to `Display Go Information`, giving you visibility into the paths go-plus is using for tools
+* :new: Add menu option and keymap to clear coverage
+
+### Minor Changes
+
+* :lipstick: Display of coverage information is now much more reliable thanks to use of the decorations API
+* :bug: Ensure vet arguments can be specified (fixes #36)
+* :hammer: Coverage functionality now has tests
+* :1234: Update atom-message-panel dependency; you can now copy message panel text
+* Switch to use of Atom's `BufferedProcess` instead of `process.spawn`
+
+If you've read this far, you're probably looking for some mention of [`gocode`](https://github.com/joefitzgerald/go-plus/issues/2) or [`oracle`](https://github.com/joefitzgerald/go-plus/pull/24) integration.
+This release sets the stage for their addition (a keen eye will see the beginnings of `oracle` already in the code). Stay tuned!
+
 ## v1.1.4 (May 31st, 2014)
 
 * :bug: Fix issue preventing display of coverage (#34)
