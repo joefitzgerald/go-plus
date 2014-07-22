@@ -29,7 +29,7 @@ install:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
-  - apm test --path C:\Chocolatey\lib\Atom.0.115.0\tools\Atom\atom.exe
+  - apm test
 
 # to disable automatic tests
 test: off

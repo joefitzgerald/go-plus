@@ -31,8 +31,6 @@ describe "build", ->
       testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
       fs.writeFileSync(filePath, '')
       fs.writeFileSync(testFilePath, '')
-      editorPromise = atom.workspace.open(filePath)
-      testEditorPromise = atom.workspace.open(testFilePath)
 
       waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
