@@ -23,30 +23,22 @@
   color: @text-color-error;
 }
 
-.go-plus-pane {
-  font-size:11px;
-  line-height:22px;
-  color: @text-color;
-  font-weight: normal;
-  background-color: @tool-panel-background-color;
-  overflow:auto;
-  max-height: 80px;
-  border-top: 1px solid @tool-panel-border-color;
-  padding: 0 12.5px;
+.goplus-error {
+  background-color: lighten(@background-color-error, 25%);
+  color: darken(@text-color-error, 15%);
 }
 
-.editor .gocov-marker .region {
-  position: absolute;
-  pointer-events: none;
-  z-index: -1;
+.goplus-warning {
+  background-color: lighten(@background-color-warning, 15%);
+  color: darken(@text-color-warning, 15%);
 }
 
-.region.uncovered {
-  background-color: #FF6969;
-  opacity: 0.25;
+.highlight.uncovered .region {
+  background-color: @background-color-error;
+  opacity: 0.2;
 }
 
-.region.covered {
-  background-color: #69FF69;
-  opacity: 0.25;
+.highlight.covered .region {
+  background-color: @background-color-success;
+  opacity: 0.2;
 }

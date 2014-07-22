@@ -3,11 +3,14 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
+AtomConfig = require './util/atomconfig'
 
 describe "gopath", ->
-  [editor, directory, filePath, oldGoPath] = []
+  [editor, dispatch, directory, filePath, oldGoPath] = []
 
   beforeEach ->
+    atomconfig = new AtomConfig()
+    atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
     process.env['GOPATH']=directory
@@ -20,18 +23,12 @@ describe "gopath", ->
 
   describe "when syntax check on save is enabled and goPath is set", ->
     beforeEach ->
-      atom.config.set("go-plus.formatOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", directory)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "wrongsrc", "github.com", "testuser", "example", "go-plus.go")
       fs.writeFileSync(filePath, '')
-      editor = atom.workspace.openSync(filePath)
+
+      waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
@@ -39,14 +36,20 @@ describe "gopath", ->
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
 
+      runs ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.goexecutable.detect()
+
+      waitsFor ->
+        dispatch.ready is true
+
     it "displays a warning for a GOPATH without 'src' directory", ->
       done = false
       runs ->
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1
@@ -63,12 +66,11 @@ describe "gopath", ->
     it "displays a warning for a non-existent GOPATH", ->
       done = false
       runs ->
-        process.env['GOPATH']=path.join(directory, 'nonexistent')
+        dispatch.goexecutable.current().gopath = path.join(directory, 'nonexistent')
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1
@@ -84,18 +86,12 @@ describe "gopath", ->
 
   describe "when syntax check on save is enabled and GOPATH is not set", ->
     beforeEach ->
-      atom.config.set("go-plus.formatOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
       atom.config.set("go-plus.goPath", "")
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
       atom.config.set("go-plus.syntaxCheckOnSave", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", true)
       filePath = path.join(directory, "wrongsrc", "github.com", "testuser", "example", "go-plus.go")
       fs.writeFileSync(filePath, '')
-      editor = atom.workspace.openSync(filePath)
+
+      waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
@@ -103,15 +99,22 @@ describe "gopath", ->
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
 
+      runs ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.goexecutable.detect()
+
+      waitsFor ->
+        dispatch.ready is true
+
     it "displays warnings for an unset GOPATH", ->
       done = false
       runs ->
-        process.env['GOPATH']=''
+        dispatch.goexecutable.current().env['GOPATH'] = ''
+        dispatch.goexecutable.current().gopath = ''
         fs.unlinkSync(filePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nfunc main() {\n\treturn\n}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n\treturn\n}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1

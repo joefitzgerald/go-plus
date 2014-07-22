@@ -11,9 +11,8 @@ class Gobuild
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: (dispatch) ->
+  constructor: (@dispatch) ->
     atom.workspaceView.command 'golang:gobuild', => @checkCurrentBuffer()
-    @dispatch = dispatch
     @name = 'syntaxcheck'
 
   destroy: ->
@@ -24,25 +23,32 @@ class Gobuild
 
   checkCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
-    return unless editorView?
+    return unless @dispatch.isValidEditorView(editorView)
     @reset editorView
-    @checkBuffer(editorView, false)
+    done = (err, messages) =>
+      @dispatch.resetAndDisplayMessages(editorView, messages)
+    @checkBuffer(editorView, false, done)
 
-  checkBuffer: (editorView, saving) ->
-    @tempDir = temp.mkdirSync()
+  checkBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     if saving and not atom.config.get('go-plus.syntaxCheckOnSave')
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
-    gopath = @dispatch.buildGoPath()
+
+    go = @dispatch.goexecutable.current()
+    gopath = go.buildgopath()
     if not gopath? or gopath is ''
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     env = @dispatch.env()
     env['GOPATH'] = gopath
@@ -50,7 +56,10 @@ class Gobuild
     cwd = buffer.getPath().replace(re, '')
     output = ''
     outputPath = ''
+    files = []
+    fileDir = path.dirname(buffer.getPath())
     args = []
+    @tempDir = temp.mkdirSync()
     if buffer.getPath().match(/_test.go$/i)
       pre = /^\w*package ([\d\w]+){1}\w*$/img # Need To Support Unicode Letters Also
       match = pre.exec(buffer.getText())
@@ -59,27 +68,15 @@ class Gobuild
       output = testPackage + '.test'
       outputPath = @tempDir
       args = ['test', '-copybinary', '-outputdir', outputPath,'-c', buffer.getPath()]
+      files = fs.readdirSync(fileDir)
     else
       output = '.go-plus-syntax-check'
       outputPath = path.join(@tempDir, output)
       args = ['build', '-o', outputPath, '.']
-    cmd = atom.config.get('go-plus.goExecutablePath')
-    cmd = @dispatch.replaceTokensInPath(cmd, false)
-    errored = false
-    proc = spawn(cmd, args, {cwd: cwd, env: env})
-    proc.on 'error', (error) =>
-      return unless error?
-      errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + env.PATH + ']'
-      messages = []
-      message = line: false, column: false, type: 'error', msg: 'Go Executable Not Found @ ' + cmd
-      messages.push message
-      @emit @name + '-messages', editorView, messages
-      @emit @name + '-complete', editorView, saving
-    proc.stderr.on 'data', (data) => @mapMessages(editorView, data, buffer.getBaseName())
-    proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
-    proc.on 'close', (code) =>
-      console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
+    cmd = go.executable
+    done = (exitcode, stdout, stderr, messages) =>
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+      messages = @mapMessages(editorView, stderr, buffer.getBaseName()) if stderr? and stderr isnt ''
       pattern = cwd + '/*' + output
       glob pattern, {mark: false, sync:true}, (er, files) ->
         for file in files
@@ -90,7 +87,14 @@ class Gobuild
           fs.rmdirSync(outputPath)
         else
           fs.unlinkSync(outputPath)
-      @emit @name + '-complete', editorView, saving unless errored
+      updatedFiles = _.difference(fs.readdirSync(fileDir), files)
+      if updatedFiles? and _.size(updatedFiles) > 0
+        for file in updatedFiles
+          if _.endsWith(file, '.test')
+            fs.unlinkSync(path.join(fileDir, file))
+      @emit @name + '-complete', editorView, saving
+      callback(null, messages)
+    @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   mapMessages: (editorView, data, filename) ->
     pattern = /^(\.\/)?(.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?)/img
@@ -107,14 +111,17 @@ class Gobuild
           column: matchLine[5]
           msg: matchLine[6]
           type: 'error'
+          source: 'syntaxcheck'
         else
           line: matchLine[3]
           column: false
           msg: matchLine[6]
           type: 'error'
+          source: 'syntaxcheck'
       messages.push message
     loop
       match = pattern.exec(data)
       extract(match)
       break unless match?
     @emit @name + '-messages', editorView, messages
+    return messages

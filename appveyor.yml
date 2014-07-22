@@ -1,0 +1,38 @@
+# version format
+version: "{build}"
+
+# Operating system (build VM template)
+os: Windows Server 2012 R2
+
+init:
+  - cmd: rd /s /q %CHOCOLATEYINSTALL%
+  - ps: iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+
+# environment variables
+environment:
+  GOPATH: c:\gopath
+
+# scripts that run after cloning repository
+install:
+  - choco version
+  - go version
+  - go env
+  - mkdir c:\gopath
+  - go get github.com/golang/lint/golint
+  - go get code.google.com/p/go.tools/cmd/cover
+  - go get code.google.com/p/go.tools/cmd/goimports
+  - go get code.google.com/p/go.tools/cmd/vet
+  - go get code.google.com/p/go.tools/cmd/godoc
+  - cinst atom
+  - apm install
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - apm test
+
+# to disable automatic tests
+test: off
+
+# to disable deployment
+deploy: off

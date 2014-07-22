@@ -1,6 +1,7 @@
 # go-plus – Improved Go Experience In Atom
 
-[![Build Status](https://travis-ci.org/joefitzgerald/go-plus.svg?branch=master)](https://travis-ci.org/joefitzgerald/go-plus)
+[![OSX Build Status](https://travis-ci.org/joefitzgerald/go-plus.svg?branch=master)](https://travis-ci.org/joefitzgerald/go-plus)
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/d0cekvaprt9wo1et)](https://ci.appveyor.com/project/joefitzgerald/go-plus)
 
 You can install `go-plus` by opening Atom, going to `Preferences` > `Packages`, and searching for `go-plus`. Alternatively, run `apm install go-plus` in your terminal.
 

@@ -20,49 +20,53 @@ class Gofmt
 
   formatCurrentBuffer: ->
     editorView = atom.workspaceView.getActiveView()
-    return unless editorView?
+    return unless @dispatch.isValidEditorView(editorView)
     @reset editorView
-    @formatBuffer(editorView, false)
+    done = (err, messages) =>
+      @dispatch.resetAndDisplayMessages(editorView, messages)
+    @formatBuffer(editorView, false, done)
 
-  formatBuffer: (editorView, saving) ->
+  formatBuffer: (editorView, saving, callback = ->) ->
     unless @dispatch.isValidEditorView(editorView)
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     if saving and not atom.config.get('go-plus.formatOnSave')
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
     buffer = editorView?.getEditor()?.getBuffer()
     unless buffer?
       @emit @name + '-complete', editorView, saving
+      callback(null)
       return
-    gopath = @dispatch.buildGoPath()
     args = ['-w']
-    configArgs = @dispatch.splitToArray(atom.config.get('go-plus.gofmtArgs'))
-    args = args.concat(configArgs) if configArgs? and _.size(configArgs) > 0
-    args = args.concat([buffer.getPath()])
-    cmd = atom.config.get('go-plus.gofmtPath')
-    cmd = @dispatch.replaceTokensInPath(cmd, false)
-    errored = false
-    proc = spawn(cmd, args)
-    proc.on 'error', (error) =>
-      return unless error?
-      errored = true
-      console.log @name + ': error launching command [' + cmd + '] – ' + error  + ' – current PATH: [' + @dispatch.env().PATH + ']'
-      messages = []
-      message = line: false, column: false, type: 'error', msg: 'Gofmt Executable Not Found @ ' + cmd + ' ($GOPATH: ' + gopath + ')'
-      messages.push message
-      @emit @name + '-messages', editorView, messages
+    configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gofmtArgs'))
+    args = _.union(args, configArgs) if configArgs? and _.size(configArgs) > 0
+    args = _.union(args, [buffer.getPath()])
+    go = @dispatch.goexecutable.current()
+    cmd = go.format()
+    if cmd is false
+      message =
+        line: false
+        column: false
+        msg: 'Format Tool Missing'
+        type: 'error'
+        source: @name
+      callback(null, [message])
+      return
+    done = (exitcode, stdout, stderr, messages) =>
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+      messages = @mapMessages(editorView, stderr) if stderr? and stderr.trim() isnt ''
       @emit @name + '-complete', editorView, saving
-    proc.stderr.on 'data', (data) => @mapMessages(editorView, data)
-    proc.stdout.on 'data', (data) => console.log @name + ': ' + data if data?
-    proc.on 'close', (code) =>
-      console.log @name + ': [' + cmd + '] exited with code [' + code + ']' if code isnt 0
-      @emit @name + '-complete', editorView, saving unless errored
+      callback(null, messages)
+    @dispatch.executor.exec(cmd, false, @dispatch?.env(), done, args)
 
-  mapMessages: (editorView, data) ->
+  mapMessages: (editorView, data) =>
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
     messages = []
-    extract = (matchLine) ->
+    return messages unless data? and data isnt ''
+    extract = (matchLine) =>
       return unless matchLine?
       message = switch
         when matchLine[4]?
@@ -70,14 +74,16 @@ class Gofmt
           column: matchLine[4]
           msg: matchLine[5]
           type: 'error'
+          source: @name
         else
           line: matchLine[2]
           column: false
           msg: matchLine[5]
           type: 'error'
+          source: @name
       messages.push message
     loop
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit @name + '-messages', editorView, messages
+    return messages

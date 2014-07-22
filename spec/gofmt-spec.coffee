@@ -3,19 +3,22 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
+AtomConfig = require './util/atomconfig'
 
 describe "format", ->
-  [editor, buffer, filePath] = []
+  [editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
+    atomconfig = new AtomConfig()
+    atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
     filePath = path.join(directory, 'go-plus.go')
     fs.writeFileSync(filePath, '')
-    editor = atom.workspace.openSync(filePath)
-    buffer = editor.getBuffer()
+
+    waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
 
     waitsForPromise ->
       atom.packages.activatePackage('language-go')
@@ -23,21 +26,22 @@ describe "format", ->
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
 
+    runs ->
+      buffer = editor.getBuffer()
+      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch.goexecutable.detect()
+
+    waitsFor ->
+      dispatch.ready is true
+
   describe "when format on save is enabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", true)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", false)
 
     it "reformats the file", ->
       done = false
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.on 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 0
@@ -51,9 +55,8 @@ describe "format", ->
     it "reformats the file after multiple saves", ->
       done = false
       displayDone = false
-      
+
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
           expect(dispatch.messages?).toBe true
@@ -72,7 +75,6 @@ describe "format", ->
 
       runs ->
         done = false
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main() {\n}\n"
           expect(dispatch.messages?).toBe true
@@ -87,7 +89,6 @@ describe "format", ->
     it "collects errors when the input is invalid", ->
       done = false
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', (editorView) =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main(!)  {\n}\n"
           expect(dispatch.messages?).toBe true
@@ -102,20 +103,28 @@ describe "format", ->
       waitsFor ->
         done is true
 
+    it "uses goimports to reorganize imports if enabled", ->
+      done = false
+      runs ->
+        atom.config.set("go-plus.formatWithGoImports", true)
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, 世界\")\n}\n"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 0
+          done = true
+        buffer.setText("package main\n\nfunc main()  {\n\tfmt.Println(\"Hello, 世界\")\n}\n")
+        buffer.save()
+
+      waitsFor ->
+        done is true
+
   describe "when format on save is disabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", false)
-      atom.config.set("go-plus.vetOnSave", false)
-      atom.config.set("go-plus.lintOnSave", false)
-      atom.config.set("go-plus.environmentOverridesConfiguration", true)
-      atom.config.set("go-plus.goExecutablePath", "$GOROOT/bin/go")
-      atom.config.set("go-plus.gofmtPath", "$GOROOT/bin/gofmt")
-      atom.config.set("go-plus.showPanel", false)
 
     it "does not reformat the file", ->
       done = false
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main()  {\n}\n"
           expect(dispatch.messages?).toBe true
