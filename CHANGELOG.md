@@ -1,3 +1,8 @@
+## v2.0.1 (July 22nd, 2014)
+
+* :abc: Be more helpful when displaying 'Not Found' message for the format tool (#43)
+* :new: Allow tools that would normally be found in `$GOPATH/bin` (or segments thereof) to be found on the `$PATH` also (#43, via @vanackere)
+
 ## v2.0.0 (July 21st, 2014)
 
 ### Major Changes
