@@ -54,7 +54,7 @@ class GoExecutable
         if @env.Path?
           elements = @env.Path.split(path.delimiter)
           for element in elements
-            executables.push path.normalize(path.join(element, 'go'))
+            executables.push path.normalize(path.join(element, 'go.exe'))
 
         # Binary Distribution
         executables.push path.normalize(path.join('C:','go', 'bin', 'go.exe'))
