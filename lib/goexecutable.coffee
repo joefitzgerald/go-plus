@@ -50,6 +50,12 @@ class GoExecutable
         # Configuration
         executables.push path.normalize(goinstallation) if goinstallation? and goinstallation.trim() isnt '' and goinstallation.lastIndexOf(path.sep + 'go.exe') is goinstallation.length - 3
 
+        # PATH
+        if @env.Path?
+          elements = @env.Path.split(path.delimiter)
+          for element in elements
+            executables.push path.normalize(path.join(element, 'go'))
+
         # Binary Distribution
         executables.push path.normalize(path.join('C:','go', 'bin', 'go.exe'))
 

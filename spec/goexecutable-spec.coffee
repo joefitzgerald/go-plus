@@ -67,7 +67,6 @@ describe "go executable", ->
     it "finds tools if they are on the PATH but not in the GOPATH", ->
       done = false
       runs ->
-        gopath = go.splitgopath()[0] + path.sep + 'bin'
         env = _.clone(process.env)
         env['GOPATH'] = ''
         atom.config.set('go-plus.goPath', '')
@@ -94,7 +93,10 @@ describe "go executable", ->
       runs ->
         env = _.clone(process.env)
         env['GOPATH'] = ''
-        env['PATH'] = ''
+        if os.platform() is 'win32'
+          env['Path'] = ''
+        else
+          env['PATH'] = ''
         atom.config.set('go-plus.goPath', '')
         goexecutable = new GoExecutable(env)
         goexecutable.once 'detect-complete', (thego) ->

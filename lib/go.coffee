@@ -93,8 +93,9 @@ class Go
       return result if fs.existsSync(result)
 
     # PATH
-    if @env.PATH?
-      elements = @env.PATH.split(path.delimiter)
+    p = if os.platform() is 'win32' then @env.Path else @env.PATH
+    if p?
+      elements = p.split(path.delimiter)
       for element in elements
         target = path.resolve(path.normalize(path.join(element, name + @exe)))
         pathresult = target if fs.existsSync(target)
