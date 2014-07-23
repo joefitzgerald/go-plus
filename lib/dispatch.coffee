@@ -127,7 +127,8 @@ class Dispatch
       if go.format()? and go.format() isnt false
         @messagepanel.add new PlainMessageView message: 'Format Tool: ' + go.format(), className: 'text-success'
       else
-        @messagepanel.add new PlainMessageView message: 'Format Tool: Not Found', className: 'text-error'
+        @messagepanel.add new PlainMessageView message: 'Format Tool (goimports): Not Found', className: 'text-error' if atom.config.get('go-plus.formatWithGoImports')
+        @messagepanel.add new PlainMessageView message: 'Format Tool (gofmt): Not Found', className: 'text-error' unless atom.config.get('go-plus.formatWithGoImports')
 
       # golint
       if go.golint()? and go.golint() isnt false
