@@ -76,21 +76,29 @@ class Go
     return result
 
   goimports: ->
-    return @gopathBinItem('goimports')
+    return @gopathOrPathBinItem('goimports')
 
   golint: ->
-    return @gopathBinItem('golint')
+    return @gopathOrPathBinItem('golint')
 
   oracle: ->
-    return @gopathBinItem('oracle')
+    return @gopathOrPathBinItem('oracle')
 
-  gopathBinItem: (name) ->
+  gopathOrPathBinItem: (name) ->
+    pathresult = false
+    # first look in PATH for the binaries
+    if @env.PATH?
+      elements = @env.PATH.split(path.delimiter)
+      for element in elements
+        target = path.resolve(path.normalize(path.join(element, name + @exe)))
+        pathresult = target if fs.existsSync(target)
+
     gopaths = @splitgopath()
-    return false unless gopaths? and _.size(gopaths) > 0
+    return pathresult unless gopaths? and _.size(gopaths) > 0
     for item in gopaths
       result = path.resolve(path.normalize(path.join(item, 'bin', name + @exe)))
       return result if fs.existsSync(result)
-    return false
+    return pathresult
 
   toolsAreMissing: ->
     return true if @format() is false
