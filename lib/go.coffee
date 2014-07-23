@@ -86,18 +86,19 @@ class Go
 
   gopathOrPathBinItem: (name) ->
     pathresult = false
-    # first look in PATH for the binaries
+
+    gopaths = @splitgopath()
+    for item in gopaths
+      result = path.resolve(path.normalize(path.join(item, 'bin', name + @exe)))
+      return result if fs.existsSync(result)
+
+    # PATH
     if @env.PATH?
       elements = @env.PATH.split(path.delimiter)
       for element in elements
         target = path.resolve(path.normalize(path.join(element, name + @exe)))
         pathresult = target if fs.existsSync(target)
 
-    gopaths = @splitgopath()
-    return pathresult unless gopaths? and _.size(gopaths) > 0
-    for item in gopaths
-      result = path.resolve(path.normalize(path.join(item, 'bin', name + @exe)))
-      return result if fs.existsSync(result)
     return pathresult
 
   toolsAreMissing: ->

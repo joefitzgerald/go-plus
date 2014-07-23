@@ -64,11 +64,37 @@ describe "go executable", ->
         done is true
       , 60000 # Go getting takes a while (this will fail without internet)
 
+    it "finds tools if they are on the PATH but not in the GOPATH", ->
+      done = false
+      runs ->
+        gopath = go.splitgopath()[0] + path.sep + 'bin'
+        env = _.clone(process.env)
+        env['GOPATH'] = ''
+        atom.config.set('go-plus.goPath', '')
+        goexecutable = new GoExecutable(env)
+        goexecutable.once 'detect-complete', (thego) ->
+          go = thego
+          done = true
+        goexecutable.detect()
+
+      waitsFor ->
+        done is true
+
+      runs =>
+        done = false
+        expect(goexecutable).toBeDefined
+        expect(go).toBeDefined
+        expect(go).toBeTruthy
+        expect(go.gopath).toBe ''
+        expect(go.goimports()).not.toBe false
+        expect(go.golint()).not.toBe false
+
     it "skips fetching tools if GOPATH is empty", ->
       done = false
       runs ->
         env = _.clone(process.env)
         env['GOPATH'] = ''
+        env['PATH'] = ''
         atom.config.set('go-plus.goPath', '')
         goexecutable = new GoExecutable(env)
         goexecutable.once 'detect-complete', (thego) ->
