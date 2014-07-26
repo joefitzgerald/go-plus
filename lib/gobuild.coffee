@@ -65,13 +65,13 @@ class Gobuild
       match = pre.exec(buffer.getText())
       testPackage = match[1]
       testPackage = testPackage.replace(/_test$/i, '')
-      output = testPackage + '.test'
+      output = testPackage + '.test' + go.exe
       outputPath = @tempDir
       args = ['test', '-copybinary', '-outputdir', outputPath,'-c', buffer.getPath()]
       files = fs.readdirSync(fileDir)
     else
       output = '.go-plus-syntax-check'
-      outputPath = path.join(@tempDir, output)
+      outputPath = path.join(@tempDir, output + go.exe)
       args = ['build', '-o', outputPath, '.']
     cmd = go.executable
     done = (exitcode, stdout, stderr, messages) =>
@@ -90,7 +90,7 @@ class Gobuild
       updatedFiles = _.difference(fs.readdirSync(fileDir), files)
       if updatedFiles? and _.size(updatedFiles) > 0
         for file in updatedFiles
-          if _.endsWith(file, '.test')
+          if _.endsWith(file, '.test' + go.exe)
             fs.unlinkSync(path.join(fileDir, file))
       @emit @name + '-complete', editorView, saving
       callback(null, messages)
