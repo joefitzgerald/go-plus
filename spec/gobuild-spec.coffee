@@ -96,8 +96,9 @@ describe "build", ->
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\tt.Error(\"Example Test\")\n}")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        go = dispatch.goexecutable.current()
         dispatch.once 'dispatch-complete', =>
-          expect(fs.existsSync(path.join(directory, "src", "github.com", "testuser", "example", "example.test"))).toBe false
+          expect(fs.existsSync(path.join(directory, "src", "github.com", "testuser", "example", "example.test" + go.exe))).toBe false
           done = true
         testBuffer.save()
 
