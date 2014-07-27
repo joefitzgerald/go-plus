@@ -165,9 +165,10 @@ class Dispatch
     @gopath.destroy()
     @gofmt.destroy()
 
-  handleEvents: (editorView) ->
+  handleEvents: (editorView) =>
     editor = editorView.getEditor()
     buffer = editor.getBuffer()
+    @updateGutter(editorView, @messages)
     buffer.on 'changed', => @handleBufferChanged(editorView)
     buffer.on 'saved', =>
       return unless not @dispatching
@@ -243,13 +244,14 @@ class Dispatch
       buffer = editorView?.getEditor()?.getBuffer()
       return unless buffer?
       for message in messages
-        if message?.line? and message.line isnt false and message.line >= 0
-          marker = buffer.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
-          editorView.getEditor().decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
-    else
-      gutter = editorView?.gutter
-      return unless gutter?
-      gutter.addClassToLine message.line - 1, 'go-plus-message' for message in messages
+        skip = false
+        if message?.file? and message.file isnt ''
+          skip = message.file isnt buffer.getPath()
+
+        unless skip
+          if message?.line? and message.line isnt false and message.line >= 0
+            marker = buffer.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
+            editorView.getEditor().decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
 
   resetPanel: ->
     @messagepanel?.close()
@@ -272,15 +274,17 @@ class Dispatch
         when 'warning' then 'text-warning'
         else 'text-info'
 
-      if message.line isnt false and message.column isnt false
-        # LineMessageView
-        @messagepanel.add new LineMessageView line: message.line, character: message.column, message: message.msg, className: className
-      else if message.line isnt false and message.column is false
-        # LineMessageView
-        @messagepanel.add new LineMessageView line: message.line, message: message.msg, className: className
-      else
+      file = if message.file? and message.file.trim() isnt '' then message.file else null
+      file = atom.project.relativize(file) if file? and file isnt ''
+      column = if message.column? and message.column isnt '' and message.column isnt false then message.column else null
+      line = if message.line? and message.line isnt '' and message.line isnt false then message.line else null
+
+      if file is null and column is null and line is null
         # PlainMessageView
         @messagepanel.add new PlainMessageView message: message.msg, className: className
+      else
+        # LineMessageView
+        @messagepanel.add new LineMessageView file: file, line: line, character: column, message: message.msg, className: className
     @messagepanel.attach() if atom?.workspaceView?
 
   isValidEditorView: (editorView) ->

@@ -52,8 +52,7 @@ class Gobuild
       return
     env = @dispatch.env()
     env['GOPATH'] = gopath
-    re = new RegExp(buffer.getBaseName() + '$')
-    cwd = buffer.getPath().replace(re, '')
+    cwd = path.dirname(buffer.getPath())
     output = ''
     outputPath = ''
     files = []
@@ -67,7 +66,7 @@ class Gobuild
       testPackage = testPackage.replace(/_test$/i, '')
       output = testPackage + '.test' + go.exe
       outputPath = @tempDir
-      args = ['test', '-copybinary', '-outputdir', outputPath,'-c', buffer.getPath()]
+      args = ['test', '-copybinary', '-outputdir', outputPath,'-c', '.']
       files = fs.readdirSync(fileDir)
     else
       output = '.go-plus-syntax-check'
@@ -76,7 +75,7 @@ class Gobuild
     cmd = go.executable
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
-      messages = @mapMessages(editorView, stderr, buffer.getBaseName()) if stderr? and stderr isnt ''
+      messages = @mapMessages(editorView, stderr, cwd) if stderr? and stderr isnt ''
       pattern = cwd + '/*' + output
       glob pattern, {mark: false, sync:true}, (er, files) ->
         for file in files
@@ -96,26 +95,31 @@ class Gobuild
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
-  mapMessages: (editorView, data, filename) ->
-    pattern = /^(\.\/)?(.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?)/img
+  mapMessages: (editorView, data, cwd) ->
+    pattern = /^(.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?)/img
     messages = []
-    fre = new RegExp('^' + filename + '$', 'i')
     extract = (matchLine) ->
       return unless matchLine?
-      file = matchLine[2]?.replace(/^.*[\\\/]/, '')
-      if file?
-        return unless file.match(fre)
+      file = null
+      if matchLine[1]? and matchLine[1] isnt ''
+        if matchLine[1].substring(0, 1) is '.'
+          file = path.join(cwd, matchLine[1])
+        else
+          file = matchLine[1]
+
       message = switch
-        when matchLine[5]?
-          line: matchLine[3]
-          column: matchLine[5]
-          msg: matchLine[6]
+        when matchLine[4]?
+          file: file
+          line: matchLine[2]
+          column: matchLine[4]
+          msg: matchLine[5]
           type: 'error'
           source: 'syntaxcheck'
         else
-          line: matchLine[3]
+          file: file
+          line: matchLine[2]
           column: false
-          msg: matchLine[6]
+          msg: matchLine[5]
           type: 'error'
           source: 'syntaxcheck'
       messages.push message

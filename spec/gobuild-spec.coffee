@@ -142,6 +142,7 @@ describe "build", ->
     it "does not display errors for dependent functions spread across multiple files in the same package", ->
       done = false
       runs ->
+        fs.unlinkSync(testFilePath)
         buffer = editor.getBuffer()
         secondBuffer = secondEditor.getBuffer()
         thirdBuffer = thirdEditor.getBuffer()
@@ -158,6 +159,63 @@ describe "build", ->
           expect(_.size(dispatch.messages)).toBe 0
           done = true
         secondBuffer.save()
+
+      waitsFor ->
+        done is true
+
+    it "does display errors for errors in dependent functions spread across multiple files in the same package", ->
+      done = false
+      runs ->
+        fs.unlinkSync(testFilePath)
+        buffer = editor.getBuffer()
+        secondBuffer = secondEditor.getBuffer()
+        thirdBuffer = thirdEditor.getBuffer()
+        buffer.setText("package main\n\nimport \"fmt\"\nimport \"github.com/testuser/example/util\"\n\nfunc main() {\n\tfmt.Println(\"Hello, world!\")\n\tutil.ProcessString(\"Hello, world!\")\n}")
+        secondBuffer.setText("package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}")
+        thirdBuffer.setText("package util\n\n// Stringify stringifies text\nfunc Stringify(text string) string {\n\t42\n\treturn text + \"-stringified\"\n}")
+        buffer.save()
+        secondBuffer.save()
+        thirdBuffer.save()
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe "package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0].file).toBe thirdFilePath
+          expect(dispatch.messages[0].line).toBe '5'
+          expect(dispatch.messages[0].msg).toBe '42 evaluated but not used'
+          expect(dispatch.messages[0].type).toBe 'error'
+          expect(dispatch.messages[0].column).toBe false
+          done = true
+        secondBuffer.save()
+
+      waitsFor ->
+        done is true
+
+    it "displays errors for unused code in a file under test", ->
+      done = false
+      runs ->
+        fs.unlinkSync(filePath)
+        secondBuffer = secondEditor.getBuffer()
+        thirdBuffer = thirdEditor.getBuffer()
+        testBuffer = testEditor.getBuffer()
+        secondBuffer.setText("package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}")
+        thirdBuffer.setText("package util\n\n// Stringify stringifies text\nfunc Stringify(text string) string {\n\t42\n\treturn text + \"-stringified\"\n}")
+        testBuffer.setText("package util\n\nimport \"testing\"\nimport \"fmt\"\n\nfunc TestExample(t *testing.T) {\n\tfmt.Println(Stringify(\"Testing\"))\n}")
+        secondBuffer.save()
+        thirdBuffer.save()
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe "package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0].file).toBe thirdFilePath
+          expect(dispatch.messages[0].line).toBe '5'
+          expect(dispatch.messages[0].msg).toBe '42 evaluated but not used'
+          expect(dispatch.messages[0].type).toBe 'error'
+          expect(dispatch.messages[0].column).toBe false
+          done = true
+        testBuffer.save()
 
       waitsFor ->
         done is true

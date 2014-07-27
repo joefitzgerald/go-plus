@@ -1,6 +1,7 @@
 {spawn} = require 'child_process'
 {Subscriber, Emitter} = require 'emissary'
 _ = require 'underscore-plus'
+path = require 'path'
 
 module.exports =
 class Gofmt
@@ -40,6 +41,7 @@ class Gofmt
       @emit @name + '-complete', editorView, saving
       callback(null)
       return
+    cwd = path.dirname(buffer.getPath())
     args = ['-w']
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gofmtArgs'))
     args = _.union(args, configArgs) if configArgs? and _.size(configArgs) > 0
@@ -57,25 +59,28 @@ class Gofmt
       return
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
-      messages = @mapMessages(editorView, stderr) if stderr? and stderr.trim() isnt ''
+      messages = @mapMessages(editorView, stderr, cwd) if stderr? and stderr.trim() isnt ''
       @emit @name + '-complete', editorView, saving
       callback(null, messages)
-    @dispatch.executor.exec(cmd, false, @dispatch?.env(), done, args)
+    @dispatch.executor.exec(cmd, cwd, @dispatch?.env(), done, args)
 
-  mapMessages: (editorView, data) =>
+  mapMessages: (editorView, data, cwd) =>
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
     messages = []
     return messages unless data? and data isnt ''
     extract = (matchLine) =>
       return unless matchLine?
+      file = if matchLine[1]? and matchLine[1] isnt '' then matchLine[1] else null
       message = switch
         when matchLine[4]?
+          file: file
           line: matchLine[2]
           column: matchLine[4]
           msg: matchLine[5]
           type: 'error'
           source: @name
         else
+          file: file
           line: matchLine[2]
           column: false
           msg: matchLine[5]
