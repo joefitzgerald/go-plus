@@ -102,10 +102,10 @@ class Gobuild
       return unless matchLine?
       file = null
       if matchLine[1]? and matchLine[1] isnt ''
-        if matchLine[1].substring(0, 1) is '.'
-          file = path.join(cwd, matchLine[1])
-        else
+        if matchLine[1].substring(0, 1) is '/' or matchLine[1].substring(1, 2) is ':\\'
           file = matchLine[1]
+        else
+          file = path.join(cwd, matchLine[1])
 
       message = switch
         when matchLine[4]?
