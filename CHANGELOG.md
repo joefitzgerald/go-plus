@@ -1,3 +1,8 @@
+## v2.0.2 (July 27, 2014)
+
+* :new: Check syntax for the entire package rather than just the current file (fixes #35, partially fixes #44)
+* :new: Display gutter indicators for all files in a package, rather than just the current file
+
 ## v2.0.1 (July 22nd, 2014)
 
 * :abc: Be more helpful when displaying 'Not Found' message for the format tool (#43)
