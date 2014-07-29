@@ -110,10 +110,11 @@ class Gobuild
         if matchLine[5]? and matchLine[5] isnt ''
           if matchLine[5].substring(0, 1) is '/' or matchLine[5].substring(1, 2) is ':\\'
             file = matchLine[5]
-          else if pkg? and pkg isnt ''
-            file = path.join(pkg, matchLine[5])
           else
             file = path.join(cwd, matchLine[5])
+
+          if file is null and pkg? and pkg isnt ''
+            file = path.join(pkg, matchLine[5])
 
         message = switch
           when matchLine[8]?
