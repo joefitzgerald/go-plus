@@ -103,8 +103,8 @@ class Gobuild
     extract = (matchLine) =>
       return unless matchLine?
       if matchLine[2]? and matchLine[2] is '#'
-        # Found A Package Indicator
-        pkg = @absolutePathForPackage(matchLine[3], splitgopath)
+        # Found A Package Indicator, Skip For Now
+        # pkg = @absolutePathForPackage(matchLine[3], splitgopath)
       else
         file = null
         if matchLine[5]? and matchLine[5] isnt ''
