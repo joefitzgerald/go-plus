@@ -36,7 +36,7 @@ class Dispatch
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
-    @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true
+    @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true unless @messagepanel?
 
     @detect()
 
@@ -158,12 +158,16 @@ class Dispatch
 
   destroy: ->
     @unsubscribe()
+    @resetPanel()
+    @messagepanel?.remove()
     @gocover.destroy()
     @gobuild.destroy()
     @golint.destroy()
     @govet.destroy()
     @gopath.destroy()
     @gofmt.destroy()
+    ready = false
+    @emit 'destroyed'
 
   handleEvents: (editorView) =>
     editor = editorView.getEditor()
@@ -174,7 +178,10 @@ class Dispatch
       return unless not @dispatching
       @dispatching = true
       @handleBufferSave(editorView, true)
+    @on 'destroyed', => buffer.off 'saved'
+    @on 'destroyed', => buffer.off 'changed'
     editor.on 'destroyed', => buffer.off 'saved'
+    editor.on 'destroyed', => buffer.off 'changed'
 
   triggerPipeline: (editorView, saving) ->
     go = @goexecutable.current()
@@ -216,6 +223,7 @@ class Dispatch
     @triggerPipeline(editorView, saving)
 
   handleBufferChanged: (editorView) ->
+    return unless @ready
     @gocover.resetCoverage()
 
   resetState: (editorView) ->
