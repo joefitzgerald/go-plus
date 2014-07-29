@@ -71,7 +71,7 @@ class Gobuild
       files = fs.readdirSync(fileDir)
     else
       output = '.go-plus-syntax-check'
-      outputPath = path.join(@tempDir, output + go.exe)
+      outputPath = path.normalize(path.join(@tempDir, output + go.exe))
       args = ['build', '-o', outputPath, '.']
     cmd = go.executable
     done = (exitcode, stdout, stderr, messages) =>
@@ -116,7 +116,7 @@ class Gobuild
             file = path.join(cwd, matchLine[5])
 
         message = switch
-          when matchLine[4]?
+          when matchLine[8]?
             file: file
             line: matchLine[6]
             column: matchLine[8]
