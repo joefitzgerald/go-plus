@@ -41,23 +41,43 @@ class Gopath
           source: 'gopath'
       messages.push message
 
-    if messages? and _.size(messages) is 0 and not fs.existsSync(gopaths[0])
-      message =
-          line: false
-          column: false
-          msg: 'Warning: GOPATH [' + gopaths[0] + '] does not exist'
-          type: 'warning'
-          source: 'gopath'
-      messages.push message
+    if messages? and _.size(messages) is 0
+      for gopath in gopaths
+        unless fs.existsSync(gopath)
+          message =
+              line: false
+              column: false
+              msg: 'Warning: GOPATH [' + gopaths[0] + '] does not exist'
+              type: 'warning'
+              source: 'gopath'
+          messages.push message
 
-    if messages? and _.size(messages) is 0 and not fs.existsSync(path.join(gopaths[0], 'src'))
-      message =
-          line: false
-          column: false
-          msg: 'Warning: GOPATH [' + gopaths[0] + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
-          type: 'warning'
-          source: 'gopath'
-      messages.push message
+    if messages? and _.size(messages) is 0
+      for gopath in gopaths
+        unless fs.existsSync(path.join(gopath, 'src'))
+          message =
+              line: false
+              column: false
+              msg: 'Warning: GOPATH [' + gopaths[0] + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
+              type: 'warning'
+              source: 'gopath'
+          messages.push message
+
+    filepath = editorView?.getEditor()?.getPath()
+    if filepath? and filepath isnt '' and fs.existsSync(filepath)
+      found = false
+      for gopath in gopaths
+        if filepath.toLowerCase().startsWith(path.join(gopath, 'src').toLowerCase())
+          found = true
+
+      unless found
+        message =
+            line: false
+            column: false
+            msg: 'Warning: File [' + filepath + '] does not reside within a "src" directory in your GOPATH [' + gopaths + '] - please review http://golang.org/doc/code.html#Workspaces'
+            type: 'warning'
+            source: 'gopath'
+        messages.push message
 
     if messages? and _.size(messages) > 0
       @emit @name + '-messages', editorView, messages

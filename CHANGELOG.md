@@ -2,6 +2,7 @@
 
 * :bug: Fix issue where two message panels would show after upgrading go-plus or disabling / enabling it (fixes #49)
 * :lipstick: Better handle relative paths from `go build` and `go test` by using the package hints included in stderr (partially fixes #50)
+* :new: Warn when the current file is not within a "src" directory (or subdirectory thereof) in a GOPATH segment (fixes #15)
 
 ## v2.0.2 (July 27, 2014)
 
