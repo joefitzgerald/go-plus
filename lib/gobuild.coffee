@@ -50,6 +50,7 @@ class Gobuild
       @emit @name + '-complete', editorView, saving
       callback(null)
       return
+    splitgopath = go.splitgopath()
     env = @dispatch.env()
     env['GOPATH'] = gopath
     cwd = path.dirname(buffer.getPath())
@@ -75,7 +76,7 @@ class Gobuild
     cmd = go.executable
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
-      messages = @mapMessages(editorView, stderr, cwd) if stderr? and stderr isnt ''
+      messages = @mapMessages(editorView, stderr, cwd, splitgopath) if stderr? and stderr isnt ''
       pattern = cwd + '/*' + output
       glob pattern, {mark: false, sync:true}, (er, files) ->
         for file in files
@@ -95,37 +96,50 @@ class Gobuild
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
-  mapMessages: (editorView, data, cwd) ->
-    pattern = /^(.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?)/img
+  mapMessages: (editorView, data, cwd, splitgopath) =>
+    pattern = /^((#)\s(.*)?)|((.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?))/img
     messages = []
-    extract = (matchLine) ->
+    pkg = ''
+    extract = (matchLine) =>
       return unless matchLine?
-      file = null
-      if matchLine[1]? and matchLine[1] isnt ''
-        if matchLine[1].substring(0, 1) is '/' or matchLine[1].substring(1, 2) is ':\\'
-          file = matchLine[1]
-        else
-          file = path.join(cwd, matchLine[1])
+      if matchLine[2]? and matchLine[2] is '#'
+        # Found A Package Indicator
+        pkg = @absolutePathForPackage(matchLine[3], splitgopath)
+      else
+        file = null
+        if matchLine[5]? and matchLine[5] isnt ''
+          if matchLine[5].substring(0, 1) is '/' or matchLine[5].substring(1, 2) is ':\\'
+            file = matchLine[5]
+          else if pkg? and pkg isnt ''
+            file = path.join(pkg, matchLine[5])
+          else
+            file = path.join(cwd, matchLine[5])
 
-      message = switch
-        when matchLine[4]?
-          file: file
-          line: matchLine[2]
-          column: matchLine[4]
-          msg: matchLine[5]
-          type: 'error'
-          source: 'syntaxcheck'
-        else
-          file: file
-          line: matchLine[2]
-          column: false
-          msg: matchLine[5]
-          type: 'error'
-          source: 'syntaxcheck'
-      messages.push message
+        message = switch
+          when matchLine[4]?
+            file: file
+            line: matchLine[6]
+            column: matchLine[8]
+            msg: matchLine[9]
+            type: 'error'
+            source: 'syntaxcheck'
+          else
+            file: file
+            line: matchLine[6]
+            column: false
+            msg: matchLine[9]
+            type: 'error'
+            source: 'syntaxcheck'
+        messages.push message
     loop
       match = pattern.exec(data)
       extract(match)
       break unless match?
     @emit @name + '-messages', editorView, messages
     return messages
+
+  absolutePathForPackage: (pkg, splitgopath) =>
+    for gopath in splitgopath
+      combinedpath = path.join(gopath, 'src', pkg)
+      return combinedpath if fs.existsSync(combinedpath)
+    null
