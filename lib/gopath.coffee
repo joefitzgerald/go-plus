@@ -14,6 +14,7 @@ class Gopath
 
   destroy: ->
     @unsubscribe()
+    @dispatch = null
 
   reset: (editorView) ->
     @emit 'reset', editorView

@@ -21,6 +21,10 @@ class GoExecutable
 
   destroy: ->
     @unsubscribe()
+    @executor = null
+    @pathexpander = null
+    @gos = []
+    @currentgo = ''
     @reset()
 
   reset: ->

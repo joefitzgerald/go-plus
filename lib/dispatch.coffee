@@ -21,6 +21,7 @@ class Dispatch
 
   constructor: ->
     # Manage Save Pipeline
+    @activated = false
     @dispatching = false
     @ready = false
     @messages = []
@@ -36,38 +37,95 @@ class Dispatch
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
+
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true unless @messagepanel?
 
-    @detect()
+    @on 'run-detect', => @detect()
 
     # Reset State If Requested
-    @gofmt.on 'reset', (editorView) =>
-      @resetState(editorView)
-    @golint.on 'reset', (editorView) =>
-      @resetState(editorView)
-    @govet.on 'reset', (editorView) =>
-      @resetState(editorView)
-    @gopath.on 'reset', (editorView) =>
-      @resetState(editorView)
-    @gobuild.on 'reset', (editorView) =>
-      @resetState(editorView)
-    @gocover.on 'reset', (editorView) =>
-      @resetState(editorView)
+    gofmtsubscription = @gofmt.on 'reset', (editorView) => @resetState(editorView)
+    golintsubscription = @golint.on 'reset', (editorView) => @resetState(editorView)
+    govetsubscription = @govet.on 'reset', (editorView) => @resetState(editorView)
+    gopathsubscription = @gopath.on 'reset', (editorView) => @resetState(editorView)
+    gobuildsubscription = @gobuild.on 'reset', (editorView) => @resetState(editorView)
+    gocoversubscription = @gocover.on 'reset', (editorView) => @resetState(editorView)
 
-    # Update Pane And Gutter With Messages
-    @on 'dispatch-complete', (editorView) =>
-      @displayMessages(editorView)
+    @subscribe(gofmtsubscription)
+    @subscribe(golintsubscription)
+    @subscribe(govetsubscription)
+    @subscribe(gopathsubscription)
+    @subscribe(gobuildsubscription)
+    @subscribe(gocoversubscription)
 
-    atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
-    atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPanel()
-    atom.config.observe 'go-plus.getMissingTools', => @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools') and @ready? and @ready
-    atom.config.observe 'go-plus.formatWithGoImports', => @displayGoInfo(true) if @ready
-    atom.config.observe 'go-plus.goPath', => @displayGoInfo(true) if @ready
-    atom.config.observe 'go-plus.environmentOverridesConfiguration', => @displayGoInfo(true) if @ready
-    atom.config.observe 'go-plus.goInstallation', => @detect() if @ready
-    atom.workspaceView.command 'golang:goinfo', => @displayGoInfo(true) if @ready
-    atom.workspaceView.command 'golang:getmissingtools', => @gettools(false)
-    atom.workspaceView.command 'golang:updatetools', => @gettools(true)
+    @on 'dispatch-complete', (editorView) => @displayMessages(editorView)
+    @subscribeToAtomEvents()
+    @emit 'run-detect'
+
+  destroy: =>
+    @unsubscribeFromAtomEvents()
+    @unsubscribe()
+    @resetPanel()
+    @messagepanel?.remove()
+    @messagepanel = null
+    @gocover.destroy()
+    @gobuild.destroy()
+    @golint.destroy()
+    @govet.destroy()
+    @gopath.destroy()
+    @gofmt.destroy()
+    @gocover = null
+    @gobuild = null
+    @golint = null
+    @govet = null
+    @gopath = null
+    @gofmt = null
+    @ready = false
+    @activated = false
+    @emit 'destroyed'
+
+  subscribeToAtomEvents: =>
+    @editorViewSubscription = atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
+    @workspaceViewSubscription = atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPanel()
+    @getMissingToolsSubscription = atom.config.observe 'go-plus.getMissingTools', => @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools') and @ready
+    @formatWithGoImportsSubscription = atom.config.observe 'go-plus.formatWithGoImports', => @displayGoInfo(true) if @ready
+    @gopathSubscription = atom.config.observe 'go-plus.goPath', => @displayGoInfo(true) if @ready
+    @environmentOverridesConfigurationSubscription = atom.config.observe 'go-plus.environmentOverridesConfiguration', => @displayGoInfo(true) if @ready
+    @goInstallationSubscription = atom.config.observe 'go-plus.goInstallation', => @detect() if @ready
+    @goinfoCommandSubscription = atom.workspaceView.command 'golang:goinfo', => @displayGoInfo(true) if @ready and @activated
+    @getmissingtoolsCommandSubscription = atom.workspaceView.command 'golang:getmissingtools', => @gettools(false) if @activated
+    @updatetoolsCommandSubscription = atom.workspaceView.command 'golang:updatetools', => @gettools(true) if @activated
+
+    @subscribe(@getMissingToolsSubscription)
+    @subscribe(@formatWithGoImportsSubscription)
+    @subscribe(@gopathSubscription)
+    @subscribe(@environmentOverridesConfigurationSubscription)
+    @subscribe(@goInstallationSubscription)
+    @activated = true
+
+  handleEvents: (editorView) =>
+    buffer = editorView?.getEditor()?.getBuffer()
+    return unless buffer?
+    @updateGutter(editorView, @messages)
+    modifiedsubscription = buffer.on 'contents-modified', =>
+      return unless @activated
+      @handleBufferChanged(editorView)
+
+    savedsubscription = buffer.on 'saved', =>
+      return unless @activated
+      return unless not @dispatching
+      @dispatching = true
+      @handleBufferSave(editorView, true)
+
+    destroyedsubscription = buffer.once 'destroyed', =>
+      savedsubscription?.off()
+      modifiedsubscription?.off()
+
+    @subscribe(modifiedsubscription)
+    @subscribe(savedsubscription)
+    @subscribe(destroyedsubscription)
+
+  unsubscribeFromAtomEvents: =>
+    @editorViewSubscription?.off()
 
   detect: =>
     @ready = false
@@ -156,37 +214,12 @@ class Dispatch
       return element?.line + ':' + element?.column + ':' + element?.msg
     @emit 'messages-collected', _.size(@messages)
 
-  destroy: ->
-    @unsubscribe()
-    @resetPanel()
-    @messagepanel?.remove()
-    @gocover.destroy()
-    @gobuild.destroy()
-    @golint.destroy()
-    @govet.destroy()
-    @gopath.destroy()
-    @gofmt.destroy()
-    ready = false
-    @emit 'destroyed'
-
-  handleEvents: (editorView) =>
-    editor = editorView.getEditor()
-    buffer = editor.getBuffer()
-    @updateGutter(editorView, @messages)
-    buffer.on 'changed', => @handleBufferChanged(editorView)
-    buffer.on 'saved', =>
-      return unless not @dispatching
-      @dispatching = true
-      @handleBufferSave(editorView, true)
-    @on 'destroyed', => buffer.off 'saved'
-    @on 'destroyed', => buffer.off 'changed'
-    editor.on 'destroyed', => buffer.off 'saved'
-    editor.on 'destroyed', => buffer.off 'changed'
-
   triggerPipeline: (editorView, saving) ->
+    @dispatching = true
     go = @goexecutable.current()
     unless go? and go.executable? and go.executable.trim() isnt ''
       @displayGoInfo(false)
+      @dispatching = false
       return
 
     async.series([
@@ -217,13 +250,14 @@ class Dispatch
     )
 
   handleBufferSave: (editorView, saving) ->
-    return unless @ready? and @ready
+    return unless @ready and @activated
     return unless @isValidEditorView(editorView)
     @resetState(editorView)
     @triggerPipeline(editorView, saving)
 
   handleBufferChanged: (editorView) ->
-    return unless @ready
+    return unless @ready and @activated
+    return unless @isValidEditorView(editorView)
     @gocover.resetCoverage()
 
   resetState: (editorView) ->
@@ -240,10 +274,6 @@ class Dispatch
       return unless markers? and _.size(markers) > 0
       # Remove markers
       marker.destroy() for marker in markers
-    else
-      gutter = editorView?.gutter
-      return unless gutter?
-      gutter.removeClassFromAllLines('go-plus-message')
 
   updateGutter: (editorView, messages) ->
     @resetGutter(editorView)

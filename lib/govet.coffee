@@ -15,12 +15,13 @@ class Govet
 
   destroy: ->
     @unsubscribe()
+    @dispatch = null
 
   reset: (editorView) ->
     @emit 'reset', editorView
 
   checkCurrentBuffer: ->
-    editorView = atom.workspaceView.getActiveView()
+    editorView = atom?.workspaceView?.getActiveView()
     return unless @dispatch.isValidEditorView(editorView)
     @reset editorView
     done = (err, messages) =>

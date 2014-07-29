@@ -33,7 +33,7 @@ class Executor
       callback(code, output, error, messages)
     args = [] unless args?
     bufferedprocess = new BufferedProcess({command, args, options, stdout, stderr, exit})
-    bufferedprocess.process.on 'error', (err) =>
+    bufferedprocess.process.once 'error', (err) =>
       if err.code is 'ENOENT'
         message =
             line: false

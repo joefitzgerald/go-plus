@@ -1,5 +1,3 @@
-Dispatch = require './dispatch'
-
 module.exports =
   configDefaults:
     environmentOverridesConfiguration: true # Environment variables override configuration
@@ -19,7 +17,13 @@ module.exports =
     vetOnSave: true # Run vet on save
 
   activate: (state) ->
-    @dispatch = new Dispatch()
+    @dispatch = @createDispatch()
 
   deactivate: ->
-    @dispatch.destroy()
+    @dispatch?.destroy()
+    @dispatch = null
+
+  createDispatch: ->
+    unless @dispatch?
+      Dispatch = require './dispatch'
+      @dispatch = new Dispatch()

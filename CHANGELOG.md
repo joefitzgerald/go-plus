@@ -1,3 +1,7 @@
+## v2.0.4 (July 30, 2014)
+
+* :bug: Really nailed the multiple message panels thing now :smile: - Emissary event life cycles are now properly handled
+
 ## v2.0.3 (July 29, 2014)
 
 * :bug: Fix issue where two message panels would show after upgrading go-plus or disabling / enabling it (fixes #49)

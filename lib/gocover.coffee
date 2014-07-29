@@ -29,6 +29,8 @@ class Gocover
 
   destroy: ->
     @unsubscribe()
+    @dispatch = null
+    @parser = null
     @removeCoverageFile()
 
   addMarkersToEditors: =>
@@ -84,7 +86,7 @@ class Gocover
     @coverageFile = path.join(tempDir, 'coverage.out')
 
   runCoverageForCurrentEditorView: =>
-    editorView = atom.workspaceView.getActiveView()
+    editorView = atom?.workspaceView?.getActiveView()
     return unless editorView?
     @reset editorView
     @runCoverage(editorView, false)
