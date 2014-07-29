@@ -113,9 +113,6 @@ class Gobuild
           else
             file = path.join(cwd, matchLine[5])
 
-          if file is null and pkg? and pkg isnt ''
-            file = path.join(pkg, matchLine[5])
-
         message = switch
           when matchLine[8]?
             file: file
@@ -142,5 +139,5 @@ class Gobuild
   absolutePathForPackage: (pkg, splitgopath) =>
     for gopath in splitgopath
       combinedpath = path.join(gopath, 'src', pkg)
-      return combinedpath if fs.existsSync(combinedpath)
+      return fs.realpathSync(combinedpath) if fs.existsSync(combinedpath)
     null

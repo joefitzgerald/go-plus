@@ -219,3 +219,58 @@ describe "build", ->
 
       waitsFor ->
         done is true
+
+  describe "when files are opened outside a gopath", ->
+    [otherdirectory] = []
+
+    ready = false
+    beforeEach ->
+      otherdirectory = temp.mkdirSync()
+      process.env['GOPATH']=otherdirectory
+      atom.config.set("go-plus.goPath", otherdirectory)
+      atom.config.set("go-plus.syntaxCheckOnSave", true)
+      filePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus.go")
+      testFilePath = path.join(directory, "src", "github.com", "testuser", "example", "go-plus_test.go")
+      fs.writeFileSync(filePath, '')
+      fs.writeFileSync(testFilePath, '')
+
+      waitsForPromise -> atom.workspace.open(filePath).then (e) -> editor = e
+
+      waitsForPromise -> atom.workspace.open(testFilePath).then (e) -> testEditor = e
+
+      waitsForPromise ->
+        atom.packages.activatePackage('language-go')
+
+      runs ->
+        atom.packages.activatePackage('go-plus')
+
+      runs ->
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.goexecutable.detect()
+
+      waitsFor ->
+        dispatch.ready is true
+
+    it "displays warnings about the gopath, but still displays errors", ->
+      done = false
+      runs ->
+        fs.unlinkSync(testFilePath)
+        buffer = editor.getBuffer()
+        buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n")
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n"
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 2
+          expect(dispatch.messages[0]?.column).toBe false
+          expect(dispatch.messages[0]?.line).toBe false
+          expect(dispatch.messages[0]?.msg).toBe 'Warning: GOPATH [' + otherdirectory + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
+          expect(dispatch.messages[1]?.column).toBe false
+          expect(dispatch.messages[1]?.file).toBe fs.realpathSync(filePath)
+          expect(dispatch.messages[1]?.line).toBe "6"
+          expect(dispatch.messages[1]?.msg).toBe "42 evaluated but not used"
+          done = true
+        buffer.save()
+
+      waitsFor ->
+        done is true

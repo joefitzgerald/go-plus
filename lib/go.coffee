@@ -31,7 +31,7 @@ class Go
   go: ->
     return false unless @executable? and @executable isnt ''
     return false unless fs.existsSync(@executable)
-    return @executable
+    return fs.realpathSync(@executable)
 
   buildgopath: ->
     result = ''
@@ -52,7 +52,7 @@ class Go
     return false unless @goroot? and @goroot isnt ''
     result = path.join(@goroot, 'bin', 'gofmt' + @exe)
     return false unless fs.existsSync(result)
-    return result
+    return fs.realpathSync(result)
 
   format: ->
     if atom.config.get('go-plus.formatWithGoImports')? and atom.config.get('go-plus.formatWithGoImports') then @goimports() else @gofmt()
@@ -61,19 +61,19 @@ class Go
     return false unless @goroot? and @goroot isnt ''
     result = path.join(@goroot, 'bin', 'godoc' + @exe)
     return false unless fs.existsSync(result)
-    return result
+    return fs.realpathSync(result)
 
   vet: ->
     return false unless @gotooldir? and @gotooldir isnt ''
     result = path.join(@gotooldir, 'vet' + @exe)
     return false unless fs.existsSync(result)
-    return result
+    return fs.realpathSync(result)
 
   cover: ->
     return false unless @gotooldir? and @gotooldir isnt ''
     result = path.join(@gotooldir, 'cover' + @exe)
     return false unless fs.existsSync(result)
-    return result
+    return fs.realpathSync(result)
 
   goimports: ->
     return @gopathOrPathBinItem('goimports')
@@ -90,7 +90,7 @@ class Go
     gopaths = @splitgopath()
     for item in gopaths
       result = path.resolve(path.normalize(path.join(item, 'bin', name + @exe)))
-      return result if fs.existsSync(result)
+      return fs.realpathSync(result) if fs.existsSync(result)
 
     # PATH
     p = if os.platform() is 'win32' then @env.Path else @env.PATH
@@ -98,7 +98,7 @@ class Go
       elements = p.split(path.delimiter)
       for element in elements
         target = path.resolve(path.normalize(path.join(element, name + @exe)))
-        pathresult = target if fs.existsSync(target)
+        pathresult = fs.realpathSync(target) if fs.existsSync(target)
 
     return pathresult
 

@@ -283,7 +283,7 @@ class Dispatch
         else 'text-info'
 
       file = if message.file? and message.file.trim() isnt '' then message.file else null
-      file = atom.project.relativize(file) if file? and file isnt ''
+      file = atom.project.relativize(file) if file? and file isnt '' and atom?.project?
       column = if message.column? and message.column isnt '' and message.column isnt false then message.column else null
       line = if message.line? and message.line isnt '' and message.line isnt false then message.line else null
 

@@ -1,5 +1,6 @@
 {exec} = require 'child_process'
 {BufferedProcess} = require 'atom'
+fs = require 'fs-plus'
 
 module.exports =
 class Executor
@@ -12,7 +13,7 @@ class Executor
     options =
       cwd: null
       env: null
-    options.cwd = cwd if cwd? and cwd isnt '' and cwd isnt false
+    options.cwd = fs.realpathSync(cwd) if cwd? and cwd isnt '' and cwd isnt false and fs.existsSync(cwd)
     options.env = env if env?
     options.env = process.env unless options.env?
     stdout = (data) -> output += data

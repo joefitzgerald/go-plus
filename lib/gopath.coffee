@@ -63,21 +63,25 @@ class Gopath
               source: 'gopath'
           messages.push message
 
-    filepath = editorView?.getEditor()?.getPath()
-    if filepath? and filepath isnt '' and fs.existsSync(filepath)
-      found = false
-      for gopath in gopaths
-        if filepath.toLowerCase().startsWith(path.join(gopath, 'src').toLowerCase())
-          found = true
+    if messages? and _.size(messages) is 0
+      filepath = editorView?.getEditor()?.getPath()
+      if filepath? and filepath isnt '' and fs.existsSync(filepath)
+        filepath = fs.realpathSync(filepath)
+        found = false
+        for gopath in gopaths
+          if fs.existsSync(gopath)
+            gopath = fs.realpathSync(gopath)
+            if filepath.toLowerCase().startsWith(path.join(gopath, 'src').toLowerCase())
+              found = true
 
-      unless found
-        message =
-            line: false
-            column: false
-            msg: 'Warning: File [' + filepath + '] does not reside within a "src" directory in your GOPATH [' + gopaths + '] - please review http://golang.org/doc/code.html#Workspaces'
-            type: 'warning'
-            source: 'gopath'
-        messages.push message
+        unless found
+          message =
+              line: false
+              column: false
+              msg: 'Warning: File [' + filepath + '] does not reside within a "src" directory in your GOPATH [' + gopaths + '] - please review http://golang.org/doc/code.html#Workspaces'
+              type: 'warning'
+              source: 'gopath'
+          messages.push message
 
     if messages? and _.size(messages) > 0
       @emit @name + '-messages', editorView, messages
