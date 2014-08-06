@@ -1,3 +1,7 @@
+## v2.0.5 (August 5, 2014)
+
+* :bug: Fix issue which prevented the save pipeline from triggering if you opened a file that was not .go
+
 ## v2.0.4 (July 30, 2014)
 
 * :bug: Really nailed the multiple message panels thing now :smile: - Emissary event life cycles are now properly handled

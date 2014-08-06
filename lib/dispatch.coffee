@@ -113,7 +113,6 @@ class Dispatch
     savedsubscription = buffer.on 'saved', =>
       return unless @activated
       return unless not @dispatching
-      @dispatching = true
       @handleBufferSave(editorView, true)
 
     destroyedsubscription = buffer.once 'destroyed', =>
