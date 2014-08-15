@@ -38,7 +38,7 @@ class GoExecutable
     switch os.platform()
       when 'darwin', 'freebsd', 'linux', 'sunos'
         # Configuration
-        executables.push path.normalize(goinstallation) if goinstallation? and goinstallation.trim() isnt '' and goinstallation.lastIndexOf(path.sep + 'go') is goinstallation.length - 3
+        executables.push path.normalize(goinstallation) if goinstallation? and goinstallation.trim() isnt '' and goinstallation.lastIndexOf(path.sep + 'go') is goinstallation.length - 3 or goinstallation.lastIndexOf(path.sep + 'goapp') is goinstallation.length - 6
 
         # PATH
         if @env.PATH?
@@ -52,7 +52,7 @@ class GoExecutable
         executables.push path.normalize(path.join('/usr', 'local', 'bin', 'go', ))
       when 'win32'
         # Configuration
-        executables.push path.normalize(goinstallation) if goinstallation? and goinstallation.trim() isnt '' and goinstallation.lastIndexOf(path.sep + 'go.exe') is goinstallation.length - 3
+        executables.push path.normalize(goinstallation) if goinstallation? and goinstallation.trim() isnt '' and goinstallation.lastIndexOf(path.sep + 'go.exe') is goinstallation.length - 7 or goinstallation.lastIndexOf(path.sep + 'goapp.bat') is goinstallation.length - 10
 
         # PATH
         if @env.Path?
