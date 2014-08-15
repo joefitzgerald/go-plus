@@ -1,3 +1,7 @@
+## v2.0.6 (August 15, 2014)
+
+* :new: Support GAE's `goapp` / `goapp.bat` (fixes #58, #59)
+
 ## v2.0.5 (August 5, 2014)
 
 * :bug: Fix issue which prevented the save pipeline from triggering if you opened a file that was not .go
