@@ -5,15 +5,17 @@ temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
 GoExecutable = require './../lib/goexecutable'
+Environment = require './../lib/environment'
 
 describe "go executable", ->
-  [goexecutable, directory, env, go] = []
+  [environment, goexecutable, directory, env, go] = []
 
   beforeEach ->
     done = false
     runs ->
+      environment = new Environment()
       directory = temp.mkdirSync()
-      env = _.clone(process.env)
+      env = environment.Clone()
       env['GOPATH'] = directory
       goexecutable = new GoExecutable(env)
       goexecutable.once 'detect-complete', (thego) ->
@@ -67,7 +69,7 @@ describe "go executable", ->
     it "finds tools if they are on the PATH but not in the GOPATH", ->
       done = false
       runs ->
-        env = _.clone(process.env)
+        env = environment.Clone()
         env['GOPATH'] = ''
         atom.config.set('go-plus.goPath', '')
         goexecutable = new GoExecutable(env)
@@ -91,7 +93,7 @@ describe "go executable", ->
     it "skips fetching tools if GOPATH is empty", ->
       done = false
       runs ->
-        env = _.clone(process.env)
+        env = environment.Clone()
         env['GOPATH'] = ''
         if os.platform() is 'win32'
           env['Path'] = ''

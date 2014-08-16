@@ -2,12 +2,14 @@ _ = require 'underscore-plus'
 path = require 'path'
 PathExpander = require './../../lib/util/pathexpander'
 PathHelper = require './pathhelper.coffee'
+Environment = require './../../lib/environment'
 
 describe "pathexpander", ->
-  [pathexpander, pathhelper, gopath] = []
+  [environment, pathexpander, pathhelper, gopath] = []
 
   beforeEach ->
-    pathexpander = new PathExpander(process.env)
+    environment = new Environment()
+    pathexpander = new PathExpander(environment.Clone())
     pathhelper = new PathHelper()
 
   describe "when working with a single-item path", ->

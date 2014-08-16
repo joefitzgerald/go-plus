@@ -6,6 +6,7 @@ Gopath = require './gopath'
 Gobuild = require './gobuild'
 Gocover = require './gocover'
 Executor = require './executor'
+Environment = require './environment'
 GoExecutable = require './goexecutable'
 SplicerSplitter = require './util/splicersplitter'
 _ = require 'underscore-plus'
@@ -26,8 +27,8 @@ class Dispatch
     @ready = false
     @messages = []
 
-    @processEnv = process.env
-    @executor = new Executor()
+    @environment = new Environment()
+    @executor = new Executor(@environment.Clone())
     @splicersplitter = new SplicerSplitter()
     @goexecutable = new GoExecutable(@env())
 
@@ -198,8 +199,16 @@ class Dispatch
         @messagepanel.add new PlainMessageView message: 'Oracle Tool: ' + go.oracle(), className: 'text-success'
       else
         @messagepanel.add new PlainMessageView message: 'Oracle Tool: Not Found', className: 'text-error'
+
+      # PATH
+      gopath = go.buildgopath()
+      if gopath? and gopath.trim() isnt ''
+        @messagepanel.add new PlainMessageView message: 'PATH: ' + path, className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'PATH: Not Set', className: 'text-error'
     else
       @messagepanel.add new PlainMessageView message: 'No Go Installations Were Found', className: 'text-error'
+
     @messagepanel.attach()
 
   collectMessages: (messages) ->
@@ -328,7 +337,7 @@ class Dispatch
     editorView?.getEditor()?.getGrammar()?.scopeName is 'source.go'
 
   env: ->
-    _.clone(@processEnv)
+    @environment.Clone()
 
   gettools: (updateExistingTools) =>
     updateExistingTools = updateExistingTools? and updateExistingTools

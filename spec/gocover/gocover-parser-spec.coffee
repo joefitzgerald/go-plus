@@ -5,14 +5,16 @@ os = require 'os'
 _ = require 'underscore-plus'
 GoExecutable = require './../../lib/goexecutable'
 GocoverParser = require './../../lib/gocover/gocover-parser'
+Environment = require './../../lib/environment'
 Executor = require './../../lib/executor'
 
 describe "gocover parser", ->
-  [done, gocoverparser, executor, goexecutable, go, env, directory, filePath, testFilePath] = []
+  [done, gocoverparser, environment, executor, goexecutable, go, env, directory, filePath, testFilePath] = []
 
   beforeEach ->
     done = false
-    executor = new Executor()
+    environment = new Environment()
+    executor = new Executor(environment.Clone())
     gocoverparser = new GocoverParser()
     directory = temp.mkdirSync()
     env = _.clone(process.env)

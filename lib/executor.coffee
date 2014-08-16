@@ -4,6 +4,7 @@ fs = require 'fs-plus'
 
 module.exports =
 class Executor
+  constructor: (@environment) ->
 
   exec: (command, cwd, env, callback, args) =>
     output = ''
@@ -14,8 +15,7 @@ class Executor
       cwd: null
       env: null
     options.cwd = fs.realpathSync(cwd) if cwd? and cwd isnt '' and cwd isnt false and fs.existsSync(cwd)
-    options.env = env if env?
-    options.env = process.env unless options.env?
+    options.env = if env? then env else @environment
     stdout = (data) -> output += data
     stderr = (data) -> error += data
     exit = (data) ->

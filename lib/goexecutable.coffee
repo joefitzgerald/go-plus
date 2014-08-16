@@ -16,7 +16,7 @@ class GoExecutable
   constructor: (@env) ->
     @gos = []
     @currentgo = ''
-    @executor = new Executor()
+    @executor = new Executor(@env)
     @pathexpander = new PathExpander(@env)
 
   destroy: ->

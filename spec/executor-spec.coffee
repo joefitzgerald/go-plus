@@ -1,14 +1,16 @@
 _ = require 'underscore-plus'
 path = require 'path'
 os = require 'os'
+Environment = require './../lib/environment'
 Executor = require './../lib/executor'
 PathHelper = require './util/pathhelper'
 
 describe "executor", ->
-  [executor, pathhelper, prefix] = []
+  [environment, executor, pathhelper, prefix] = []
 
   beforeEach ->
-    executor = new Executor()
+    environment = new Environment()
+    executor = new Executor(environment.Clone())
     pathhelper = new PathHelper()
     prefix = if os.platform() is 'win32' then 'C:\\' else '/'
 
