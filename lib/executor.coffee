@@ -19,7 +19,7 @@ class Executor
     stdout = (data) -> output += data
     stderr = (data) -> error += data
     exit = (data) ->
-      if error? and error isnt '' and error.replace(/\r?\n|\r/g, '') is "\'\"" + command + "\"\' is not recognized as an internal or external command,operable program or batch file."
+      if error? and error isnt '' and error.replace(/\r?\n|\r/g, '') is "\'" + command + "\' is not recognized as an internal or external command,operable program or batch file."
         message =
             line: false
             column: false
