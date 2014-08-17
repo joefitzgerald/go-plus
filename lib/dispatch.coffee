@@ -202,9 +202,9 @@ class Dispatch
         @messagepanel.add new PlainMessageView message: 'Oracle Tool: Not Found', className: 'text-error'
 
       # PATH
-      path = if os.platform() is 'win32' then @env?.Path else @env?.PATH
-      if path? and path.trim() isnt ''
-        @messagepanel.add new PlainMessageView message: 'PATH: ' + path, className: 'text-success'
+      thepath = if os.platform() is 'win32' then @env()?.Path else @env()?.PATH
+      if thepath? and thepath.trim() isnt ''
+        @messagepanel.add new PlainMessageView message: 'PATH: ' + thepath, className: 'text-success'
       else
         @messagepanel.add new PlainMessageView message: 'PATH: Not Set', className: 'text-error'
     else
