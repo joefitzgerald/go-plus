@@ -1,3 +1,7 @@
+## v2.0.7 (August 17, 2014)
+
+* :new: Use `/usr/libexec/path_helper` on OS X to set the PATH when Atom is launched via Dock / Finder / Spotlight (fixes #54, helps with #55)
+
 ## v2.0.6 (August 15, 2014)
 
 * :new: Support GAE's `goapp` / `goapp.bat` (fixes #58, #59)
