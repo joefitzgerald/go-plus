@@ -1,3 +1,7 @@
+## v2.0.8 (August 17, 2014)
+
+* :bug: Actually parse `/usr/libexec/path_helper` output correctly
+
 ## v2.0.7 (August 17, 2014)
 
 * :new: Use `/usr/libexec/path_helper` on OS X to set the PATH when Atom is launched via Dock / Finder / Spotlight (fixes #54, helps with #55)

@@ -6,7 +6,6 @@ Executor = require './executor'
 module.exports =
 class Environment
   constructor: (@environment) ->
-    @matcher = /^PATH="(.*?)";/img
 
   Clone: ->
     env = _.clone(@environment)
@@ -17,7 +16,8 @@ class Environment
     result = executor.execSync(pathhelper)
     return env if result.code isnt 0
     return env if result.stderr? and result.stderr isnt ''
-    match = @matcher.exec(result.stdout)
+    matcher = /^PATH="(.*?)";/img
+    match = matcher.exec(result.stdout)
     return env unless match?
     env.PATH = match[1]
     return env
