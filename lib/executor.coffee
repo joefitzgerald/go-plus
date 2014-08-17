@@ -15,7 +15,6 @@ class Executor
     options.env = if env? then env else @environment
     args = [] unless args?
     done = spawnSync(command, args, options)
-    console.log done
     result =
       code: done.status
       stdout: if done?.stdout? then done.stdout else ''
