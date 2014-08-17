@@ -13,7 +13,7 @@ describe "gocover parser", ->
 
   beforeEach ->
     done = false
-    environment = new Environment()
+    environment = new Environment(process.env)
     executor = new Executor(environment.Clone())
     gocoverparser = new GocoverParser()
     directory = temp.mkdirSync()

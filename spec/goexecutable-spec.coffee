@@ -13,7 +13,7 @@ describe "go executable", ->
   beforeEach ->
     done = false
     runs ->
-      environment = new Environment()
+      environment = new Environment(process.env)
       directory = temp.mkdirSync()
       env = environment.Clone()
       env['GOPATH'] = directory

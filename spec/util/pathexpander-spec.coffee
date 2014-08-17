@@ -8,7 +8,7 @@ describe "pathexpander", ->
   [environment, pathexpander, pathhelper, gopath] = []
 
   beforeEach ->
-    environment = new Environment()
+    environment = new Environment(process.env)
     pathexpander = new PathExpander(environment.Clone())
     pathhelper = new PathHelper()
 

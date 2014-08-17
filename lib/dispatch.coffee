@@ -13,6 +13,7 @@ _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
 {$, SettingsView} = require 'atom'
 path = require 'path'
+os = require 'os'
 async = require 'async'
 
 module.exports =
@@ -27,7 +28,7 @@ class Dispatch
     @ready = false
     @messages = []
 
-    @environment = new Environment()
+    @environment = new Environment(process.env)
     @executor = new Executor(@environment.Clone())
     @splicersplitter = new SplicerSplitter()
     @goexecutable = new GoExecutable(@env())
@@ -201,8 +202,8 @@ class Dispatch
         @messagepanel.add new PlainMessageView message: 'Oracle Tool: Not Found', className: 'text-error'
 
       # PATH
-      gopath = go.buildgopath()
-      if gopath? and gopath.trim() isnt ''
+      path = if os.platform() is 'win32' then @env?.Path else @env?.PATH
+      if path? and path.trim() isnt ''
         @messagepanel.add new PlainMessageView message: 'PATH: ' + path, className: 'text-success'
       else
         @messagepanel.add new PlainMessageView message: 'PATH: Not Set', className: 'text-error'

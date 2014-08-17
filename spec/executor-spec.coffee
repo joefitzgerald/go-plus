@@ -9,12 +9,12 @@ describe "executor", ->
   [environment, executor, pathhelper, prefix] = []
 
   beforeEach ->
-    environment = new Environment()
+    environment = new Environment(process.env)
     executor = new Executor(environment.Clone())
     pathhelper = new PathHelper()
     prefix = if os.platform() is 'win32' then 'C:\\' else '/'
 
-  describe "when executing a command", ->
+  describe "when asynchronously executing a command", ->
 
     it "succeeds", ->
       complete = false
@@ -89,3 +89,26 @@ describe "executor", ->
 
       waitsFor =>
         complete is true
+
+  describe "when synchronously executing a command", ->
+    it "succeeds", ->
+      command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe') else 'env'
+      result = executor.execSync(command)
+      expect(result.code).toBeDefined
+      expect(result.code).toBe 0
+      expect(result.stdout).toBeDefined
+      expect(result.stdout).not.toBe ''
+      expect(result.stderr).toBeUndefined
+      expect(result.stderr).toBe ''
+
+    it "returns a message if the command was not found", ->
+      result = executor.execSync('nonexistentcommand')
+      expect(result.code).toBeDefined
+      expect(result.code).toBe 127
+      expect(_.size(result.messages)).toBe 1
+      expect(result.messages[0]).toBeDefined
+      expect(result.messages[0].msg).toBe 'No file or directory: [nonexistentcommand]'
+      expect(result.stdout).toBeUndefined
+      expect(result.stdout).toBe ''
+      expect(result.stderr).toBeUndefined
+      expect(result.stderr).toBe ''

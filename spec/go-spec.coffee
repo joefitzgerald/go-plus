@@ -10,7 +10,7 @@ describe "go", ->
   [go, environment, pathexpander, pathhelper, env] = []
 
   beforeEach ->
-    environment = new Environment()
+    environment = new Environment(process.env)
     pathexpander = new PathExpander(environment.Clone())
     pathhelper = new PathHelper()
     go = new Go('/usr/local/bin/go', pathexpander)

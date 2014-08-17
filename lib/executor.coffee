@@ -1,10 +1,37 @@
-{exec} = require 'child_process'
+{spawnSync} = require 'child_process'
 {BufferedProcess} = require 'atom'
 fs = require 'fs-plus'
 
 module.exports =
 class Executor
   constructor: (@environment) ->
+
+  execSync: (command, cwd, env, args) =>
+    options =
+      cwd: null
+      env: null
+      encoding: 'utf8'
+    options.cwd = fs.realpathSync(cwd) if cwd? and cwd isnt '' and cwd isnt false and fs.existsSync(cwd)
+    options.env = if env? then env else @environment
+    args = [] unless args?
+    done = spawnSync(command, args, options)
+    console.log done
+    result =
+      code: done.status
+      stdout: if done?.stdout? then done.stdout else ''
+      stderr: if done?.stderr? then done.stderr else ''
+      messages: []
+    if done.error?
+      if done.error.code is 'ENOENT'
+        message =
+            line: false
+            column: false
+            msg: 'No file or directory: [' + command + ']'
+            type: 'error'
+            source: 'executor'
+        result.messages.push message
+        result.code = 127
+    return result
 
   exec: (command, cwd, env, callback, args) =>
     output = ''
