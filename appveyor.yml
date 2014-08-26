@@ -14,6 +14,7 @@ environment:
 
 # scripts that run after cloning repository
 install:
+  - echo YO!
   - choco version
   - go version
   - go env
