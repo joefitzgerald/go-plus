@@ -17,7 +17,7 @@ describe "go", ->
 
   describe "when working with a single-item gopath", ->
     beforeEach ->
-      go.gopath = '~/go'
+      go.gopath = pathhelper.home() + path.sep + 'go'
 
     it "expands the path", ->
       runs =>
@@ -37,7 +37,7 @@ describe "go", ->
 
   describe "when working with a multi-item gopath", ->
     beforeEach ->
-      go.gopath = '~' + path.sep + 'go' + path.delimiter + '~' + path.sep + 'go2' + path.delimiter + path.sep + 'usr' + path.sep + 'local' + path.sep + 'go'
+      go.gopath = pathhelper.home() + path.sep + 'go' + path.delimiter + pathhelper.home() + path.sep + 'go2' + path.delimiter + path.sep + 'usr' + path.sep + 'local' + path.sep + 'go'
 
     it "expands the path", ->
       runs =>

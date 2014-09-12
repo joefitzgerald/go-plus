@@ -27,6 +27,7 @@ class Dispatch
     @dispatching = false
     @ready = false
     @messages = []
+    @items = []
 
     @environment = new Environment(process.env)
     @executor = new Executor(@environment.Clone())
@@ -64,6 +65,7 @@ class Dispatch
     @emit 'run-detect'
 
   destroy: =>
+    @destroyItems()
     @unsubscribeFromAtomEvents()
     @unsubscribe()
     @resetPanel()
@@ -84,6 +86,28 @@ class Dispatch
     @ready = false
     @activated = false
     @emit 'destroyed'
+
+  addItem: (item) ->
+    return if item in @items
+
+    if typeof item.on is 'function'
+      @subscribe item, 'destroyed', => @removeItem(item)
+
+    @items.splice(0, 0, item)
+
+  removeItem: (item) ->
+    index = @items.indexOf(item)
+    return if index is -1
+
+    if typeof item.on is 'function'
+      @unsubscribe item
+
+    @items.splice(index, 1)
+
+  destroyItems: ->
+    return unless @items and _.size(@items) > 0
+    for item in @items
+      item.dispose()
 
   subscribeToAtomEvents: =>
     @editorViewSubscription = atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
@@ -108,22 +132,24 @@ class Dispatch
     buffer = editorView?.getEditor()?.getBuffer()
     return unless buffer?
     @updateGutter(editorView, @messages)
-    modifiedsubscription = buffer.on 'contents-modified', =>
+    modifiedsubscription = buffer.onDidStopChanging =>
       return unless @activated
       @handleBufferChanged(editorView)
 
-    savedsubscription = buffer.on 'saved', =>
+    savedsubscription = buffer.onDidSave =>
       return unless @activated
       return unless not @dispatching
       @handleBufferSave(editorView, true)
 
-    destroyedsubscription = buffer.once 'destroyed', =>
-      savedsubscription?.off()
-      modifiedsubscription?.off()
+    destroyedsubscription = buffer.onDidDestroy =>
+      savedsubscription?.dispose()
+      @removeItem(savedsubscription) if savedsubscription?
+      modifiedsubscription?.dispose()
+      @removeItem(modifiedsubscription) if modifiedsubscription?
 
-    @subscribe(modifiedsubscription)
-    @subscribe(savedsubscription)
-    @subscribe(destroyedsubscription)
+    @addItem(modifiedsubscription)
+    @addItem(savedsubscription)
+    @addItem(destroyedsubscription)
 
   unsubscribeFromAtomEvents: =>
     @editorViewSubscription?.off()

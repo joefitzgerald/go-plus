@@ -23,7 +23,7 @@ class Gocover
 
     atom.workspaceView.command 'golang:gocover', => @runCoverageForCurrentEditorView()
     atom.workspaceView.command 'golang:cleargocover', => @clearMarkersFromEditors()
-    atom.workspace.eachEditor (editor) =>
+    atom.workspace.observeTextEditors (editor) =>
       if atom.config.get('core.useReactEditor')? and atom.config.get('core.useReactEditor')
         @addMarkersToEditor(editor)
 
@@ -34,13 +34,13 @@ class Gocover
     @removeCoverageFile()
 
   addMarkersToEditors: =>
-    editors = atom.workspace.getEditors()
+    editors = atom.workspace.getTextEditors()
     for editor in editors
       @addMarkersToEditor(editor)
 
   clearMarkersFromEditors: =>
     @removeCoverageFile()
-    editors = atom.workspace.getEditors()
+    editors = atom.workspace.getTextEditors()
     for editor in editors
       @clearMarkers(editor)
 

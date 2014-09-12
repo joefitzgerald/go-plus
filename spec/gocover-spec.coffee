@@ -3,18 +3,20 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
+PathHelper = require './util/pathhelper'
 AtomConfig = require './util/atomconfig'
 
 describe "gocover", ->
-  [atomconfig, editor, dispatch, testEditor, directory, filePath, testFilePath, oldGoPath] = []
+  [atomconfig, editor, dispatch, testEditor, directory, filePath, testFilePath, oldGoPath, pathhelper] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
+    pathhelper = new PathHelper()
     atomconfig.allfunctionalitydisabled()
     atom.config.set('core.useReactEditor', true)
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
-    oldGoPath = "~/go" unless process.env.GOPATH?
+    oldGoPath = pathhelper.home() + path.sep + 'go' unless process.env.GOPATH?
     process.env['GOPATH']=directory
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()

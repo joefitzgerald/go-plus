@@ -3,17 +3,19 @@ fs = require 'fs-plus'
 temp = require('temp').track()
 {WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
+PathHelper = require './util/pathhelper'
 AtomConfig = require './util/atomconfig'
 
 describe "build", ->
-  [editor, dispatch, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath] = []
+  [editor, dispatch, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath, pathhelper] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
+    pathhelper = new PathHelper()
     atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
-    oldGoPath = "~/go" unless process.env.GOPATH?
+    oldGoPath = pathhelper.home() + path.sep + 'go' unless process.env.GOPATH?
     process.env['GOPATH']=directory
     atom.project.setPath(directory)
     atom.workspaceView = new WorkspaceView()
