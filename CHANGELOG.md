@@ -1,3 +1,11 @@
+## v2.0.10 (September 21, 2014)
+
+* :bug: Ensure gutter highlighting occurs and coverage is displayed (fixes #66)
+
+## v2.0.9 (September 12, 2014)
+
+* :lipstick: Remove deprecation warnings
+
 ## v2.0.8 (August 17, 2014)
 
 * :bug: Actually parse `/usr/libexec/path_helper` output correctly
