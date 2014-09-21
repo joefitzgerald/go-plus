@@ -13,7 +13,7 @@
     "go fmt",
     "go vet"
   ],
-  "version": "2.0.9",
+  "version": "2.0.10",
   "main": "./lib/go-plus",
   "license": "Apache-2.0",
   "engines": {
