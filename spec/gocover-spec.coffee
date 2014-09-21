@@ -13,7 +13,6 @@ describe "gocover", ->
     atomconfig = new AtomConfig()
     pathhelper = new PathHelper()
     atomconfig.allfunctionalitydisabled()
-    atom.config.set('core.useReactEditor', true)
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
     oldGoPath = pathhelper.home() + path.sep + 'go' unless process.env.GOPATH?

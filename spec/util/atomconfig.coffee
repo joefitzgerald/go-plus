@@ -2,7 +2,6 @@ module.exports =
 class AtomConfig
 
   defaults: ->
-    atom.config.set('core.useReactEditor', false)
     atom.config.set('go-plus.environmentOverridesConfiguration', true)
     atom.config.set('go-plus.gofmtArgs', '-w')
     atom.config.set('go-plus.vetArgs', '')

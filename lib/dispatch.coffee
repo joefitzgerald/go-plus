@@ -302,29 +302,27 @@ class Dispatch
 
   resetGutter: (editorView) ->
     return unless @isValidEditorView(editorView)
-    if atom.config.get('core.useReactEditor')
-      return unless editorView.getEditor()?
-      # Find current markers
-      markers = editorView.getEditor().getBuffer()?.findMarkers(class: 'go-plus')
-      return unless markers? and _.size(markers) > 0
-      # Remove markers
-      marker.destroy() for marker in markers
+    return unless editorView.getEditor()?
+    # Find current markers
+    markers = editorView.getEditor().getBuffer()?.findMarkers(class: 'go-plus')
+    return unless markers? and _.size(markers) > 0
+    # Remove markers
+    marker.destroy() for marker in markers
 
   updateGutter: (editorView, messages) ->
     @resetGutter(editorView)
     return unless messages? and messages.length > 0
-    if atom.config.get('core.useReactEditor')
-      buffer = editorView?.getEditor()?.getBuffer()
-      return unless buffer?
-      for message in messages
-        skip = false
-        if message?.file? and message.file isnt ''
-          skip = message.file isnt buffer.getPath()
+    buffer = editorView?.getEditor()?.getBuffer()
+    return unless buffer?
+    for message in messages
+      skip = false
+      if message?.file? and message.file isnt ''
+        skip = message.file isnt buffer.getPath()
 
-        unless skip
-          if message?.line? and message.line isnt false and message.line >= 0
-            marker = buffer.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
-            editorView.getEditor().decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
+      unless skip
+        if message?.line? and message.line isnt false and message.line >= 0
+          marker = buffer.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
+          editorView.getEditor().decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
 
   resetPanel: ->
     @messagepanel?.close()
