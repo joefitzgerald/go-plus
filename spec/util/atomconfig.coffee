@@ -14,7 +14,7 @@ class AtomConfig
     @defaults()
     atom.config.set("go-plus.syntaxCheckOnSave", false)
     atom.config.set("go-plus.formatOnSave", false)
-    atom.config.set("go-plus.formatWithGoImports", false)
+    atom.config.set("go-plus.formatTool", 'gofmt')
     atom.config.set("go-plus.getMissingTools", false)
     atom.config.set("go-plus.vetOnSave", false)
     atom.config.set("go-plus.lintOnSave", false)

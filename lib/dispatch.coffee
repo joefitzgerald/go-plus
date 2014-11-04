@@ -113,7 +113,7 @@ class Dispatch
     @editorViewSubscription = atom.workspaceView.eachEditorView (editorView) => @handleEvents(editorView)
     @workspaceViewSubscription = atom.workspaceView.on 'pane-container:active-pane-item-changed', => @resetPanel()
     @getMissingToolsSubscription = atom.config.observe 'go-plus.getMissingTools', => @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools') and @ready
-    @formatWithGoImportsSubscription = atom.config.observe 'go-plus.formatWithGoImports', => @displayGoInfo(true) if @ready
+    @formatToolSubscription = atom.config.observe 'go-plus.formatTool', => @displayGoInfo(true) if @ready
     @gopathSubscription = atom.config.observe 'go-plus.goPath', => @displayGoInfo(true) if @ready
     @environmentOverridesConfigurationSubscription = atom.config.observe 'go-plus.environmentOverridesConfiguration', => @displayGoInfo(true) if @ready
     @goInstallationSubscription = atom.config.observe 'go-plus.goInstallation', => @detect() if @ready
@@ -122,7 +122,7 @@ class Dispatch
     @updatetoolsCommandSubscription = atom.workspaceView.command 'golang:updatetools', => @gettools(true) if @activated
 
     @subscribe(@getMissingToolsSubscription)
-    @subscribe(@formatWithGoImportsSubscription)
+    @subscribe(@formatToolSubscription)
     @subscribe(@gopathSubscription)
     @subscribe(@environmentOverridesConfigurationSubscription)
     @subscribe(@goInstallationSubscription)
@@ -212,8 +212,7 @@ class Dispatch
       if go.format()? and go.format() isnt false
         @messagepanel.add new PlainMessageView message: 'Format Tool: ' + go.format(), className: 'text-success'
       else
-        @messagepanel.add new PlainMessageView message: 'Format Tool (goimports): Not Found', className: 'text-error' if atom.config.get('go-plus.formatWithGoImports')
-        @messagepanel.add new PlainMessageView message: 'Format Tool (gofmt): Not Found', className: 'text-error' unless atom.config.get('go-plus.formatWithGoImports')
+        @messagepanel.add new PlainMessageView message: 'Format Tool (' + atom.config.get('go-plus.formatTool') + '): Not Found', className: 'text-error'
 
       # golint
       if go.golint()? and go.golint() isnt false

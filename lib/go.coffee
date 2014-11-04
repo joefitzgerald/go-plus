@@ -55,7 +55,10 @@ class Go
     return fs.realpathSync(result)
 
   format: ->
-    if atom.config.get('go-plus.formatWithGoImports')? and atom.config.get('go-plus.formatWithGoImports') then @goimports() else @gofmt()
+    switch atom.config.get('go-plus.formatTool')
+      when 'goimports' then return @goimports()
+      when 'goreturns' then return @goreturns()
+      else return @gofmt()
 
   godoc: ->
     return false unless @goroot? and @goroot isnt ''
@@ -77,6 +80,9 @@ class Go
 
   goimports: ->
     return @gopathOrPathBinItem('goimports')
+
+  goreturns: ->
+    return @gopathOrPathBinItem('goreturns')
 
   golint: ->
     return @gopathOrPathBinItem('golint')

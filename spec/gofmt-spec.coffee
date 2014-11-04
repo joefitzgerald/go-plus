@@ -106,7 +106,7 @@ describe "format", ->
     it "uses goimports to reorganize imports if enabled", ->
       done = false
       runs ->
-        atom.config.set("go-plus.formatWithGoImports", true)
+        atom.config.set("go-plus.formatTool", 'goimports')
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, 世界\")\n}\n"
           expect(dispatch.messages?).toBe true
