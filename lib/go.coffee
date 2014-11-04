@@ -81,8 +81,8 @@ class Go
   golint: ->
     return @gopathOrPathBinItem('golint')
 
-  oracle: ->
-    return @gopathOrPathBinItem('oracle')
+  # oracle: ->
+  #   return @gopathOrPathBinItem('oracle')
 
   gopathOrPathBinItem: (name) ->
     pathresult = false
@@ -107,5 +107,5 @@ class Go
     return true if @golint() is false
     return true if @vet() is false
     return true if @cover() is false
-    return true if @oracle() is false
+    # return true if @oracle() is false
     return false

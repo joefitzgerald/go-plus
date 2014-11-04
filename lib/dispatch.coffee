@@ -222,10 +222,10 @@ class Dispatch
         @messagepanel.add new PlainMessageView message: 'Lint Tool: Not Found', className: 'text-error'
 
       # oracle
-      if go.oracle()? and go.oracle() isnt false
-        @messagepanel.add new PlainMessageView message: 'Oracle Tool: ' + go.oracle(), className: 'text-success'
-      else
-        @messagepanel.add new PlainMessageView message: 'Oracle Tool: Not Found', className: 'text-error'
+      # if go.oracle()? and go.oracle() isnt false
+      #   @messagepanel.add new PlainMessageView message: 'Oracle Tool: ' + go.oracle(), className: 'text-success'
+      # else
+      #   @messagepanel.add new PlainMessageView message: 'Oracle Tool: Not Found', className: 'text-error'
 
       # PATH
       thepath = if os.platform() is 'win32' then @env()?.Path else @env()?.PATH
