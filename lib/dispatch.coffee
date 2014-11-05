@@ -224,6 +224,8 @@ class Dispatch
     else
       @messagepanel.add new PlainMessageView message: 'No Go Installations Were Found', className: 'text-error'
 
+    @messagepanel.add new PlainMessageView message: 'Atom: ' + atom.appVersion + ' (' + os.platform() + ' ' + os.arch() + ' ' + os.release() + ')', className: 'text-info'
+
     @messagepanel.attach()
 
   collectMessages: (messages) ->
