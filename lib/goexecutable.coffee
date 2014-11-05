@@ -39,8 +39,11 @@ class GoExecutable
       when 'darwin', 'freebsd', 'linux', 'sunos'
         # Configuration
         if goinstallation? and goinstallation.trim() isnt ''
-          if goinstallation.lastIndexOf(path.sep + 'go') is goinstallation.length - 3 or goinstallation.lastIndexOf(path.sep + 'goapp') is goinstallation.length - 6
-            executables.push path.normalize(goinstallation)
+          if fs.existsSync(goinstallation)
+            if fs.lstatSync(goinstallation)?.isDirectory()
+              executables.push path.normalize(path.join(goinstallation, 'bin', 'go'))
+            else if goinstallation.lastIndexOf(path.sep + 'go') is goinstallation.length - 3 or goinstallation.lastIndexOf(path.sep + 'goapp') is goinstallation.length - 6
+              executables.push path.normalize(goinstallation)
 
         # PATH
         if @env.PATH?
@@ -78,6 +81,9 @@ class GoExecutable
 
   introspect: (executable, outercallback) =>
     absoluteExecutable = path.resolve(executable)
+    if fs.lstatSync(absoluteExecutable)?.isDirectory()
+      outercallback(null)
+      return
 
     go = new Go(absoluteExecutable, @pathexpander)
     async.series([
