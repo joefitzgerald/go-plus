@@ -18,11 +18,12 @@ install:
   - go version
   - go env
   - mkdir c:\gopath
-  - go get github.com/golang/lint/golint
-  - go get code.google.com/p/go.tools/cmd/cover
-  - go get code.google.com/p/go.tools/cmd/goimports
-  - go get code.google.com/p/go.tools/cmd/vet
-  - go get code.google.com/p/go.tools/cmd/godoc
+  - go get -u github.com/golang/lint/golint
+  - go get -u code.google.com/p/go.tools/cmd/cover
+  - go get -u code.google.com/p/go.tools/cmd/goimports
+  - go get -u code.google.com/p/go.tools/cmd/vet
+  - go get -u code.google.com/p/go.tools/cmd/godoc
+  - go get -u sourcegraph.com/sqs/goreturns
   - cinst atom
   - apm install
 
