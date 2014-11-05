@@ -215,6 +215,18 @@ class Dispatch
       # else
       #   @messagepanel.add new PlainMessageView message: 'Oracle Tool: Not Found', className: 'text-error'
 
+      # git
+      if go.git()? and go.git() isnt false
+        @messagepanel.add new PlainMessageView message: 'Git: ' + go.git(), className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'Git: Not Found', className: 'text-warning'
+
+      # hg
+      if go.hg()? and go.hg() isnt false
+        @messagepanel.add new PlainMessageView message: 'Mercurial: ' + go.hg(), className: 'text-success'
+      else
+        @messagepanel.add new PlainMessageView message: 'Mercurial: Not Found', className: 'text-warning'
+
       # PATH
       thepath = if os.platform() is 'win32' then @env()?.Path else @env()?.PATH
       if thepath? and thepath.trim() isnt ''

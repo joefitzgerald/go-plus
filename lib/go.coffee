@@ -79,25 +79,33 @@ class Go
     return fs.realpathSync(result)
 
   goimports: ->
-    return @gopathOrPathBinItem('goimports')
+    return @gopathBinOrPathItem('goimports')
 
   goreturns: ->
-    return @gopathOrPathBinItem('goreturns')
+    return @gopathBinOrPathItem('goreturns')
 
   golint: ->
-    return @gopathOrPathBinItem('golint')
+    return @gopathBinOrPathItem('golint')
 
   # oracle: ->
-  #   return @gopathOrPathBinItem('oracle')
+  #   return @gopathBinOrPathItem('oracle')
 
-  gopathOrPathBinItem: (name) ->
-    pathresult = false
+  git: ->
+    return @pathItem('git')
 
+  hg: ->
+    return @pathItem('hg')
+
+  gopathBinOrPathItem: (name) ->
     gopaths = @splitgopath()
     for item in gopaths
       result = path.resolve(path.normalize(path.join(item, 'bin', name + @exe)))
       return fs.realpathSync(result) if fs.existsSync(result)
 
+    return @pathItem(name)
+
+  pathItem: (name) ->
+    pathresult = false
     # PATH
     p = if os.platform() is 'win32' then @env.Path else @env.PATH
     if p?
@@ -114,4 +122,6 @@ class Go
     return true if @vet() is false
     return true if @cover() is false
     # return true if @oracle() is false
+    return true if @git() is false
+    return true if @hg() is false
     return false
