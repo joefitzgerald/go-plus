@@ -14,7 +14,7 @@ describe "gopath", ->
     directory = temp.mkdirSync()
     oldGoPath = process.env.GOPATH
     process.env['GOPATH']=directory
-    atom.project.setPath(directory)
+    atom.project.setPaths(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
 

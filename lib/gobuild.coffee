@@ -19,36 +19,36 @@ class Gobuild
     @unsubscribe()
     @dispatch = null
 
-  reset: (editorView) ->
-    @emit 'reset', editorView
+  reset: (editor) ->
+    @emit 'reset', editor
 
   checkCurrentBuffer: ->
-    editorView = atom?.workspaceView?.getActiveView()
-    return unless @dispatch.isValidEditorView(editorView)
-    @reset editorView
+    editor = atom?.workspace?.getActiveTextEditor()
+    return unless @dispatch.isValidEditor(editor)
+    @reset editor
     done = (err, messages) =>
-      @dispatch.resetAndDisplayMessages(editorView, messages)
-    @checkBuffer(editorView, false, done)
+      @dispatch.resetAndDisplayMessages(editor, messages)
+    @checkBuffer(editor, false, done)
 
-  checkBuffer: (editorView, saving, callback = ->) ->
-    unless @dispatch.isValidEditorView(editorView)
-      @emit @name + '-complete', editorView, saving
+  checkBuffer: (editor, saving, callback = ->) ->
+    unless @dispatch.isValidEditor(editor)
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
     if saving and not atom.config.get('go-plus.syntaxCheckOnSave')
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
-    buffer = editorView?.getEditor()?.getBuffer()
+    buffer = editor?.getBuffer()
     unless buffer?
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
 
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
     splitgopath = go.splitgopath()
@@ -77,7 +77,7 @@ class Gobuild
     cmd = go.executable
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
-      messages = @mapMessages(editorView, stderr, cwd, splitgopath) if stderr? and stderr isnt ''
+      messages = @mapMessages(stderr, cwd, splitgopath) if stderr? and stderr isnt ''
       pattern = cwd + '/*' + output
       glob pattern, {mark: false, sync:true}, (er, files) ->
         for file in files
@@ -93,11 +93,11 @@ class Gobuild
         for file in updatedFiles
           if _.endsWith(file, '.test' + go.exe)
             fs.unlinkSync(path.join(fileDir, file))
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
-  mapMessages: (editorView, data, cwd, splitgopath) =>
+  mapMessages: (data, cwd, splitgopath) =>
     pattern = /^((#)\s(.*)?)|((.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?))/img
     messages = []
     pkg = ''
@@ -134,7 +134,6 @@ class Gobuild
       match = pattern.exec(data)
       extract(match)
       break unless match?
-    @emit @name + '-messages', editorView, messages
     return messages
 
   absolutePathForPackage: (pkg, splitgopath) =>

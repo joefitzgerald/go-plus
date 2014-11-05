@@ -173,10 +173,16 @@ class GoExecutable
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
-        if go.goimports() isnt false and not updateExistingTools
+        if go.format() isnt false and not updateExistingTools
           done()
         else
-          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/goimports'])
+          pkg = switch atom.config.get('go-plus.formatTool')
+            when 'goimports' then 'code.google.com/p/go.tools/cmd/goimports'
+            when 'goreturns' then 'sourcegraph.com/sqs/goreturns'
+            else false
+          console.log 'pkg: ' + pkg
+          done() unless pkg?
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', pkg])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)

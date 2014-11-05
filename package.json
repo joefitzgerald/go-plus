@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "async": ">=0.9.0",
-    "atom-message-panel": ">=1.1.1",
+    "atom-message-panel": ">=1.1.2",
     "emissary": "1.x",
     "fs-plus": "2.x",
     "glob": "3.x",

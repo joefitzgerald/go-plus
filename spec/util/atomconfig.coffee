@@ -3,8 +3,9 @@ class AtomConfig
 
   defaults: ->
     atom.config.set('go-plus.environmentOverridesConfiguration', true)
-    atom.config.set('go-plus.gofmtArgs', '-w')
+    atom.config.set('go-plus.formatArgs', '-w -e')
     atom.config.set('go-plus.vetArgs', '')
+    atom.config.set("go-plus.formatTool", 'goimports')
     atom.config.set('go-plus.goPath', '')
     atom.config.set('go-plus.golintArgs', '')
     atom.config.set('go-plus.showPanel', true)

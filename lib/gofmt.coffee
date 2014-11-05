@@ -17,34 +17,34 @@ class Gofmt
     @unsubscribe()
     @dispatch = null
 
-  reset: (editorView) ->
-    @emit 'reset', editorView
+  reset: (editor) ->
+    @emit 'reset', editor
 
   formatCurrentBuffer: ->
-    editorView = atom?.workspaceView?.getActiveView()
-    return unless @dispatch.isValidEditorView(editorView)
-    @reset editorView
+    editor= atom?.workspace?.getActiveTextEditor()
+    return unless @dispatch.isValidEditor(editor)
+    @reset editor
     done = (err, messages) =>
-      @dispatch.resetAndDisplayMessages(editorView, messages)
-    @formatBuffer(editorView, false, done)
+      @dispatch.resetAndDisplayMessages(editor, messages)
+    @formatBuffer(editor, false, done)
 
-  formatBuffer: (editorView, saving, callback = ->) ->
-    unless @dispatch.isValidEditorView(editorView)
-      @emit @name + '-complete', editorView, saving
+  formatBuffer: (editor, saving, callback = ->) ->
+    unless @dispatch.isValidEditor(editor)
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
     if saving and not atom.config.get('go-plus.formatOnSave')
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
-    buffer = editorView?.getEditor()?.getBuffer()
+    buffer = editor?.getBuffer()
     unless buffer?
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
     cwd = path.dirname(buffer.getPath())
     args = ['-w']
-    configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gofmtArgs'))
+    configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.formatArgs'))
     args = _.union(args, configArgs) if configArgs? and _.size(configArgs) > 0
     args = _.union(args, [buffer.getPath()])
     go = @dispatch.goexecutable.current()
@@ -60,12 +60,12 @@ class Gofmt
       return
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
-      messages = @mapMessages(editorView, stderr, cwd) if stderr? and stderr.trim() isnt ''
-      @emit @name + '-complete', editorView, saving
+      messages = @mapMessages(stderr, cwd) if stderr? and stderr.trim() isnt ''
+      @emit @name + '-complete', editor, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, @dispatch?.env(), done, args)
 
-  mapMessages: (editorView, data, cwd) =>
+  mapMessages: (data, cwd) =>
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
     messages = []
     return messages unless data? and data isnt ''

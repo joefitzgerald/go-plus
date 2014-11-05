@@ -21,7 +21,7 @@ class Gocover
     @coverageFile = false
     @ranges = false
 
-    atom.workspaceView.command 'golang:gocover', => @runCoverageForCurrentEditorView()
+    atom.workspaceView.command 'golang:gocover', => @runCoverageForCurrentEditor()
     atom.workspaceView.command 'golang:cleargocover', => @clearMarkersFromEditors()
     atom.workspace.observeTextEditors (editor) =>
       @addMarkersToEditor(editor)
@@ -68,8 +68,8 @@ class Gocover
     # Remove markers
     marker.destroy() for marker in markers
 
-  reset: (editorView) ->
-    @emit 'reset', editorView
+  reset: (editor) ->
+    @emit 'reset', editor
 
   removeCoverageFile: =>
     @ranges = []
@@ -84,29 +84,29 @@ class Gocover
     tempDir = temp.mkdirSync()
     @coverageFile = path.join(tempDir, 'coverage.out')
 
-  runCoverageForCurrentEditorView: =>
-    editorView = atom?.workspaceView?.getActiveView()
-    return unless editorView?
-    @reset editorView
-    @runCoverage(editorView, false)
+  runCoverageForCurrentEditor: =>
+    editor = atom?.workspace?.getActiveTextEditor()
+    return unless editor?
+    @reset editor
+    @runCoverage(editor, false)
 
-  runCoverage: (editorView, saving, callback = ->) =>
-    unless @dispatch.isValidEditorView(editorView)
-      @emit @name + '-complete', editorView, saving
+  runCoverage: (editor, saving, callback = ->) =>
+    unless @dispatch.isValidEditor(editor)
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
     if saving and not atom.config.get('go-plus.runCoverageOnSave')
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
-    buffer = editorView?.getEditor()?.getBuffer()
+    buffer = editor?.getBuffer()
     unless buffer?
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
 
     if @covering
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
 
@@ -116,7 +116,7 @@ class Gocover
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
     env = @dispatch.env()
@@ -142,9 +142,8 @@ class Gocover
         @ranges = @parser.ranges(tempFile)
         @addMarkersToEditors()
       @covering = false
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   resetCoverage: =>
-    

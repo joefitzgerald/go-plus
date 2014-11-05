@@ -31,7 +31,11 @@ module.exports =
       default: 'goimports'
       enum: ['goimports', 'goreturns', 'gofmt']
       order: 50
-    # gofmtArgs: '-w' - Specify this in your user config if you need different args
+    formatArgs:
+      title: 'Format Arguments'
+      description: '`-w` will always be used; you can specify additional arguments for the format tool if desired'
+      type: 'string'
+      default: '-w -e'
     lintOnSave:
       title: 'Run Lint Tool On Save'
       description: 'Run `golint` each time a file is saved'

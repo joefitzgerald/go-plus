@@ -16,18 +16,18 @@ class Gopath
     @unsubscribe()
     @dispatch = null
 
-  reset: (editorView) ->
-    @emit 'reset', editorView
+  reset: (editor) ->
+    @emit 'reset', editor
 
-  check: (editorView, saving, callback = ->) ->
-    unless @dispatch.isValidEditorView(editorView)
-      @emit @name + '-complete', editorView, saving
+  check: (editor, saving, callback = ->) ->
+    unless @dispatch.isValidEditor(editor)
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
 
     # Only Check GOPATH If Syntax Checking (For Now)
     unless atom.config.get('go-plus.syntaxCheckOnSave')
-      @emit @name + '-complete', editorView, saving
+      @emit @name + '-complete', editor, saving
       callback(null)
       return
 
@@ -65,7 +65,7 @@ class Gopath
           messages.push message
 
     if messages? and _.size(messages) is 0
-      filepath = editorView?.getEditor()?.getPath()
+      filepath = editor?.getPath()
       if filepath? and filepath isnt '' and fs.existsSync(filepath)
         filepath = fs.realpathSync(filepath)
         found = false
@@ -85,10 +85,10 @@ class Gopath
           messages.push message
 
     if messages? and _.size(messages) > 0
-      @emit @name + '-messages', editorView, messages
+      @emit @name + '-complete', editor, saving
       callback(null, messages)
       return
 
-    @emit @name + '-complete', editorView, saving
+    @emit @name + '-complete', editor, saving
     callback(null)
     return

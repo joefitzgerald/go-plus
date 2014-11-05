@@ -6,6 +6,7 @@ temp = require('temp').track()
 _ = require 'underscore-plus'
 GoExecutable = require './../lib/goexecutable'
 Environment = require './../lib/environment'
+AtomConfig = require './util/atomconfig'
 
 describe "go executable", ->
   [environment, goexecutable, directory, env, go] = []
@@ -13,6 +14,8 @@ describe "go executable", ->
   beforeEach ->
     done = false
     runs ->
+      atomconfig = new AtomConfig()
+      atomconfig.defaults()
       environment = new Environment(process.env)
       directory = temp.mkdirSync()
       env = environment.Clone()
@@ -49,6 +52,7 @@ describe "go executable", ->
         expect(go).toBeTruthy
         expect(go.gopath).toBe directory
         expect(go.goimports()).toBe false
+        expect(go.goreturns()).toBe false
         expect(go.golint()).toBe false
         # expect(go.oracle()).toBe false
         goexecutable.once 'gettools-complete', =>
@@ -56,8 +60,35 @@ describe "go executable", ->
           expect(go).toBeDefined
           expect(go).toBeTruthy
           expect(go.gopath).toBe directory
-          expect(go.goimports()).toBe path.join(directory, 'bin', 'goimports' + suffix)
-          expect(go.golint()).toBe path.join(directory, 'bin', 'golint' + suffix)
+          expect(go.goimports()).toBe fs.realpathSync(path.join(directory, 'bin', 'goimports' + suffix))
+          expect(go.goreturns()).toBe false
+          expect(go.golint()).toBe fs.realpathSync(path.join(directory, 'bin', 'golint' + suffix))
+          # expect(go.oracle()).toBe path.join(directory, 'bin', 'oracle' + suffix)
+          done = true
+        goexecutable.gettools(go, true)
+
+      waitsFor =>
+        done is true
+      , 60000 # Go getting takes a while (this will fail without internet)
+
+      runs =>
+        suffix = if os.platform() is 'win32' then '.exe' else ''
+        expect(goexecutable).toBeDefined
+        expect(go).toBeDefined
+        expect(go).toBeTruthy
+        expect(go.gopath).toBe directory
+        expect(go.goimports()).not.toBe false
+        expect(go.goreturns()).toBe false
+        expect(go.golint()).not.toBe false
+        # expect(go.oracle()).toBe false
+        goexecutable.once 'gettools-complete', =>
+          go = goexecutable.current()
+          expect(go).toBeDefined
+          expect(go).toBeTruthy
+          expect(go.gopath).toBe directory
+          expect(go.goimports()).toBe fs.realpathSync(path.join(directory, 'bin', 'goimports' + suffix))
+          expect(go.goreturns()).toBe fs.realpathSync(path.join(directory, 'bin', 'goreturns' + suffix))
+          expect(go.golint()).toBe fs.realpathSync(path.join(directory, 'bin', 'golint' + suffix))
           # expect(go.oracle()).toBe path.join(directory, 'bin', 'oracle' + suffix)
           done = true
         goexecutable.gettools(go, true)
@@ -68,7 +99,7 @@ describe "go executable", ->
 
     # Yosemite Regression Causes This To Fail
     # https://github.com/atom/atom-shell/issues/550
-    # 
+    #
     # it "finds tools if they are on the PATH but not in the GOPATH", ->
     #   done = false
     #   runs ->

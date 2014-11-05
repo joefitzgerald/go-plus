@@ -12,7 +12,7 @@ describe "vet", ->
     atomconfig = new AtomConfig()
     atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
-    atom.project.setPath(directory)
+    atom.project.setPaths(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
     filePath = path.join(directory, 'go-plus.go')

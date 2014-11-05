@@ -11,7 +11,7 @@ describe "Go Plus", ->
     atomconfig = new AtomConfig()
     atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
-    atom.project.setPath(directory)
+    atom.project.setPaths(directory)
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
     filePath = path.join(directory, 'go-plus.go')
@@ -45,7 +45,8 @@ describe "Go Plus", ->
       runs ->
         buffer.setText("package main\n\nfunc main()  {\n}\n")
         expect(editor.getGrammar().scopeName).toBe 'source.go'
-        buffer.once 'saved', ->
+        bufferSubscription = buffer.onDidSave ->
+          bufferSubscription?.dispose()
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nfunc main()  {\n}\n"
           done = true
         buffer.save()
