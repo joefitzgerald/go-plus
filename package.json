@@ -17,7 +17,7 @@
   "main": "./lib/go-plus",
   "license": "Apache-2.0",
   "engines": {
-    "atom": ">=0.116.0",
+    "atom": ">=0.142.0",
     "node": "*"
   },
   "author": "Joe Fitzgerald <jfitzgerald@gopivotal.com> (http://github.com/joefitzgerald)",
@@ -34,8 +34,8 @@
     "atom-message-panel": ">=1.1.2",
     "emissary": "1.x",
     "fs-plus": "2.x",
-    "glob": "3.x",
-    "temp": ">=0.7.0",
+    "glob": ">=4.0.6",
+    "temp": ">=0.8.1",
     "underscore-plus": "1.x"
   }
 }
