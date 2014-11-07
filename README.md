@@ -95,18 +95,55 @@ The following features will be added soon:
 * `go oracle` / `godef` integration ([#11](https://github.com/joefitzgerald/go-plus/issues/11))
 * `godoc` integration ([#12](https://github.com/joefitzgerald/go-plus/issues/12))
 * ... and others: https://github.com/joefitzgerald/go-plus/issues
- 
+
 
 ### Troubleshooting
 
-Installation errors may occur if you do not have **mercurial hg** installed.    To resolve:
+#### Missing Tools
 
-On OSX run `brew install mercurial`.
+> <b>Question:</b> Why are all my tools found except for `cover` and `vet`?
 
-For windows and other operating systems see this [page](http://mercurial.selenic.com/wiki/Download).
+> <b>Answer:</b> Do you have Mercurial Installed?
+
+Many `go` tools live at https://code.google.com/p/go.tools. This repository is a Mercurial repository. If you have the `Get Missing Tools` option enabled, `go-plus` will attempt to install required tools from this repository. If you do not have Mercurial (`hg`) installed, `go-plus` will not succeed in installing `cover` or `vet`.
+
+To resolve issues installing cover or vet, install Mercurial:
+
+* OS X: Run `brew install mercurial`
+* Windows + Others: http://mercurial.selenic.com/wiki/Download
+
+#### GOPATH
+
+> <b>Question:</b> Why can't Atom see my GOPATH? I have set it and I see it in terminal?
+
+> <b>Answer:</b> Did You Launch Atom Using The Shell Command?
+
+(From Above):
+
+The most common reason `GOPATH` might not be set in the environment on OS X is due to the way OS X launches processes. When you launch Atom via processes created by `launchd` (e.g. using Finder, the Dock, or Spotlight) it likely will not have access to your `$GOPATH` if you set it in your shell initialization files (e.g. `.bash_profile`, `.bashrc`, `.zshrc`, etc).
+
+Consider launching Atom via your shell – using the Atom Shell Commands – where Atom should inherit your environment. Alternatively, try one of the suggestions at http://apple.stackexchange.com/a/87283 to set the `GOPATH` for processes launched by `launchd` (and their children, which will include Atom).
+
+### Still Having Issues?
+
+If you are having issues and the information above isn't helping, feel free to create an issue at https://github.com/joefitzgerald/issues. When you create the issue, please be sure to paste the information from `Packages > Go Plus > Display Go Information` to help us form a response that is targeted to your situation. This looks something like:
+
+```
+Go: go1.3.3 darwin/amd64 (@/usr/local/bin/go)
+GOPATH: /Users/jfitzgerald/go
+Cover Tool: /usr/local/Cellar/go/1.3.3/libexec/pkg/tool/darwin_amd64/cover
+Vet Tool: /usr/local/Cellar/go/1.3.3/libexec/pkg/tool/darwin_amd64/vet
+Format Tool: /Users/jfitzgerald/go/bin/goimports
+Lint Tool: /Users/jfitzgerald/go/bin/golint
+Git: /usr/bin/git
+Mercurial: /usr/local/Cellar/mercurial/3.1.2/bin/hg
+PATH: /Users/jfitzgerald/go/bin:/usr/local/bin:/Users/jfitzgerald/.rbenv/shims:/usr/local/bin:/usr/local/sbin:/Users/jfitzgerald/go/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/usr/texbin
+Atom: 0.143.0 (darwin x64 14.0.0)
+```
 
 ### Contributors
 
+* Joe Fitzgerald [@joefitzgerald](https://github.com/joefitzgerald)
 * Scott Barron [@rubyist](https://github.com/rubyist)
     * Gofmt integration (https://github.com/atom/language-go/pull/3)
     * Display test coverage (https://github.com/joefitzgerald/go-plus/pull/27)
