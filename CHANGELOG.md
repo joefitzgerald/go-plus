@@ -1,3 +1,13 @@
+## v2.1.0 (November 7, 2014)
+
+* :new: Add support for [goreturns](https://github.com/sqs/goreturns) (#84)
+* :abc: Warn when `git` and `hg` cannot be found (#55)
+* :abc: Add operating system and Atom information to `Display Go Information` output (#85)
+* :bug: Don't try to use folders named `go` as the go executable
+* :lipstick: Add descriptions to `go-plus` settings
+* :lipstick: Add order to `go-plus` settings
+* :lipstick: Move to new Atom API(s) to fix test deprecation warnings
+
 ## v2.0.10 (September 21, 2014)
 
 * :bug: Ensure gutter highlighting occurs and coverage is displayed (fixes #66)

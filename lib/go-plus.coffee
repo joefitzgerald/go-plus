@@ -2,7 +2,7 @@ module.exports =
   config:
     environmentOverridesConfiguration:
       title: 'Environment Overrides Config'
-      description: 'Environment variables (if set) will override configuration (e.g. a GOPATH set in the environment should be used instead of the configured value for GOPATH below); if unchecked, the GOPATH value set below will be used even if GOPATH is set in the environment'
+      description: 'Use the environment\'s value for GOPATH (if set) instead of the configured value for GOPATH (below)'
       type: 'boolean'
       default: true
       order: 10
