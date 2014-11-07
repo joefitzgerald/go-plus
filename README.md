@@ -95,6 +95,15 @@ The following features will be added soon:
 * `go oracle` / `godef` integration ([#11](https://github.com/joefitzgerald/go-plus/issues/11))
 * `godoc` integration ([#12](https://github.com/joefitzgerald/go-plus/issues/12))
 * ... and others: https://github.com/joefitzgerald/go-plus/issues
+ 
+
+### Troubleshooting
+
+Installation errors may occur if you do not have **mercurial hg** installed.    To resolve:
+
+On OSX run `brew install mercurial`.
+
+For windows and other operating systems see this [page](http://mercurial.selenic.com/wiki/Download).
 
 ### Contributors
 
