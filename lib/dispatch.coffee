@@ -176,67 +176,67 @@ class Dispatch
     @resetPanel()
     go = @goexecutable.current()
     if go? and go.executable? and go.executable.trim() isnt ''
-      @messagepanel.add new PlainMessageView message: 'Using Go: ' + go.name + ' (@' + go.executable + ')', className: 'text-success'
+      @messagepanel.add new PlainMessageView raw: true, message: '<b>Go:</b> ' + go.name + ' (@' + go.executable + ')', className: 'text-info'
 
       # gopath
       gopath = go.buildgopath()
       if gopath? and gopath.trim() isnt ''
-        @messagepanel.add new PlainMessageView message: 'GOPATH: ' + gopath, className: 'text-success'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>GOPATH:</b> ' + gopath, className: 'text-highlight'
       else
-        @messagepanel.add new PlainMessageView message: 'GOPATH: Not Set', className: 'text-error'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>GOPATH:</b> Not Set (You Should Try Launching Atom Using The Shell Commands...)', className: 'text-error'
 
       # cover
       if go.cover()? and go.cover() isnt false
-        @messagepanel.add new PlainMessageView message: 'Cover Tool: ' + go.cover(), className: 'text-success'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Cover Tool:</b> ' + go.cover(), className: 'text-subtle'
       else
-        @messagepanel.add new PlainMessageView message: 'Cover Tool: Not Found', className: 'text-error'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Cover Tool:</b> Not Found (Is Mercurial Installed?)', className: 'text-error'
 
       # vet
       if go.vet()? and go.vet() isnt false
-        @messagepanel.add new PlainMessageView message: 'Vet Tool: ' + go.vet(), className: 'text-success'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Vet Tool:</b> ' + go.vet(), className: 'text-subtle'
       else
-        @messagepanel.add new PlainMessageView message: 'Vet Tool: Not Found', className: 'text-error'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Vet Tool:</b> Not Found (Is Mercurial Installed?)', className: 'text-error'
 
       # gofmt / goimports
       if go.format()? and go.format() isnt false
-        @messagepanel.add new PlainMessageView message: 'Format Tool: ' + go.format(), className: 'text-success'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Format Tool:</b> ' + go.format(), className: 'text-subtle'
       else
-        @messagepanel.add new PlainMessageView message: 'Format Tool (' + atom.config.get('go-plus.formatTool') + '): Not Found', className: 'text-error'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Format Tool (' + atom.config.get('go-plus.formatTool') + '):</b> Not Found', className: 'text-error'
 
       # golint
       if go.golint()? and go.golint() isnt false
-        @messagepanel.add new PlainMessageView message: 'Lint Tool: ' + go.golint(), className: 'text-success'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Lint Tool:</b> ' + go.golint(), className: 'text-subtle'
       else
-        @messagepanel.add new PlainMessageView message: 'Lint Tool: Not Found', className: 'text-error'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Lint Tool:</b> Not Found', className: 'text-error'
 
       # oracle
       # if go.oracle()? and go.oracle() isnt false
-      #   @messagepanel.add new PlainMessageView message: 'Oracle Tool: ' + go.oracle(), className: 'text-success'
+      #   @messagepanel.add new PlainMessageView raw: true, message: '<b>Oracle Tool: ' + go.oracle(), className: 'text-subtle'
       # else
-      #   @messagepanel.add new PlainMessageView message: 'Oracle Tool: Not Found', className: 'text-error'
+      #   @messagepanel.add new PlainMessageView raw: true, message: '<b>Oracle Tool: Not Found', className: 'text-error'
 
       # git
       if go.git()? and go.git() isnt false
-        @messagepanel.add new PlainMessageView message: 'Git: ' + go.git(), className: 'text-success'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Git:</b> ' + go.git(), className: 'text-subtle'
       else
-        @messagepanel.add new PlainMessageView message: 'Git: Not Found', className: 'text-warning'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Git:</b> Not Found', className: 'text-warning'
 
       # hg
       if go.hg()? and go.hg() isnt false
-        @messagepanel.add new PlainMessageView message: 'Mercurial: ' + go.hg(), className: 'text-success'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Mercurial:</b> ' + go.hg(), className: 'text-subtle'
       else
-        @messagepanel.add new PlainMessageView message: 'Mercurial: Not Found', className: 'text-warning'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Mercurial:</b> Not Found', className: 'text-warning'
 
       # PATH
       thepath = if os.platform() is 'win32' then @env()?.Path else @env()?.PATH
       if thepath? and thepath.trim() isnt ''
-        @messagepanel.add new PlainMessageView message: 'PATH: ' + thepath, className: 'text-success'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>PATH:</b> ' + thepath, className: 'text-subtle'
       else
-        @messagepanel.add new PlainMessageView message: 'PATH: Not Set', className: 'text-error'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>PATH:</b> Not Set', className: 'text-error'
     else
-      @messagepanel.add new PlainMessageView message: 'No Go Installations Were Found', className: 'text-error'
+      @messagepanel.add new PlainMessageView raw: true, message: 'No Go Installations Were Found', className: 'text-error'
 
-    @messagepanel.add new PlainMessageView message: 'Atom: ' + atom.appVersion + ' (' + os.platform() + ' ' + os.arch() + ' ' + os.release() + ')', className: 'text-info'
+    @messagepanel.add new PlainMessageView raw: true, message: '<b>Atom:</b> ' + atom.appVersion + ' (' + os.platform() + ' ' + os.arch() + ' ' + os.release() + ')', className: 'text-info'
 
     @messagepanel.attach()
 

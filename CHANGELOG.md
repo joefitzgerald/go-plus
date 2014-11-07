@@ -1,3 +1,8 @@
+## v2.1.1 (November 7, 2014)
+
+* :abc: Tone down the color scheme for `Display Go Information`
+* :abc: Add a hint about Mercurial for missing tools that require `hg` for a successful `go get`
+
 ## v2.1.0 (November 7, 2014)
 
 * :new: Add support for [goreturns](https://github.com/sqs/goreturns) (#84)
