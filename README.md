@@ -101,11 +101,11 @@ The following features will be added soon:
 
 #### Missing Tools
 
-> <b>Question:</b> Why are all my tools found except for `cover` and `vet`?
+> <b>Question:</b> Why are some of the tools found, not `cover`, `goimports`, or `vet`?
 
 > <b>Answer:</b> Do you have Mercurial Installed?
 
-Many `go` tools live at https://code.google.com/p/go.tools. This repository is a Mercurial repository. If you have the `Get Missing Tools` option enabled, `go-plus` will attempt to install required tools from this repository. If you do not have Mercurial (`hg`) installed, `go-plus` will not succeed in installing `cover` or `vet`.
+Many `go` tools live at https://code.google.com/p/go.tools. This repository is a Mercurial repository. If you have the `Get Missing Tools` option enabled, `go-plus` will attempt to install required tools from this repository. If you do not have Mercurial (`hg`) installed, `go-plus` will not succeed in installing `cover`, `goimports`, or `vet`.
 
 To resolve issues installing cover or vet, install Mercurial:
 
