@@ -10,6 +10,7 @@ before_script:
   - mkdir -p go
   - export GOPATH="$HOME/go"
   - export PATH=$PATH:$GOPATH/bin
+  - go version
   - go get -u github.com/golang/lint/golint
   - go get -u code.google.com/p/go.tools/cmd/cover
   - go get -u code.google.com/p/go.tools/cmd/goimports
