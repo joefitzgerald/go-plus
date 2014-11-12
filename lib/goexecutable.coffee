@@ -161,21 +161,21 @@ class GoExecutable
         if go.godoc() isnt false and not updateExistingTools
           done()
         else
-          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/godoc'])
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/godoc'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
         if go.vet() isnt false and not updateExistingTools
           done()
         else
-          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/vet'])
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/vet'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
         if go.cover() isnt false and not updateExistingTools
           done()
         else
-          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/cover'])
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/cover'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
@@ -183,7 +183,7 @@ class GoExecutable
           done()
         else
           pkg = switch atom.config.get('go-plus.formatTool')
-            when 'goimports' then 'code.google.com/p/go.tools/cmd/goimports'
+            when 'goimports' then 'golang.org/x/tools/cmd/goimports'
             when 'goreturns' then 'sourcegraph.com/sqs/goreturns'
             else false
           console.log 'pkg: ' + pkg
