@@ -1,3 +1,8 @@
+## v2.1.2 (November 12, 2014)
+
+* :lipstick: Change import paths for Go tools to new `golang.org/x/...` path (thanks @hansrodtang!)
+* :abc: Documentation updates
+
 ## v2.1.1 (November 7, 2014)
 
 * :abc: Tone down the color scheme for `Display Go Information`

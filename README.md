@@ -143,11 +143,7 @@ Atom: 0.143.0 (darwin x64 14.0.0)
 
 ### Contributors
 
-* Joe Fitzgerald [@joefitzgerald](https://github.com/joefitzgerald)
-* Scott Barron [@rubyist](https://github.com/rubyist)
-    * Gofmt integration (https://github.com/atom/language-go/pull/3)
-    * Display test coverage (https://github.com/joefitzgerald/go-plus/pull/27)
-* Matt Aimonetti [@mattetti](https://github.com/mattetti) - Syntax checking (https://github.com/atom/language-go/pull/11)
+A list of contributors can be found at https://github.com/joefitzgerald/go-plus/graphs/contributors. Joe Fitzgerald ([@joefitzgerald](https://github.com/joefitzgerald)) is the maintainer of this project.
 
 ### Contributing
 
