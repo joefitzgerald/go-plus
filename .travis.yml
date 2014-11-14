@@ -4,7 +4,9 @@ notifications:
   email:
     on_success: never
     on_failure: change
-
+before_install:
+  - brew update
+  - if brew outdated | grep -qx go; then brew upgrade go; fi
 before_script:
   - pushd $HOME
   - mkdir -p go
