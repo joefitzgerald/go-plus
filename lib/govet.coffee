@@ -42,6 +42,14 @@ class Govet
       @emit @name + '-complete', editor, saving
       callback(null)
       return
+    go = @dispatch.goexecutable.current()
+    gopath = go.buildgopath()
+    if not gopath? or gopath is ''
+      @emit @name + '-complete', editor, saving
+      callback(null)
+      return
+    env = @dispatch.env()
+    env['GOPATH'] = gopath
     cwd = path.dirname(buffer.getPath())
     args = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
     args = _.union(args, [buffer.getPath()])
@@ -60,7 +68,7 @@ class Govet
       messages = @mapMessages(stderr, cwd) if stderr? and stderr.trim() isnt ''
       @emit @name + '-complete', editor, saving
       callback(null, messages)
-    @dispatch.executor.exec(cmd, cwd, null, done, args)
+    @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   mapMessages: (data, cwd) ->
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img

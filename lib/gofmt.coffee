@@ -48,6 +48,13 @@ class Gofmt
     args = _.union(args, configArgs) if configArgs? and _.size(configArgs) > 0
     args = _.union(args, [buffer.getPath()])
     go = @dispatch.goexecutable.current()
+    gopath = go.buildgopath()
+    if not gopath? or gopath is ''
+      @emit @name + '-complete', editor, saving
+      callback(null)
+      return
+    env = @dispatch.env()
+    env['GOPATH'] = gopath
     cmd = go.format()
     if cmd is false
       message =
@@ -63,7 +70,7 @@ class Gofmt
       messages = @mapMessages(stderr, cwd) if stderr? and stderr.trim() isnt ''
       @emit @name + '-complete', editor, saving
       callback(null, messages)
-    @dispatch.executor.exec(cmd, cwd, @dispatch?.env(), done, args)
+    @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   mapMessages: (data, cwd) =>
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
