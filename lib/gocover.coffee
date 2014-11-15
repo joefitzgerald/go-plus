@@ -141,6 +141,8 @@ class Gocover
       if exitcode is 0
         @ranges = @parser.ranges(tempFile)
         @addMarkersToEditors()
+      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+      console.log @name + ' - stderr: ' + stderr if stderr? and stderr.trim() isnt ''
       @covering = false
       @emit @name + '-complete', editor, saving
       callback(null, messages)
