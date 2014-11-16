@@ -78,6 +78,12 @@ class Go
     return false unless fs.existsSync(result)
     return fs.realpathSync(result)
 
+  gocode: ->
+    return false unless @gotooldir? and @gotooldir isnt ''
+    result = path.join(@gotooldir, 'gocode' + @exe)
+    return false unless fs.existsSync(result)
+    return fs.realpathSync(result)
+
   goimports: ->
     return @gopathBinOrPathItem('goimports')
 
@@ -86,6 +92,8 @@ class Go
 
   golint: ->
     return @gopathBinOrPathItem('golint')
+  gocode: ->
+    return @gopathBinOrPathItem('gocode')
 
   # oracle: ->
   #   return @gopathBinOrPathItem('oracle')
@@ -121,6 +129,7 @@ class Go
     return true if @golint() is false
     return true if @vet() is false
     return true if @cover() is false
+    return true if @gocode() is false
     # return true if @oracle() is false
     return true if @git() is false
     return true if @hg() is false
