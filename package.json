@@ -1,6 +1,6 @@
 {
   "name": "go-plus",
-  "description": "Adds `gofmt`, `goimports`, `go vet`, `golint`, `go build` and `go test` functionality for the go language.",
+  "description": "Adds `gocode`, `gofmt`, `goimports`, `go vet`, `golint`, `go build` and `go test` functionality for the go language.",
   "keywords": [
     "go",
     "golang",
@@ -37,6 +37,6 @@
     "glob": ">=4.0.6",
     "temp": ">=0.8.1",
     "underscore-plus": "1.x",
-    "autocomplete-plus": "git://github.com/saschagehlich/autocomplete-plus.git#feature/api"
+    "autocomplete-plus": "git://github.com/saschagehlich/autocomplete-plus.git"
   }
 }

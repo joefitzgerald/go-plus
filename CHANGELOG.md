@@ -1,3 +1,7 @@
+## v3.0.0 (November 16, 2014)
+
+* :gift: Gocode integration - major thanks to @andy-inc for the contribution! (fixes #2, #4, #94)
+
 ## v2.1.3 (November 16, 2014)
 
 * :bug: Ensure GOPATH is correctly set when calling Format, Lint, and Vet tools (thanks @azr!) (fixes #89)

@@ -3,10 +3,16 @@
 [![OSX Build Status](https://travis-ci.org/joefitzgerald/go-plus.svg?branch=master)](https://travis-ci.org/joefitzgerald/go-plus)
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/d0cekvaprt9wo1et)](https://ci.appveyor.com/project/joefitzgerald/go-plus)
 
-You can install `go-plus` by opening Atom, going to `Preferences` > `Packages`, and searching for `go-plus`. Alternatively, run `apm install go-plus` in your terminal.
+## Installing
+
+1. Install `autocomplete-plus`: `apm install autocomplete-plus` or open Atom and go to `Preferences > Packages`, search for `autocomplete-plus`, and install it
+1. Install `go-plus`: `apm install go-plus` or open Atom and go to `Preferences > Packages`, search for `go-plus`, and install it
+
+## Overview
 
 This package adds extra Atom functionality for the go language:
 
+* Autocomplete using `gocode` (you _must_ have the `autocomplete-plus` package installed for this to work)
 * Formatting source using `gofmt`
 * Formatting and managing imports using `goimports`
 * Code quality inspection using `go vet`
@@ -20,7 +26,7 @@ This package adds extra Atom functionality for the go language:
 
 ### Platforms
 
-The package is currently known to work on OS X and Windows, and has CI jobs for those platforms.
+The package is currently known to work on OS X, Windows (7+) and Ubuntu. CI jobs run for OS X and Windows; Ubuntu CI is still in-progress.
 
 ### Defaults
 
@@ -91,7 +97,6 @@ test` powered syntax checking.
 
 The following features will be added soon:
 
-* `gocode` integration ([#2](https://github.com/joefitzgerald/go-plus/issues/2))
 * `go oracle` / `godef` integration ([#11](https://github.com/joefitzgerald/go-plus/issues/11))
 * `godoc` integration ([#12](https://github.com/joefitzgerald/go-plus/issues/12))
 * ... and others: https://github.com/joefitzgerald/go-plus/issues
