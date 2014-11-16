@@ -30,6 +30,8 @@ class Executor
             source: 'executor'
         result.messages.push message
         result.code = 127
+      else
+        console.log 'Error: ' + done.error
     return result
 
   exec: (command, cwd, env, callback, args) =>

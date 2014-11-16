@@ -155,13 +155,13 @@ class GoExecutable
       return
     gogetenv['GOPATH'] = gopath
     async.series([
-      (callback) =>
-        done = (exitcode, stdout, stderr) =>
-          callback(null)
-        if go.godoc() isnt false and not updateExistingTools
-          done()
-        else
-          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/godoc'])
+      # (callback) =>
+      #   done = (exitcode, stdout, stderr) =>
+      #     callback(null)
+      #   if go.godoc() isnt false and not updateExistingTools
+      #     done()
+      #   else
+      #     @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/godoc'])
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)
@@ -175,7 +175,7 @@ class GoExecutable
         if go.cover() isnt false and not updateExistingTools
           done()
         else
-          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/cover'])
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/cover']) # TODO: Switch To New Path Once Go 1.4 Is Released
       (callback) =>
         done = (exitcode, stdout, stderr) =>
           callback(null)

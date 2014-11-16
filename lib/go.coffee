@@ -60,23 +60,17 @@ class Go
       when 'goreturns' then return @goreturns()
       else return @gofmt()
 
-  godoc: ->
-    return false unless @goroot? and @goroot isnt ''
-    result = path.join(@goroot, 'bin', 'godoc' + @exe)
-    return false unless fs.existsSync(result)
-    return fs.realpathSync(result)
+  # godoc: ->
+  #   return false unless @goroot? and @goroot isnt ''
+  #   result = path.join(@goroot, 'bin', 'godoc' + @exe)
+  #   return false unless fs.existsSync(result)
+  #   return fs.realpathSync(result)
 
   vet: ->
-    return false unless @gotooldir? and @gotooldir isnt ''
-    result = path.join(@gotooldir, 'vet' + @exe)
-    return false unless fs.existsSync(result)
-    return fs.realpathSync(result)
+    return @pathOrGoPathBinOrGoToolDirItem('vet')
 
   cover: ->
-    return false unless @gotooldir? and @gotooldir isnt ''
-    result = path.join(@gotooldir, 'cover' + @exe)
-    return false unless fs.existsSync(result)
-    return fs.realpathSync(result)
+    return @pathOrGoPathBinOrGoToolDirItem('cover')
 
   goimports: ->
     return @gopathBinOrPathItem('goimports')
@@ -95,6 +89,11 @@ class Go
 
   hg: ->
     return @pathItem('hg')
+
+  pathOrGoPathBinOrGoToolDirItem: (name) ->
+    result = path.join(@gotooldir, name + @exe)
+    return fs.realpathSync(result) if fs.existsSync(result)
+    return @gopathBinOrPathItem(name)
 
   gopathBinOrPathItem: (name) ->
     gopaths = @splitgopath()
