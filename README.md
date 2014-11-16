@@ -14,21 +14,21 @@ This package adds extra Atom functionality for the go language:
 
 * Autocomplete using `gocode` (you _must_ have the `autocomplete-plus` package installed for this to work)
 * Formatting source using `gofmt`
-* Formatting and managing imports using `goimports`
+* Formatting and managing imports using `goimports`, `goreturns`, or `gofmt`
 * Code quality inspection using `go vet`
 * Linting using `golint`
 * Syntax checking using `go build` and `go test`
 * Display of test coverage using `go test -coverprofile`
 
-### Example
+## Example
 
 ![A screenshot of go-plus in action](http://cl.ly/image/392z2L0f0E41/go-plus-example.gif)
 
-### Platforms
+## Platforms
 
-The package is currently known to work on OS X, Windows (7+) and Ubuntu. CI jobs run for OS X and Windows; Ubuntu CI is still in-progress.
+The package is currently known to work on OS X, Windows (7+) and Ubuntu. CI jobs exist for OS X and Windows; Ubuntu CI is still in-progress.
 
-### Defaults
+## Defaults
 
 By default, the package has the following preferences enabled:
 
@@ -93,7 +93,7 @@ If both the `Go Path` preference and the `$GOPATH` / `%GOPATH%` environment vari
 empty, `go-plus` will display a warning and will not perform `go build` / `go
 test` powered syntax checking.
 
-### Planned Features
+## Planned Features
 
 The following features will be added soon:
 
@@ -102,9 +102,9 @@ The following features will be added soon:
 * ... and others: https://github.com/joefitzgerald/go-plus/issues
 
 
-### Troubleshooting
+## Troubleshooting
 
-#### Missing Tools
+### Missing Tools
 
 > <b>Question:</b> Why are some of the tools found, not `cover`, `goimports`, or `vet`?
 
@@ -117,7 +117,7 @@ To resolve issues installing cover or vet, install Mercurial:
 * OS X: Run `brew install mercurial`
 * Windows + Others: http://mercurial.selenic.com/wiki/Download
 
-#### GOPATH
+### GOPATH
 
 > <b>Question:</b> Why can't Atom see my GOPATH? I have set it and I see it in terminal?
 
@@ -146,11 +146,11 @@ PATH: /Users/jfitzgerald/go/bin:/usr/local/bin:/Users/jfitzgerald/.rbenv/shims:/
 Atom: 0.143.0 (darwin x64 14.0.0)
 ```
 
-### Contributors
+## Contributors
 
 A list of contributors can be found at https://github.com/joefitzgerald/go-plus/graphs/contributors. Joe Fitzgerald ([@joefitzgerald](https://github.com/joefitzgerald)) is the maintainer of this project.
 
-### Contributing
+## Contributing
 
 Contributions are greatly appreciated. Please fork this repository, make your
 changes, and open a pull request. See [Contributing](https://github.com/joefitzgerald/go-plus/wiki/Contributing) for detailed instructions.
