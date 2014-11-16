@@ -1,3 +1,8 @@
+## v2.1.3 (November 16, 2014)
+
+* :bug: Ensure GOPATH is correctly set when calling Format, Lint, and Vet tools (thanks @azr!) (fixes #89)
+* :lipstick: Fix issue with cover caused by migration of tools import paths to `golang.org/x/...` (related to #92)
+
 ## v2.1.2 (November 12, 2014)
 
 * :lipstick: Change import paths for Go tools to new `golang.org/x/...` path (thanks @hansrodtang!)
