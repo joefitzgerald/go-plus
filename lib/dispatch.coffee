@@ -5,6 +5,7 @@ Golint = require './golint'
 Gopath = require './gopath'
 Gobuild = require './gobuild'
 Gocover = require './gocover'
+Gocode = require './gocode'
 Executor = require './executor'
 Environment = require './environment'
 GoExecutable = require './goexecutable'
@@ -40,6 +41,7 @@ class Dispatch
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
+    @gocode = new Gocode(this)
 
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true unless @messagepanel?
 
@@ -52,6 +54,7 @@ class Dispatch
     gopathsubscription = @gopath.on 'reset', (editor) => @resetState(editor)
     gobuildsubscription = @gobuild.on 'reset', (editor) => @resetState(editor)
     gocoversubscription = @gocover.on 'reset', (editor) => @resetState(editor)
+    gocodesubscription = @gocode.on 'reset', (editor) => @resetState(editor)
 
     @subscribe(gofmtsubscription)
     @subscribe(golintsubscription)
@@ -59,6 +62,7 @@ class Dispatch
     @subscribe(gopathsubscription)
     @subscribe(gobuildsubscription)
     @subscribe(gocoversubscription)
+    @subscribe(gocodesubscription)
 
     @on 'dispatch-complete', (editor) => @displayMessages(editor)
     @subscribeToAtomEvents()
@@ -76,12 +80,14 @@ class Dispatch
     @govet.destroy()
     @gopath.destroy()
     @gofmt.destroy()
+    @gocode.destroy()
     @gocover = null
     @gobuild = null
     @golint = null
     @govet = null
     @gopath = null
     @gofmt = null
+    @gocode = null
     @ready = false
     @activated = false
     @emit 'destroyed'
@@ -208,6 +214,12 @@ class Dispatch
         @messagepanel.add new PlainMessageView raw: true, message: '<b>Lint Tool:</b> ' + go.golint(), className: 'text-subtle'
       else
         @messagepanel.add new PlainMessageView raw: true, message: '<b>Lint Tool:</b> Not Found', className: 'text-error'
+
+      # golint
+      if go.gocode()? and go.gocode() isnt false
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Tool:</b> ' + go.gocode(), className: 'text-subtle'
+      else
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Tool:</b> Not Found or autocomplete-plus package do not installed', className: 'text-error'
 
       # oracle
       # if go.oracle()? and go.oracle() isnt false

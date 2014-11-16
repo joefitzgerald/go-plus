@@ -196,6 +196,13 @@ class GoExecutable
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'github.com/golang/lint/golint'])
+      (callback) =>
+        done = (exitcode, stdout, stderr) =>
+          callback(null)
+        if go.gocode() isnt false and not updateExistingTools
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'github.com/nsf/gocode'])
       # (callback) =>
       #   done = (exitcode, stdout, stderr) =>
       #     callback(null)

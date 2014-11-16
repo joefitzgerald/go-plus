@@ -6,13 +6,15 @@ module.exports =
 class Executor
   constructor: (@environment) ->
 
-  execSync: (command, cwd, env, args) =>
+  execSync: (command, cwd, env, args, input = null) =>
     options =
       cwd: null
       env: null
       encoding: 'utf8'
     options.cwd = fs.realpathSync(cwd) if cwd? and cwd isnt '' and cwd isnt false and fs.existsSync(cwd)
     options.env = if env? then env else @environment
+    if input
+      options.input = input
     args = [] unless args?
     done = spawnSync(command, args, options)
     result =
@@ -34,7 +36,7 @@ class Executor
         console.log 'Error: ' + done.error
     return result
 
-  exec: (command, cwd, env, callback, args) =>
+  exec: (command, cwd, env, callback, args, input = null) =>
     output = ''
     error = ''
     code = 0
@@ -61,6 +63,8 @@ class Executor
       callback(code, output, error, messages)
     args = [] unless args?
     bufferedprocess = new BufferedProcess({command, args, options, stdout, stderr, exit})
+    if input
+      bufferedprocess.process.stdin.end(input)
     bufferedprocess.process.once 'error', (err) =>
       if err.code is 'ENOENT'
         message =
