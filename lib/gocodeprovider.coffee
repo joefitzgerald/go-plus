@@ -10,7 +10,6 @@ ProviderClass: (Provider, Suggestion, dispatch)  ->
     empty: [new Suggestion(this, word: '')]
 
     buildSuggestions: () ->
-      console.log 'building suggestions'
       unless dispatch.isValidEditor(@editor)
         return @empty
       buffer = @editor?.getBuffer()

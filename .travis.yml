@@ -24,4 +24,4 @@ before_script:
   - apm install autocomplete-plus
 
 script:
-  - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
+  - build-package-travis.sh
