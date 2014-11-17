@@ -79,7 +79,7 @@ class Gobuild
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(stderr, cwd, splitgopath) if stderr? and stderr isnt ''
       pattern = cwd + '/*' + output
-      glob pattern, {mark: false, sync:true}, (er, files) ->
+      glob pattern, {mark: false}, (er, files) ->
         for file in files
           do (file) ->
             fs.unlinkSync(file)
