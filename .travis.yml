@@ -21,6 +21,7 @@ before_script:
   - go get -u sourcegraph.com/sqs/goreturns
   - go get -u github.com/nsf/gocode
   - popd
+  - apm install autocomplete-plus
 
 script:
   - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'

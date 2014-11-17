@@ -27,6 +27,7 @@ install:
   - go get -u sourcegraph.com/sqs/goreturns
   - go get -u github.com/nsf/gocode
   - cinst atom
+  - apm install autocomplete-plus
   - apm install
 
 # to run your custom scripts instead of automatic MSBuild
