@@ -1,3 +1,7 @@
+## v3.0.1 (November 17, 2014)
+
+* :bug: Ensure Autocomplete activation works (fixes #95)
+
 ## v3.0.0 (November 16, 2014)
 
 * :gift: Gocode integration - major thanks to @andy-inc for the contribution! (fixes #2, #4, #94)

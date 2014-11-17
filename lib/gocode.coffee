@@ -30,15 +30,19 @@ class Gocode
         GocodeProvider = (require './gocodeprovider')
           .ProviderClass(@autocomplete.Provider, @autocomplete.Suggestion, @dispatch)
 
-        @editorSubscription = atom.workspace.observeTextEditors((editor) => @registerProvider(GocodeProvider, editor))
+        @editorSubscription = atom.workspaceView.eachEditorView((editorView) => @registerProvider(GocodeProvider, editorView))
 
-  registerProvider: (GocodeProvider, editor) =>
-    return unless @dispatch.isValidEditor(editor)
-    editorView = atom.views.getView(editor).__spacePenView
-    provider = new GocodeProvider(editorView)
-    provider.editor = editor
-    @autocomplete.registerProviderForEditorView provider, editorView
-    @providers.push(provider)
+  registerProvider: (GocodeProvider, editorView) =>
+    console.log 'Registering Provider'
+    if editorView.attached and not editorView.mini
+      editor = editorView.getModel()
+      return unless @dispatch.isValidEditor(editor)
+      console.log 'Creating Provider'
+      provider = new GocodeProvider(editorView)
+      # provider.editor = editor
+      @autocomplete.registerProviderForEditorView provider, editorView
+      @providers.push(provider)
+      console.log 'Registered Provider'
 
   deactivate: ->
     @editorSubscription?.dispose()
