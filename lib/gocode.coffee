@@ -33,19 +33,15 @@ class Gocode
         @editorSubscription = atom.workspaceView.eachEditorView((editorView) => @registerProvider(GocodeProvider, editorView))
 
   registerProvider: (GocodeProvider, editorView) =>
-    console.log 'Registering Provider'
     if editorView.attached and not editorView.mini
       editor = editorView.getModel()
       return unless @dispatch.isValidEditor(editor)
-      console.log 'Creating Provider'
       provider = new GocodeProvider(editorView)
-      # provider.editor = editor
       @autocomplete.registerProviderForEditorView provider, editorView
       @providers.push(provider)
-      console.log 'Registered Provider'
 
   deactivate: ->
-    @editorSubscription?.dispose()
+    @editorSubscription?.off()
     @editorSubscription = null
 
     @providers.forEach (provider) =>
