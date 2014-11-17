@@ -34,7 +34,7 @@ describe 'gocode', ->
       dispatch.goexecutable.detect()
       editorView = atom.workspaceView.getActiveView()
 
-    waitsFor ->      
+    waitsFor ->
       dispatch.ready is true
 
   describe 'when autocomplete-plus executed', ->

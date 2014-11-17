@@ -215,11 +215,17 @@ class Dispatch
       else
         @messagepanel.add new PlainMessageView raw: true, message: '<b>Lint Tool:</b> Not Found', className: 'text-error'
 
-      # golint
+      # gocode
       if go.gocode()? and go.gocode() isnt false
         @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Tool:</b> ' + go.gocode(), className: 'text-subtle'
       else
-        @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Tool:</b> Not Found or autocomplete-plus package do not installed', className: 'text-error'
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Tool:</b> Not Found', className: 'text-error'
+
+      # gocode active
+      if _.contains(atom.packages.getAvailablePackageNames(), 'autocomplete-plus')
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Status:</b> Enabled', className: 'text-subtle'
+      else
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Status:</b> Not Enabled (autocomplete-plus needs to be installed and active; install it and restart)', className: 'text-warning'
 
       # oracle
       # if go.oracle()? and go.oracle() isnt false
