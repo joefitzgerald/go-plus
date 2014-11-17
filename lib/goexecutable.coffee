@@ -70,6 +70,9 @@ class GoExecutable
         # Binary Distribution
         executables.push path.normalize(path.join('C:','go', 'bin', 'go.exe'))
 
+        # Chocolatey
+        executables.push path.normalize(path.join('C:', 'tools', 'go', 'bin', 'go.exe'))
+
     # De-duplicate entries
     executables = _.uniq(executables)
     async.filter executables, fs.exists, (results) =>
