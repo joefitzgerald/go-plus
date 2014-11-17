@@ -21,7 +21,6 @@ before_script:
   - go get -u sourcegraph.com/sqs/goreturns
   - go get -u github.com/nsf/gocode
   - popd
-  - apm install autocomplete-plus
 
 script:
   - build-package-travis.sh
