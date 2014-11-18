@@ -206,13 +206,13 @@ class GoExecutable
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'github.com/nsf/gocode'])
-      # (callback) =>
-      #   done = (exitcode, stdout, stderr) =>
-      #     callback(null)
-      #   if go.oracle() isnt false and not updateExistingTools
-      #     done()
-      #   else
-      #     @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/oracle'])
+      (callback) =>
+        done = (exitcode, stdout, stderr) =>
+          callback(null)
+        if go.oracle() isnt false and not updateExistingTools
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/go.tools/cmd/oracle'])
     ], (err, results) =>
       @emit 'gettools-complete'
     )

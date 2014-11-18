@@ -228,10 +228,10 @@ class Dispatch
         @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Status:</b> Not Enabled (autocomplete-plus needs to be installed and active; install it and restart)', className: 'text-warning'
 
       # oracle
-      # if go.oracle()? and go.oracle() isnt false
-      #   @messagepanel.add new PlainMessageView raw: true, message: '<b>Oracle Tool: ' + go.oracle(), className: 'text-subtle'
-      # else
-      #   @messagepanel.add new PlainMessageView raw: true, message: '<b>Oracle Tool: Not Found', className: 'text-error'
+      if go.oracle()? and go.oracle() isnt false
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Oracle Tool: ' + go.oracle(), className: 'text-subtle'
+      else
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Oracle Tool: Not Found', className: 'text-error'
 
       # git
       if go.git()? and go.git() isnt false

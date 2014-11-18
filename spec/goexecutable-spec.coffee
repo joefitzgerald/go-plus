@@ -54,7 +54,7 @@ describe "go executable", ->
         expect(go.goimports()).toBe false
         expect(go.goreturns()).toBe false
         expect(go.golint()).toBe false
-        # expect(go.oracle()).toBe false
+        expect(go.oracle()).toBe false
         goexecutable.once 'gettools-complete', =>
           go = goexecutable.current()
           expect(go).toBeDefined
@@ -63,7 +63,7 @@ describe "go executable", ->
           expect(go.goimports()).toBe fs.realpathSync(path.join(directory, 'bin', 'goimports' + suffix))
           expect(go.goreturns()).toBe false
           expect(go.golint()).toBe fs.realpathSync(path.join(directory, 'bin', 'golint' + suffix))
-          # expect(go.oracle()).toBe path.join(directory, 'bin', 'oracle' + suffix)
+          expect(go.oracle()).toBe path.join(directory, 'bin', 'oracle' + suffix)
           done = true
         goexecutable.gettools(go, true)
 
@@ -80,7 +80,7 @@ describe "go executable", ->
         expect(go.goimports()).not.toBe false
         expect(go.goreturns()).toBe false
         expect(go.golint()).not.toBe false
-        # expect(go.oracle()).toBe false
+        expect(go.oracle()).toBe false
         goexecutable.once 'gettools-complete', =>
           go = goexecutable.current()
           expect(go).toBeDefined
@@ -89,7 +89,7 @@ describe "go executable", ->
           expect(go.goimports()).toBe fs.realpathSync(path.join(directory, 'bin', 'goimports' + suffix))
           expect(go.goreturns()).toBe fs.realpathSync(path.join(directory, 'bin', 'goreturns' + suffix))
           expect(go.golint()).toBe fs.realpathSync(path.join(directory, 'bin', 'golint' + suffix))
-          # expect(go.oracle()).toBe path.join(directory, 'bin', 'oracle' + suffix)
+          expect(go.oracle()).toBe path.join(directory, 'bin', 'oracle' + suffix)
           done = true
         goexecutable.gettools(go, true)
 

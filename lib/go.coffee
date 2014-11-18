@@ -89,8 +89,8 @@ class Go
   gocode: ->
     return @gopathBinOrPathItem('gocode')
 
-  # oracle: ->
-  #   return @gopathBinOrPathItem('oracle')
+  oracle: ->
+    return @gopathBinOrPathItem('oracle')
 
   git: ->
     return @pathItem('git')
@@ -129,7 +129,7 @@ class Go
     return true if @vet() is false
     return true if @cover() is false
     return true if @gocode() is false
-    # return true if @oracle() is false
+    return true if @oracle() is false
     return true if @git() is false
     return true if @hg() is false
     return false
