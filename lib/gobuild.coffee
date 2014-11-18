@@ -78,11 +78,6 @@ class Gobuild
     done = (exitcode, stdout, stderr, messages) =>
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(stderr, cwd, splitgopath) if stderr? and stderr isnt ''
-      pattern = cwd + '/*' + output
-      glob pattern, {mark: false}, (er, files) ->
-        for file in files
-          do (file) ->
-            fs.unlinkSync(file)
       if fs.existsSync(outputPath)
         if fs.lstatSync(outputPath).isDirectory()
           fs.rmdirSync(outputPath)
@@ -93,6 +88,11 @@ class Gobuild
         for file in updatedFiles
           if _.endsWith(file, '.test' + go.exe)
             fs.unlinkSync(path.join(fileDir, file))
+      pattern = cwd + '/*' + output
+      glob pattern, {mark: false}, (er, files) ->
+        for file in files
+          do (file) ->
+            fs.unlinkSync(file)
       @emit @name + '-complete', editor, saving
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
