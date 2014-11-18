@@ -1,3 +1,11 @@
+## v3.0.4 (November 18, 2014)
+
+* :lipstick: Avoid potential :racehorse: condition (see #96)
+
+## v3.0.3 (November 17, 2014)
+
+* :bug: Fix error from `glob` (fixes #96)
+
 ## v3.0.1 (November 17, 2014)
 
 * :bug: Ensure Autocomplete activation works (fixes #95)
