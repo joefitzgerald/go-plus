@@ -68,7 +68,7 @@ class Gobuild
       testPackage = testPackage.replace(/_test$/i, '')
       output = testPackage + '.test' + go.exe
       outputPath = @tempDir
-      args = ['test', '-copybinary', '-outputdir', outputPath,'-c', '.']
+      args = ['test', '-copybinary', '-o', outputPath,'-c', '.']
       files = fs.readdirSync(fileDir)
     else
       output = '.go-plus-syntax-check'
