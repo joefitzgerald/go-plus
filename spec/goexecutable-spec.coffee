@@ -35,9 +35,9 @@ describe "go executable", ->
         expect(goexecutable).toBeDefined
         expect(go).toBeDefined
         expect(go).toBeTruthy
-        expect(go.name.substring(0,2)).toBe 'go'
-        expect(go.version.substring(0,2)).toBe 'go'
-        expect(go.arch).toBe 'amd64'
+        expect(go.name.substring(0,2)).toBe 'go' unless go.version is 'devel'
+        expect(go.version.substring(0,2)).toBe 'go' unless go.version is 'devel'
+        expect(go.arch).toBe 'amd64' unless go.version is 'devel'
         if os.platform() is 'win32'
           expect(go.executable.substring(go.executable.length - 6, go.executable.length)).toBe 'go.exe'
         else
