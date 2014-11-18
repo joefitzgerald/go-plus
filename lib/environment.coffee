@@ -9,6 +9,7 @@ class Environment
 
   Clone: ->
     env = _.clone(@environment)
+    env.DYLD_INSERT_LIBRARIES = undefined if env.DYLD_INSERT_LIBRARIES?
     return env unless os.platform() is 'darwin' and env.PATH is '/usr/bin:/bin:/usr/sbin:/sbin'
     pathhelper = '/usr/libexec/path_helper'
     return env unless fs.existsSync(pathhelper)
