@@ -1,4 +1,4 @@
-## v3.0.4 (November 18, 2014)
+## v3.0.4 (November 17, 2014)
 
 * :lipstick: Avoid potential :racehorse: condition (see #96)
 
