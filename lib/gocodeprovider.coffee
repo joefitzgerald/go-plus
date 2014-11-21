@@ -31,7 +31,7 @@ ProviderClass: (Provider, Suggestion, dispatch)  ->
       env = dispatch.env()
       env['GOPATH'] = gopath
       cwd = path.dirname(buffer.getPath())
-      args = ['-f=json', 'autocomplete', offset]
+      args = ['-f=json', 'autocomplete', buffer.getPath(), offset]
       configArgs = dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gocodeArgs'))
       args = _.union(configArgs, args) if configArgs? and _.size(configArgs) > 0
       cmd = dispatch.goexecutable.current().gocode()
