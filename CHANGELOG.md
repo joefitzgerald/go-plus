@@ -1,3 +1,8 @@
+## v3.0.5 (November 22, 2014)
+
+* :lipstick: Send the current buffer path to gocode to allow autocomplete within the current package (see #98)
+* :hammer: Fix tests
+
 ## v3.0.4 (November 17, 2014)
 
 * :lipstick: Avoid potential :racehorse: condition (see #96)
