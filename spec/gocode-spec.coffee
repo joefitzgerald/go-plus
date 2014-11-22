@@ -1,5 +1,5 @@
 path = require 'path'
-{WorkspaceView, $} = require 'atom'
+{WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
 AtomConfig = require './util/atomconfig'
 
@@ -8,11 +8,12 @@ describe 'gocode', ->
 
   beforeEach ->
     atomconfig = new AtomConfig()
+    atomconfig.allfunctionalitydisabled()
     atom.workspaceView = new WorkspaceView()
     atom.workspace = atom.workspaceView.model
 
     # Enable live autocompletion
-    atom.config.set 'autocomplete-plus.enableAutoActivation', true
+    atom.config.set("autocomplete-plus.enableAutoActivation", true)
     # Set the completion delay
     completionDelay = 100
     atom.config.set 'autocomplete-plus.autoActivationDelay', completionDelay
@@ -20,7 +21,10 @@ describe 'gocode', ->
 
     waitsForPromise -> atom.workspace.open('gocode.go').then (e) ->
       editor = e
-      atom.workspaceView.simulateDomAttachment()
+      atom.workspaceView.attachToDom()
+
+    waitsForPromise ->
+      atom.packages.activatePackage('autocomplete-plus')
 
     waitsForPromise ->
       atom.packages.activatePackage('language-go')
@@ -63,7 +67,7 @@ describe 'gocode', ->
         expect(editorView.find('.autocomplete-plus')).toExist()
         expect(editorView.find('.autocomplete-plus span.word:eq(0)')).toHaveText ''
         editor.backspace()
-    it 'display empty list on and of line', ->
+    it 'display empty list on end of line', ->
       runs ->
         expect(editorView.find('.autocomplete-plus')).not.toExist()
 

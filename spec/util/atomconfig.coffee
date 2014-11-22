@@ -20,3 +20,4 @@ class AtomConfig
     atom.config.set("go-plus.vetOnSave", false)
     atom.config.set("go-plus.lintOnSave", false)
     atom.config.set("go-plus.runCoverageOnSave", false)
+    atom.config.set("autocomplete-plus.enableAutoActivation", false)
