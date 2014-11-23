@@ -45,8 +45,8 @@ class Gocover
 
   addMarkersToEditor: (editor) =>
     return unless editor?.getGrammar()?.scopeName is 'source.go'
-    file = editor.getPath()
-    buffer = editor.getBuffer()
+    file = editor?.getPath()
+    buffer = editor?.getBuffer()
     return unless file? and buffer?
 
     # Clear current markers
@@ -55,18 +55,24 @@ class Gocover
     # Add new markers
     return unless @ranges? and @ranges and _.size(@ranges) > 0
     editorRanges = _.filter @ranges, (r) -> _.endsWith(file, r.file)
-    for range in editorRanges
-      marker = buffer.markRange(range.range, class: 'gocover', gocovercount: range.count, invalidate: 'touch')
-      clazz = if range.count > 0 then 'covered' else 'uncovered'
-      editor.decorateMarker(marker, type: 'highlight', class: clazz, onlyNonEmpty: true)
+    try
+      for range in editorRanges
+        marker = buffer.markRange(range.range, class: 'gocover', gocovercount: range.count, invalidate: 'touch')
+        clazz = if range.count > 0 then 'covered' else 'uncovered'
+        editor.decorateMarker(marker, type: 'highlight', class: clazz, onlyNonEmpty: true)
+    catch error
+      console.log error
 
   clearMarkers: (editor) =>
     return unless editor?.getGrammar()?.scopeName is 'source.go'
     # Find current markers
-    markers = editor.getBuffer()?.findMarkers(class: 'gocover')
-    return unless markers? and _.size(markers) > 0
-    # Remove markers
-    marker.destroy() for marker in markers
+    try
+      markers = editor?.getBuffer()?.findMarkers(class: 'gocover')
+      return unless markers? and _.size(markers) > 0
+      # Remove markers
+      marker.destroy() for marker in markers
+    catch error
+      console.log error
 
   reset: (editor) ->
     @emit 'reset', editor

@@ -337,12 +337,15 @@ class Dispatch
     for message in messages
       skip = false
       if message?.file? and message.file isnt ''
-        skip = message.file isnt buffer.getPath()
+        skip = message.file isnt buffer?.getPath()
 
       unless skip
         if message?.line? and message.line isnt false and message.line >= 0
-          marker = buffer.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
-          editor?.decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
+          try
+            marker = buffer?.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
+            editor?.decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
+          catch error
+            console.log error
 
   resetPanel: ->
     @messagepanel?.close()
