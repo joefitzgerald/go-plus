@@ -1,3 +1,7 @@
+## v3.0.6 (November 23, 2014)
+
+* :bug: Add error handling when interacting with TextEditor and Buffer to guard against a destroyed TextEditor (fixes #100)
+
 ## v3.0.5 (November 22, 2014)
 
 * :lipstick: Send the current buffer path to gocode to allow autocomplete within the current package (see #98)
