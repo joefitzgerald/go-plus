@@ -28,27 +28,29 @@ This package adds extra Atom functionality for the go language:
 
 The package is currently known to work on OS X, Windows (7+) and Ubuntu. CI jobs exist for OS X and Windows; Ubuntu CI is still in-progress.
 
-## Defaults
+## Configuration
 
-By default, the package has the following preferences enabled:
+### Defaults
 
-* `Environment Overrides Configuration`: allow environment variables (e.g. `$GOPATH` or `%GOPATH%`) to override configured values (e.g. `Gopath`)
-* `Format On Save`: run `gofmt` or `goimports` on save
-* `Format With Go Imports`: use `goimports` instead of `gofmt`
-* `Get Missing Tools`: run `go get -u` on startup for all missing tools
-* `Lint On Save`: run `golint` on save
-* `Run Coverage On Save`: run `go test -coverprofile` & `cover` on save, and display coverage in the editor
-* `Show Panel`: show the message panel at the bottom of the screen if any errors or warnings are detected
-* `Syntax Check On Save`: run `go build` / `go test` on save to check for errors
-* `Vet On Save`: run `vet` on save to check for errors or warnings
+| Display Name                            | Name                                        | Default     | Description                                                                                                                                                                                                                            |
+|:----------------------------------------|:--------------------------------------------|:------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Environment Overrides Config            | `go-plus.environmentOverridesConfiguration` | `true`      | Use the environment's value for GOPATH (if set) instead of the configured value for GOPATH (below)                                                                                                                                     |
+| GOPATH                                  | `go-plus.goPath`                            | `unset`     | You should set your GOPATH in the environment, and launch Atom using the `atom` command line tool; if you would like to set it explicitly, you can do so here (e.g. ~/go)                                                              |
+| Go Installation Path                    | `go-plus.goInstallation`                    | `unset`     | You should not normally set this; if you have a non-standard go installation path and `go` is not available on your PATH, you can use this to configure the location to `go` (e.g. /usr/local/othergo/bin/go or c:\othergo\bin\go.exe) |
+| Run Format Tool On Save                 | `go-plus.formatOnSave`                      | `true`      | Run the configured format tool each time a file is saved                                                                                                                                                                               |
+| Format Tool                             | `go-plus.formatTool`                        | `goimports` | Choose one: goimports, goreturns, or gofmt                                                                                                                                                                                             |
+| Format Arguments                        | `go-plus.formatArgs`                        | `-w -e`     | `-w` will always be used; you can specify additional arguments for the format tool if desired                                                                                                                                          |
+| Run Lint Tool On Save                   | `go-plus.lintOnSave`                        | `true`      | Run `golint` each time a file is saved                                                                                                                                                                                                 |
+| Lint Arguments                          | `go-plus.golintArgs`                        | `unset`     | Arguments to pass to `golint` (these are not usually needed)                                                                                                                                                                           |
+| Run Coverage Tool On Save               | `go-plus.runCoverageOnSave`                 | `false`     | Run `go test -coverprofile` each time a file is saved                                                                                                                                                                                  |
+| Run Syntax Check On Save                | `go-plus.syntaxCheckOnSave`                 | `true`      | Run `go build` / `go test` each time a file is saved                                                                                                                                                                                   |
+| Run Vet Tool On Save                    | `go-plus.vetOnSave`                         | `true`      | Run `go vet` each time a file is saved                                                                                                                                                                                                 |
+| Vet Arguments                           | `go-plus.vetArgs`                           | `unset`     | Arguments to pass to `go vet` (these are not usually needed)                                                                                                                                                                           |
+| Automatically Get Missing Tools         | `go-plus.getMissingTools`                   | `true`      | Run `go get -u` to retrieve any tools that are required but not currently available in the go tool directory, the PATH, or your GOPATH                                                                                                 |
+| Show Message Panel                      | `go-plus.showPanel`                         | `true`      | Show the go-plus message panel to provide information about issues with your source                                                                                                                                                    |
+| Show Message Panel When No Issues Exist | `go-plus.showPanelWhenNoIssuesExist`        | `false`     | Show the go-plus message panel even when no issues exist                                                                                                                                                                               |
 
-Additionally, the following preferences can be optionally set:
-
-* `Golint Args`: specify the arguments that should be passed to `golint`
-* `Go Installation`: you should not need to specify this by default (!); allows you to specify a specific go installation instead of relying on inspection of the path and use of platform defaults
-* `Go Path`: this should usually be set in the environment, but you can specify your `GOPATH` here also to ensure Atom still works if you accidentally launch it via `Finder`, `Dock`, or `Spotlight` instead of the command line `atom` helper
-* `Show Panel When No Issues Exist`: show the message panel even if there are no errors or warnings
-* `Vet Args`: specify the arguments that should be passed to `vet`
+### Detection Of Your Go Installation
 
 The package will search the following locations (in order) for a `go` executable:
 
@@ -56,6 +58,7 @@ The package will search the following locations (in order) for a `go` executable
 * OS X: `/usr/local/go/bin` (package installer)
 * OS X: `/usr/local/bin` (Homebrew)
 * Windows: `C:\go\bin` (package installer)
+* Windows: `C:\tools\go\bin` (Chocolatey)
 
 If you have go installed somewhere else, and *not available on the path*, specify the full path to the go executable in the `Go Installation` preference.
 

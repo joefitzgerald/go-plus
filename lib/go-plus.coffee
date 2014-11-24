@@ -74,7 +74,7 @@ module.exports =
       order: 110
     getMissingTools:
       title: 'Automatically Get Missing Tools'
-      description: 'Run `go get -u` to retrieve any tools that are required but not currently available in the go tool directory or in your GOPATH'
+      description: 'Run `go get -u` to retrieve any tools that are required but not currently available in the go tool directory, the PATH, or your GOPATH'
       type: 'boolean'
       default: true
       order: 120
