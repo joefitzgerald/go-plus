@@ -9,7 +9,8 @@ class Golint
   Emitter.includeInto(this)
 
   constructor: (dispatch) ->
-    atom.workspaceView.command 'golang:golint', => @checkCurrentBuffer()
+    atom.commands.add 'atom-workspace',
+      'golang:golint': => @checkCurrentBuffer()
     @dispatch = dispatch
     @name = 'lint'
 

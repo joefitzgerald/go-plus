@@ -12,7 +12,6 @@ GoExecutable = require './goexecutable'
 SplicerSplitter = require './util/splicersplitter'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
-{SettingsView} = require 'atom'
 path = require 'path'
 os = require 'os'
 async = require 'async'
@@ -122,9 +121,16 @@ class Dispatch
     @addItem(atom.config.observe('go-plus.goPath', => @displayGoInfo(true) if @ready))
     @addItem(atom.config.observe('go-plus.environmentOverridesConfiguration', => @displayGoInfo(true) if @ready))
     @addItem(atom.config.observe('go-plus.goInstallation', => @detect() if @ready))
-    @goinfoCommandSubscription = atom.workspaceView.command 'golang:goinfo', => @displayGoInfo(true) if @ready and @activated
-    @getmissingtoolsCommandSubscription = atom.workspaceView.command 'golang:getmissingtools', => @gettools(false) if @activated
-    @updatetoolsCommandSubscription = atom.workspaceView.command 'golang:updatetools', => @gettools(true) if @activated
+
+    atom.commands.add 'atom-workspace',
+      'golang:goinfo': => @displayGoInfo(true) if @ready and @activated
+
+    atom.commands.add 'atom-workspace',
+      'golang:getmissingtools': => @gettools(false) if @activated
+
+    atom.commands.add 'atom-workspace',
+      'golang:updatetools': => @gettools(true) if @activated
+
     @activated = true
 
   handleEvents: (editor) =>

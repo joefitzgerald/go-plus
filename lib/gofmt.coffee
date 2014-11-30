@@ -9,7 +9,8 @@ class Gofmt
   Emitter.includeInto(this)
 
   constructor: (dispatch) ->
-    atom.workspaceView.command 'golang:gofmt', => @formatCurrentBuffer()
+    atom.commands.add 'atom-workspace',
+      'golang:gofmt': => @formatCurrentBuffer()
     @dispatch = dispatch
     @name = 'fmt'
 
