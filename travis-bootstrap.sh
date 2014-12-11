@@ -19,4 +19,4 @@ cd gopath
 GOPATH=`pwd`
 echo "GOPATH=$GOPATH"
 GOROOT=$GOROOT GOPATH=$GOPATH "$GOBIN/go" get github.com/golang/lint/golint
-GOROOT=$GOROOT GOPATH=$GOPATH "$GOBIN/go" get code.google.com/p/go.tools/cmd/goimports
+GOROOT=$GOROOT GOPATH=$GOPATH "$GOBIN/go" get golang.org/x/tools/cmd/goimports
