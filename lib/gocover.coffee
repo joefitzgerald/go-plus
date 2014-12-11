@@ -21,8 +21,12 @@ class Gocover
     @coverageFile = false
     @ranges = false
 
-    atom.workspaceView.command 'golang:gocover', => @runCoverageForCurrentEditor()
-    atom.workspaceView.command 'golang:cleargocover', => @clearMarkersFromEditors()
+    atom.commands.add 'atom-workspace',
+      'golang:gocover': => @runCoverageForCurrentEditor()
+
+    atom.commands.add 'atom-workspace',
+      'golang:cleargocover': => @clearMarkersFromEditors()
+      
     atom.workspace.observeTextEditors (editor) =>
       @addMarkersToEditor(editor)
 

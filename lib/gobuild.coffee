@@ -12,7 +12,8 @@ class Gobuild
   Emitter.includeInto(this)
 
   constructor: (@dispatch) ->
-    atom.workspaceView.command 'golang:gobuild', => @checkCurrentBuffer()
+    atom.commands.add 'atom-workspace',
+      'golang:gobuild': => @checkCurrentBuffer()
     @name = 'syntaxcheck'
 
   destroy: ->

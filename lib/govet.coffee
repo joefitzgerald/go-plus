@@ -9,7 +9,8 @@ class Govet
   Emitter.includeInto(this)
 
   constructor: (dispatch) ->
-    atom.workspaceView.command 'golang:govet', => @checkCurrentBuffer()
+    atom.commands.add 'atom-workspace',
+      'golang:govet': => @checkCurrentBuffer()
     @dispatch = dispatch
     @name = 'vet'
 

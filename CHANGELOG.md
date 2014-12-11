@@ -1,3 +1,9 @@
+## v3.0.8 (December 11, 2014)
+
+* :hammer: Migrate go tools repos with the release of 1.4
+* :hammer: Use new autocomplete-plus registration API (you may need to uninstall/reinstall autocomplete-plus, or run `apm install autocomplete-plus` to get gocode integration working again)
+* :bug: Due to the go tools location moving, you will need to: `rm -rf $GOPATH/src/code.google.com/p/go.tools` and `rm -rf $GOPATH/src/golang.org/x` , and then run `Update Tools` to get your tools back to a working state with Go 1.4
+
 ## v3.0.6 (November 23, 2014)
 
 * :bug: Add error handling when interacting with TextEditor and Buffer to guard against a destroyed TextEditor (fixes #100)

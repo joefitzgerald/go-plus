@@ -1,5 +1,5 @@
 path = require 'path'
-{WorkspaceView} = require 'atom'
+{Workspace} = require 'atom'
 _ = require 'underscore-plus'
 AtomConfig = require './util/atomconfig'
 
@@ -9,8 +9,8 @@ describe 'gocode', ->
   beforeEach ->
     atomconfig = new AtomConfig()
     atomconfig.allfunctionalitydisabled()
-    atom.workspaceView = new WorkspaceView()
-    atom.workspace = atom.workspaceView.model
+    atom.workspace = new Workspace()
+    atom.workspaceView = atom.views.getView(atom.workspace).__spacePenView
 
     # Enable live autocompletion
     atom.config.set("autocomplete-plus.enableAutoActivation", true)
