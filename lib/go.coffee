@@ -72,12 +72,6 @@ class Go
   cover: ->
     return @pathOrGoPathBinOrGoToolDirItem('cover')
 
-  gocode: ->
-    return false unless @gotooldir? and @gotooldir isnt ''
-    result = path.join(@gotooldir, 'gocode' + @exe)
-    return false unless fs.existsSync(result)
-    return fs.realpathSync(result)
-
   goimports: ->
     return @gopathBinOrPathItem('goimports')
 
@@ -86,6 +80,7 @@ class Go
 
   golint: ->
     return @gopathBinOrPathItem('golint')
+
   gocode: ->
     return @gopathBinOrPathItem('gocode')
 
