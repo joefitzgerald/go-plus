@@ -49,7 +49,7 @@ class Go
     return result.split(path.delimiter)
 
   gofmt: ->
-    return @gopathBinOrPathItem('gofmt')
+    return @pathOrGoPathBinOrGoToolDirItem('gofmt')
 
   format: ->
     switch atom.config.get('go-plus.formatTool')
