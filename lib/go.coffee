@@ -49,10 +49,7 @@ class Go
     return result.split(path.delimiter)
 
   gofmt: ->
-    return false unless @goroot? and @goroot isnt ''
-    result = path.join(@goroot, 'bin', 'gofmt' + @exe)
-    return false unless fs.existsSync(result)
-    return fs.realpathSync(result)
+    return @gopathBinOrPathItem('gofmt')
 
   format: ->
     switch atom.config.get('go-plus.formatTool')
