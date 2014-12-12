@@ -49,10 +49,7 @@ class Go
     return result.split(path.delimiter)
 
   gofmt: ->
-    return false unless @goroot? and @goroot isnt ''
-    result = path.join(@goroot, 'bin', 'gofmt' + @exe)
-    return false unless fs.existsSync(result)
-    return fs.realpathSync(result)
+    return @pathOrGoPathBinOrGoToolDirItem('gofmt')
 
   format: ->
     switch atom.config.get('go-plus.formatTool')
@@ -72,12 +69,6 @@ class Go
   cover: ->
     return @pathOrGoPathBinOrGoToolDirItem('cover')
 
-  gocode: ->
-    return false unless @gotooldir? and @gotooldir isnt ''
-    result = path.join(@gotooldir, 'gocode' + @exe)
-    return false unless fs.existsSync(result)
-    return fs.realpathSync(result)
-
   goimports: ->
     return @gopathBinOrPathItem('goimports')
 
@@ -86,6 +77,7 @@ class Go
 
   golint: ->
     return @gopathBinOrPathItem('golint')
+
   gocode: ->
     return @gopathBinOrPathItem('gocode')
 
