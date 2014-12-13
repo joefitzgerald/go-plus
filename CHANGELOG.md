@@ -1,4 +1,8 @@
-## v3.0.8 (December 11, 2014)
+## v3.0.8 (December 12, 2104)
+
+* :bug: Fix integration with autocomplete-plus (fixes #101)
+
+## v3.0.7 (December 11, 2014)
 
 * :hammer: Migrate go tools repos with the release of 1.4
 * :hammer: Use new autocomplete-plus registration API (you may need to uninstall/reinstall autocomplete-plus, or run `apm install autocomplete-plus` to get gocode integration working again)
