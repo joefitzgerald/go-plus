@@ -134,7 +134,7 @@ Consider launching Atom via your shell – using the Atom Shell Commands – whe
 
 ### Still Having Issues?
 
-If you are having issues and the information above isn't helping, feel free to create an issue at https://github.com/joefitzgerald/issues. When you create the issue, please be sure to paste the information from `Packages > Go Plus > Display Go Information` to help us form a response that is targeted to your situation. This looks something like:
+If you are having issues and the information above isn't helping, feel free to create an issue at https://github.com/joefitzgerald/go-plus/issues. When you create the issue, please be sure to paste the information from `Packages > Go Plus > Display Go Information` to help us form a response that is targeted to your situation. This looks something like:
 
 ```
 Go: go1.3.3 darwin/amd64 (@/usr/local/bin/go)
