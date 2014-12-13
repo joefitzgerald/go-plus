@@ -1,3 +1,7 @@
+## v3.0.9 (December 12, 2014)
+
+* :bug: Fix potential race condition
+
 ## v3.0.8 (December 12, 2104)
 
 * :bug: Fix integration with autocomplete-plus (fixes #101)

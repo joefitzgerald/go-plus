@@ -92,12 +92,13 @@ class GoExecutable
     async.series([
       (callback) =>
         done = (exitcode, stdout, stderr) =>
+          console.log exitcode
           unless stderr? and stderr isnt ''
             if stdout? and stdout isnt ''
               components = stdout.replace(/\r?\n|\r/g, '').split(' ')
-              go.name = components[2] + ' ' + components[3]
-              go.version = components[2]
-              go.env = @env
+              go?.name = components[2] + ' ' + components[3]
+              go?.version = components[2]
+              go?.env = @env
           console.log 'Error running go version: ' + err if err?
           console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
           callback(null)
