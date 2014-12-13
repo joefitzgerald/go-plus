@@ -80,7 +80,7 @@ describe "executor", ->
           expect(exitcode).toBe 127
           expect(_.size(messages)).toBe 1
           expect(messages[0]).toBeDefined
-          expect(messages[0].msg).toBe 'No file or directory: [nonexistentcommand]'
+          expect(messages[0]?.msg).toBe 'No file or directory: [nonexistentcommand]'
           expect(stdout).toBeUndefined
           expect(stderr).toBeUndefined
           complete = true

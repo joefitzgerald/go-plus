@@ -41,8 +41,9 @@ describe 'gocode', ->
     waitsFor ->
       dispatch.ready is true
 
-  describe 'when autocomplete-plus executed', ->
-    it 'display list of gocode result', ->
+  describe 'when the gocode autocomplete-plus provider is enabled', ->
+
+    it 'displays suggestions from gocode', ->
       runs ->
         expect(editorView.find('.autocomplete-plus')).not.toExist()
 
@@ -55,7 +56,8 @@ describe 'gocode', ->
         expect(editorView.find('.autocomplete-plus span.word:eq(0)')).toHaveText 'Println('
         expect(editorView.find('.autocomplete-plus span.label:eq(0)')).toHaveText 'func(a ...interface{}) (n int, err error)'
         editor.backspace()
-    it 'display empty list in quotes', ->
+
+    it 'does not display suggestions when no gocode suggestions exist', ->
       runs ->
         expect(editorView.find('.autocomplete-plus')).not.toExist()
 
@@ -64,26 +66,17 @@ describe 'gocode', ->
 
         advanceClock completionDelay + 1000
 
-        expect(editorView.find('.autocomplete-plus')).toExist()
-        expect(editorView.find('.autocomplete-plus span.word:eq(0)')).toHaveText ''
-        editor.backspace()
-    it 'display empty list on end of line', ->
+        expect(editorView.find('.autocomplete-plus')).not.toExist()
+
+    it 'does not display suggestions at the end of a line when no gocode suggestions exist', ->
       runs ->
         expect(editorView.find('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([5, 15])
         editor.backspace()
         editor.insertText ')'
-
         advanceClock completionDelay + 1000
-
-        expect(editorView.find('.autocomplete-plus')).toExist()
-        expect(editorView.find('.autocomplete-plus span.word:eq(0)')).toHaveText ''
-
+        expect(editorView.find('.autocomplete-plus')).not.toExist()
         editor.insertText ';'
-
         advanceClock completionDelay + 1000
-
-        expect(editorView.find('.autocomplete-plus')).toExist()
-        expect(editorView.find('.autocomplete-plus span.word:eq(0)')).toHaveText ''
-        editor.backspace()
+        expect(editorView.find('.autocomplete-plus')).not.toExist()

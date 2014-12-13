@@ -49,10 +49,7 @@ class Go
     return result.split(path.delimiter)
 
   gofmt: ->
-    return false unless @goroot? and @goroot isnt ''
-    result = path.join(@goroot, 'bin', 'gofmt' + @exe)
-    return false unless fs.existsSync(result)
-    return fs.realpathSync(result)
+    return @gorootBinOrPathItem('gofmt')
 
   format: ->
     switch atom.config.get('go-plus.formatTool')
@@ -67,10 +64,10 @@ class Go
   #   return fs.realpathSync(result)
 
   vet: ->
-    return @pathOrGoPathBinOrGoToolDirItem('vet')
+    return @goTooldirOrGopathBinOrPathItem('vet')
 
   cover: ->
-    return @pathOrGoPathBinOrGoToolDirItem('cover')
+    return @goTooldirOrGopathBinOrPathItem('cover')
 
   gocode: ->
     return false unless @gotooldir? and @gotooldir isnt ''
@@ -98,20 +95,26 @@ class Go
   hg: ->
     return @pathItem('hg')
 
-  pathOrGoPathBinOrGoToolDirItem: (name) ->
-    result = path.join(@gotooldir, name + @exe)
-    return fs.realpathSync(result) if fs.existsSync(result)
-    return @gopathBinOrPathItem(name)
+  goTooldirOrGopathBinOrPathItem: (name) ->
+    result = @goTooldirItem(name)
+    result = @gopathBinOrPathItem(name) unless result? and result
+    return result
 
   gopathBinOrPathItem: (name) ->
+    result = @gopathBinItem(name)
+    result = @pathItem(name) unless result? and result
+    return result
+
+  gopathBinItem: (name) ->
+    return false unless name? and name isnt ''
     gopaths = @splitgopath()
     for item in gopaths
       result = path.resolve(path.normalize(path.join(item, 'bin', name + @exe)))
       return fs.realpathSync(result) if fs.existsSync(result)
-
-    return @pathItem(name)
+    return false
 
   pathItem: (name) ->
+    return false unless name? and name isnt ''
     pathresult = false
     # PATH
     p = if os.platform() is 'win32' then @env.Path else @env.PATH
@@ -122,6 +125,25 @@ class Go
         pathresult = fs.realpathSync(target) if fs.existsSync(target)
 
     return pathresult
+
+  gorootBinOrPathItem: (name) ->
+    return false unless name? and name isnt ''
+    result = @gorootBinItem(name)
+    result = @pathItem(name) unless result? and result
+    return result
+
+  gorootBinItem: (name) ->
+    return false unless name? and name isnt ''
+    return false unless @goroot? and @goroot isnt ''
+    result = path.join(@goroot, 'bin', name + @exe)
+    return false unless fs.existsSync(result)
+    return fs.realpathSync(result)
+
+  goTooldirItem: (name) ->
+    return false unless name? and name isnt ''
+    result = path.join(@gotooldir, name + @exe)
+    return fs.realpathSync(result) if fs.existsSync(result)
+    return false
 
   toolsAreMissing: ->
     return true if @format() is false

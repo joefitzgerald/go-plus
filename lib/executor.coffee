@@ -62,11 +62,11 @@ class Executor
       code = data
       callback(code, output, error, messages)
     args = [] unless args?
+
     bufferedprocess = new BufferedProcess({command, args, options, stdout, stderr, exit})
-    if input
-      bufferedprocess.process.stdin.end(input)
-    bufferedprocess.process.once 'error', (err) =>
-      if err.code is 'ENOENT'
+    bufferedprocess.onWillThrowError (err) =>
+      return unless err?
+      if err.error.code is 'ENOENT'
         message =
             line: false
             column: false
@@ -75,6 +75,9 @@ class Executor
             source: 'executor'
         messages.push message
       else
-        console.log err
-
+        console.log err.error
+      err.handle()
       callback(127, output, error, messages)
+
+    if input
+      bufferedprocess.process.stdin.end(input)
