@@ -11,10 +11,10 @@ init:
 # environment variables
 environment:
   GOPATH: c:\gopath
-  Path: c:\tools\go\bin;%Path%
 
 # scripts that run after cloning repository
 install:
+  - set Path=c:\tools\go\bin;%Path%
   - echo %Path%
   - choco version
   - cinst golang -Version 1.4
