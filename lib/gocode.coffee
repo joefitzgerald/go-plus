@@ -39,7 +39,7 @@ class Gocode
     @providers.push(provider)
 
   deactivate: ->
-    @editorSubscription?.off()
+    @editorSubscription?.dispose()
     @editorSubscription = null
 
     @providers.forEach (provider) =>

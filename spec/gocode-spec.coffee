@@ -1,16 +1,13 @@
 path = require 'path'
-{Workspace} = require 'atom'
 _ = require 'underscore-plus'
 AtomConfig = require './util/atomconfig'
 
 describe 'gocode', ->
-  [editor, editorView, dispatch, buffer, completionDelay] = []
+  [workspaceElement, editor, editorView, dispatch, buffer, completionDelay] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
     atomconfig.allfunctionalitydisabled()
-    atom.workspace = new Workspace()
-    atom.workspaceView = atom.views.getView(atom.workspace).__spacePenView
 
     # Enable live autocompletion
     atom.config.set("autocomplete-plus.enableAutoActivation", true)
@@ -19,9 +16,12 @@ describe 'gocode', ->
     atom.config.set 'autocomplete-plus.autoActivationDelay', completionDelay
     completionDelay += 100 # Rendering delay
 
+    workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
+
     waitsForPromise -> atom.workspace.open('gocode.go').then (e) ->
       editor = e
-      atom.workspaceView.attachToDom()
+      editorView = atom.views.getView(editor)
 
     waitsForPromise ->
       atom.packages.activatePackage('autocomplete-plus')
@@ -36,7 +36,6 @@ describe 'gocode', ->
       buffer = editor.getBuffer()
       dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       dispatch.goexecutable.detect()
-      editorView = atom.workspaceView.getActiveView()
 
     waitsFor ->
       dispatch.ready is true
@@ -45,38 +44,38 @@ describe 'gocode', ->
 
     it 'displays suggestions from gocode', ->
       runs ->
-        expect(editorView.find('.autocomplete-plus')).not.toExist()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([5, 11])
         editor.insertText 'l'
 
         advanceClock completionDelay + 1000
 
-        expect(editorView.find('.autocomplete-plus')).toExist()
-        expect(editorView.find('.autocomplete-plus span.word:eq(0)')).toHaveText 'Println('
-        expect(editorView.find('.autocomplete-plus span.label:eq(0)')).toHaveText 'func(a ...interface{}) (n int, err error)'
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        expect(editorView.querySelector('.autocomplete-plus span.word')).toHaveText('Println(')
+        expect(editorView.querySelector('.autocomplete-plus span.label')).toHaveText('func(a ...interface{}) (n int, err error)')
         editor.backspace()
 
     it 'does not display suggestions when no gocode suggestions exist', ->
       runs ->
-        expect(editorView.find('.autocomplete-plus')).not.toExist()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([6, 15])
         editor.insertText 'w'
 
         advanceClock completionDelay + 1000
 
-        expect(editorView.find('.autocomplete-plus')).not.toExist()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
     it 'does not display suggestions at the end of a line when no gocode suggestions exist', ->
       runs ->
-        expect(editorView.find('.autocomplete-plus')).not.toExist()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([5, 15])
         editor.backspace()
         editor.insertText ')'
         advanceClock completionDelay + 1000
-        expect(editorView.find('.autocomplete-plus')).not.toExist()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         editor.insertText ';'
         advanceClock completionDelay + 1000
-        expect(editorView.find('.autocomplete-plus')).not.toExist()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

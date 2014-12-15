@@ -2,7 +2,6 @@ path = require 'path'
 fs = require 'fs-plus'
 os = require 'os'
 temp = require('temp').track()
-{WorkspaceView} = require 'atom'
 _ = require 'underscore-plus'
 GoExecutable = require './../lib/goexecutable'
 Environment = require './../lib/environment'

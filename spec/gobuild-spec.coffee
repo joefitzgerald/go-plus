@@ -1,7 +1,6 @@
 path = require 'path'
 fs = require 'fs-plus'
 temp = require('temp').track()
-{Workspace} = require 'atom'
 _ = require 'underscore-plus'
 PathHelper = require './util/pathhelper'
 AtomConfig = require './util/atomconfig'
@@ -18,8 +17,6 @@ describe "build", ->
     oldGoPath = pathhelper.home() + path.sep + 'go' unless process.env.GOPATH?
     process.env['GOPATH']=directory
     atom.project.setPaths(directory)
-    atom.workspace = new Workspace()
-    atom.workspaceView = atom.views.getView(atom.workspace).__spacePenView
 
   afterEach ->
     process.env['GOPATH']=oldGoPath

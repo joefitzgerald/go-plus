@@ -385,7 +385,7 @@ class Dispatch
       else
         # LineMessageView
         @messagepanel.add new LineMessageView file: file, line: line, character: column, message: message.msg, className: className
-    @messagepanel.attach() if atom?.workspaceView?
+    @messagepanel.attach() if atom?.workspace?
 
   isValidEditor: (editor) ->
     editor?.getGrammar()?.scopeName is 'source.go'

@@ -1,7 +1,6 @@
 path = require 'path'
 fs = require 'fs-plus'
 temp = require('temp').track()
-{Workspace} = require 'atom'
 AtomConfig = require './util/atomconfig'
 
 describe "Go Plus", ->
@@ -12,8 +11,6 @@ describe "Go Plus", ->
     atomconfig.allfunctionalitydisabled()
     directory = temp.mkdirSync()
     atom.project.setPaths(directory)
-    atom.workspace = new Workspace()
-    atom.workspaceView = atom.views.getView(atom.workspace).__spacePenView
     filePath = path.join(directory, 'go-plus.go')
     fs.writeFileSync(filePath, '')
 
