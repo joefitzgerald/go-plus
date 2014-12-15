@@ -15,7 +15,7 @@ environment:
 # scripts that run after cloning repository
 install:
   - choco version
-  - cinst golang
+  - cinst golang -Version 1.4
   - go version
   - go env
   - mkdir c:\gopath
