@@ -92,7 +92,6 @@ class GoExecutable
     async.series([
       (callback) =>
         done = (exitcode, stdout, stderr) =>
-          console.log exitcode
           unless stderr? and stderr isnt ''
             if stdout? and stdout isnt ''
               components = stdout.replace(/\r?\n|\r/g, '').split(' ')
