@@ -1,5 +1,7 @@
 # go-plus – Improved Go Experience In Atom
 
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/joefitzgerald/go-plus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![OSX Build Status](https://travis-ci.org/joefitzgerald/go-plus.svg?branch=master)](https://travis-ci.org/joefitzgerald/go-plus)
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/d0cekvaprt9wo1et)](https://ci.appveyor.com/project/joefitzgerald/go-plus)
 
