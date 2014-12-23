@@ -1,3 +1,4 @@
+{Range}  = require('atom')
 _ = require('underscore-plus')
 path = require('path')
 
@@ -63,9 +64,11 @@ class GocodeProvider
   mapMessages: (data, text, index) ->
     return [] unless data?
     res = JSON.parse(data)
-
+    console.log(res)
     numPrefix = res[0]
     candidates = res[1]
+
+
 
     return [] unless candidates
 
@@ -73,12 +76,45 @@ class GocodeProvider
     for c in candidates
       suggestion =
         prefix: c.name.substring(0, numPrefix)
-        word: c.name
         label: c.type or c.class
-      suggestion.word += '(' if c.class is 'func' and text[index] isnt '('
+      if c.class is 'func'
+        suggestion.snippet = c.name + @generateSignature(c.type)
+        suggestion.label = c.class
+      else
+        suggestion.text = c.name
       suggestions.push(suggestion)
 
     return suggestions
+
+  generateSignature: (type) ->
+    signature = ""
+    skipBlank = false
+    parenCounter = 0
+    paramCount = 1
+    scanned = false
+
+    for char, index in type.split ''
+      if skipBlank
+        skipBlank = false
+        continue
+      if char == "("
+        parenCounter++
+        scanned = true
+        signature += "(${" + paramCount + ":"
+        paramCount++
+      else if char == ")"
+        parenCounter--
+        signature += "})"
+      else if parenCounter > 0 && char == ","
+        signature += "}, ${" + paramCount + ":"
+        paramCount++
+        skipBlank = true
+      else if parenCounter > 0
+        signature += char
+      if scanned && parenCounter == 0
+        break
+
+    return signature
 
   dispose: ->
     @dispatch = null
