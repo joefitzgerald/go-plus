@@ -5,7 +5,7 @@ _ = require 'underscore-plus'
 AtomConfig = require './util/atomconfig'
 
 describe "format", ->
-  [editor, dispatch, buffer, filePath] = []
+  [editor, dispatch, buffer, filePath, mainModule] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -22,10 +22,11 @@ describe "format", ->
 
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
+        .then (a) -> mainModule = a.mainModule
 
     runs ->
       buffer = editor.getBuffer()
-      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch = mainModule.dispatch
       dispatch.goexecutable.detect()
 
     waitsFor ->

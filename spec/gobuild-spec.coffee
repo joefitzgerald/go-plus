@@ -6,7 +6,7 @@ PathHelper = require './util/pathhelper'
 AtomConfig = require './util/atomconfig'
 
 describe "build", ->
-  [editor, dispatch, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath, pathhelper] = []
+  [editor, dispatch, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath, pathhelper, mainModule] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -38,11 +38,12 @@ describe "build", ->
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      runs ->
+      waitsForPromise ->
         atom.packages.activatePackage('go-plus')
+          .then (a) -> mainModule = a.mainModule
 
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.goexecutable.detect()
 
       waitsFor ->
@@ -54,7 +55,7 @@ describe "build", ->
         fs.unlinkSync(testFilePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n"
           expect(dispatch.messages?).toBe true
@@ -74,7 +75,7 @@ describe "build", ->
         fs.unlinkSync(filePath)
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\t42\n\tt.Error(\"Example Test\")\n}")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\t42\n\tt.Error(\"Example Test\")\n}"
           expect(dispatch.messages?).toBe true
@@ -94,7 +95,7 @@ describe "build", ->
         fs.unlinkSync(filePath)
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestExample(t *testing.T) {\n\tt.Error(\"Example Test\")\n}")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         go = dispatch.goexecutable.current()
         dispatch.once 'dispatch-complete', =>
           expect(fs.existsSync(path.join(directory, "src", "github.com", "testuser", "example", "example.test" + go.exe))).toBe false
@@ -130,9 +131,10 @@ describe "build", ->
 
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
+          .then (a) -> mainModule = a.mainModule
 
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.goexecutable.detect()
 
       waitsFor ->
@@ -151,7 +153,7 @@ describe "build", ->
         buffer.save()
         secondBuffer.save()
         thirdBuffer.save()
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe "package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}"
           expect(dispatch.messages?).toBe true
@@ -175,7 +177,7 @@ describe "build", ->
         buffer.save()
         secondBuffer.save()
         thirdBuffer.save()
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe "package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}"
           expect(dispatch.messages?).toBe true
@@ -203,7 +205,7 @@ describe "build", ->
         testBuffer.setText("package util\n\nimport \"testing\"\nimport \"fmt\"\n\nfunc TestExample(t *testing.T) {\n\tfmt.Println(Stringify(\"Testing\"))\n}")
         secondBuffer.save()
         thirdBuffer.save()
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe "package util\n\nimport \"fmt\"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println(\"Processing...\")\n\tfmt.Println(Stringify(\"Testing\"))\n}"
           expect(dispatch.messages?).toBe true
@@ -240,11 +242,12 @@ describe "build", ->
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      runs ->
+      waitsForPromise ->
         atom.packages.activatePackage('go-plus')
+          .then (a) -> mainModule = a.mainModule
 
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.goexecutable.detect()
 
       waitsFor ->
@@ -256,7 +259,7 @@ describe "build", ->
         fs.unlinkSync(testFilePath)
         buffer = editor.getBuffer()
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.once 'dispatch-complete', =>
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe "package main\n\nimport \"fmt\"\n\nfunc main()  {\n42\nreturn\nfmt.Println(\"Unreachable...\")}\n"
           expect(dispatch.messages?).toBe true
