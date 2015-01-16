@@ -9,6 +9,7 @@ Gocode = require './gocode'
 Executor = require './executor'
 Environment = require './environment'
 GoExecutable = require './goexecutable'
+Godef = require './godef'
 SplicerSplitter = require './util/splicersplitter'
 _ = require 'underscore-plus'
 {MessagePanelView, LineMessageView, PlainMessageView} = require 'atom-message-panel'
@@ -41,6 +42,7 @@ class Dispatch
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
     @gocode = new Gocode(this)
+    @godef = new Godef(this)
 
     @messagepanel = new MessagePanelView title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true unless @messagepanel?
 
@@ -80,6 +82,7 @@ class Dispatch
     @gopath.destroy()
     @gofmt.destroy()
     @gocode.destroy()
+    @godef.destroy()
     @gocover = null
     @gobuild = null
     @golint = null
@@ -87,6 +90,7 @@ class Dispatch
     @gopath = null
     @gofmt = null
     @gocode = null
+    @godef = null
     @ready = false
     @activated = false
     @emit 'destroyed'
