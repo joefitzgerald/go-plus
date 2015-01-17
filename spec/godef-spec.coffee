@@ -1,5 +1,20 @@
-# TODO:
-# get the 1st test to pass
+###
+  TODO
+  - unit tests for the word finder?
+  - match godef approach to existing go-plus
+  - how to test for dispatch of a command?
+  - how to wait for presentation of a new editor?
+  - check for paths of exe and source files on Windows
+  - copy text from test file
+
+ Questions for
+
+  - why function/method args sometimes, sometimes not, in brackets? (happily
+    inconsistent, or is there a patter I'm not seeing?)
+
+    A good reason to keep consistent: f() looks a lot like f () ->
+
+ ###
 
 path = require 'path'
 fs = require 'fs-plus'
@@ -8,6 +23,7 @@ _ = require ("underscore-plus")
 
 describe "godef", ->
   [editor, editorView, dispatch, buffer, filePath, workspaceElement] = []
+  testText = "package main\n import \"fmt\"\n var testvar = \"stringy\"\n\nfunc f(){fmt.Println( testvar )}"
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -29,6 +45,8 @@ describe "godef", ->
 
     runs ->
       buffer = editor.getBuffer()
+      buffer.setText testText
+      buffer.save()
       dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       dispatch.goexecutable.detect()
 
@@ -53,22 +71,52 @@ describe "godef", ->
         it "should not dispatch godef", ->
           expect(false).toBe(true)
 
+      describe "with a word under the cursor", ->
+        describe "defined within the current file", ->
+          fit "should move the cursor to the definition", ->
+            done = false
+            console.log "file written to #{filePath}"
+            runs ->
+              editor.setCursorBufferPosition([4,24])
+              atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
 
-      describe "with the cursor on a word start", ->
-        fit "should open a new text editor", ->
-          wordToDefine = "word"
-          editor.setText(wordToDefine)
-          editor.setCursorBufferPosition([1,1])
-          atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
+              ### TODO this is the test I'm working on
+                   Here's the test impasse
+                   Currently although gotoDefinitionForWord works, the test doesn't.
+                   I think atom.commands.dispatch() is returning before the buffer
+                   cursor is moved
+                  So how to wait for presumably asynchronous dispatch call???
 
-          done = false
-          runs ->
-            expect(atom.workspace.getActiveTextEditor()).not.toBe(editor)
-            # This fails, because the open is asynchronous (at this stage we have the .go source file still)
-            # How to test this? The command dispatch sets off an asynchronous open
-            # (ie. of the file containing the word definition)
-            # The command dispatch does not itself return a promise. So what is there to wait for
-            done = true
+                  One possibility is to listen for an event we set up on
+                  Godef::gotoDefinitionForWord
+                        dispatch.godef.on 'testingdone', ->
+                          console.log "I GOT IT"
+                  Possibly bad? Only emitted for test?
+                  Try the new Atom non-stringly event system:
+                    https://github.com/atom/event-kit
+                    http://blog.atom.io/2014/09/16/new-event-subscription-api.html
+              ###
+              expect(editor.getCursorBufferPosition().toArray()).toEqual([2,5])
+              # would rather compare with a Point, but always gives me a ReferenceError
+              done = true
+            waitsFor ->
+              done is true
 
-          waitsFor ->
-            done is true
+        describe "defined outside the current file", ->
+          it "should open a new text editor", ->
+            done = false
+            runs ->
+              editor.setText("notAGoKeyword")
+              editor.setCursorBufferPosition([1,1])
+              atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
+              newItemWatcher = atom.workspace.onDidChangeActivePaneItem (item) ->
+                console.log "new ITEM: #{item}"
+                expect(item).not.toBe(editor)
+                done = true
+                newItemWatcher dispose()
+
+            waitsFor ->
+              done is true
+
+          it "with the cursor at the definition", ->
+            expect(false).toBe(true)

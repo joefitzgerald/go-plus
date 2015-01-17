@@ -1,16 +1,5 @@
-###
-  TODO
-  - fix 'error deactiviating go-plus'
- Questions
-
-  - why function/method args sometimes, sometimes not, in brackets? (happily
-    inconsistent, or is there a patter I'm not seeing?)
-  -
-
- ###
-
-
 {Emitter, Subscriber} = require 'emissary'
+path = require 'path'
 
 module.exports =
 class Godef
@@ -30,29 +19,46 @@ class Godef
     @dispatch = null
 
   reset: (editor) ->
-    @emit 'reset', editor
+    @emit 'reset', @editor
 
   gotoDefinitionForWordAtCursor: ->
-    editor = atom?.workspace?.getActiveTextEditor()
-    return unless @dispatch.isValidEditor editor
-    @reset editor
+    @editor = atom?.workspace?.getActiveTextEditor()
+    return unless @dispatch.isValidEditor @editor
+    @reset @editor
     done = (err, messages) =>
-      @dispatch.resetAndDisplayMessages editor, messages
-    @gotoDefinitionForWord  @wordAtCursor(editor), done
+      @dispatch.resetAndDisplayMessages @editor, messages
+    @gotoDefinitionForWord  @wordAtCursor(), done
 
 
   gotoDefinitionForWord: (word, callback = ->) ->
-    console.log "Finding definition for word: #{word}"
+
+    console.log "Finding definition for word: #{word}\n in buffer: #{@editor.getText()}"
+
     messages = {}
-    if word.length > 0 then
-      # invoke godef with word and capture output
+    if word.length > 0
+      @emit 'testingdone'
+      # TODO follow go-plus pattern for cmd invocation
+      command = 'godef'
+      env = null
+      filename = @editor.getPath()
+      cwd = path.dirname(filename)
+      args = ['-f', filename, word]
+      done = (exitcode, stdout, stderr, messages) =>
+        console.log "#{command} exitcode: #{exitcode}, it reported: #{stdout}"
+        if exitcode == 0
+          output = stdout.split ":"
+          wordPosition = [parseInt(output[1],10) - 1,parseInt(output[2],10) - 1]
+          @editor.setCursorBufferPosition wordPosition
+        else
+          # TODO report failures  as per else clause below (not an id; not found)
+          console.log 'no bloody good'
+
+      @dispatch.executor.exec(command, cwd, env, done, args)
       # if +'ve, capture filename, line, col
       # report this for goplus panel?
       # open and make new editor with filename
       # place cursor at line and column
       # report to dispatch / goplus for panel ??
-      #atom.workspace.open('/tmp/txt')
-
     else
       message =
         line: false
@@ -63,9 +69,7 @@ class Godef
 
     callback null, [message]
 
-
-
-  wordAtCursor: (editor )->
+  wordAtCursor: ->
     # options =
     #   wordRegex: /\w+\.\w+/
-    return editor.getWordUnderCursor()
+    return @editor.getWordUnderCursor()
