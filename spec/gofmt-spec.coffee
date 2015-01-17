@@ -31,6 +31,23 @@ describe "format", ->
     waitsFor ->
       dispatch.ready is true
 
+  it "reformats the file", ->
+    workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
+
+    done = false
+    runs ->
+      dispatch.gofmt.once 'fmt-complete', =>
+        expect(buffer.getText()).toBe "package main\n\nfunc main() {\n}\n"
+        expect(dispatch.messages?).toBe true
+        expect(_.size(dispatch.messages)).toBe 0
+        done = true
+      buffer.setText("package main\n\nfunc main()  {\n}\n")
+      atom.commands.dispatch workspaceElement, 'golang:gofmt'
+
+    waitsFor ->
+      done is true
+
   describe "when format on save is enabled", ->
     beforeEach ->
       atom.config.set("go-plus.formatOnSave", true)
