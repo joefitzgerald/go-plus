@@ -2,6 +2,7 @@
 {Subscriber, Emitter} = require 'emissary'
 _ = require 'underscore-plus'
 path = require 'path'
+fs = require 'fs'
 
 module.exports =
 class Gofmt
@@ -47,7 +48,12 @@ class Gofmt
     args = ['-w']
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.formatArgs'))
     args = _.union(args, configArgs) if configArgs? and _.size(configArgs) > 0
-    args = _.union(args, [buffer.getPath()])
+    filePath = buffer.getPath()
+    unless saving
+      position = editor.getCursorBufferPosition()
+      filePath = @getTempPath(buffer.getPath())
+      fs.writeFileSync(filePath, buffer.getText())
+    args = _.union(args, [filePath])
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
@@ -67,6 +73,11 @@ class Gofmt
       callback(null, [message])
       return
     done = (exitcode, stdout, stderr, messages) =>
+      unless saving
+        formattedText = fs.readFileSync(filePath, editor.getEncoding())
+        editor.setText(formattedText)
+        fs.unlink(filePath)
+        editor.setCursorBufferPosition(position)
       console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(stderr, cwd) if stderr? and stderr.trim() isnt ''
       @emit @name + '-complete', editor, saving
@@ -101,3 +112,9 @@ class Gofmt
       extract(match)
       break unless match?
     return messages
+
+  getTempPath: (filePath) ->
+    fileDirPath = path.dirname(filePath)
+    fileName = path.basename(filePath)
+    tempFileName = ".gofmt-#{fileName}.tmp"
+    filePath = path.resolve(fileDirPath, tempFileName)
