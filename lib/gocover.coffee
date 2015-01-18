@@ -26,7 +26,7 @@ class Gocover
 
     atom.commands.add 'atom-workspace',
       'golang:cleargocover': => @clearMarkersFromEditors()
-      
+
     atom.workspace.observeTextEditors (editor) =>
       @addMarkersToEditor(editor)
 
@@ -114,6 +114,9 @@ class Gocover
       @emit @name + '-complete', editor, saving
       callback(null)
       return
+    unless saving
+      @dispatch.dispatching = true
+      buffer.save()
 
     if @covering
       @emit @name + '-complete', editor, saving
