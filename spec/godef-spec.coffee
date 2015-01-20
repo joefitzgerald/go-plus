@@ -1,9 +1,11 @@
 ###
   TODO
-  - match godef cmd invocation approach to existing go-plus approach
+  - highlight defined term
+    (see https://atom.io/docs/api/v0.174.0/Decoration)
   - scroll target to put the def line at top of ed pane?
   - fix bug in cursor-moving test
   - how to test for dispatch of a command?
+  - should I use mapMessages approach? I'm forking based on exitcode.
   - check for paths of exe and source files on Windows
   - copy test text from test file instead of using string lits?
   - deal with multiple cursors
@@ -28,7 +30,7 @@ temp = require('temp').track()
 _ = require ("underscore-plus")
 {Subscriber} = require 'emissary'
 
-fdescribe "godef", ->
+describe "godef", ->
   [editor, editorView, dispatch, filePath, workspaceElement] = []
   testText = "package main\n import \"fmt\"\n var testvar = \"stringy\"\n\nfunc f(){fmt.Println( testvar )}\n\n"
 

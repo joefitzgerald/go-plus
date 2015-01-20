@@ -39,13 +39,9 @@ class Godef
     @gotoDefinitionForWord  @wordAtCursor(), done
 
   gotoDefinitionForWord: (word, callback = ->) ->
-    # TODO remove temp
-    console.log "Finding definition for word: *#{word}*"
     message = {}
 
     unless word.length > 0
-      # TODO remove temp
-      console.log "NOTHING TO DEFINE"
       message =
         line: false
         column: false
@@ -56,8 +52,6 @@ class Godef
       return
 
     done = (exitcode, stdout, stderr, messages) =>
-      # TODO remove temp
-      console.log "Godef exitcode: #{exitcode}, reported: #{stdout}" # TODO remove temp
       if exitcode == 0
         outputs = stdout.split ":"
         # atom's cursors 0-based; godef uses diff-like 1-based
@@ -66,15 +60,12 @@ class Godef
         targetFilePath = outputs[0]
         if targetFilePath == @editor.getPath()
           @editor.setCursorBufferPosition [col, line]
+          # @editor.markBufferRange([[1,1], ])
           @emit @didCompleteNotification, @editor, false
         else
-          # TODO remove temp
-          console.log "opening #{targetFilePath}"
           atom.workspace.open(targetFilePath, {initialLine:line, initialColumn:col}).then (e) =>
             @emit @didCompleteNotification, @editor, false
       else # godef can't find def
-        # TODO remove temp
-        console.log 'GODEF FOUND NO DEF'
         message =
           line: false
           column: false
@@ -84,12 +75,11 @@ class Godef
       callback null, [message]
 
     cmd = 'godef'
-    env = null
+    env = @dispatch.env()
     filePath = @editor.getPath()
     cwd = path.dirname(filePath)
     args = ['-f', filePath, word]
 
-    console.log "about to dispatch #{cmd}"
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   wordAtCursor: ->
