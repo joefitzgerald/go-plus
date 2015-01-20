@@ -1,12 +1,12 @@
 ###
   TODO
-  - unit tests for the word finder?
-  - match godef approach to existing go-plus
+  - match godef cmd invocation approach to existing go-plus
+  - fix bug in cursor-moving test
   - how to test for dispatch of a command?
-  - how to wait for presentation of a new editor?
   - check for paths of exe and source files on Windows
   - copy test text from test file instead of using string lits?
   - deal with multiple cursors
+  - scroll target to put the def line at top of ed pane?
 
  Questions for
 
@@ -120,10 +120,10 @@ describe "godef", ->
            editor.isModified() is false
 
         # TODO fix something async-funky making this test fail
-        xdescribe "defined within the current file", ->
+        fdescribe "defined within the current file", ->
           it "should move the cursor to the definition", ->
             done = false
-            subscription = dispatch.godef.on "#{dispatch.godef.name}-complete", ->
+            subscription = dispatch.godef.onDidComplete ->
               # `new Point` always results in ReferenceError (why?), hence array
               expect(editor.getCursorBufferPosition().toArray()).toEqual([2,5]) #"testvar" decl
               done = true
@@ -135,20 +135,18 @@ describe "godef", ->
             runs ->
               subscription.dispose()
 
-        # TODO implement
-        xdescribe "defined outside the current file", ->
+        describe "defined outside the current file", ->
           it "should open a new text editor", ->
-
             done = false
+            subscription = dispatch.godef.onDidComplete ->
+              # `new Point` always results in ReferenceError (why?), hence array
+              currentEditor = atom.workspace.getActiveTextEditor()
+              expect(currentEditor.getTitle()).toBe('print.go')
+              done = true
             runs ->
-              editor.setText("notAGoKeyword")
-              editor.setCursorBufferPosition([1,1])
+              editor.setCursorBufferPosition([4,10]) # "fmt.Println"
               atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-              newItemWatcher = atom.workspace.onDidChangeActivePaneItem (item) ->
-                console.log "new ITEM: #{item}"
-                expect(item).not.toBe(editor)
-                done = true
-                newItemWatcher dispose()
-
             waitsFor ->
-              done is true
+              done == true
+            runs ->
+              subscription.dispose()
