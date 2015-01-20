@@ -1,4 +1,6 @@
 {Emitter, Subscriber} = require 'emissary'
+# should use event-kit as per http://blog.atom.io/2014/09/16/new-event-subscription-api.html
+# (so far unable to get subscriptions to work)
 path = require 'path'
 
 module.exports =
@@ -13,6 +15,7 @@ class Godef
     @warningNotFoundMessage = 'No word under cursor to define'
     atom.commands.add 'atom-workspace',
       'golang:godef': => @gotoDefinitionForWordAtCursor()
+    @emitter = new Emitter
 
   destroy: ->
     @unsubscribe()
@@ -29,14 +32,12 @@ class Godef
       @dispatch.resetAndDisplayMessages @editor, messages
     @gotoDefinitionForWord  @wordAtCursor(), done
 
-
   gotoDefinitionForWord: (word, callback = ->) ->
 
-    console.log "Finding definition for word: #{word}\n in buffer: #{@editor.getText()}"
-
-    messages = {}
+    # TODO remove temp
+    console.log "Finding definition for word: *#{word}*"
+    message = []
     if word.length > 0
-      @emit 'testingdone'
       # TODO follow go-plus pattern for cmd invocation
       command = 'godef'
       env = null
@@ -44,13 +45,16 @@ class Godef
       cwd = path.dirname(filename)
       args = ['-f', filename, word]
       done = (exitcode, stdout, stderr, messages) =>
-        console.log "#{command} exitcode: #{exitcode}, it reported: #{stdout}"
+        console.log "#{command} exitcode: #{exitcode}, reported: #{stdout}" # TODO remove temp
         if exitcode == 0
-          output = stdout.split ":"
-          wordPosition = [parseInt(output[1],10) - 1,parseInt(output[2],10) - 1]
-          @editor.setCursorBufferPosition wordPosition
+          outputs = stdout.split ":"
+          # atom's cursors 0-based; godef uses diff 1-based
+          wordPoint = [parseInt(outputs[1],10) - 1,parseInt(outputs[2],10) - 1]
+          @editor.setCursorBufferPosition wordPoint
+          @emit "#{@name}-complete", @editor, false
         else
           # TODO report failures  as per else clause below (not an id; not found)
+          # TODO remove temp
           console.log 'no bloody good'
 
       @dispatch.executor.exec(command, cwd, env, done, args)
@@ -59,7 +63,8 @@ class Godef
       # open and make new editor with filename
       # place cursor at line and column
       # report to dispatch / goplus for panel ??
-    else
+    else # no word found
+      console.log "NOTHING TO DEFINE"
       message =
         line: false
         column: false
@@ -70,6 +75,6 @@ class Godef
     callback null, [message]
 
   wordAtCursor: ->
-    # options =
-    #   wordRegex: /\w+\.\w+/
-    return @editor.getWordUnderCursor()
+    options =
+      wordRegex: /[\w+\.]*/
+    return @editor.getWordUnderCursor(options)
