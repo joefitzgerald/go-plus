@@ -24,7 +24,7 @@ class Godef
     @emit 'reset', @editor
 
   # new pattern as per http://blog.atom.io/2014/09/16/new-event-subscription-api.html
-  # (so far unable to get event-kit subscriptions to work)
+  # (but so far unable to get event-kit subscriptions to work)
   onDidComplete: (callback) ->
     @on @didCompleteNotification, callback
 
@@ -36,7 +36,8 @@ class Godef
     @reset @editor
     done = (err, messages) =>
       @dispatch.resetAndDisplayMessages @editor, messages
-    @gotoDefinitionForWord  @wordAtCursor(), done
+    {word, range} = @wordAtCursor()
+    @gotoDefinitionForWord word, done
 
   gotoDefinitionForWord: (word, callback = ->) ->
     message = {}
@@ -60,10 +61,11 @@ class Godef
         targetFilePath = outputs[0]
         if targetFilePath == @editor.getPath()
           @editor.setCursorBufferPosition [col, line]
-          # @editor.markBufferRange([[1,1], ])
+          @highlightWordAtCursor()
           @emit @didCompleteNotification, @editor, false
         else
           atom.workspace.open(targetFilePath, {initialLine:line, initialColumn:col}).then (e) =>
+            @highlightWordAtCursor(atom.workspace.getActiveEditor())
             @emit @didCompleteNotification, @editor, false
       else # godef can't find def
         message =
@@ -82,7 +84,20 @@ class Godef
 
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
-  wordAtCursor: ->
+  wordAtCursor: (editor = @editor) ->
     options =
       wordRegex: /[\w+\.]*/
-    return @editor.getWordUnderCursor(options)
+    cursor = editor.getCursor()
+    # TODO this is probably a furphy. It's the range of godef's output that's needed
+    range = cursor.getCurrentWordBufferRange(options)
+    word = @editor.getTextInBufferRange(range)
+    return {word: word, range: range}
+
+  highlightWordAtCursor: (editor = @editor) ->
+    {word, range} = @wordAtCursor(editor)
+    highlightMarker = editor.markBufferRange(range, {invalidate:'inside'})
+    highlightDecoration = editor.decorateMarker(highlightMarker, {type:'highlight', class:'goplus-godef-highlight'})
+    cursor = editor.getCursor()
+    # TODO how
+    subscription = cursor.onDidChangePosition ->
+      highlightMarker.destroy()
