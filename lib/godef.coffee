@@ -40,7 +40,7 @@ class Godef
     @gotoDefinitionForWord word, done
 
   gotoDefinitionForWord: (word, callback = ->) ->
-    message = {}
+    message = null
 
     unless word.length > 0
       message =
@@ -58,6 +58,9 @@ class Godef
         # atom's cursors 0-based; godef uses diff-like 1-based
         line = parseInt(outputs[1],10) - 1
         col = parseInt(outputs[2],10) - 1
+
+        console.log "line: #{line}, col: #{col}"
+
         targetFilePath = outputs[0]
         if targetFilePath == @editor.getPath()
           @editor.setCursorBufferPosition [col, line]

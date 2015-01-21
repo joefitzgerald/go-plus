@@ -1,18 +1,22 @@
 ###
-  TODO
-  - bug?: never dispose() cursor subscriptions in godef.coffee
-  - bug: own-file def presents go-plus message window (empty)
+  TODO - Essential
+  * bug: subsequent invocations jump to previous definition
   - bug: "Uncaught TypeError: Cannot read property 'add' of null",
-  - scroll target to put the def line at top of ed pane when it's in a different file?
+  - bug?: never dispose() cursor subscriptions in godef.coffee
   - how to test for dispatch of a command?
-  - should I use mapMessages approach? I'm forking based on exitcode.
+  - thorough playing to destruction with lots of go files
+    (use on a couple of days' Go programming)
   - check for paths of exe and source files on Windows
-  - copy test text from test file instead of using string lits?
   - deal with multiple cursors
   - why can item in `for _, item := range env {` not be found by godef?
+
+  TODO - Enhancements
+  - copy test text from test file instead of using string lits?
+  - scroll target to put the def line at top of ed pane when it's in a different file?
+  - should I use mapMessages approach? I'm forking based on exitcode.
   - consider -webkit-animation: to animate the definition highlight?
 
- Questions for
+ Questions for package maintainer
 
   - why function/method args sometimes, sometimes not, in brackets? (happily
     inconsistent, or is there a patter I'm not seeing?)

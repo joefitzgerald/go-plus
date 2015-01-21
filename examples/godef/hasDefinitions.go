@@ -2,16 +2,18 @@ package main
 
 import "fmt"
 
-var test = "test string"
+var sausage testStruct
 
 type testStruct struct {
 	x int
 	y string
 }
 
+var test = "test string"
+
 func main() {
-	x := testStruct{}
-	fmt.Printf("%s, struct is of type %T\ntest is %s", hello(), x, test)
+	sausage = testStruct{}
+	fmt.Printf("%s, struct is of type %T\ntest is %s", hello(), sausage, test)
 }
 
 func hello() string {
