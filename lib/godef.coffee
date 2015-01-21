@@ -12,6 +12,7 @@ class Godef
     @name = 'def'
     @didCompleteNotification = "#{@name}-complete"
     @warningNotFoundMessage = "No word under cursor to define"
+    @warningMultipleCursorsMessage = "Godef only works with a single cursor"
     atom.commands.add 'atom-workspace',
       'golang:godef': => @gotoDefinitionForWordAtCursor()
     @cursorOnChangeSubscription = null
@@ -31,12 +32,21 @@ class Godef
 
   gotoDefinitionForWordAtCursor: ->
     @editor = atom?.workspace?.getActiveTextEditor()
+    done = (err, messages) =>
+      @dispatch.resetAndDisplayMessages @editor, messages
     unless @dispatch.isValidEditor @editor
       @emit @didCompleteNotification, @editor, false
       return
+    unless !@editor.hasMultipleCursors()
+      message =
+        line: false
+        column: false
+        msg: @warningMultipleCursorsMessage
+        type: 'warning'
+        source: @name
+      done null, [message]
+      return
     @reset @editor
-    done = (err, messages) =>
-      @dispatch.resetAndDisplayMessages @editor, messages
     {word, range} = @wordAtCursor()
     @gotoDefinitionForWord word, done
 

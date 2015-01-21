@@ -1,14 +1,14 @@
 ###
   TODO - Essential
-  - BUG: 
+  - BUG:
     "Uncaught TypeError: Cannot read property 'checkBuffer' of null", source: /Users/crispinb/work/code/atom/go-plus/lib/dispatch.coffee (583)
       (in dispatch::triggerPipeline)
      "Uncaught TypeError: Cannot read property 'add' of null", source: /Users/crispinb/work/code/atom/go-plus/lib/dispatch.coffee (752)
       (in dispatch::updatePane)
     No idea about this as yet
 
+  * deal with multiple cursors
   - how to test for dispatch of a command?
-  - deal with multiple cursors
   - check for paths of exe and source files on Windows?
   - thorough playing to destruction with lots of go files
     (use on a couple of days' Go programming)
@@ -38,7 +38,7 @@ temp = require('temp').track()
 _ = require ("underscore-plus")
 {Subscriber} = require 'emissary'
 
-fdescribe "godef", ->
+describe "godef", ->
   [editor, editorView, dispatch, filePath, workspaceElement] = []
   testText = "package main\n import \"fmt\"\n var testvar = \"stringy\"\n\nfunc f(){fmt.Println( testvar )}\n\n"
 
@@ -119,6 +119,26 @@ fdescribe "godef", ->
       expect(godefCommand.length).toEqual(1)
 
   describe "when godef command is invoked", ->
+    beforeEach ->
+      editor.setText testText
+      editor.save()
+
+    waitsFor ->
+      editor.isModified() is false
+
+    fdescribe "if there is more than one cursor", ->
+      it "displays a warning message", ->
+          editor.setCursorBufferPosition([0,0])
+          editor.addCursorAtBufferPosition([1,0])
+          atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
+          expect(dispatch.messages?).toBe(true)
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0].msg).toBe(dispatch.godef.warningMultipleCursorsMessage)
+
+      it "should not dispatch godef", ->
+        expect(false).toBe(true)
+
+
       describe "with no word under the cursor", ->
         beforeEach ->
           editor.setText ""
