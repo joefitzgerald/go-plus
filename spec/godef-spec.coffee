@@ -1,8 +1,8 @@
 ###
   TODO
-  - tests for word and range finding
-  - bug: own-file def presents go-plus message window (empty)
   - bug?: never dispose() cursor subscriptions in godef.coffee
+  - bug: own-file def presents go-plus message window (empty)
+  - bug: "Uncaught TypeError: Cannot read property 'add' of null",
   - scroll target to put the def line at top of ed pane when it's in a different file?
   - how to test for dispatch of a command?
   - should I use mapMessages approach? I'm forking based on exitcode.
@@ -31,7 +31,7 @@ temp = require('temp').track()
 _ = require ("underscore-plus")
 {Subscriber} = require 'emissary'
 
-describe "godef", ->
+fdescribe "godef", ->
   [editor, editorView, dispatch, filePath, workspaceElement] = []
   testText = "package main\n import \"fmt\"\n var testvar = \"stringy\"\n\nfunc f(){fmt.Println( testvar )}\n\n"
 
@@ -65,41 +65,45 @@ describe "godef", ->
     beforeEach ->
       godef = dispatch.godef
       godef.editor = editor
+      editor.setText("foo foo.bar bar")
 
-    it "should return foo for |foo", ->
-      editor.setText("foo bar bar")
+    fit "should return foo for |foo", ->
       editor.setCursorBufferPosition([0,0])
       {word, range} = godef.wordAtCursor()
       expect(word).toEqual('foo')
-      expect(range).toEqual([[0,0], [0,2]])
-
-    it "should return foo for bar bar |foo", ->
-      editor.setText("bar bar foo")
-      editor.setCursorBufferPosition([0,8])
-      {word, range} = godef.wordAtCursor()
-      expect(word).toEqual('foo')
-      expect(range).toEqual([[0,8], [0,11]])
+      expect(range).toEqual([[0,0], [0,3]])
 
     it "should return foo for fo|o", ->
-      editor.setText("foo")
       editor.setCursorBufferPosition([0,2])
-      expect(godef.wordAtCursor()).toEqual('foo')
+      {word, range} = godef.wordAtCursor()
+      expect(word).toEqual('foo')
+      expect(range).toEqual([[0,0], [0,3]])
 
-    # arguable, but easiest to implement using atom Cursor's methods
-    it "should return empty for foo|", ->
-      editor.setText("foo")
+    # odd that word range includes the trailing space, but cursor there
+    # isn't 'in' the word, but that's how Atom does it
+    it "should return no word for foo| foo", ->
       editor.setCursorBufferPosition([0,3])
-      expect(godef.wordAtCursor()).toEqual('')
+      {word, range} = godef.wordAtCursor()
+      expect(word).toEqual('')
+      expect(range).toEqual([[0,3], [0,3]])
+
+    it "should return bar for |bar", ->
+      editor.setCursorBufferPosition([0,12])
+      {word, range} = godef.wordAtCursor()
+      expect(word).toEqual('bar')
+      expect(range).toEqual([[0,12], [0,15]])
 
     it "should return foo.bar for !foo.bar", ->
-      editor.setText("foo.bar")
-      editor.setCursorBufferPosition([0,0])
-      expect(godef.wordAtCursor()).toEqual('foo.bar')
+      editor.setCursorBufferPosition([0,4])
+      {word, range} = godef.wordAtCursor()
+      expect(word).toEqual('foo.bar')
+      expect(range).toEqual([[0,4], [0,11]])
 
-    it "should return foo.bar for foo.ba|r", ->
-      editor.setText("foo.bar")
-      editor.setCursorBufferPosition([0,6])
-      expect(godef.wordAtCursor()).toEqual('foo.bar')
+    fit "should return foo.bar for foo.ba|r", ->
+      editor.setCursorBufferPosition([0,10])
+      {word, range} = godef.wordAtCursor()
+      expect(word).toEqual('foo.bar')
+      expect(range).toEqual([[0,4], [0,11]])
 
   describe "when go-plus is loaded", ->
     it "should have registered the golang:godef command",  ->
@@ -152,7 +156,7 @@ describe "godef", ->
             runs ->
               subscription.dispose()
 
-          fit "should create a highlight decoration of the correct class", ->
+          it "should create a highlight decoration of the correct class", ->
             done = false
             subscription = dispatch.godef.onDidComplete ->
               higlightClass = 'goplus-godef-highlight'
