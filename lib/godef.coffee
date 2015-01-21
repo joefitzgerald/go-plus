@@ -14,7 +14,7 @@ class Godef
     @warningNotFoundMessage = "No word under cursor to define"
     atom.commands.add 'atom-workspace',
       'golang:godef': => @gotoDefinitionForWordAtCursor()
-    @emitter = new Emitter
+    @cursorOnChangeSubscription = null
 
   destroy: ->
     @unsubscribe()
@@ -22,6 +22,7 @@ class Godef
 
   reset: (editor) ->
     @emit 'reset', @editor
+    @cursorOnChangeSubscription?.dispose()
 
   # new pattern as per http://blog.atom.io/2014/09/16/new-event-subscription-api.html
   # (but so far unable to get event-kit subscriptions to work)
@@ -61,11 +62,11 @@ class Godef
         targetFilePath = outputs[0]
         if targetFilePath == @editor.getPath()
           @editor.setCursorBufferPosition [row, col]
-          @highlightWordAtCursor()
+          @cursorOnChangeSubscription = @highlightWordAtCursor()
           @emit @didCompleteNotification, @editor, false
         else
           atom.workspace.open(targetFilePath, {initialLine:row, initialColumn:col}).then (e) =>
-            @highlightWordAtCursor(atom.workspace.getActiveEditor())
+            @cursorOnChangeSubscription = @highlightWordAtCursor(atom.workspace.getActiveEditor())
             @emit @didCompleteNotification, @editor, false
       else # godef can't find def
         message =
@@ -98,6 +99,4 @@ class Godef
     highlightMarker = editor.markBufferRange(range, {invalidate:'inside'})
     highlightDecoration = editor.decorateMarker(highlightMarker, {type:'highlight', class:'goplus-godef-highlight'})
     cursor = editor.getCursor()
-    # TODO how
-    subscription = cursor.onDidChangePosition ->
-      highlightMarker.destroy()
+    cursor.onDidChangePosition ->  highlightMarker.destroy()

@@ -1,14 +1,12 @@
 ###
   TODO - Essential
-  * bug: subsequent invocations jump to previous definition
+  * bug: never dispose() cursor subscriptions in godef.coffee
   - bug: "Uncaught TypeError: Cannot read property 'add' of null",
-  - bug?: never dispose() cursor subscriptions in godef.coffee
   - how to test for dispatch of a command?
+  - deal with multiple cursors
+  - check for paths of exe and source files on Windows?
   - thorough playing to destruction with lots of go files
     (use on a couple of days' Go programming)
-  - check for paths of exe and source files on Windows
-  - deal with multiple cursors
-  - why can item in `for _, item := range env {` not be found by godef?
 
   TODO - Enhancements
   - copy test text from test file instead of using string lits?
