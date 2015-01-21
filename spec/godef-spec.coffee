@@ -1,15 +1,16 @@
 ###
   TODO
-  - highlight defined term
-    (see https://atom.io/docs/api/v0.174.0/Decoration)
-  - scroll target to put the def line at top of ed pane?
-  - fix bug in cursor-moving test
+  - tests for word and range finding
+  - bug: own-file def presents go-plus message window (empty)
+  - bug?: never dispose() cursor subscriptions in godef.coffee
+  - scroll target to put the def line at top of ed pane when it's in a different file?
   - how to test for dispatch of a command?
   - should I use mapMessages approach? I'm forking based on exitcode.
   - check for paths of exe and source files on Windows
   - copy test text from test file instead of using string lits?
   - deal with multiple cursors
   - why can item in `for _, item := range env {` not be found by godef?
+  - consider -webkit-animation: to animate the definition highlight?
 
  Questions for
 
@@ -66,9 +67,18 @@ describe "godef", ->
       godef.editor = editor
 
     it "should return foo for |foo", ->
-      editor.setText("foo")
+      editor.setText("foo bar bar")
       editor.setCursorBufferPosition([0,0])
-      expect(godef.wordAtCursor()).toEqual('foo')
+      {word, range} = godef.wordAtCursor()
+      expect(word).toEqual('foo')
+      expect(range).toEqual([[0,0], [0,2]])
+
+    it "should return foo for bar bar |foo", ->
+      editor.setText("bar bar foo")
+      editor.setCursorBufferPosition([0,8])
+      {word, range} = godef.wordAtCursor()
+      expect(word).toEqual('foo')
+      expect(range).toEqual([[0,8], [0,11]])
 
     it "should return foo for fo|o", ->
       editor.setText("foo")
@@ -127,8 +137,8 @@ describe "godef", ->
            editor.isModified() is false
 
         # TODO fix something async-funky making this test fail
-        xdescribe "defined within the current file", ->
-          it "should move the cursor to the definition", ->
+        describe "defined within the current file", ->
+          xit "should move the cursor to the definition", ->
             done = false
             subscription = dispatch.godef.onDidComplete ->
               # `new Point` always results in ReferenceError (why?), hence array
@@ -136,6 +146,21 @@ describe "godef", ->
               done = true
             runs ->
               editor.setCursorBufferPosition([4,24]) # "testvar" use
+              atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
+            waitsFor ->
+              done == true
+            runs ->
+              subscription.dispose()
+
+          fit "should create a highlight decoration of the correct class", ->
+            done = false
+            subscription = dispatch.godef.onDidComplete ->
+              higlightClass = 'goplus-godef-highlight'
+              goPlusHighlightDecs = (d for d in editor.getHighlightDecorations() when d.getProperties()['class'] == higlightClass)
+              expect(goPlusHighlightDecs.length).toBe(1)
+              done = true
+            runs ->
+              editor.setCursorBufferPosition([4,24]) # "testvar"
               atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
             waitsFor ->
               done == true
