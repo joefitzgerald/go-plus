@@ -3,4 +3,5 @@
 '.editor':
   'ctrl-alt-c': 'golang:gocover'
   'ctrl-alt-shift-c': 'golang:cleargocover'
-  'ctrl-alt-cmd-t': 'golang:godef' # TODO testing only. Remove
+  # TODO testing only. Remove
+  'alt-cmd-g': 'golang:godef' 

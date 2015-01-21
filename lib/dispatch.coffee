@@ -231,6 +231,12 @@ class Dispatch
       else
         @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Tool:</b> Not Found', className: 'text-error'
 
+      # godef
+      if go.godef()? and go.godef() isnt false
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Godef Tool:</b> ' + go.godef(), className: 'text-subtle'
+      else
+        @messagepanel.add new PlainMessageView raw: true, message: '<b>Godef Tool:</b> Not Found', className: 'text-error'
+
       # gocode active
       if _.contains(atom.packages.getAvailablePackageNames(), 'autocomplete-plus')
         @messagepanel.add new PlainMessageView raw: true, message: '<b>Gocode Status:</b> Enabled', className: 'text-subtle'

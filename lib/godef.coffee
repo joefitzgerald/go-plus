@@ -88,7 +88,17 @@ class Godef
           type: 'warning'
           source: @name
 
-    cmd = 'godef'
+    go = @dispatch.goexecutable.current()
+    cmd = go.godef()
+    if cmd is false
+      message =
+        line: false
+        column: false
+        msg: 'Godef Tool Missing'
+        type: 'error'
+        source: @name
+      callback(null, [message])
+      return
     env = @dispatch.env()
     filePath = @editor.getPath()
     cwd = path.dirname(filePath)

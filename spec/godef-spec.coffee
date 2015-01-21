@@ -7,29 +7,27 @@
       (in dispatch::updatePane)
     No idea about this as yet
 
-  * deal with multiple cursors
-  - how to test for dispatch of a command?
-  - check for paths of exe and source files on Windows?
+  * check that godef will install using go get if not exists
+  - use mapMessages
   - thorough playing to destruction with lots of go files
     (use on a couple of days' Go programming)
+  - refactor messy godef::gotoDefinitionForWord
 
   TODO - Enhancements
-  - copy test text from test file instead of using string lits?
+  - copy test text from test file instead of using string lits
   - scroll target to put the def line at top of ed pane when it's in a different file?
   - should I use mapMessages approach? I'm forking based on exitcode.
   - consider -webkit-animation: to animate the definition highlight?
 
  Questions for package maintainer
 
+  - I don't know anything about the appveyor/travis stuff
   - why function/method args sometimes, sometimes not, in brackets? (happily
     inconsistent, or is there a patter I'm not seeing?)
+    A good reason to keep consistent: f() looks a lot like f () ->
   - gofmt has a buffer existence check: `buffer = editor?.getBuffer()`
     Under what circumstances would a valid (*.go) active text editor not have a
     buffer?
-
-
-    A good reason to keep consistent: f() looks a lot like f () ->
-
  ###
 
 path = require 'path'
@@ -135,10 +133,6 @@ describe "godef", ->
           expect(_.size(dispatch.messages)).toBe 1
           expect(dispatch.messages[0].msg).toBe(dispatch.godef.warningMultipleCursorsMessage)
 
-      it "should not dispatch godef", ->
-        expect(false).toBe(true)
-
-
       describe "with no word under the cursor", ->
         beforeEach ->
           editor.setText ""
@@ -153,10 +147,6 @@ describe "godef", ->
           expect(dispatch.messages?).toBe(true)
           expect(_.size(dispatch.messages)).toBe 1
           expect(dispatch.messages[0].msg).toBe(dispatch.godef.warningNotFoundMessage)
-
-        # TODO implement
-        xit "should not dispatch godef", ->
-          expect(false).toBe(true)
 
       describe "with a word under the cursor", ->
         beforeEach ->
