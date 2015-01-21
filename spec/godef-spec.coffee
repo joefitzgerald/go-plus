@@ -1,7 +1,12 @@
 ###
   TODO - Essential
-  * bug: never dispose() cursor subscriptions in godef.coffee
-  - bug: "Uncaught TypeError: Cannot read property 'add' of null",
+  - BUG: 
+    "Uncaught TypeError: Cannot read property 'checkBuffer' of null", source: /Users/crispinb/work/code/atom/go-plus/lib/dispatch.coffee (583)
+      (in dispatch::triggerPipeline)
+     "Uncaught TypeError: Cannot read property 'add' of null", source: /Users/crispinb/work/code/atom/go-plus/lib/dispatch.coffee (752)
+      (in dispatch::updatePane)
+    No idea about this as yet
+
   - how to test for dispatch of a command?
   - deal with multiple cursors
   - check for paths of exe and source files on Windows?

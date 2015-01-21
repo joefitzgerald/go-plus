@@ -26,7 +26,7 @@ class Godef
 
   # new pattern as per http://blog.atom.io/2014/09/16/new-event-subscription-api.html
   # (but so far unable to get event-kit subscriptions to work)
-  onDidComplete: (callback) ->
+  onDidComplete: (callback) =>
     @on @didCompleteNotification, callback
 
   gotoDefinitionForWordAtCursor: ->
@@ -64,10 +64,12 @@ class Godef
           @editor.setCursorBufferPosition [row, col]
           @cursorOnChangeSubscription = @highlightWordAtCursor()
           @emit @didCompleteNotification, @editor, false
+          callback null, [message]
         else
           atom.workspace.open(targetFilePath, {initialLine:row, initialColumn:col}).then (e) =>
             @cursorOnChangeSubscription = @highlightWordAtCursor(atom.workspace.getActiveEditor())
             @emit @didCompleteNotification, @editor, false
+            callback null, [message]
       else # godef can't find def
         message =
           line: false
@@ -75,7 +77,6 @@ class Godef
           msg: "godef could not find definition for #{word}"
           type: 'warning'
           source: @name
-      callback null, [message]
 
     cmd = 'godef'
     env = @dispatch.env()
