@@ -81,12 +81,15 @@ class Godef
             @emit @didCompleteNotification, @editor, false
             callback null, [message]
       else # godef can't find def
+        # little point parsing the error further, given godef bugs eg
+        # "godef: cannot parse expression: <arg>:1:1: expected operand, found 'return'"
         message =
           line: false
           column: false
-          msg: "godef could not find definition for #{word}"
+          msg: stderr
           type: 'warning'
           source: @name
+        callback null, [message]
 
     go = @dispatch.goexecutable.current()
     cmd = go.godef()
