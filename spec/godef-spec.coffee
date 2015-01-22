@@ -6,15 +6,13 @@
      "Uncaught TypeError: Cannot read property 'add' of null", source: /Users/crispinb/work/code/atom/go-plus/lib/dispatch.coffee (752)
       (in dispatch::updatePane)
     No idea about this as yet
-  * Bug: opens empty file "-" when invoked on simple type names (int, string etc)
 
-  - refactor godef:gotoDefinitionForWord
-  - research godef "# godef: cannot parse expression: <arg>:1:1: expected operand, found 'return'"
+  * refactor messy godef::gotoDefinitionForWord
   - thorough playing to destruction with lots of go files
     (use on a couple of days' Go programming)
-  - refactor messy godef::gotoDefinitionForWord
 
   TODO - Enhancements
+  - research godef "# godef: cannot parse expression: <arg>:1:1: expected operand, found 'return'"
   - copy test text from test file instead of using string lits
   - scroll target to put the def line at top of ed pane when it's in a different file?
   - should I use mapMessages approach? I'm forking based on exitcode.
@@ -37,7 +35,8 @@ temp = require('temp').track()
 _ = require ("underscore-plus")
 {Subscriber} = require 'emissary'
 
-describe "godef", ->
+# TODO remove temp fdescribe
+fdescribe "godef", ->
   [editor, editorView, dispatch, filePath, workspaceElement] = []
   testText = "package main\n import \"fmt\"\n var testvar = \"stringy\"\n\nfunc f(){fmt.Println( testvar )}\n\n"
 
@@ -73,7 +72,7 @@ describe "godef", ->
       godef.editor = editor
       editor.setText("foo foo.bar bar")
 
-    fit "should return foo for |foo", ->
+    it "should return foo for |foo", ->
       editor.setCursorBufferPosition([0,0])
       {word, range} = godef.wordAtCursor()
       expect(word).toEqual('foo')
@@ -105,7 +104,7 @@ describe "godef", ->
       expect(word).toEqual('foo.bar')
       expect(range).toEqual([[0,4], [0,11]])
 
-    fit "should return foo.bar for foo.ba|r", ->
+    it "should return foo.bar for foo.ba|r", ->
       editor.setCursorBufferPosition([0,10])
       {word, range} = godef.wordAtCursor()
       expect(word).toEqual('foo.bar')
@@ -125,14 +124,14 @@ describe "godef", ->
     waitsFor ->
       editor.isModified() is false
 
-    fdescribe "if there is more than one cursor", ->
+    describe "if there is more than one cursor", ->
       it "displays a warning message", ->
           editor.setCursorBufferPosition([0,0])
           editor.addCursorAtBufferPosition([1,0])
           atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
           expect(dispatch.messages?).toBe(true)
           expect(_.size(dispatch.messages)).toBe 1
-          expect(dispatch.messages[0].msg).toBe(dispatch.godef.warningMultipleCursorsMessage)
+          expect(dispatch.messages[0].type).toBe("warning")
 
       describe "with no word under the cursor", ->
         beforeEach ->
@@ -147,7 +146,7 @@ describe "godef", ->
           atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
           expect(dispatch.messages?).toBe(true)
           expect(_.size(dispatch.messages)).toBe 1
-          expect(dispatch.messages[0].msg).toBe(dispatch.godef.warningNotFoundMessage)
+          expect(dispatch.messages[0].type).toBe("warning")
 
       describe "with a word under the cursor", ->
         beforeEach ->

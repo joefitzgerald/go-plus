@@ -12,8 +12,6 @@ class Godef
     @dispatch = dispatch
     @name = 'def'
     @didCompleteNotification = "#{@name}-complete"
-    @warningNotFoundMessage = "No word under cursor to define"
-    @warningMultipleCursorsMessage = "Godef only works with a single cursor"
     atom.commands.add 'atom-workspace',
       'golang:godef': => @gotoDefinitionForWordAtCursor()
     @cursorOnChangeSubscription = null
@@ -27,7 +25,7 @@ class Godef
     @cursorOnChangeSubscription?.dispose()
 
   # new pattern as per http://blog.atom.io/2014/09/16/new-event-subscription-api.html
-  # (but so far unable to get event-kit subscriptions to work)
+  # (but so far unable to get event-kit subscriptions to work, so keeping emissary)
   onDidComplete: (callback) =>
     @on @didCompleteNotification, callback
 
@@ -42,7 +40,7 @@ class Godef
       message =
         line: false
         column: false
-        msg: @warningMultipleCursorsMessage
+        msg: "Godef only works with a single cursor"
         type: 'warning'
         source: @name
       done null, [message]
@@ -58,7 +56,7 @@ class Godef
       message =
         line: false
         column: false
-        msg: @warningNotFoundMessage
+        msg: "No word under cursor to define"
         type: 'warning'
         source: @name
       callback null, [message]
@@ -72,7 +70,7 @@ class Godef
           message =
             line: false
             column: false
-            msg: "godef suggested a file path (\"#{targetFilePath}\") that does not exist)"
+            msg: @warningFileDoesNotExistMessage = "godef suggested a file path (\"#{targetFilePath}\") that does not exist)"
             type: 'warning'
             source: @name
           callback null, [message]
@@ -123,7 +121,6 @@ class Godef
     options =
       wordRegex: /[\w+\.]*/
     cursor = editor.getCursor()
-    # TODO this is probably a furphy. It's the range of godef's output that's needed
     range = cursor.getCurrentWordBufferRange(options)
     word = @editor.getTextInBufferRange(range)
     return {word: word, range: range}
