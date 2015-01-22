@@ -33,82 +33,52 @@ class Godef
     @editor = atom?.workspace?.getActiveTextEditor()
     done = (err, messages) =>
       @dispatch.resetAndDisplayMessages @editor, messages
+
     unless @dispatch.isValidEditor @editor
       @emit @didCompleteNotification, @editor, false
       return
     if @editor.hasMultipleCursors()
-      message =
-        line: false
-        column: false
-        msg: "Godef only works with a single cursor"
-        type: 'warning'
-        source: @name
-      done null, [message]
+      @bailWithWarning "Godef only works with a single cursor", done
       return
-    @reset @editor
     {word, range} = @wordAtCursor()
+    unless word.length > 0
+      @bailWithWarning "No word under cursor to define", done
+      return
+
+    @reset @editor
     @gotoDefinitionForWord word, done
 
   gotoDefinitionForWord: (word, callback = ->) ->
     message = null
-
-    unless word.length > 0
-      message =
-        line: false
-        column: false
-        msg: "No word under cursor to define"
-        type: 'warning'
-        source: @name
-      callback null, [message]
-      return
-
     done = (exitcode, stdout, stderr, messages) =>
-      if exitcode == 0
-        outputs = stdout.split ":"
-        targetFilePath = outputs[0]
-        unless fs.existsSync(targetFilePath)
-          message =
-            line: false
-            column: false
-            msg: @warningFileDoesNotExistMessage = "godef suggested a file path (\"#{targetFilePath}\") that does not exist)"
-            type: 'warning'
-            source: @name
-          callback null, [message]
-          return
-        # atom's cursors 0-based; godef uses diff-like 1-based
-        row = parseInt(outputs[1],10) - 1
-        col = parseInt(outputs[2],10) - 1
-        if targetFilePath == @editor.getPath()
-          @editor.setCursorBufferPosition [row, col]
-          @cursorOnChangeSubscription = @highlightWordAtCursor()
-          @emit @didCompleteNotification, @editor, false
-          callback null, [message]
-        else
-          atom.workspace.open(targetFilePath, {initialLine:row, initialColumn:col}).then (e) =>
-            @cursorOnChangeSubscription = @highlightWordAtCursor(atom.workspace.getActiveEditor())
-            @emit @didCompleteNotification, @editor, false
-            callback null, [message]
-      else # godef can't find def
+      unless exitcode == 0
         # little point parsing the error further, given godef bugs eg
         # "godef: cannot parse expression: <arg>:1:1: expected operand, found 'return'"
-        message =
-          line: false
-          column: false
-          msg: stderr
-          type: 'warning'
-          source: @name
+        @bailWithWarning stderr, callback
+        return
+      outputs = stdout.split ":"
+      targetFilePath = outputs[0]
+      unless fs.existsSync(targetFilePath)
+        @bailWithWarning "godef suggested a file path (\"#{targetFilePath}\") that does not exist)", callback
+        return
+      # atom's cursors 0-based; godef uses diff-like 1-based
+      row = parseInt(outputs[1],10) - 1
+      col = parseInt(outputs[2],10) - 1
+      if targetFilePath == @editor.getPath()
+        @editor.setCursorBufferPosition [row, col]
+        @cursorOnChangeSubscription = @highlightWordAtCursor()
+        @emit @didCompleteNotification, @editor, false
         callback null, [message]
+      else
+        atom.workspace.open(targetFilePath, {initialLine:row, initialColumn:col}).then (e) =>
+          @cursorOnChangeSubscription = @highlightWordAtCursor(atom.workspace.getActiveEditor())
+          @emit @didCompleteNotification, @editor, false
+          callback null, [message]
 
     go = @dispatch.goexecutable.current()
     cmd = go.godef()
     if cmd is false
-      message =
-        line: false
-        column: false
-        msg: 'Godef Tool Missing'
-        type: 'error'
-        source: @name
-      callback(null, [message])
+      @bailWithError 'Godef Tool Missing' , callback
       return
     env = @dispatch.env()
     filePath = @editor.getPath()
@@ -116,6 +86,21 @@ class Godef
     args = ['-f', filePath, word]
 
     @dispatch.executor.exec(cmd, cwd, env, done, args)
+
+  bailWithWarning: (warning, callback) ->
+    @bailWithMessage 'warning', warning, callback
+
+  bailWithError: (error, callback) ->
+    @bailWithMessage 'error', error, callback
+
+  bailWithMessage: (type, msg, callback) ->
+    message =
+      line: false
+      column: false
+      msg: msg
+      type: type
+      source: @name
+    callback null, [message]
 
   wordAtCursor: (editor = @editor) ->
     options =
