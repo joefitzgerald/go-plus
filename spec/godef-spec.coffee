@@ -6,9 +6,9 @@
      "Uncaught TypeError: Cannot read property 'add' of null", source: /Users/crispinb/work/code/atom/go-plus/lib/dispatch.coffee (752)
       (in dispatch::updatePane)
     No idea about this as yet
-  - Bug: opens empty file "-" when invoked on simple type names (int, string etc)
+  * Bug: opens empty file "-" when invoked on simple type names (int, string etc)
 
-  * use mapMessages (or if not, why not?)
+  - refactor godef:gotoDefinitionForWord
   - research godef "# godef: cannot parse expression: <arg>:1:1: expected operand, found 'return'"
   - thorough playing to destruction with lots of go files
     (use on a couple of days' Go programming)
