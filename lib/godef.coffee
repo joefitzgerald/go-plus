@@ -71,7 +71,7 @@ class Godef
         callback null, [message]
       else
         atom.workspace.open(targetFilePath, {initialLine:row, initialColumn:col}).then (e) =>
-          @cursorOnChangeSubscription = @highlightWordAtCursor(atom.workspace.getActiveEditor())
+          @cursorOnChangeSubscription = @highlightWordAtCursor(atom.workspace.getActiveTextEditor())
           @emit @didCompleteNotification, @editor, false
           callback null, [message]
 
@@ -105,7 +105,7 @@ class Godef
   wordAtCursor: (editor = @editor) ->
     options =
       wordRegex: /[\w+\.]*/
-    cursor = editor.getCursor()
+    cursor = editor.getLastCursor()
     range = cursor.getCurrentWordBufferRange(options)
     word = @editor.getTextInBufferRange(range)
     return {word: word, range: range}
@@ -114,5 +114,5 @@ class Godef
     {word, range} = @wordAtCursor(editor)
     highlightMarker = editor.markBufferRange(range, {invalidate:'inside'})
     highlightDecoration = editor.decorateMarker(highlightMarker, {type:'highlight', class:'goplus-godef-highlight'})
-    cursor = editor.getCursor()
+    cursor = editor.getLastCursor()
     cursor.onDidChangePosition ->  highlightMarker.destroy()

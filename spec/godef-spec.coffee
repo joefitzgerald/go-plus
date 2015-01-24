@@ -1,46 +1,21 @@
-###
-  TODO - Essential
-  - BUG:
-    "Uncaught TypeError: Cannot read property 'checkBuffer' of null", source: /Users/crispinb/work/code/atom/go-plus/lib/dispatch.coffee (583)
-      (in dispatch::triggerPipeline)
-     "Uncaught TypeError: Cannot read property 'add' of null", source: /Users/crispinb/work/code/atom/go-plus/lib/dispatch.coffee (752)
-      (in dispatch::updatePane)
-    No idea about this as yet
-
-  * refactor messy godef::gotoDefinitionForWord
-  - thorough playing to destruction with lots of go files
-    (use on a couple of days' Go programming)
-
-  TODO - Enhancements
-  - research godef "# godef: cannot parse expression: <arg>:1:1: expected operand, found 'return'"
-  - copy test text from test file instead of using string lits
-  - scroll target to put the def line at top of ed pane when it's in a different file?
-  - should I use mapMessages approach? I'm forking based on exitcode.
-  - consider -webkit-animation: to animate the definition highlight?
-
- Questions for package maintainer
-
-  - I don't know anything about the appveyor/travis stuff
-  - why function/method args sometimes, sometimes not, in brackets? (happily
-    inconsistent, or is there a patter I'm not seeing?)
-    A good reason to keep consistent: f() looks a lot like f () ->
-  - gofmt has a buffer existence check: `buffer = editor?.getBuffer()`
-    Under what circumstances would a valid (*.go) active text editor not have a
-    buffer?
- ###
-
 path = require 'path'
 fs = require 'fs-plus'
 temp = require('temp').track()
 _ = require ("underscore-plus")
 {Subscriber} = require 'emissary'
 
-# TODO remove temp fdescribe
-fdescribe "godef", ->
+describe "godef", ->
   [editor, editorView, dispatch, filePath, workspaceElement] = []
   testText = "package main\n import \"fmt\"\n var testvar = \"stringy\"\n\nfunc f(){fmt.Println( testvar )}\n\n"
 
   beforeEach ->
+    # don't run any of the on-save tools
+    atom.config.set("go-plus.formatOnSave", false)
+    atom.config.set("go-plus.lintOnSave", false)
+    atom.config.set("go-plus.vetOnSave", false)
+    atom.config.set("go-plus.syntaxCheckOnSave", false)
+    atom.config.set("go-plus.runCoverageOnSave", false)
+
     directory = temp.mkdirSync()
     atom.project.setPaths(directory)
     filePath = path.join(directory, 'go-plus-testing.go')
@@ -84,8 +59,8 @@ fdescribe "godef", ->
       expect(word).toEqual('foo')
       expect(range).toEqual([[0,0], [0,3]])
 
-    # odd that word range includes the trailing space, but cursor there
-    # isn't 'in' the word, but that's how Atom does it
+    # odd that word range includes the trailing space
+    # but that's how Atom does it
     it "should return no word for foo| foo", ->
       editor.setCursorBufferPosition([0,3])
       {word, range} = godef.wordAtCursor()
@@ -117,89 +92,86 @@ fdescribe "godef", ->
       expect(godefCommand.length).toEqual(1)
 
   describe "when godef command is invoked", ->
-    beforeEach ->
-      editor.setText testText
-      editor.save()
-
-    waitsFor ->
-      editor.isModified() is false
 
     describe "if there is more than one cursor", ->
       it "displays a warning message", ->
-          editor.setCursorBufferPosition([0,0])
-          editor.addCursorAtBufferPosition([1,0])
-          atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-          expect(dispatch.messages?).toBe(true)
-          expect(_.size(dispatch.messages)).toBe 1
-          expect(dispatch.messages[0].type).toBe("warning")
-
-      describe "with no word under the cursor", ->
-        beforeEach ->
-          editor.setText ""
+        done = false
+        runs ->
+          dispatch.once 'dispatch-complete', =>
+            done = true
+          editor.setText testText
           editor.save()
-
         waitsFor ->
-          editor.isModified() is false
+          done is true
+        editor.setCursorBufferPosition([0,0])
+        editor.addCursorAtBufferPosition([1,0])
+        atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
 
-        it "displays a warning message", ->
-          editor.setCursorBufferPosition([0,0])
-          atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-          expect(dispatch.messages?).toBe(true)
-          expect(_.size(dispatch.messages)).toBe 1
-          expect(dispatch.messages[0].type).toBe("warning")
+        expect(dispatch.messages?).toBe(true)
+        expect(_.size(dispatch.messages)).toBe 1
+        expect(dispatch.messages[0].type).toBe("warning")
 
-      describe "with a word under the cursor", ->
-        beforeEach ->
+    describe "with no word under the cursor", ->
+
+      it "displays a warning message", ->
+        editor.setCursorBufferPosition([0,0])
+        atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
+        expect(dispatch.messages?).toBe(true)
+        expect(_.size(dispatch.messages)).toBe 1
+        expect(dispatch.messages[0].type).toBe("warning")
+
+    describe "with a word under the cursor", ->
+      beforeEach ->
+        done = false
+        runs ->
+          dispatch.once 'dispatch-complete', =>
+            done = true
+          editor.setText testText
+          editor.save()
+        waitsFor ->
+         done == true
+
+      describe "defined within the current file", ->
+        it "should move the cursor to the definition", ->
+          done = false
+          subscription = dispatch.godef.onDidComplete ->
+            # `new Point` always results in ReferenceError (why?), hence array
+            expect(editor.getCursorBufferPosition().toArray()).toEqual([2,5]) #"testvar" decl
+            done = true
           runs ->
-            editor.setText testText
-            editor.save()
-
+            editor.setCursorBufferPosition([4,24]) # "testvar" use
+            atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
           waitsFor ->
-           editor.isModified() is false
+            done == true
+          runs ->
+            subscription.dispose()
 
-        # TODO fix something async-funky making this test fail
-        describe "defined within the current file", ->
-          xit "should move the cursor to the definition", ->
-            done = false
-            subscription = dispatch.godef.onDidComplete ->
-              # `new Point` always results in ReferenceError (why?), hence array
-              expect(editor.getCursorBufferPosition().toArray()).toEqual([2,5]) #"testvar" decl
-              done = true
-            runs ->
-              editor.setCursorBufferPosition([4,24]) # "testvar" use
-              atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-            waitsFor ->
-              done == true
-            runs ->
-              subscription.dispose()
+        it "should create a highlight decoration of the correct class", ->
+          done = false
+          subscription = dispatch.godef.onDidComplete ->
+            higlightClass = 'goplus-godef-highlight'
+            goPlusHighlightDecs = (d for d in editor.getHighlightDecorations() when d.getProperties()['class'] == higlightClass)
+            expect(goPlusHighlightDecs.length).toBe(1)
+            done = true
+          runs ->
+            editor.setCursorBufferPosition([4,24]) # "testvar"
+            atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
+          waitsFor ->
+            done == true
+          runs ->
+            subscription.dispose()
 
-          it "should create a highlight decoration of the correct class", ->
-            done = false
-            subscription = dispatch.godef.onDidComplete ->
-              higlightClass = 'goplus-godef-highlight'
-              goPlusHighlightDecs = (d for d in editor.getHighlightDecorations() when d.getProperties()['class'] == higlightClass)
-              expect(goPlusHighlightDecs.length).toBe(1)
-              done = true
-            runs ->
-              editor.setCursorBufferPosition([4,24]) # "testvar"
-              atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-            waitsFor ->
-              done == true
-            runs ->
-              subscription.dispose()
-
-        describe "defined outside the current file", ->
-          it "should open a new text editor", ->
-            done = false
-            subscription = dispatch.godef.onDidComplete ->
-              # `new Point` always results in ReferenceError (why?), hence array
-              currentEditor = atom.workspace.getActiveTextEditor()
-              expect(currentEditor.getTitle()).toBe('print.go')
-              done = true
-            runs ->
-              editor.setCursorBufferPosition([4,10]) # "fmt.Println"
-              atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-            waitsFor ->
-              done == true
-            runs ->
-              subscription.dispose()
+      describe "defined outside the current file", ->
+        it "should open a new text editor", ->
+          done = false
+          subscription = dispatch.godef.onDidComplete ->
+            currentEditor = atom.workspace.getActiveTextEditor()
+            expect(currentEditor.getTitle()).toBe('print.go')
+            done = true
+          runs ->
+            editor.setCursorBufferPosition([4,10]) # "fmt.Println"
+            atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
+          waitsFor ->
+            done == true
+          runs ->
+            subscription.dispose()
