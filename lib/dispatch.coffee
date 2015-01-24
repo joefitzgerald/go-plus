@@ -53,7 +53,6 @@ class Dispatch
     gopathsubscription = @gopath.on 'reset', (editor) => @resetState(editor)
     gobuildsubscription = @gobuild.on 'reset', (editor) => @resetState(editor)
     gocoversubscription = @gocover.on 'reset', (editor) => @resetState(editor)
-    gocodesubscription = @gocode.on 'reset', (editor) => @resetState(editor)
 
     @subscribe(gofmtsubscription)
     @subscribe(golintsubscription)
@@ -61,7 +60,6 @@ class Dispatch
     @subscribe(gopathsubscription)
     @subscribe(gobuildsubscription)
     @subscribe(gocoversubscription)
-    @subscribe(gocodesubscription)
 
     @on 'dispatch-complete', (editor) => @displayMessages(editor)
     @subscribeToAtomEvents()
@@ -79,7 +77,7 @@ class Dispatch
     @govet.destroy()
     @gopath.destroy()
     @gofmt.destroy()
-    @gocode.destroy()
+    @gocode.dispose()
     @gocover = null
     @gobuild = null
     @golint = null
@@ -349,7 +347,7 @@ class Dispatch
         if message?.line? and message.line isnt false and message.line >= 0
           try
             marker = buffer?.markPosition([message.line - 1, 0], class: 'go-plus', invalidate: 'touch')
-            editor?.decorateMarker(marker, type: 'gutter', class: 'goplus-' + message.type)
+            editor?.decorateMarker(marker, type: 'line-number', class: 'goplus-' + message.type)
           catch error
             console.log error
 

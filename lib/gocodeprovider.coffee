@@ -2,35 +2,33 @@ _ = require 'underscore-plus'
 path = require 'path'
 
 module.exports =
-ProviderClass: (Provider, Suggestion, dispatch)  ->
+class GocodeProvider
+  constructor: (@dispatch) ->
+  selector: '.source.go'
+  requestHandler: (options) ->
+    return new Promise (resolve) =>
+      return resolve() unless options?
+      return resolve() unless @dispatch?.isValidEditor(options.editor)
+      return resolve() unless options.buffer?
 
-  class GocodeProvider extends Provider
-    exclusive: true
-
-    buildSuggestions: () ->
-      return unless dispatch?.isValidEditor(@editor)
-      buffer = @editor?.getBuffer()
-      return unless buffer?
-
-      go = dispatch.goexecutable.current()
-      return unless go?
+      go = @dispatch.goexecutable.current()
+      return resolve() unless go?
       gopath = go.buildgopath()
-      return if not gopath? or gopath is ''
+      return resolve() if not gopath? or gopath is ''
 
-      position = @editor.getCursorBufferPosition()
-      return unless position
-      index = buffer.characterIndexForPosition(position)
+      return resolve() unless options.position
+      index = options.buffer.characterIndexForPosition(options.position)
       offset = 'c' + index.toString()
-      text = @editor.getText()
-      return if text[index-1] == ')' or text[index-1] == ';'
-      quotedRange = this.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', position)
-      return if quotedRange
+      text = options.editor.getText()
+      return resolve() if text[index-1] == ')' or text[index-1] == ';'
+      quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.position)
+      return resolve() if quotedRange
 
-      env = dispatch.env()
+      env = @dispatch.env()
       env['GOPATH'] = gopath
-      cwd = path.dirname(buffer.getPath())
-      args = ['-f=json', 'autocomplete', buffer.getPath(), offset]
-      configArgs = dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gocodeArgs'))
+      cwd = path.dirname(options.buffer.getPath())
+      args = ['-f=json', 'autocomplete', options.buffer.getPath(), offset]
+      configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gocodeArgs'))
       args = _.union(configArgs, args) if configArgs? and _.size(configArgs) > 0
       cmd = go.gocode()
       if cmd is false
@@ -41,29 +39,34 @@ ProviderClass: (Provider, Suggestion, dispatch)  ->
           type: 'error'
           source: @name
 
-        return
+        return resolve()
 
-      result = dispatch.executor.execSync(cmd, cwd, env, args, text)
-      console.log @name + ' - stderr: ' + result.stderr if result.stderr? and result.stderr.trim() isnt ''
-      messages = @mapMessages(result.stdout, text, index) if result.stdout? and result.stdout.trim() isnt ''
-      return if messages?.length < 1
-      return messages
+      done = (exitcode, stdout, stderr, messages) =>
+        console.log @name + ' - stderr: ' + stderr if stderr? and stderr.trim() isnt ''
+        messages = @mapMessages(stdout, text, index) if stdout? and stdout.trim() isnt ''
+        return resolve() if messages?.length < 1
+        resolve(messages)
 
-    mapMessages: (data, text, index) ->
-      return [] unless data?
-      res = JSON.parse(data)
+      @dispatch.executor.exec(cmd, cwd, env, done, args, text)
 
-      numPrefix = res[0]
-      candidates = res[1]
+  mapMessages: (data, text, index) ->
+    return [] unless data?
+    res = JSON.parse(data)
 
-      return [] unless candidates
+    numPrefix = res[0]
+    candidates = res[1]
 
-      suggestions = []
-      for c in candidates
-        prefix = c.name.substring 0, numPrefix
-        word = c.name
-        word += '(' if c.class is 'func' and text[index] != '('
-        label = c.type or c.class
-        suggestions.push new Suggestion(this, word: word, prefix: prefix, label: label)
+    return [] unless candidates
 
-      return suggestions
+    suggestions = []
+    for c in candidates
+      suggestion =
+        prefix: c.name.substring 0, numPrefix
+        word: c.name
+        label: c.type or c.class
+      suggestion.word += '(' if c.class is 'func' and text[index] != '('
+      suggestions.push(suggestion)
+
+    return suggestions
+
+  dispose: ->

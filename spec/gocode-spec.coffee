@@ -3,7 +3,7 @@ _ = require 'underscore-plus'
 AtomConfig = require './util/atomconfig'
 
 describe 'gocode', ->
-  [workspaceElement, editor, editorView, dispatch, buffer, completionDelay] = []
+  [workspaceElement, editor, editorView, dispatch, buffer, completionDelay, autocompleteManager] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -24,7 +24,8 @@ describe 'gocode', ->
       editorView = atom.views.getView(editor)
 
     waitsForPromise ->
-      atom.packages.activatePackage('autocomplete-plus')
+      atom.packages.activatePackage('autocomplete-plus').then (a) ->
+        autocompleteManager = a.mainModule.autocompleteManager
 
     waitsForPromise ->
       atom.packages.activatePackage('language-go')
@@ -43,16 +44,24 @@ describe 'gocode', ->
   describe 'when the gocode autocomplete-plus provider is enabled', ->
 
     it 'displays suggestions from gocode', ->
+      [done] = []
       runs ->
+        done = false
+        autocompleteManager.onDidAutocomplete ->
+          done = true
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-        editor.setCursorScreenPosition([5, 11])
-        editor.insertText 'l'
+        editor.setCursorScreenPosition([5, 6])
+        editor.insertText 'P'
 
         advanceClock completionDelay + 1000
 
+      waitsFor ->
+        done is true
+
+      runs ->
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
-        expect(editorView.querySelector('.autocomplete-plus span.word')).toHaveText('Println(')
+        expect(editorView.querySelector('.autocomplete-plus span.word')).toHaveText('Print(')
         expect(editorView.querySelector('.autocomplete-plus span.label')).toHaveText('func(a ...interface{}) (n int, err error)')
         editor.backspace()
 
