@@ -3,7 +3,7 @@ _ = require 'underscore-plus'
 AtomConfig = require './util/atomconfig'
 
 describe 'gocode', ->
-  [workspaceElement, editor, editorView, dispatch, buffer, completionDelay] = []
+  [workspaceElement, editor, editorView, dispatch, buffer, completionDelay, mainModule] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -31,10 +31,11 @@ describe 'gocode', ->
 
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
+        .then (a) -> mainModule = a.mainModule
 
     runs ->
       buffer = editor.getBuffer()
-      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+      dispatch = mainModule.dispatch
       dispatch.goexecutable.detect()
 
     waitsFor ->

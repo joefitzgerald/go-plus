@@ -6,7 +6,7 @@ PathHelper = require './util/pathhelper'
 AtomConfig = require './util/atomconfig'
 
 describe "gocover", ->
-  [atomconfig, editor, dispatch, testEditor, directory, filePath, testFilePath, oldGoPath, pathhelper] = []
+  [atomconfig, editor, dispatch, testEditor, directory, filePath, testFilePath, oldGoPath, pathhelper, mainModule] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -38,9 +38,10 @@ describe "gocover", ->
 
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
+          .then (a) -> mainModule = a.mainModule
 
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.goexecutable.detect()
 
       waitsFor ->
@@ -53,7 +54,7 @@ describe "gocover", ->
         buffer.setText("package main\n\nimport \"fmt\"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn \"Hello, 世界\"\n}\n")
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("package main\n\nimport \"testing\"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != \"Hello, 世界\" {\n\t\tt.Errorf(\"Expected %s - got %s\", \"Hello, 世界\", result)\n\t}\n}")
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.once 'coverage-complete', =>
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 0

@@ -5,7 +5,7 @@ _ = require 'underscore-plus'
 AtomConfig = require './util/atomconfig'
 
 describe "gopath", ->
-  [editor, dispatch, directory, filePath, oldGoPath] = []
+  [editor, dispatch, directory, filePath, oldGoPath, mainModule] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -32,9 +32,10 @@ describe "gopath", ->
 
       waitsForPromise ->
         atom.packages.activatePackage('go-plus')
+          .then (a) -> mainModule = a.mainModule
 
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.goexecutable.detect()
 
       waitsFor ->
@@ -97,7 +98,7 @@ describe "gopath", ->
         atom.packages.activatePackage('go-plus')
 
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch = mainModule.dispatch
         dispatch.goexecutable.detect()
 
       waitsFor ->
