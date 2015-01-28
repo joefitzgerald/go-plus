@@ -10,7 +10,7 @@ class Gocode
     @dispatch = dispatch
     @provider = new GocodeProvider(@dispatch)
     @subscriptions.add(@provider)
-    @registration = atom.services.provide('autocomplete.provider', '0.1.0', {@provider})
+    @registration = atom.services.provide('autocomplete.provider', '1.0.0', {@provider})
     @subscriptions.add(@registration)
 
   dispose: ->

@@ -3,8 +3,11 @@ path = require 'path'
 
 module.exports =
 class GocodeProvider
-  constructor: (@dispatch) ->
+  id: 'go-plus-gocodeprovider'
   selector: '.source.go'
+
+  constructor: (@dispatch) ->
+
   requestHandler: (options) ->
     return new Promise (resolve) =>
       return resolve() unless options?
@@ -69,4 +72,4 @@ class GocodeProvider
 
     return suggestions
 
-  dispose: ->
+  dispose: -> 
