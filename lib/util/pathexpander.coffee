@@ -1,11 +1,12 @@
-fs = require 'fs-plus'
-path = require 'path'
-os = require 'os'
-_ = require 'underscore-plus'
+fs = require('fs-plus')
+path = require('path')
+os = require('os')
+_ = require('underscore-plus')
 
 module.exports =
 class PathExpander
-  constructor: (@env) ->
+  constructor: (env) ->
+    @env = env
 
   expand: (p, gopath) ->
     return '' unless p? and p.trim() isnt ''
@@ -23,10 +24,10 @@ class PathExpander
     switch os.platform()
       when 'darwin', 'freebsd', 'linux', 'sunos'
         unless p.indexOf('~') is -1
-          home = @env.HOME || @env.HOMEPATH || @env.USERPROFILE
+          home = @env.HOME or @env.HOMEPATH or @env.USERPROFILE
           p = p.replace(/~/i, home)
         unless p.toUpperCase().indexOf('$HOME') is -1
-          home = @env.HOME || @env.HOMEPATH || @env.USERPROFILE
+          home = @env.HOME or @env.HOMEPATH or @env.USERPROFILE
           p = p.replace(/\$HOME/i, home)
         unless p.toUpperCase().indexOf('$GOROOT') is -1
           goroot = @env.GOROOT
@@ -36,13 +37,13 @@ class PathExpander
           home = @env.USERPROFILE
           p = p.replace(/~/i, home)
         unless p.toUpperCase().indexOf('%HOME%') is -1
-          home = @env.HOME || @env.HOMEPATH || @env.USERPROFILE
+          home = @env.HOME or @env.HOMEPATH or @env.USERPROFILE
           p = p.replace(/%HOME%/i, home)
         unless p.toUpperCase().indexOf('%USERPROFILE%') is -1
-          home = @env.USERPROFILE || @env.HOME || @env.HOMEPATH
+          home = @env.USERPROFILE or @env.HOME or @env.HOMEPATH
           p = p.replace(/%USERPROFILE%/i, home)
         unless p.toUpperCase().indexOf('%HOMEPATH%') is -1
-          home = @env.HOMEPATH || @env.HOME || @env.USERPROFILE
+          home = @env.HOMEPATH or @env.HOME or @env.USERPROFILE
           p = p.replace(/%HOMEPATH%/i, home)
         unless p.toUpperCase().indexOf('%GOROOT%') is -1
           goroot = @env.GOROOT

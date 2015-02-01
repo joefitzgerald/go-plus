@@ -1,17 +1,18 @@
-{spawn} = require 'child_process'
-fs = require 'fs-plus'
-glob = require 'glob'
-path = require 'path'
-temp = require 'temp'
-{Subscriber, Emitter} = require 'emissary'
-_ = require 'underscore-plus'
+{spawn} = require('child_process')
+fs = require('fs-plus')
+glob = require('glob')
+path = require('path')
+temp = require('temp')
+{Subscriber, Emitter} = require('emissary')
+_ = require('underscore-plus')
 
 module.exports =
 class Gobuild
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: (@dispatch) ->
+  constructor: (dispatch) ->
+    @dispatch = dispatch
     atom.commands.add 'atom-workspace',
       'golang:gobuild': => @checkCurrentBuffer()
     @name = 'syntaxcheck'
@@ -21,35 +22,35 @@ class Gobuild
     @dispatch = null
 
   reset: (editor) ->
-    @emit 'reset', editor
+    @emit('reset', editor)
 
   checkCurrentBuffer: ->
     editor = atom?.workspace?.getActiveTextEditor()
     return unless @dispatch.isValidEditor(editor)
-    @reset editor
+    @reset(editor)
     done = (err, messages) =>
       @dispatch.resetAndDisplayMessages(editor, messages)
     @checkBuffer(editor, false, done)
 
-  checkBuffer: (editor, saving, callback = ->) ->
+  checkBuffer: (editor, saving, callback) ->
     unless @dispatch.isValidEditor(editor)
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     if saving and not atom.config.get('go-plus.syntaxCheckOnSave')
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     buffer = editor?.getBuffer()
     unless buffer?
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
 
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     splitgopath = go.splitgopath()
@@ -69,7 +70,7 @@ class Gobuild
       testPackage = testPackage.replace(/_test$/i, '')
       output = testPackage + '.test' + go.exe
       outputPath = @tempDir
-      args = ['test', '-copybinary', '-o', outputPath,'-c', '.']
+      args = ['test', '-copybinary', '-o', outputPath, '-c', '.']
       files = fs.readdirSync(fileDir)
     else
       output = '.go-plus-syntax-check'
@@ -77,7 +78,7 @@ class Gobuild
       args = ['build', '-o', outputPath, '.']
     cmd = go.executable
     done = (exitcode, stdout, stderr, messages) =>
-      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+      console.log(@name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt '')
       messages = @mapMessages(stderr, cwd, splitgopath) if stderr? and stderr isnt ''
       if fs.existsSync(outputPath)
         if fs.lstatSync(outputPath).isDirectory()
@@ -94,15 +95,15 @@ class Gobuild
         for file in files
           do (file) ->
             fs.unlinkSync(file)
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
-  mapMessages: (data, cwd, splitgopath) =>
+  mapMessages: (data, cwd, splitgopath) ->
     pattern = /^((#)\s(.*)?)|((.*?):(\d*?):((\d*?):)?\s((.*)?((\n\t.*)+)?))/img
     messages = []
     pkg = ''
-    extract = (matchLine) =>
+    extract = (matchLine) ->
       return unless matchLine?
       if matchLine[2]? and matchLine[2] is '#'
         # Found A Package Indicator, Skip For Now
@@ -130,14 +131,14 @@ class Gobuild
             msg: matchLine[9]
             type: 'error'
             source: 'syntaxcheck'
-        messages.push message
+        messages.push(message)
     loop
       match = pattern.exec(data)
       extract(match)
       break unless match?
     return messages
 
-  absolutePathForPackage: (pkg, splitgopath) =>
+  absolutePathForPackage: (pkg, splitgopath) ->
     for gopath in splitgopath
       combinedpath = path.join(gopath, 'src', pkg)
       return fs.realpathSync(combinedpath) if fs.existsSync(combinedpath)

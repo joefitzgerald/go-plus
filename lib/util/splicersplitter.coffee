@@ -1,4 +1,4 @@
-_ = require 'underscore-plus'
+_ = require('underscore-plus')
 
 module.exports =
 class SplicerSplitter
@@ -13,12 +13,12 @@ class SplicerSplitter
     result = _.map result, (item) ->
       return '' unless item?
       return item.trim()
-    result = _.filter result, (item) -> item? and item.length > 0 and item isnt ''
+    result = _.filter(result, (item) -> item? and item.length > 0 and item isnt '')
 
   spliceAndSquash: (args...) ->
     return '' unless args? and args.length > 0
     args = _.map args..., (item) ->
       return '' unless item?
       return item.trim()
-    args = _.filter args, (item) -> item? and item.length > 0 and item.trim() isnt ''
+    args = _.filter(args, (item) -> item? and item.length > 0 and item.trim() isnt '')
     result = args.join(' ')

@@ -1,4 +1,4 @@
-os = require 'os'
+os = require('os')
 
 module.exports =
 class PathHelper

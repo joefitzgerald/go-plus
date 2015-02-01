@@ -1,10 +1,10 @@
-{spawn} = require 'child_process'
-temp = require 'temp'
-path = require 'path'
-fs = require 'fs-plus'
-{Subscriber, Emitter} = require 'emissary'
-GocoverParser = require './gocover/gocover-parser'
-_ = require 'underscore-plus'
+{spawn} = require('child_process')
+temp = require('temp')
+path = require('path')
+fs = require('fs-plus')
+{Subscriber, Emitter} = require('emissary')
+GocoverParser = require('./gocover/gocover-parser')
+_ = require('underscore-plus')
 
 areas = []
 
@@ -26,7 +26,7 @@ class Gocover
 
     atom.commands.add 'atom-workspace',
       'golang:cleargocover': => @clearMarkersFromEditors()
-      
+
     atom.workspace.observeTextEditors (editor) =>
       @addMarkersToEditor(editor)
 
@@ -58,34 +58,34 @@ class Gocover
 
     # Add new markers
     return unless @ranges? and @ranges and _.size(@ranges) > 0
-    editorRanges = _.filter @ranges, (r) -> _.endsWith(file, r.file)
+    editorRanges = _.filter(@ranges, (r) -> _.endsWith(file, r.file))
     try
       for range in editorRanges
-        marker = buffer.markRange(range.range, class: 'gocover', gocovercount: range.count, invalidate: 'touch')
+        marker = buffer.markRange(range.range, {class: 'gocover', gocovercount: range.count, invalidate: 'touch'})
         clazz = if range.count > 0 then 'covered' else 'uncovered'
-        editor.decorateMarker(marker, type: 'highlight', class: clazz, onlyNonEmpty: true)
+        editor.decorateMarker(marker, {type: 'highlight', class: clazz, onlyNonEmpty: true})
     catch error
-      console.log error
+      console.log(error)
 
-  clearMarkers: (editor) =>
+  clearMarkers: (editor) ->
     return unless editor?.getGrammar()?.scopeName is 'source.go'
     # Find current markers
     try
-      markers = editor?.getBuffer()?.findMarkers(class: 'gocover')
+      markers = editor?.getBuffer()?.findMarkers({class: 'gocover'})
       return unless markers? and _.size(markers) > 0
       # Remove markers
       marker.destroy() for marker in markers
     catch error
-      console.log error
+      console.log(error)
 
   reset: (editor) ->
-    @emit 'reset', editor
+    @emit('reset', editor)
 
   removeCoverageFile: =>
     @ranges = []
     if @coverageFile
       try
-        fs.unlinkSync @coverageFile
+        fs.unlinkSync(@coverageFile)
       catch
         return
 
@@ -97,26 +97,26 @@ class Gocover
   runCoverageForCurrentEditor: =>
     editor = atom?.workspace?.getActiveTextEditor()
     return unless editor?
-    @reset editor
+    @reset(editor)
     @runCoverage(editor, false)
 
-  runCoverage: (editor, saving, callback = ->) =>
+  runCoverage: (editor, saving, callback) =>
     unless @dispatch.isValidEditor(editor)
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     if saving and not atom.config.get('go-plus.runCoverageOnSave')
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     buffer = editor?.getBuffer()
     unless buffer?
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
 
     if @covering
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
 
@@ -126,7 +126,7 @@ class Gocover
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     env = @dispatch.env()
@@ -146,14 +146,12 @@ class Gocover
       return
     cwd = buffer.getPath().replace(re, '')
     cmd = @dispatch.goexecutable.current().executable
-    args = ["test", "-coverprofile=#{tempFile}"]
+    args = ['test', "-coverprofile=#{tempFile}"]
     done = (exitcode, stdout, stderr, messages) =>
       if exitcode is 0
         @ranges = @parser.ranges(tempFile)
         @addMarkersToEditors()
       @covering = false
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
-
-  resetCoverage: =>

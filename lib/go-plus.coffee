@@ -100,5 +100,5 @@ module.exports =
 
   createDispatch: ->
     unless @dispatch?
-      Dispatch = require './dispatch'
+      Dispatch = require('./dispatch')
       @dispatch = new Dispatch()

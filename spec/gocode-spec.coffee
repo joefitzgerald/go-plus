@@ -1,6 +1,6 @@
-path = require 'path'
-_ = require 'underscore-plus'
-AtomConfig = require './util/atomconfig'
+path = require('path')
+_ = require('underscore-plus')
+AtomConfig = require('./util/atomconfig')
 
 describe 'gocode', ->
   [workspaceElement, editor, editorView, dispatch, buffer, completionDelay, autocompleteManager] = []
@@ -10,10 +10,10 @@ describe 'gocode', ->
     atomconfig.allfunctionalitydisabled()
 
     # Enable live autocompletion
-    atom.config.set("autocomplete-plus.enableAutoActivation", true)
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
     # Set the completion delay
     completionDelay = 100
-    atom.config.set 'autocomplete-plus.autoActivationDelay', completionDelay
+    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
     completionDelay += 100 # Rendering delay
 
     workspaceElement = atom.views.getView(atom.workspace)
@@ -52,9 +52,9 @@ describe 'gocode', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([5, 6])
-        editor.insertText 'P'
+        editor.insertText('P')
 
-        advanceClock completionDelay + 1000
+        advanceClock(completionDelay + 1000)
 
       waitsFor ->
         done is true
@@ -70,9 +70,9 @@ describe 'gocode', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([6, 15])
-        editor.insertText 'w'
+        editor.insertText('w')
 
-        advanceClock completionDelay + 1000
+        advanceClock(completionDelay + 1000)
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -82,9 +82,9 @@ describe 'gocode', ->
 
         editor.setCursorScreenPosition([5, 15])
         editor.backspace()
-        editor.insertText ')'
-        advanceClock completionDelay + 1000
+        editor.insertText(')')
+        advanceClock(completionDelay + 1000)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-        editor.insertText ';'
-        advanceClock completionDelay + 1000
+        editor.insertText(';')
+        advanceClock(completionDelay + 1000)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

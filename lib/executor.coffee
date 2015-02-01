@@ -1,10 +1,11 @@
-{spawnSync} = require 'child_process'
-{BufferedProcess} = require 'atom'
-fs = require 'fs-plus'
+{spawnSync} = require('child_process')
+{BufferedProcess} = require('atom')
+fs = require('fs-plus')
 
 module.exports =
 class Executor
-  constructor: (@environment) ->
+  constructor: (environment) ->
+    @environment = environment
 
   execSync: (command, cwd, env, args, input = null) =>
     options =
@@ -30,10 +31,10 @@ class Executor
             msg: 'No file or directory: [' + command + ']'
             type: 'error'
             source: 'executor'
-        result.messages.push message
+        result.messages.push(message)
         result.code = 127
       else
-        console.log 'Error: ' + done.error
+        console.log('Error: ' + done.error)
     return result
 
   exec: (command, cwd, env, callback, args, input = null) =>
@@ -56,7 +57,7 @@ class Executor
             msg: 'No file or directory: [' + command + ']'
             type: 'error'
             source: 'executor'
-        messages.push message
+        messages.push(message)
         callback(127, output, error, messages)
         return
       code = data
@@ -64,7 +65,7 @@ class Executor
     args = [] unless args?
 
     bufferedprocess = new BufferedProcess({command, args, options, stdout, stderr, exit})
-    bufferedprocess.onWillThrowError (err) =>
+    bufferedprocess.onWillThrowError (err) ->
       return unless err?
       if err.error.code is 'ENOENT'
         message =
@@ -73,9 +74,9 @@ class Executor
             msg: 'No file or directory: [' + command + ']'
             type: 'error'
             source: 'executor'
-        messages.push message
+        messages.push(message)
       else
-        console.log err.error
+        console.log(err.error)
       err.handle()
       callback(127, output, error, messages)
 

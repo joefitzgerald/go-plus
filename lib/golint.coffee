@@ -1,7 +1,7 @@
-{spawn} = require 'child_process'
-{Subscriber, Emitter} = require 'emissary'
-_ = require 'underscore-plus'
-path = require 'path'
+{spawn} = require('child_process')
+{Subscriber, Emitter} = require('emissary')
+_ = require('underscore-plus')
+path = require('path')
 
 module.exports =
 class Golint
@@ -19,34 +19,34 @@ class Golint
     @dispatch = null
 
   reset: (editor) ->
-    @emit 'reset', editor
+    @emit('reset', editor)
 
   checkCurrentBuffer: ->
     editor = atom?.workspace?.getActiveTextEditor()
     return unless @dispatch.isValidEditor(editor)
-    @reset editor
+    @reset(editor)
     done = (err, messages) =>
       @dispatch.resetAndDisplayMessages(editor, messages)
     @checkBuffer(editor, false, done)
 
-  checkBuffer: (editor, saving, callback = ->) ->
+  checkBuffer: (editor, saving, callback) ->
     unless @dispatch.isValidEditor(editor)
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     if saving and not atom.config.get('go-plus.lintOnSave')
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     buffer = editor?.getBuffer()
     unless buffer?
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     env = @dispatch.env()
@@ -66,9 +66,9 @@ class Golint
       callback(null, [message])
       return
     done = (exitcode, stdout, stderr, messages) =>
-      console.log @name + ' - stderr: ' + stderr if stderr? and stderr.trim() isnt ''
+      console.log(@name + ' - stderr: ' + stderr) if stderr? and stderr.trim() isnt ''
       messages = @mapMessages(stdout, cwd) if stdout? and stdout.trim() isnt ''
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
@@ -93,7 +93,7 @@ class Golint
           msg: matchLine[5]
           type: 'warning'
           source: 'lint'
-      messages.push message
+      messages.push(message)
     loop
       match = pattern.exec(data)
       extract(match)

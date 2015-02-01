@@ -1,6 +1,6 @@
-{Range} = require 'atom'
-_ = require 'underscore-plus'
-fs = require 'fs-plus'
+{Range} = require('atom')
+_ = require('underscore-plus')
+fs = require('fs-plus')
 
 module.exports =
 class GocoverParser
@@ -9,11 +9,11 @@ class GocoverParser
 
   rangesForFile: (file) ->
     ranges = @ranges(@dataFile)
-    _.filter ranges, (r) -> _.endsWith(file, r.file)
+    _.filter(ranges, (r) -> _.endsWith(file, r.file))
 
   ranges: (dataFile) ->
     try
-      data = fs.readFileSync dataFile, {encoding: 'utf8'}
+      data = fs.readFileSync(dataFile, {encoding: 'utf8'})
     catch error
       return []
 
@@ -27,8 +27,8 @@ class GocoverParser
       filePath = match[1]
       statements = match[6]
       count = match[7]
-      range = new Range([parseInt(match[2])-1, parseInt(match[3])-1], [parseInt(match[4])-1, parseInt(match[5])-1])
-      ranges.push range: range, count: parseInt(count), file: filePath
+      range = new Range([parseInt(match[2]) - 1, parseInt(match[3]) - 1], [parseInt(match[4]) - 1, parseInt(match[5]) - 1])
+      ranges.push({range: range, count: parseInt(count), file: filePath})
     loop
       match = pattern.exec(data)
       extract(match)

@@ -1,7 +1,7 @@
-path = require 'path'
-fs = require 'fs-plus'
-_ = require 'underscore-plus'
-{Subscriber, Emitter} = require 'emissary'
+path = require('path')
+fs = require('fs-plus')
+_ = require('underscore-plus')
+{Subscriber, Emitter} = require('emissary')
 
 module.exports =
 class Gopath
@@ -17,17 +17,17 @@ class Gopath
     @dispatch = null
 
   reset: (editor) ->
-    @emit 'reset', editor
+    @emit('reset', editor)
 
-  check: (editor, saving, callback = ->) ->
+  check: (editor, saving, callback) ->
     unless @dispatch.isValidEditor(editor)
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
 
     # Only Check GOPATH If Syntax Checking (For Now)
     unless atom.config.get('go-plus.syntaxCheckOnSave')
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
 
@@ -40,7 +40,7 @@ class Gopath
           msg: 'Warning: GOPATH is not set – either set the GOPATH environment variable or define the Go Path in go-plus package preferences'
           type: 'warning'
           source: 'gopath'
-      messages.push message
+      messages.push(message)
 
     if messages? and _.size(messages) is 0
       for gopath in gopaths
@@ -51,7 +51,7 @@ class Gopath
               msg: 'Warning: GOPATH [' + gopaths[0] + '] does not exist'
               type: 'warning'
               source: 'gopath'
-          messages.push message
+          messages.push(message)
 
     if messages? and _.size(messages) is 0
       for gopath in gopaths
@@ -62,7 +62,7 @@ class Gopath
               msg: 'Warning: GOPATH [' + gopaths[0] + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
               type: 'warning'
               source: 'gopath'
-          messages.push message
+          messages.push(message)
 
     if messages? and _.size(messages) is 0
       filepath = editor?.getPath()
@@ -82,13 +82,13 @@ class Gopath
               msg: 'Warning: File [' + filepath + '] does not reside within a "src" directory in your GOPATH [' + gopaths + '] - please review http://golang.org/doc/code.html#Workspaces'
               type: 'warning'
               source: 'gopath'
-          messages.push message
+          messages.push(message)
 
     if messages? and _.size(messages) > 0
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null, messages)
       return
 
-    @emit @name + '-complete', editor, saving
+    @emit(@name + '-complete', editor, saving)
     callback(null)
     return

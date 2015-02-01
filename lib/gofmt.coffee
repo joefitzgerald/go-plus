@@ -1,7 +1,7 @@
-{spawn} = require 'child_process'
-{Subscriber, Emitter} = require 'emissary'
-_ = require 'underscore-plus'
-path = require 'path'
+{spawn} = require('child_process')
+{Subscriber, Emitter} = require('emissary')
+_ = require('underscore-plus')
+path = require('path')
 
 module.exports =
 class Gofmt
@@ -19,28 +19,28 @@ class Gofmt
     @dispatch = null
 
   reset: (editor) ->
-    @emit 'reset', editor
+    @emit('reset', editor)
 
   formatCurrentBuffer: ->
-    editor= atom?.workspace?.getActiveTextEditor()
+    editor = atom?.workspace?.getActiveTextEditor()
     return unless @dispatch.isValidEditor(editor)
-    @reset editor
+    @reset(editor)
     done = (err, messages) =>
       @dispatch.resetAndDisplayMessages(editor, messages)
     @formatBuffer(editor, false, done)
 
-  formatBuffer: (editor, saving, callback = ->) ->
+  formatBuffer: (editor, saving, callback) ->
     unless @dispatch.isValidEditor(editor)
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     if saving and not atom.config.get('go-plus.formatOnSave')
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     buffer = editor?.getBuffer()
     unless buffer?
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     cwd = path.dirname(buffer.getPath())
@@ -51,7 +51,7 @@ class Gofmt
     go = @dispatch.goexecutable.current()
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     env = @dispatch.env()
@@ -67,9 +67,9 @@ class Gofmt
       callback(null, [message])
       return
     done = (exitcode, stdout, stderr, messages) =>
-      console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+      console.log(@name + ' - stdout: ' + stdout) if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(stderr, cwd) if stderr? and stderr.trim() isnt ''
-      @emit @name + '-complete', editor, saving
+      @emit(@name + '-complete', editor, saving)
       callback(null, messages)
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
@@ -95,7 +95,7 @@ class Gofmt
           msg: matchLine[5]
           type: 'error'
           source: @name
-      messages.push message
+      messages.push(message)
     loop
       match = pattern.exec(data)
       extract(match)

@@ -1,6 +1,6 @@
-{CompositeDisposable} = require 'event-kit'
-_ = require 'underscore-plus'
-GocodeProvider = require './gocodeprovider'
+{CompositeDisposable} = require('event-kit')
+_ = require('underscore-plus')
+GocodeProvider = require('./gocodeprovider')
 
 module.exports =
 class Gocode

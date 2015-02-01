@@ -1,19 +1,20 @@
-async = require 'async'
-path = require 'path'
-fs = require 'fs-plus'
-os = require 'os'
-Go = require './go'
-_ = require 'underscore-plus'
-Executor = require './executor'
-PathExpander = require './util/pathexpander'
-{Subscriber, Emitter} = require 'emissary'
+async = require('async')
+path = require('path')
+fs = require('fs-plus')
+os = require('os')
+Go = require('./go')
+_ = require('underscore-plus')
+Executor = require('./executor')
+PathExpander = require('./util/pathexpander')
+{Subscriber, Emitter} = require('emissary')
 
 module.exports =
 class GoExecutable
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: (@env) ->
+  constructor: (env) ->
+    @env = env
     @gos = []
     @currentgo = ''
     @executor = new Executor(@env)
@@ -30,7 +31,7 @@ class GoExecutable
   reset: ->
     @gos = []
     @currentgo = ''
-    @emit 'reset'
+    @emit('reset')
 
   detect: =>
     executables = []
@@ -41,44 +42,44 @@ class GoExecutable
         if goinstallation? and goinstallation.trim() isnt ''
           if fs.existsSync(goinstallation)
             if fs.lstatSync(goinstallation)?.isDirectory()
-              executables.push path.normalize(path.join(goinstallation, 'bin', 'go'))
+              executables.push(path.normalize(path.join(goinstallation, 'bin', 'go')))
             else if goinstallation.lastIndexOf(path.sep + 'go') is goinstallation.length - 3 or goinstallation.lastIndexOf(path.sep + 'goapp') is goinstallation.length - 6
-              executables.push path.normalize(goinstallation)
+              executables.push(path.normalize(goinstallation))
 
         # PATH
         if @env.PATH?
           elements = @env.PATH.split(path.delimiter)
           for element in elements
-            executables.push path.normalize(path.join(element, 'go'))
+            executables.push(path.normalize(path.join(element, 'go')))
 
         # Binary Distribution
-        executables.push path.normalize(path.join('/usr', 'local', 'go', 'bin', 'go'))
+        executables.push(path.normalize(path.join('/usr', 'local', 'go', 'bin', 'go')))
         # Homebrew
-        executables.push path.normalize(path.join('/usr', 'local', 'bin', 'go', ))
+        executables.push(path.normalize(path.join('/usr', 'local', 'bin', 'go', )))
       when 'win32'
         # Configuration
         if goinstallation? and goinstallation.trim() isnt ''
           if goinstallation.lastIndexOf(path.sep + 'go.exe') is goinstallation.length - 7 or goinstallation.lastIndexOf(path.sep + 'goapp.bat') is goinstallation.length - 10
-            executables.push path.normalize(goinstallation)
+            executables.push(path.normalize(goinstallation))
 
         # PATH
         if @env.Path?
           elements = @env.Path.split(path.delimiter)
           for element in elements
-            executables.push path.normalize(path.join(element, 'go.exe'))
+            executables.push(path.normalize(path.join(element, 'go.exe')))
 
         # Binary Distribution
-        executables.push path.normalize(path.join('C:','go', 'bin', 'go.exe'))
+        executables.push(path.normalize(path.join('C:', 'go', 'bin', 'go.exe')))
 
         # Chocolatey
-        executables.push path.normalize(path.join('C:', 'tools', 'go', 'bin', 'go.exe'))
+        executables.push(path.normalize(path.join('C:', 'tools', 'go', 'bin', 'go.exe')))
 
     # De-duplicate entries
     executables = _.uniq(executables)
     async.filter executables, fs.exists, (results) =>
       executables = results
       async.map executables, @introspect, (err, results) =>
-        console.log 'Error mapping go: ' + err if err?
+        console.log('Error mapping go: ' + err if err?)
         @gos = results
         @emit('detect-complete', @current())
 
@@ -98,19 +99,19 @@ class GoExecutable
               go?.name = components[2] + ' ' + components[3]
               go?.version = components[2]
               go?.env = @env
-          console.log 'Error running go version: ' + err if err?
-          console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
+          console.log('Error running go version: ' + err) if err?
+          console.log('Error detail: ' + stderr) if stderr? and stderr isnt ''
           callback(null)
         try
           @executor.exec(absoluteExecutable, false, @env, done, ['version'])
         catch error
-          console.log 'go [' + absoluteExecutable + '] is not a valid go'
+          console.log('go [' + absoluteExecutable + '] is not a valid go')
           go = null
       (callback) =>
-        done = (exitcode, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) ->
           unless stderr? and stderr isnt ''
             if stdout? and stdout isnt ''
-              items = stdout.split("\n")
+              items = stdout.split('\n')
               for item in items
                 if item? and item isnt '' and item.trim() isnt ''
                   tuple = item.split('=')
@@ -136,25 +137,25 @@ class GoExecutable
                       when 'GOROOT' then go.goroot = value
                       when 'GOTOOLDIR' then go.gotooldir = value
                       when 'GOEXE' then go.exe = value
-          console.log 'Error running go env: ' + err if err?
-          console.log 'Error detail: ' + stderr if stderr? and stderr isnt ''
+          console.log('Error running go env: ' + err) if err?
+          console.log('Error detail: ' + stderr) if stderr? and stderr isnt ''
           callback(null)
         try
           @executor.exec(absoluteExecutable, false, @env, done, ['env']) unless go is null
         catch error
-          console.log 'go [' + absoluteExecutable + '] is not a valid go'
-    ], (err, results) =>
+          console.log('go [' + absoluteExecutable + '] is not a valid go')
+    ], (err, results) ->
       outercallback(err, go)
     )
 
   gettools: (go, updateExistingTools) =>
     unless go?
-      @emit 'gettools-complete'
+      @emit('gettools-complete')
       return
     gogetenv = _.clone(@env)
     gopath = go.buildgopath()
     unless gopath? and gopath.trim() isnt ''
-      @emit 'gettools-complete'
+      @emit('gettools-complete')
       return
     gogetenv['GOPATH'] = gopath
     async.series([
@@ -166,21 +167,21 @@ class GoExecutable
       #   else
       #     @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/godoc'])
       (callback) =>
-        done = (exitcode, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) ->
           callback(null)
         if go.vet() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/vet'])
       (callback) =>
-        done = (exitcode, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) ->
           callback(null)
         if go.cover() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/cover'])
       (callback) =>
-        done = (exitcode, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) ->
           callback(null)
         if go.format() isnt false and not updateExistingTools
           done()
@@ -189,32 +190,31 @@ class GoExecutable
             when 'goimports' then 'golang.org/x/tools/cmd/goimports'
             when 'goreturns' then 'sourcegraph.com/sqs/goreturns'
             else false
-          console.log 'pkg: ' + pkg
           done() unless pkg?
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', pkg])
       (callback) =>
-        done = (exitcode, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) ->
           callback(null)
         if go.golint() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'github.com/golang/lint/golint'])
       (callback) =>
-        done = (exitcode, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) ->
           callback(null)
         if go.gocode() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'github.com/nsf/gocode'])
       (callback) =>
-        done = (exitcode, stdout, stderr) =>
+        done = (exitcode, stdout, stderr) ->
           callback(null)
         if go.oracle() isnt false and not updateExistingTools
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/oracle'])
     ], (err, results) =>
-      @emit 'gettools-complete'
+      @emit('gettools-complete')
     )
 
   current: =>
