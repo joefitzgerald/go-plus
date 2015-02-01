@@ -41,6 +41,7 @@ class Go
     result = @gopath if @gopath? and @gopath isnt ''
     result = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig.trim() isnt ''
     result = gopathConfig if result is '' and gopathConfig? and gopathConfig.trim() isnt ''
+    result = result.replace(String.fromCharCode(10), '')
     return @pathexpander.expand(result, '')
 
   splitgopath: ->
