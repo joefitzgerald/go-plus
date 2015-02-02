@@ -66,12 +66,13 @@ class Gofmt
         source: @name
       callback(null, [message])
       return
-    done = (exitcode, stdout, stderr, messages) =>
-      console.log(@name + ' - stdout: ' + stdout) if stdout? and stdout.trim() isnt ''
-      messages = @mapMessages(stderr, cwd) if stderr? and stderr.trim() isnt ''
-      @emit(@name + '-complete', editor, saving)
-      callback(null, messages)
-    @dispatch.executor.exec(cmd, cwd, env, done, args)
+
+    {stdout, stderr, messages} = @dispatch.executor.execSync(cmd, cwd, env, args)
+
+    console.log @name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt ''
+    messages = @mapMessages(stderr, cwd) if stderr? and stderr.trim() isnt ''
+    @emit @name + '-complete', editor, saving
+    callback(null, messages)
 
   mapMessages: (data, cwd) =>
     pattern = /^(.*?):(\d*?):((\d*?):)?\s(.*)$/img
