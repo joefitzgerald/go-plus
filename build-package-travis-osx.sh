@@ -24,6 +24,7 @@ atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install
 
 echo "Linting package..."
 ./node_modules/.bin/coffeelint lib spec
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 echo "Running specs..."
 ATOM_PATH=./atom atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm test --path atom/Atom.app/Contents/Resources/app/atom.sh
