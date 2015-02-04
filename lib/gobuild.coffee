@@ -78,7 +78,7 @@ class Gobuild
       args = ['build', '-o', outputPath, '.']
     cmd = go.executable
     done = (exitcode, stdout, stderr, messages) =>
-      console.log(@name + ' - stdout: ' + stdout if stdout? and stdout.trim() isnt '')
+      console.log(@name + ' - stdout: ' + stdout) if stdout? and stdout.trim() isnt ''
       messages = @mapMessages(stderr, cwd, splitgopath) if stderr? and stderr isnt ''
       if fs.existsSync(outputPath)
         if fs.lstatSync(outputPath).isDirectory()

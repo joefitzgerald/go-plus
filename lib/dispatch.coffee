@@ -5,7 +5,6 @@ Golint = require('./golint')
 Gopath = require('./gopath')
 Gobuild = require('./gobuild')
 Gocover = require('./gocover')
-Gocode = require('./gocode')
 Executor = require('./executor')
 Environment = require('./environment')
 GoExecutable = require('./goexecutable')
@@ -40,7 +39,6 @@ class Dispatch
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
-    @gocode = new Gocode(this)
 
     @messagepanel = new MessagePanelView({title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true}) unless @messagepanel?
 
@@ -77,14 +75,12 @@ class Dispatch
     @govet.destroy()
     @gopath.destroy()
     @gofmt.destroy()
-    @gocode.dispose()
     @gocover = null
     @gobuild = null
     @golint = null
     @govet = null
     @gopath = null
     @gofmt = null
-    @gocode = null
     @ready = false
     @activated = false
     @emit('destroyed')

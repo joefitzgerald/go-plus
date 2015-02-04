@@ -79,7 +79,7 @@ class GoExecutable
     async.filter executables, fs.exists, (results) =>
       executables = results
       async.map executables, @introspect, (err, results) =>
-        console.log('Error mapping go: ' + err if err?)
+        console.log('Error mapping go: ' + err) if err?
         @gos = results
         @emit('detect-complete', @current())
 
@@ -101,6 +101,7 @@ class GoExecutable
               go?.env = @env
           console.log('Error running go version: ' + err) if err?
           console.log('Error detail: ' + stderr) if stderr? and stderr isnt ''
+
           callback(null)
         try
           @executor.exec(absoluteExecutable, false, @env, done, ['version'])

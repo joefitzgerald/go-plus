@@ -41,5 +41,12 @@
   },
   "devDependencies": {
     "coffeelint": ">=1.8.1"
+  },
+  "providedServices": {
+    "autocomplete.provider": {
+      "versions": {
+        "1.0.0": "provideGocodeProvider"
+      }
+    }
   }
 }

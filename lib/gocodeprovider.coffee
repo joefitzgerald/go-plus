@@ -42,11 +42,11 @@ class GocodeProvider
           msg: 'gocode Tool Missing'
           type: 'error'
           source: @name
-
-        return resolve()
+        resolve()
+        return
 
       done = (exitcode, stdout, stderr, messages) =>
-        console.log(@name + ' - stderr: ' + stderr if stderr? and stderr.trim() isnt '')
+        console.log(@name + ' - stderr: ' + stderr) if stderr? and stderr.trim() isnt ''
         messages = @mapMessages(stdout, text, index) if stdout? and stdout.trim() isnt ''
         return resolve() if messages?.length < 1
         resolve(messages)

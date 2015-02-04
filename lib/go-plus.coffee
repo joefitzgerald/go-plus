@@ -92,13 +92,26 @@ module.exports =
       order: 140
 
   activate: (state) ->
-    @dispatch = @createDispatch()
+    @getDispatch()
 
   deactivate: ->
+    @provider?.dispose()
+    @provider = null
     @dispatch?.destroy()
     @dispatch = null
 
-  createDispatch: ->
-    unless @dispatch?
-      Dispatch = require('./dispatch')
-      @dispatch = new Dispatch()
+  getDispatch: ->
+    return @dispatch if @dispatch?
+    Dispatch = require('./dispatch')
+    @dispatch = new Dispatch()
+    return @dispatch
+
+  getProvider: ->
+    return @provider if @provider?
+    GocodeProvider = require('./gocodeprovider')
+    @provider = new GocodeProvider(@getDispatch())
+    return @provider
+
+  provideGocodeProvider: ->
+    provider = @getProvider()
+    return {provider}
