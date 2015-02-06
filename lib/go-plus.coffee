@@ -92,7 +92,7 @@ module.exports =
       order: 14
     autocompleteBlacklist:
       title: 'Autocomplete Scope Blacklist'
-      description: 'Autocomplete suggestions will not be shown when the cursor is inside the following scope(s).'
+      description: 'Autocomplete suggestions will not be shown when the cursor is inside the following comma-delimited scope(s).'
       type: 'string'
       default: '.source.go .comment'
       order: 15
