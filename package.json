@@ -45,7 +45,7 @@
   "providedServices": {
     "autocomplete.provider": {
       "versions": {
-        "1.0.0": "provideGocodeProvider"
+        "1.1.0": "provide"
       }
     }
   }

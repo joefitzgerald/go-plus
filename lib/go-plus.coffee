@@ -124,6 +124,5 @@ module.exports =
     @provider = new GocodeProvider(@getDispatch())
     return @provider
 
-  provideGocodeProvider: ->
-    provider = @getProvider()
-    return {provider}
+  provide: ->
+    return {providers: [@getProvider()]}

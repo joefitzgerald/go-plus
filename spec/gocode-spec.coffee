@@ -23,10 +23,10 @@ describe 'gocode', ->
 
       pack = atom.packages.loadPackage('go-plus')
       goplusMain = pack.mainModule
-      spyOn(goplusMain, 'provideGocodeProvider').andCallThrough()
+      spyOn(goplusMain, 'provide').andCallThrough()
       pack = atom.packages.loadPackage('autocomplete-plus')
       autocompleteMain = pack.mainModule
-      spyOn(autocompleteMain, 'consumeProvider').andCallThrough()
+      spyOn(autocompleteMain, 'consumeProviders').andCallThrough()
 
     waitsForPromise -> atom.workspace.open('gocode.go').then (e) ->
       editor = e
@@ -46,20 +46,20 @@ describe 'gocode', ->
       atom.packages.activatePackage('language-go')
 
     runs ->
-      expect(goplusMain.provideGocodeProvider).not.toHaveBeenCalled()
-      expect(goplusMain.provideGocodeProvider.calls.length).toBe(0)
+      expect(goplusMain.provide).not.toHaveBeenCalled()
+      expect(goplusMain.provide.calls.length).toBe(0)
 
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
 
     waitsFor ->
-      goplusMain.provideGocodeProvider.calls.length is 1
+      goplusMain.provide.calls.length is 1
 
     waitsFor ->
-      autocompleteMain.consumeProvider.calls.length is 1
+      autocompleteMain.consumeProviders.calls.length is 1
 
     runs ->
-      expect(goplusMain.provideGocodeProvider).toHaveBeenCalled()
+      expect(goplusMain.provide).toHaveBeenCalled()
       expect(goplusMain.provider).toBeDefined()
       provider = goplusMain.provider
       spyOn(provider, 'requestHandler').andCallThrough()
@@ -73,9 +73,9 @@ describe 'gocode', ->
       dispatch.ready is true
 
   afterEach ->
-    jasmine.unspy(goplusMain, 'provideGocodeProvider')
+    jasmine.unspy(goplusMain, 'provide')
     jasmine.unspy(autocompleteManager, 'displaySuggestions')
-    jasmine.unspy(autocompleteMain, 'consumeProvider')
+    jasmine.unspy(autocompleteMain, 'consumeProviders')
     jasmine.unspy(provider, 'requestHandler')
 
   describe 'when the gocode autocomplete-plus provider is enabled', ->
