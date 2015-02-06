@@ -55,21 +55,21 @@
         "level": "error"
     },
     "no_empty_functions": {
-        "level": "ignore"
+        "level": "warn"
     },
     "no_empty_param_list": {
         "level": "error"
     },
     "no_implicit_braces": {
-        "level": "warn",
+        "level": "ignore",
         "strict": false
     },
     "no_implicit_parens": {
         "strict": false,
-        "level": "error"
+        "level": "ignore"
     },
     "no_interpolation_in_single_quotes": {
-        "level": "error"
+        "level": "warn"
     },
     "no_plusplus": {
         "level": "error"
@@ -92,13 +92,13 @@
         "allowed_in_empty_lines": true
     },
     "no_unnecessary_double_quotes": {
-        "level": "error"
+        "level": "ignore"
     },
     "no_unnecessary_fat_arrows": {
         "level": "warn"
     },
     "non_empty_constructor_needs_parens": {
-        "level": "error"
+        "level": "ignore"
     },
     "prefer_english_operator": {
         "level": "error",

@@ -66,7 +66,7 @@ class Gobuild
     if buffer.getPath().match(/_test.go$/i)
       pre = /^\w*package ([\d\w]+){1}\w*$/img # Need To Support Unicode Letters Also
       match = pre.exec(buffer.getText())
-      testPackage = if match? and match.length > 0 then match[1] else ""
+      testPackage = if match? and match.length > 0 then match[1] else ''
       testPackage = testPackage.replace(/_test$/i, '')
       output = testPackage + '.test' + go.exe
       outputPath = @tempDir
