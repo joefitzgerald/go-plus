@@ -12,6 +12,7 @@ environment:
 install:
   - set Path=c:\go\bin;%Path%
   - echo %Path%
+  - msiexec /x {FF5B30B2-08C2-11E1-85A2-6ACA4824019B} /q
   - appveyor DownloadFile https://storage.googleapis.com/golang/go1.4.1.windows-amd64.msi
   - msiexec /i go1.4.1.windows-amd64.msi /q
   - go version
