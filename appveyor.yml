@@ -4,21 +4,16 @@ version: "{build}"
 # Operating system (build VM template)
 os: Windows Server 2012 R2
 
-init:
-  - cmd: rd /s /q %CHOCOLATEYINSTALL%
-  - ps: iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
-
 # environment variables
 environment:
   GOPATH: c:\gopath
 
 # scripts that run after cloning repository
 install:
-  - set Path=c:\tools\go\bin;%Path%
+  - set Path=c:\go\bin;%Path%
   - echo %Path%
-  - choco version
-  - cinst golang -Version 1.4
-  - set GOROOT=c:\tools\go
+  - appveyor DownloadFile https://storage.googleapis.com/golang/go1.4.1.windows-amd64.msi
+  - msiexec /i go1.4.1.windows-amd64.msi /q
   - go version
   - go env
   - mkdir c:\gopath
@@ -29,14 +24,17 @@ install:
   - go get -u golang.org/x/tools/cmd/oracle
   - go get -u sourcegraph.com/sqs/goreturns
   - go get -u github.com/nsf/gocode
-  - cinst atom
-  - apm install autocomplete-plus
-  - apm install
+  - appveyor DownloadFile https://atom.io/download/windows
+  - AtomSetup.exe /silent
+  - sleep 30
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - SET PATH=%GOPATH%\bin;%PATH%
   - cd %APPVEYOR_BUILD_FOLDER%
+  - SET PATH=%GOPATH%\bin;%PATH%
+  - apm clean
+  - apm install autocomplete-plus
+  - apm install
   - apm test
 
 # to disable automatic tests

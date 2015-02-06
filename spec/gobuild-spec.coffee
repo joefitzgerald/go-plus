@@ -113,7 +113,7 @@ describe 'build', ->
         testBuffer = testEditor.getBuffer()
         testBuffer.setText("")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.once 'dispatch-complete', =>
+        dispatch.once 'dispatch-complete', ->
           expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe ""
           expect(dispatch.messages?).toBe true
           expect(_.size(dispatch.messages)).toBe 1
