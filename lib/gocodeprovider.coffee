@@ -8,6 +8,10 @@ class GocodeProvider
 
   constructor: (dispatch) ->
     @dispatch = dispatch
+    @blacklist = atom.config.get('go-plus.autocompleteBlacklist')
+    if atom.config.get('go-plus.suppressBuiltinAutocompleteProvider')
+      @providerblacklist =
+        'autocomplete-plus-fuzzyprovider': '.source.go'
 
   requestHandler: (options) ->
     return new Promise((resolve) =>

@@ -12,6 +12,7 @@ describe 'gocode', ->
 
       # Enable live autocompletion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
+      atom.config.set('go-plus.suppressBuiltinAutocompleteProvider', false)
       # Set the completion delay
       completionDelay = 100
       atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
