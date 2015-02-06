@@ -106,6 +106,24 @@ describe 'build', ->
       waitsFor ->
         done is true
 
+    it "does not error when a file is saved that is missing the 'package ...' directive", ->
+      done = false
+      runs ->
+        fs.unlinkSync(filePath)
+        testBuffer = testEditor.getBuffer()
+        testBuffer.setText("")
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        dispatch.once 'dispatch-complete', =>
+          expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe ""
+          expect(dispatch.messages?).toBe true
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0]?.msg).toBe "expected 'package', found 'EOF'"
+          done = true
+        testBuffer.save()
+
+      waitsFor ->
+        done is true
+
   describe 'when working with multiple files', ->
     beforeEach ->
       atom.config.set('go-plus.goPath', directory)
