@@ -19,7 +19,7 @@ class Gopath
   reset: (editor) ->
     @emit('reset', editor)
 
-  check: (editor, saving, callback) ->
+  check: (editor, saving, callback = -> ) ->
     unless @dispatch.isValidEditor(editor)
       @emit(@name + '-complete', editor, saving)
       callback(null)

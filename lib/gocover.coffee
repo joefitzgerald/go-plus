@@ -100,7 +100,7 @@ class Gocover
     @reset(editor)
     @runCoverage(editor, false)
 
-  runCoverage: (editor, saving, callback) =>
+  runCoverage: (editor, saving, callback = -> ) =>
     unless @dispatch.isValidEditor(editor)
       @emit(@name + '-complete', editor, saving)
       callback(null)

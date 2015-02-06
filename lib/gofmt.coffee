@@ -29,7 +29,7 @@ class Gofmt
       @dispatch.resetAndDisplayMessages(editor, messages)
     @formatBuffer(editor, false, done)
 
-  formatBuffer: (editor, saving, callback) ->
+  formatBuffer: (editor, saving, callback = -> ) ->
     unless @dispatch.isValidEditor(editor)
       @emit(@name + '-complete', editor, saving)
       callback(null)

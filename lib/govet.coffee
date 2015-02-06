@@ -29,7 +29,7 @@ class Govet
       @dispatch.resetAndDisplayMessages(editor, messages)
     @checkBuffer(editor, false, done)
 
-  checkBuffer: (editor, saving, callback) ->
+  checkBuffer: (editor, saving, callback = -> ) ->
     unless @dispatch.isValidEditor(editor)
       @emit(@name + '-complete', editor, saving)
       callback(null)
