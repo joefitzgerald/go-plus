@@ -27,12 +27,11 @@ install:
   - go get -u github.com/nsf/gocode
   - appveyor DownloadFile https://atom.io/download/windows -FileName AtomSetup.exe
   - AtomSetup.exe /silent
-  - sleep 30
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
-  - SET PATH=%GOPATH%\bin;%PATH%
+  - SET PATH=%LOCALAPPDATA%\atom\bin;%GOPATH%\bin;%PATH%
   - apm clean
   - apm install autocomplete-plus
   - apm install
