@@ -50,9 +50,6 @@ describe 'build', ->
       runs ->
         dispatch = mainModule.dispatch
 
-      waitsFor ->
-        dispatch.ready is true
-
     it 'displays errors for unused code', ->
       done = false
       runs ->
