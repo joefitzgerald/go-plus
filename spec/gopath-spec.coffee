@@ -5,7 +5,7 @@ _ = require('underscore-plus')
 AtomConfig = require('./util/atomconfig')
 
 describe 'gopath', ->
-  [editor, dispatch, directory, filePath, oldGoPath] = []
+  [mainModule, editor, dispatch, directory, filePath, oldGoPath] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -14,6 +14,7 @@ describe 'gopath', ->
     oldGoPath = process.env.GOPATH
     process.env['GOPATH'] = directory
     atom.project.setPaths(directory)
+    jasmine.unspy(window, 'setTimeout')
 
   afterEach ->
     process.env['GOPATH'] = oldGoPath
@@ -31,15 +32,14 @@ describe 'gopath', ->
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      waitsForPromise ->
-        atom.packages.activatePackage('go-plus')
-
-      runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.goexecutable.detect()
+      waitsForPromise -> atom.packages.activatePackage('go-plus').then (g) ->
+        mainModule = g.mainModule
 
       waitsFor ->
-        dispatch.ready is true
+        mainModule.dispatch?.ready
+
+      runs ->
+        dispatch = mainModule.dispatch
 
     it "displays a warning for a GOPATH without 'src' directory", ->
       done = false
@@ -95,15 +95,14 @@ describe 'gopath', ->
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      waitsForPromise ->
-        atom.packages.activatePackage('go-plus')
-
-      runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.goexecutable.detect()
+      waitsForPromise -> atom.packages.activatePackage('go-plus').then (g) ->
+        mainModule = g.mainModule
 
       waitsFor ->
-        dispatch.ready is true
+        mainModule.dispatch?.ready
+
+      runs ->
+        dispatch = mainModule.dispatch
 
     it 'displays warnings for an unset GOPATH', ->
       done = false

@@ -104,7 +104,9 @@ module.exports =
       order: 16
 
   activate: (state) ->
-    @getDispatch()
+    run = =>
+      @getDispatch()
+    setTimeout(run.bind(this), 0)
 
   deactivate: ->
     @provider?.dispose()
@@ -116,12 +118,17 @@ module.exports =
     return @dispatch if @dispatch?
     Dispatch = require('./dispatch')
     @dispatch = new Dispatch()
+    @setDispatch()
     return @dispatch
+
+  setDispatch: ->
+    @provider.setDispatch(@dispatch) if @provider? and @dispatch?
 
   getProvider: ->
     return @provider if @provider?
     GocodeProvider = require('./gocodeprovider')
-    @provider = new GocodeProvider(@getDispatch())
+    @provider = new GocodeProvider()
+    @setDispatch()
     return @provider
 
   provide: ->

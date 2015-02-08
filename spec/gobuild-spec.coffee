@@ -6,7 +6,7 @@ PathHelper = require('./util/pathhelper')
 AtomConfig = require('./util/atomconfig')
 
 describe 'build', ->
-  [editor, dispatch, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath, pathhelper] = []
+  [mainModule, editor, dispatch, secondEditor, thirdEditor, testEditor, directory, filePath, secondFilePath, thirdFilePath, testFilePath, oldGoPath, pathhelper] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -17,6 +17,7 @@ describe 'build', ->
     oldGoPath = pathhelper.home() + path.sep + 'go' unless process.env.GOPATH?
     process.env['GOPATH'] = directory
     atom.project.setPaths(directory)
+    jasmine.unspy(window, 'setTimeout')
 
   afterEach ->
     process.env['GOPATH'] = oldGoPath
@@ -40,12 +41,14 @@ describe 'build', ->
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      runs ->
-        atom.packages.activatePackage('go-plus')
+      waitsForPromise -> atom.packages.activatePackage('go-plus').then (g) ->
+        mainModule = g.mainModule
+
+      waitsFor ->
+        mainModule.dispatch?.ready
 
       runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.goexecutable.detect()
+        dispatch = mainModule.dispatch
 
       waitsFor ->
         dispatch.ready is true
@@ -152,15 +155,14 @@ describe 'build', ->
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      waitsForPromise ->
-        atom.packages.activatePackage('go-plus')
-
-      runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.goexecutable.detect()
+      waitsForPromise -> atom.packages.activatePackage('go-plus').then (g) ->
+        mainModule = g.mainModule
 
       waitsFor ->
-        dispatch.ready is true
+        mainModule.dispatch?.ready
+
+      runs ->
+        dispatch = mainModule.dispatch
 
     it 'does not display errors for dependent functions spread across multiple files in the same package', ->
       done = false
@@ -266,15 +268,14 @@ describe 'build', ->
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      runs ->
-        atom.packages.activatePackage('go-plus')
-
-      runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.goexecutable.detect()
+      waitsForPromise -> atom.packages.activatePackage('go-plus').then (g) ->
+        mainModule = g.mainModule
 
       waitsFor ->
-        dispatch.ready is true
+        mainModule.dispatch?.ready
+
+      runs ->
+        dispatch = mainModule.dispatch
 
     it 'displays warnings about the gopath, but still displays errors', ->
       done = false

@@ -5,7 +5,7 @@ _ = require('underscore-plus')
 AtomConfig = require('./util/atomconfig')
 
 describe 'lint', ->
-  [editor, dispatch, buffer, filePath] = []
+  [mainModule, editor, dispatch, buffer, filePath] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -14,23 +14,23 @@ describe 'lint', ->
     atom.project.setPaths(directory)
     filePath = path.join(directory, 'go-plus.go')
     fs.writeFileSync(filePath, '')
+    jasmine.unspy(window, 'setTimeout')
 
-    waitsForPromise ->
-      atom.workspace.open(filePath).then((e) -> editor = e)
+    waitsForPromise -> atom.workspace.open(filePath).then (e) ->
+      editor = e
+      buffer = editor.getBuffer()
 
     waitsForPromise ->
       atom.packages.activatePackage('language-go')
 
-    waitsForPromise ->
-      atom.packages.activatePackage('go-plus')
-
-    runs ->
-      buffer = editor.getBuffer()
-      dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-      dispatch.goexecutable.detect()
+    waitsForPromise -> atom.packages.activatePackage('go-plus').then (g) ->
+      mainModule = g.mainModule
 
     waitsFor ->
-      dispatch.ready is true
+      mainModule.dispatch?.ready
+
+    runs ->
+      dispatch = mainModule.dispatch
 
   describe 'when lint on save is enabled', ->
     beforeEach ->

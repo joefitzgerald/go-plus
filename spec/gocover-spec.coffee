@@ -6,7 +6,7 @@ PathHelper = require('./util/pathhelper')
 AtomConfig = require('./util/atomconfig')
 
 describe 'gocover', ->
-  [atomconfig, editor, dispatch, testEditor, directory, filePath, testFilePath, oldGoPath, pathhelper] = []
+  [mainModule, atomconfig, editor, dispatch, testEditor, directory, filePath, testFilePath, oldGoPath, pathhelper] = []
 
   beforeEach ->
     atomconfig = new AtomConfig()
@@ -17,6 +17,7 @@ describe 'gocover', ->
     oldGoPath = pathhelper.home() + path.sep + 'go' unless process.env.GOPATH?
     process.env['GOPATH'] = directory
     atom.project.setPaths(directory)
+    jasmine.unspy(window, 'setTimeout')
 
   afterEach ->
     process.env['GOPATH'] = oldGoPath
@@ -38,15 +39,14 @@ describe 'gocover', ->
       waitsForPromise ->
         atom.packages.activatePackage('language-go')
 
-      waitsForPromise ->
-        atom.packages.activatePackage('go-plus')
-
-      runs ->
-        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        dispatch.goexecutable.detect()
+      waitsForPromise -> atom.packages.activatePackage('go-plus').then (g) ->
+        mainModule = g.mainModule
 
       waitsFor ->
-        dispatch.ready is true
+        mainModule.dispatch?.ready
+
+      runs ->
+        dispatch = mainModule.dispatch
 
     it 'displays coverage for go source', ->
       done = false

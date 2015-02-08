@@ -6,12 +6,14 @@ class GocodeProvider
   id: 'go-plus-gocodeprovider'
   selector: '.source.go'
 
-  constructor: (dispatch) ->
-    @dispatch = dispatch
+  constructor: ->
     @blacklist = atom.config.get('go-plus.autocompleteBlacklist')
     if atom.config.get('go-plus.suppressBuiltinAutocompleteProvider')
       @providerblacklist =
         'autocomplete-plus-fuzzyprovider': '.source.go'
+
+  setDispatch: (dispatch) ->
+    @dispatch = dispatch
 
   requestHandler: (options) ->
     return new Promise((resolve) =>

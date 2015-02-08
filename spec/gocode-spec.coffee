@@ -24,9 +24,11 @@ describe 'gocode', ->
       pack = atom.packages.loadPackage('go-plus')
       goplusMain = pack.mainModule
       spyOn(goplusMain, 'provide').andCallThrough()
+      spyOn(goplusMain, 'setDispatch').andCallThrough()
       pack = atom.packages.loadPackage('autocomplete-plus')
       autocompleteMain = pack.mainModule
       spyOn(autocompleteMain, 'consumeProviders').andCallThrough()
+      jasmine.unspy(window, 'setTimeout')
 
     waitsForPromise -> atom.workspace.open('gocode.go').then (e) ->
       editor = e
@@ -41,6 +43,8 @@ describe 'gocode', ->
     runs ->
       autocompleteManager = autocompleteMain.autocompleteManager
       spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
+      spyOn(autocompleteManager, 'showSuggestionList').andCallThrough()
+      spyOn(autocompleteManager, 'hideSuggestionList').andCallThrough()
 
     waitsForPromise ->
       atom.packages.activatePackage('language-go')
@@ -58,6 +62,12 @@ describe 'gocode', ->
     waitsFor ->
       autocompleteMain.consumeProviders.calls.length is 1
 
+    waitsFor ->
+      goplusMain.dispatch?.ready
+
+    waitsFor ->
+      goplusMain.setDispatch.calls.length >= 1
+
     runs ->
       expect(goplusMain.provide).toHaveBeenCalled()
       expect(goplusMain.provider).toBeDefined()
@@ -69,13 +79,13 @@ describe 'gocode', ->
       dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       dispatch.goexecutable.detect()
 
-    waitsFor ->
-      dispatch.ready is true
-
   afterEach ->
     jasmine.unspy(goplusMain, 'provide')
+    jasmine.unspy(goplusMain, 'setDispatch')
     jasmine.unspy(autocompleteManager, 'displaySuggestions')
     jasmine.unspy(autocompleteMain, 'consumeProviders')
+    jasmine.unspy(autocompleteManager, 'hideSuggestionList')
+    jasmine.unspy(autocompleteManager, 'showSuggestionList')
     jasmine.unspy(provider, 'requestHandler')
 
   describe 'when the gocode autocomplete-plus provider is enabled', ->
@@ -88,9 +98,14 @@ describe 'gocode', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([5, 6])
-        editor.insertText('P')
+        advanceClock(completionDelay)
 
-        advanceClock(completionDelay + 1000)
+      waitsFor ->
+        autocompleteManager.hideSuggestionList.calls.length is 1
+
+      runs ->
+        editor.insertText('P')
+        advanceClock(completionDelay)
 
       waitsFor ->
         autocompleteManager.displaySuggestions.calls.length is 1
@@ -108,10 +123,19 @@ describe 'gocode', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([6, 15])
+        advanceClock(completionDelay)
+
+      waitsFor ->
+        autocompleteManager.hideSuggestionList.calls.length is 1
+
+      runs ->
         editor.insertText('w')
+        advanceClock(completionDelay)
 
-        advanceClock(completionDelay + 1000)
+      waitsFor ->
+        autocompleteManager.hideSuggestionList.calls.length is 2
 
+      runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
     it 'does not display suggestions at the end of a line when no gocode suggestions exist', ->
@@ -119,9 +143,15 @@ describe 'gocode', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.setCursorScreenPosition([5, 15])
+        advanceClock(completionDelay)
+
+      waitsFor ->
+        autocompleteManager.hideSuggestionList.calls.length is 1
+
+      runs ->
         editor.backspace()
         editor.insertText(')')
-        advanceClock(completionDelay + 1000)
+        advanceClock(completionDelay)
 
       waitsFor ->
         autocompleteManager.displaySuggestions.calls.length is 1
@@ -132,7 +162,7 @@ describe 'gocode', ->
 
       waitsFor ->
         autocompleteManager.displaySuggestions.calls.length is 2
-        advanceClock(completionDelay + 1000)
+        advanceClock(completionDelay)
 
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
