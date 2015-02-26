@@ -111,7 +111,7 @@ class Gobuild
       else
         file = null
         if matchLine[5]? and matchLine[5] isnt ''
-          if matchLine[5].substring(0, 1) is '/' or matchLine[5].substring(1, 2) is ':\\'
+          if path.isAbsolute(matchLine[5])
             file = matchLine[5]
           else
             file = path.join(cwd, matchLine[5])
