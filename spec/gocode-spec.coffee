@@ -118,7 +118,7 @@ describe 'gocode', ->
         expect(editorView.querySelector('.autocomplete-plus span.completion-label')).toHaveText('func(a ...interface{}) (n int, err error)')
         editor.backspace()
 
-    it 'does not display suggestions when no gocode suggestions exist', ->
+    xit 'does not display suggestions when no gocode suggestions exist', ->
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
