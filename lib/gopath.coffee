@@ -48,7 +48,7 @@ class Gopath
           message =
               line: false
               column: false
-              msg: 'Warning: GOPATH [' + gopaths[0] + '] does not exist'
+              msg: 'Warning: GOPATH [' + gopath + '] does not exist'
               type: 'warning'
               source: 'gopath'
           messages.push(message)
@@ -59,7 +59,7 @@ class Gopath
           message =
               line: false
               column: false
-              msg: 'Warning: GOPATH [' + gopaths[0] + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
+              msg: 'Warning: GOPATH [' + gopath + '] does not contain a "src" directory - please review http://golang.org/doc/code.html#Workspaces'
               type: 'warning'
               source: 'gopath'
           messages.push(message)
