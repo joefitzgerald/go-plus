@@ -8,13 +8,21 @@ os: Windows Server 2012 R2
 environment:
   GOPATH: c:\gopath
 
+init:
+- ps: >-
+    $app = Get-WmiObject -Class Win32_Product -Filter "Vendor = 'http://golang.org'"
+
+    if ($app) {
+      $app.Uninstall()
+    }
+
 # scripts that run after cloning repository
 install:
-  - set Path=c:\go\bin;%Path%
-  - echo %Path%
-  - msiexec /x {FF5B30B2-08C2-11E1-85A2-6ACA4824019B} /q
-  - appveyor DownloadFile https://storage.googleapis.com/golang/go1.4.1.windows-amd64.msi
-  - msiexec /i go1.4.1.windows-amd64.msi /q
+  - appveyor DownloadFile https://atom.io/download/windows -FileName AtomSetup.exe
+  - AtomSetup.exe /silent
+  - set PATH=%LOCALAPPDATA%\atom\bin;%GOPATH%\bin;c:\go\bin;%PATH%
+  - appveyor DownloadFile https://storage.googleapis.com/golang/go1.4.2.windows-amd64.msi
+  - msiexec /i go1.4.2.windows-amd64.msi /q
   - go version
   - go env
   - mkdir c:\gopath
@@ -25,8 +33,6 @@ install:
   - go get -u golang.org/x/tools/cmd/oracle
   - go get -u sourcegraph.com/sqs/goreturns
   - go get -u github.com/nsf/gocode
-  - appveyor DownloadFile https://atom.io/download/windows -FileName AtomSetup.exe
-  - AtomSetup.exe /silent
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
