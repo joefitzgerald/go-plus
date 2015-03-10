@@ -8,11 +8,16 @@ os: Windows Server 2012 R2
 environment:
   GOPATH: c:\gopath
 
+init: |
+  $app = Get-WmiObject -Class Win32_Product -Filter "Vendor = 'http://golang.org'"
+  if ($app) {
+    $app.Uninstall()
+  }
+
 # scripts that run after cloning repository
 install:
   - set Path=c:\go\bin;%Path%
   - echo %Path%
-  - ps: & "${env:APPVEYOR_BUILD_FOLDER}\removego.ps1"
   - appveyor DownloadFile https://storage.googleapis.com/golang/go1.4.2.windows-amd64.msi
   - msiexec /i go1.4.2.windows-amd64.msi /q
   - go version
