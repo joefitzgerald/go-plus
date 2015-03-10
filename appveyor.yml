@@ -8,11 +8,13 @@ os: Windows Server 2012 R2
 environment:
   GOPATH: c:\gopath
 
-init: |
-  $app = Get-WmiObject -Class Win32_Product -Filter "Vendor = 'http://golang.org'"
-  if ($app) {
-    $app.Uninstall()
-  }
+init:
+- ps: >-
+    $app = Get-WmiObject -Class Win32_Product -Filter "Vendor = 'http://golang.org'"
+
+    if ($app) {
+      $app.Uninstall()
+    }
 
 # scripts that run after cloning repository
 install:
