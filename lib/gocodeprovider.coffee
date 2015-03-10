@@ -102,9 +102,9 @@ class GocodeProvider
       return a
 
     return '(${0:' + args[0] + '})' if args.length is 1
-    i = 0
+    i = 1
     for arg in args
-      if i is 0
+      if i is 1
         signature = '(${' + i + ':' + args[i] + '}'
       else
         signature = signature + ', ${' + i + ':' + args[i] + '}'
