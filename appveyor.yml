@@ -12,7 +12,7 @@ environment:
 install:
   - set Path=c:\go\bin;%Path%
   - echo %Path%
-  - ps: %APPVEYOR_BUILD_FOLDER%\removego.ps1
+  - ps: & "${env:APPVEYOR_BUILD_FOLDER}\removego.ps1"
   - appveyor DownloadFile https://storage.googleapis.com/golang/go1.4.2.windows-amd64.msi
   - msiexec /i go1.4.2.windows-amd64.msi /q
   - go version
