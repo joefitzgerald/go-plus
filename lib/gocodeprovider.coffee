@@ -1,43 +1,44 @@
+{Range}  = require('atom')
 _ = require('underscore-plus')
 path = require('path')
 
 module.exports =
 class GocodeProvider
-  id: 'go-plus-gocodeprovider'
   selector: '.source.go'
+  inclusionPriority: 1
+  excludeLowerPriority: true
 
   constructor: ->
-    @blacklist = atom.config.get('go-plus.autocompleteBlacklist')
-    if atom.config.get('go-plus.suppressBuiltinAutocompleteProvider')
-      @providerblacklist =
-        'autocomplete-plus-fuzzyprovider': '.source.go'
+    @disableForSelector = atom.config.get('go-plus.autocompleteBlacklist')
 
   setDispatch: (dispatch) ->
     @dispatch = dispatch
+    @funcRegex  = /^(?:func[(]{1})([^\)]*)(?:[)]{1})(?:$|(?:\s)([^\(]*$)|(?: [(]{1})([^\)]*)(?:[)]{1}))/i
 
-  requestHandler: (options) ->
+  getSuggestions: (options) ->
     return new Promise((resolve) =>
       return resolve() unless options?
       return resolve() unless @dispatch?.isValidEditor(options.editor)
-      return resolve() unless options.buffer?
+      buffer = options.editor.getBuffer()
+      return resolve() unless buffer?
 
       go = @dispatch.goexecutable.current()
       return resolve() unless go?
       gopath = go.buildgopath()
       return resolve() if not gopath? or gopath is ''
 
-      return resolve() unless options.position
-      index = options.buffer.characterIndexForPosition(options.position)
+      return resolve() unless options.bufferPosition
+      index = buffer.characterIndexForPosition(options.bufferPosition)
       offset = 'c' + index.toString()
       text = options.editor.getText()
       return resolve() if text[index - 1] is ')' or text[index - 1] is ';'
-      quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.position)
+      quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.bufferPosition)
       return resolve() if quotedRange
 
       env = @dispatch.env()
       env['GOPATH'] = gopath
-      cwd = path.dirname(options.buffer.getPath())
-      args = ['-f=json', 'autocomplete', options.buffer.getPath(), offset]
+      cwd = path.dirname(buffer.getPath())
+      args = ['-f=json', 'autocomplete', buffer.getPath(), offset]
       configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gocodeArgs'))
       args = _.union(configArgs, args) if configArgs? and _.size(configArgs) > 0
       cmd = go.gocode()
@@ -72,13 +73,46 @@ class GocodeProvider
     suggestions = []
     for c in candidates
       suggestion =
-        prefix: c.name.substring(0, numPrefix)
-        word: c.name
-        label: c.type or c.class
-      suggestion.word += '(' if c.class is 'func' and text[index] isnt '('
+        replacementPrefix: c.name.substring(0, numPrefix)
+        rightLabel: c.type or c.class
+        type: c.class
+      if c.class is 'func'
+        suggestion.snippet = c.name + @generateSignature(c.type)
+        suggestion.rightLabel = c.class
+      else
+        suggestion.text = c.name
       suggestions.push(suggestion)
 
     return suggestions
+
+  generateSignature: (type) ->
+    signature = ""
+    skipBlank = false
+    parenCounter = 0
+    paramCount = 1
+    scanned = false
+    match = @funcRegex.exec(type)
+    return '()' unless match? and match[0]? # Not a function
+    return '()' unless match[1]? and match[1] isnt '' # Has no arguments, shouldn't be a snippet, for now
+    args = match[1].split(/, /)
+    args = _.map args, (a) ->
+      return a unless a?.length > 2
+      if a.substring(a.length - 2, a.length) is '{}'
+        return a.substring(0, a.length - 2)
+      return a
+
+    return '(${0:' + args[0] + '})' if args.length is 1
+    i = 0
+    for arg in args
+      if i is 0
+        signature = '(${' + i + ':' + args[i] + '}'
+      else
+        signature = signature + ', ${' + i + ':' + args[i] + '}'
+      i = i + 1
+
+    signature = signature + ')'
+    return signature
+    # TODO: Emit function's result(s) in snippet, when appropriate
 
   dispose: ->
     @dispatch = null

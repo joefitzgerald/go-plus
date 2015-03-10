@@ -132,4 +132,4 @@ module.exports =
     return @provider
 
   provide: ->
-    return {providers: [@getProvider()]}
+    return @getProvider()

@@ -27,7 +27,7 @@ describe 'gocode', ->
       spyOn(goplusMain, 'setDispatch').andCallThrough()
       pack = atom.packages.loadPackage('autocomplete-plus')
       autocompleteMain = pack.mainModule
-      spyOn(autocompleteMain, 'consumeProviders').andCallThrough()
+      spyOn(autocompleteMain, 'consumeProvider').andCallThrough()
       jasmine.unspy(window, 'setTimeout')
 
     waitsForPromise -> atom.workspace.open('gocode.go').then (e) ->
@@ -41,7 +41,7 @@ describe 'gocode', ->
       autocompleteMain.autocompleteManager?.ready
 
     runs ->
-      autocompleteManager = autocompleteMain.autocompleteManager
+      autocompleteManager = autocompleteMain.getAutocompleteManager()
       spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
       spyOn(autocompleteManager, 'showSuggestionList').andCallThrough()
       spyOn(autocompleteManager, 'hideSuggestionList').andCallThrough()
@@ -60,7 +60,7 @@ describe 'gocode', ->
       goplusMain.provide.calls.length is 1
 
     waitsFor ->
-      autocompleteMain.consumeProviders.calls.length is 1
+      autocompleteMain.consumeProvider.calls.length is 1
 
     waitsFor ->
       goplusMain.dispatch?.ready
@@ -72,9 +72,9 @@ describe 'gocode', ->
       expect(goplusMain.provide).toHaveBeenCalled()
       expect(goplusMain.provider).toBeDefined()
       provider = goplusMain.provider
-      spyOn(provider, 'requestHandler').andCallThrough()
-      expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.go'))).toEqual(2)
-      expect(autocompleteManager.providerManager.providersForScopeChain('.source.go')[0]).toEqual(provider)
+      spyOn(provider, 'getSuggestions').andCallThrough()
+      expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.go'))).toEqual(1)
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.go')[0]).toEqual(provider)
       buffer = editor.getBuffer()
       dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
       dispatch.goexecutable.detect()
@@ -83,17 +83,17 @@ describe 'gocode', ->
     jasmine.unspy(goplusMain, 'provide')
     jasmine.unspy(goplusMain, 'setDispatch')
     jasmine.unspy(autocompleteManager, 'displaySuggestions')
-    jasmine.unspy(autocompleteMain, 'consumeProviders')
+    jasmine.unspy(autocompleteMain, 'consumeProvider')
     jasmine.unspy(autocompleteManager, 'hideSuggestionList')
     jasmine.unspy(autocompleteManager, 'showSuggestionList')
-    jasmine.unspy(provider, 'requestHandler')
+    jasmine.unspy(provider, 'getSuggestions')
 
   describe 'when the gocode autocomplete-plus provider is enabled', ->
 
-    it 'displays suggestions from gocode', ->
+    fit 'displays suggestions from gocode', ->
       runs ->
         expect(provider).toBeDefined()
-        expect(provider.requestHandler).not.toHaveBeenCalled()
+        expect(provider.getSuggestions).not.toHaveBeenCalled()
         expect(autocompleteManager.displaySuggestions).not.toHaveBeenCalled()
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -111,8 +111,8 @@ describe 'gocode', ->
         autocompleteManager.displaySuggestions.calls.length is 1
 
       runs ->
-        expect(provider.requestHandler).toHaveBeenCalled()
-        expect(provider.requestHandler.calls.length).toBe(1)
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(1)
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         expect(editorView.querySelector('.autocomplete-plus span.word')).toHaveText('Print(')
         expect(editorView.querySelector('.autocomplete-plus span.completion-label')).toHaveText('func(a ...interface{}) (n int, err error)')
