@@ -90,7 +90,7 @@ describe 'gocode', ->
 
   describe 'when the gocode autocomplete-plus provider is enabled', ->
 
-    fit 'displays suggestions from gocode', ->
+    it 'displays suggestions from gocode', ->
       runs ->
         expect(provider).toBeDefined()
         expect(provider.getSuggestions).not.toHaveBeenCalled()
@@ -114,8 +114,8 @@ describe 'gocode', ->
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
-        expect(editorView.querySelector('.autocomplete-plus span.word')).toHaveText('Print(')
-        expect(editorView.querySelector('.autocomplete-plus span.completion-label')).toHaveText('func(a ...interface{}) (n int, err error)')
+        expect(editorView.querySelector('.autocomplete-plus span.word').innerHTML).toBe('<span class="character-match">P</span>rint(<span class="snippet-completion">a ...interface</span>)')
+        expect(editorView.querySelector('.autocomplete-plus span.completion-label').innerHTML).toBe('func')
         editor.backspace()
 
     xit 'does not display suggestions when no gocode suggestions exist', ->
@@ -154,14 +154,14 @@ describe 'gocode', ->
         advanceClock(completionDelay)
 
       waitsFor ->
-        autocompleteManager.displaySuggestions.calls.length is 1
+        autocompleteManager.displaySuggestions.calls.length is 2
 
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         editor.insertText(';')
 
       waitsFor ->
-        autocompleteManager.displaySuggestions.calls.length is 2
+        autocompleteManager.displaySuggestions.calls.length is 3
         advanceClock(completionDelay)
 
       runs ->
