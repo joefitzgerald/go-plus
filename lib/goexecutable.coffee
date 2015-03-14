@@ -214,6 +214,13 @@ class GoExecutable
           done()
         else
           @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/oracle'])
+      (callback) =>
+        done = (exitcode, stdout, stderr) ->
+          callback(null)
+        if go.gorename() isnt false and not updateExistingTools
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'golang.org/x/tools/cmd/gorename'])
     ], (err, results) =>
       @emit('gettools-complete')
     )

@@ -12,7 +12,8 @@
         { 'label': 'Lint File', 'command': 'golang:golint' },
         { 'label': 'Check File Syntax', 'command': 'golang:gobuild' },
         { 'label': 'Show Test Coverage', 'command': 'golang:gocover' },
-        { 'label': 'Clear Test Coverage', 'command': 'golang:cleargocover' }
+        { 'label': 'Clear Test Coverage', 'command': 'golang:cleargocover' },
+        { 'label': 'Rename Symbol Under Cursor', 'command': 'golang:gorename' }
       ]
     ]
   }

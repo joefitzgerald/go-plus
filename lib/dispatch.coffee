@@ -5,6 +5,7 @@ Golint = require('./golint')
 Gopath = require('./gopath')
 Gobuild = require('./gobuild')
 Gocover = require('./gocover')
+Gorename = require('./gorename')
 Executor = require('./executor')
 Environment = require('./environment')
 GoExecutable = require('./goexecutable')
@@ -39,6 +40,7 @@ class Dispatch
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
+    @gorename = new Gorename(this)
 
     @messagepanel = new MessagePanelView({title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true}) unless @messagepanel?
 
@@ -226,6 +228,12 @@ class Dispatch
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Gocode Status:</b> Enabled', className: 'text-subtle'}))
       else
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Gocode Status:</b> Not Enabled (autocomplete-plus needs to be installed and active; install it and restart)', className: 'text-warning'}))
+
+      # gorename
+      if go.gorename()? and go.gorename() isnt false
+        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Rename Tool:</b> ' + go.gorename(), className: 'text-subtle'}))
+      else
+        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Rename Tool:</b> Not Found', className: 'text-error'}))
 
       # oracle
       if go.oracle()? and go.oracle() isnt false
