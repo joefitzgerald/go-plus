@@ -101,13 +101,13 @@ class GocodeProvider
         return a.substring(0, a.length - 2)
       return a
 
-    return '(${0:' + args[0] + '})' if args.length is 1
+    return '(${1:' + args[0] + '})' if args.length is 1
     i = 1
     for arg in args
       if i is 1
-        signature = '(${' + i + ':' + args[i] + '}'
+        signature = '(${' + i + ':' + arg + '}'
       else
-        signature = signature + ', ${' + i + ':' + args[i] + '}'
+        signature = signature + ', ${' + i + ':' + arg + '}'
       i = i + 1
 
     signature = signature + ')'
