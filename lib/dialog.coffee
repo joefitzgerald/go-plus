@@ -46,6 +46,6 @@ class Dialog extends View
     @close()
     #$('.tree-view').focus()
 
-  showError: (message='') ->
+  showError: (message = '') ->
     @errorMessage.text(message)
     @flashError() if message
