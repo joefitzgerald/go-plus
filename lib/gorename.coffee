@@ -58,8 +58,9 @@ class Gorename
       callback(null, [message])
       return
 
-    # TODO: we must save ALL unsaved *.go files that are open and have changes
-    buffer.save()
+    # save any unmodified Go source files before invoking gorename
+    editor.save() for editor in atom.workspace.getTextEditors() when editor.isModified() and editor.getTitle().slice(-3) is '.go'
+
     {code, stdout, stderr, messages} = @dispatch.executor.execSync(cmd, cwd, env, args)
     msg =
       line: false
