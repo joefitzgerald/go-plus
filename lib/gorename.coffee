@@ -59,7 +59,7 @@ class Gorename
       return
 
     # save any unmodified Go source files before invoking gorename
-    editor.save() for editor in atom.workspace.getTextEditors() when editor.isModified() and editor.getTitle().slice(-3) is '.go'
+    e.save() for e in atom.workspace.getTextEditors() when e.isModified() and e.getTitle().slice(-3) is '.go'
 
     {code, stdout, stderr, messages} = @dispatch.executor.execSync(cmd, cwd, env, args)
     msg =
