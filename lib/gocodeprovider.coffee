@@ -31,7 +31,9 @@ class GocodeProvider
       index = buffer.characterIndexForPosition(options.bufferPosition)
       offset = 'c' + index.toString()
       text = options.editor.getText()
-      return resolve() if text[index - 1] is ')' or text[index - 1] is ';'
+      switch text[index - 1]
+        when ')', ';', ':', ',', '}', ' '
+          return resolve()
       quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.bufferPosition)
       return resolve() if quotedRange
 
