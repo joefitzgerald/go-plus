@@ -102,6 +102,12 @@ module.exports =
       type: 'boolean'
       default: true
       order: 16
+    suppressAutocompleteCharacters:
+      title: 'Suppress Autocomplete After Specified Characters'
+      description: 'Autocomplete suggestions will not be shown after the following space delimited list of characters'
+      type: 'string'
+      default: ') ; } , :'
+      order: 17
 
   activate: (state) ->
     run = =>

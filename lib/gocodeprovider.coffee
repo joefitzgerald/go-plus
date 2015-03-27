@@ -31,9 +31,9 @@ class GocodeProvider
       index = buffer.characterIndexForPosition(options.bufferPosition)
       offset = 'c' + index.toString()
       text = options.editor.getText()
-      switch text[index - 1]
-        when ')', ';', ':', ',', '}', ' '
-          return resolve()
+      suppressedCharacters = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.suppressAutocompleteCharacters'))
+      # We can't include a space in a list of space delimited characters so we force it here.
+      return resolve() if text[index - 1] in (suppressedCharacters + ' ')
       quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.bufferPosition)
       return resolve() if quotedRange
 
