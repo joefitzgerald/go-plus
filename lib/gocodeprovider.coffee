@@ -1,4 +1,4 @@
-{Range}  = require('atom')
+{Range, CompositeDisposable}  = require('atom')
 _ = require('underscore-plus')
 path = require('path')
 
@@ -7,9 +7,19 @@ class GocodeProvider
   selector: '.source.go'
   inclusionPriority: 1
   excludeLowerPriority: true
+  suppressForCharacters: []
 
   constructor: ->
+    @subscriptions = new CompositeDisposable
     @disableForSelector = atom.config.get('go-plus.autocompleteBlacklist')
+    @subscriptions.add atom.config.observe 'go-plus.suppressAutocompleteActivationForCharacters', (value) =>
+      @suppressForCharacters = _.map value, (c) ->
+        char = c?.trim() or ''
+        char = switch
+          when char.toLowerCase() is 'space' then ' '
+          when char.toLowerCase() is 'comma' then ','
+        return char
+      @suppressForCharacters = _.compact(@suppressForCharacters)
 
   setDispatch: (dispatch) ->
     @dispatch = dispatch
@@ -31,9 +41,7 @@ class GocodeProvider
       index = buffer.characterIndexForPosition(options.bufferPosition)
       offset = 'c' + index.toString()
       text = options.editor.getText()
-      suppressedCharacters = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.suppressAutocompleteCharacters'))
-      # We can't include a space in a list of space delimited characters so we force it here.
-      return resolve() if text[index - 1] in (suppressedCharacters + ' ')
+      return resolve() if text[index - 1] in @suppressForCharacters
       quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.bufferPosition)
       return resolve() if quotedRange
 
@@ -117,4 +125,8 @@ class GocodeProvider
     # TODO: Emit function's result(s) in snippet, when appropriate
 
   dispose: ->
+    @subscriptions?.dispose()
+    @subscriptions = null
+    @disableForSelector = null
+    @suppressForCharacters = null
     @dispatch = null
