@@ -221,5 +221,5 @@ class GoExecutable
   current: =>
     return @gos[0] if _.size(@gos) is 1
     for go in @gos
-      return go if go?.executable is @currentgo
+      return go if go?.executable is @currentgo and @currentgo isnt ''
     return @gos[0]

@@ -154,14 +154,14 @@ describe 'gocode', ->
         advanceClock(completionDelay)
 
       waitsFor ->
-        autocompleteManager.displaySuggestions.calls.length is 2
+        autocompleteManager.displaySuggestions.calls.length is 1
 
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         editor.insertText(';')
 
       waitsFor ->
-        autocompleteManager.displaySuggestions.calls.length is 3
+        autocompleteManager.displaySuggestions.calls.length is 1
         advanceClock(completionDelay)
 
       runs ->
