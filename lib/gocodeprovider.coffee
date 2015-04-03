@@ -84,26 +84,39 @@ class GocodeProvider
     for c in candidates
       suggestion =
         replacementPrefix: c.name.substring(0, numPrefix)
-        rightLabel: c.type or c.class
-        type: c.class
+        leftLabel: c.type or c.class
+        type: @translateType(c.class)
       if c.class is 'func'
-        suggestion.snippet = c.name + @generateSignature(c.type)
-        suggestion.rightLabel = c.class
+        suggestion = @upgradeSuggestion(suggestion, c)
       else
         suggestion.text = c.name
       suggestions.push(suggestion)
 
     return suggestions
 
-  generateSignature: (type) ->
-    signature = ""
-    skipBlank = false
-    parenCounter = 0
-    paramCount = 1
-    scanned = false
-    match = @funcRegex.exec(type)
-    return '()' unless match? and match[0]? # Not a function
-    return '()' unless match[1]? and match[1] isnt '' # Has no arguments, shouldn't be a snippet, for now
+  translateType: (type) ->
+    switch type
+      when 'func' then 'function'
+      when 'var' then 'variable'
+      when 'const' then 'constant'
+      when 'PANIC' then 'panic'
+      else type
+
+  upgradeSuggestion: (suggestion, c) ->
+    return suggestion unless c.type? and c.type isnt ''
+    match = @funcRegex.exec(c.type)
+    unless match? and match[0]? # Not a function
+      suggestion.snippet = c.name + '()'
+      suggestion.leftLabel = ''
+      return suggestion
+
+    suggestion.leftLabel = match[1] or match[2] or ''
+    suggestion.snippet = @generateSnippet(c.name, match)
+    return suggestion
+
+  generateSnippet: (name, match) ->
+    signature = name
+    return signature + '()' unless match[1]? and match[1] isnt '' # Has no arguments, shouldn't be a snippet, for now
     args = match[1].split(/, /)
     args = _.map args, (a) ->
       return a unless a?.length > 2
@@ -115,7 +128,7 @@ class GocodeProvider
     i = 1
     for arg in args
       if i is 1
-        signature = '(${' + i + ':' + arg + '}'
+        signature = signature + '(${' + i + ':' + arg + '}'
       else
         signature = signature + ', ${' + i + ':' + arg + '}'
       i = i + 1
