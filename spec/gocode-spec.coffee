@@ -115,7 +115,7 @@ describe 'gocode', ->
         expect(provider.getSuggestions.calls.length).toBe(1)
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         expect(editorView.querySelector('.autocomplete-plus span.word').innerHTML).toBe('<span class="character-match">P</span>rint(<span class="snippet-completion">a ...interface</span>)')
-        expect(editorView.querySelector('.autocomplete-plus span.completion-label').innerHTML).toBe('func')
+        expect(editorView.querySelector('.autocomplete-plus span.left-label').innerHTML).toBe('n int, err error')
         editor.backspace()
 
     xit 'does not display suggestions when no gocode suggestions exist', ->
