@@ -110,7 +110,7 @@ class GocodeProvider
       suggestion.leftLabel = ''
       return suggestion
 
-    suggestion.leftLabel = match[1] or match[2] or ''
+    suggestion.leftLabel = match[2] or match[3] or ''
     suggestion.snippet = @generateSnippet(c.name, match)
     return suggestion
 
@@ -124,7 +124,7 @@ class GocodeProvider
         return a.substring(0, a.length - 2)
       return a
 
-    return '(${1:' + args[0] + '})' if args.length is 1
+    return signature + '(${1:' + args[0] + '})' if args.length is 1
     i = 1
     for arg in args
       if i is 1
