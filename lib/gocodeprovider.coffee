@@ -90,6 +90,8 @@ class GocodeProvider
         suggestion = @upgradeSuggestion(suggestion, c)
       else
         suggestion.text = c.name
+
+      suggestion.iconHTML = '<i class="icon-package"></i>' if suggestion.type is 'package'
       suggestions.push(suggestion)
 
     return suggestions

@@ -79,6 +79,7 @@ class GoExecutable
     async.map executables, @introspect, (err, results) =>
       console.log('Error mapping go: ' + err) if err?
       @gos = _.compact(results)
+      @gos = _.filter(@gos, (go) -> go?.executable?.length > 0)
       @emit('detect-complete', @current())
 
   introspect: (executable, outercallback) =>
