@@ -105,9 +105,9 @@ module.exports =
       order: 17
     suppressAutocompleteActivationForCharacters:
       title: 'Suppress Autocomplete Activation For Characters'
-      description: 'Suggestions will not be provided when you type one of these characters.'
+      description: 'Suggestions will not be provided when you type one of these characters. Expects a comma separated list with any of the following labels \'comma\', \'space\', \'newline\' or \'tab\' and a string of any additional characters to suppress.'
       type: 'array'
-      default: [')', 'space', ';', 'comma', ':']
+      default: ['comma', 'newline', 'space', 'tab', '/\\()"\':;<>~!@#$%^&*|+=[]{}`?-']
       items:
         type: 'string'
       order: 18
