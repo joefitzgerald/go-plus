@@ -31,9 +31,9 @@ describe 'go executable', ->
   describe 'when user has the go executable in their path', ->
     it 'determines the current go version', ->
       runs ->
-        expect(goexecutable).toBeDefined
-        expect(go).toBeDefined
-        expect(go).toBeTruthy
+        expect(goexecutable).toBeDefined()
+        expect(go).toBeDefined()
+        expect(go).toBeTruthy()
         expect(go.name.substring(0, 2)).toBe('go') unless go.version is 'devel'
         expect(go.version.substring(0, 2)).toBe('go') unless go.version is 'devel'
         expect(go.arch).toBe('amd64') unless go.version is 'devel'
@@ -46,9 +46,9 @@ describe 'go executable', ->
       done = false
       runs ->
         suffix = if os.platform() is 'win32' then '.exe' else ''
-        expect(goexecutable).toBeDefined
-        expect(go).toBeDefined
-        expect(go).toBeTruthy
+        expect(goexecutable).toBeDefined()
+        expect(go).toBeDefined()
+        expect(go).toBeTruthy()
         expect(go.gopath).toBe(directory)
         expect(go.goimports()).toBe(false)
         expect(go.goreturns()).toBe(false)
@@ -56,8 +56,8 @@ describe 'go executable', ->
         expect(go.oracle()).toBe(false)
         goexecutable.once 'gettools-complete', ->
           go = goexecutable.current()
-          expect(go).toBeDefined
-          expect(go).toBeTruthy
+          expect(go).toBeDefined()
+          expect(go).toBeTruthy()
           expect(go.gopath).toBe(directory)
           expect(go.goimports()).toBe(fs.realpathSync(path.join(directory, 'bin', 'goimports' + suffix)))
           expect(go.goreturns()).toBe(false)
@@ -72,9 +72,9 @@ describe 'go executable', ->
 
       runs ->
         suffix = if os.platform() is 'win32' then '.exe' else ''
-        expect(goexecutable).toBeDefined
-        expect(go).toBeDefined
-        expect(go).toBeTruthy
+        expect(goexecutable).toBeDefined()
+        expect(go).toBeDefined()
+        expect(go).toBeTruthy()
         expect(go.gopath).toBe(directory)
         expect(go.goimports()).not.toBe(false)
         expect(go.goreturns()).toBe(false)
@@ -82,8 +82,8 @@ describe 'go executable', ->
         expect(go.oracle()).toBe(false)
         goexecutable.once 'gettools-complete', ->
           go = goexecutable.current()
-          expect(go).toBeDefined
-          expect(go).toBeTruthy
+          expect(go).toBeDefined()
+          expect(go).toBeTruthy()
           expect(go.gopath).toBe(directory)
           expect(go.goimports()).toBe(fs.realpathSync(path.join(directory, 'bin', 'goimports' + suffix)))
           expect(go.goreturns()).toBe(fs.realpathSync(path.join(directory, 'bin', 'goreturns' + suffix)))

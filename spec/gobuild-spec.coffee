@@ -114,10 +114,10 @@ describe 'build', ->
         testBuffer.setText("")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', ->
-          expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe ""
-          expect(dispatch.messages?).toBe true
-          expect(_.size(dispatch.messages)).toBe 1
-          expect(dispatch.messages[0]?.msg).toBe "expected 'package', found 'EOF'"
+          expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe('')
+          expect(dispatch.messages?).toBe(true)
+          expect(_.size(dispatch.messages)).toBe(1)
+          expect(dispatch.messages[0]?.msg).toBe("expected 'package', found 'EOF'")
           done = true
         testBuffer.save()
 

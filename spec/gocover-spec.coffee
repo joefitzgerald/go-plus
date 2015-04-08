@@ -65,14 +65,14 @@ describe 'gocover', ->
             markers = buffer.findMarkers({class: 'gocover'})
             expect(markers).toBeDefined()
             expect(_.size(markers)).toBe(2)
-            expect(markers[0]).toBeDefined
-            expect(markers[0].range).toBeDefined
+            expect(markers[0]).toBeDefined()
+            expect(markers[0].range).toBeDefined()
             expect(markers[0].range.start.row).toBe(4)
             expect(markers[0].range.start.column).toBe(13)
             expect(markers[0].range.end.row).toBe(6)
             expect(markers[0].range.end.column).toBe(1)
-            expect(markers[1]).toBeDefined
-            expect(markers[1].range).toBeDefined
+            expect(markers[1]).toBeDefined()
+            expect(markers[1].range).toBeDefined()
             expect(markers[1].range.start.row).toBe(8)
             expect(markers[1].range.start.column).toBe(20)
             expect(markers[1].range.end.row).toBe(10)
