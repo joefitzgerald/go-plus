@@ -16,14 +16,14 @@ describe 'executor', ->
       it 'uses /usr/libexec/path_helper to build the PATH', ->
         if os.platform() is 'darwin'
           env = environment.Clone()
-          expect(env).toBeDefined
-          expect(env.PATH).toBeDefined
+          expect(env).toBeDefined()
+          expect(env.PATH).toBeDefined()
           expect(env.PATH).not.toBe('')
           expect(env.PATH).not.toBe('/usr/bin:/bin:/usr/sbin:/sbin')
 
     it 'the DYLD_INSERT_LIBRARIES variable is undefined', ->
       env = environment.Clone()
-      expect(env).toBeDefined
+      expect(env).toBeDefined()
       expect(env.SOME_RANDOM_NONEXISTENT_VARIABLE).toBe(undefined)
       expect(env.DYLD_INSERT_LIBRARIES).toBe(undefined)
 
@@ -36,6 +36,6 @@ describe 'executor', ->
 
     it 'unsets the DYLD_INSERT_LIBRARIES variable', ->
       env = environment.Clone()
-      expect(env).toBeDefined
+      expect(env).toBeDefined()
       expect(env.SOME_RANDOM_NONEXISTENT_VARIABLE).toBe(undefined)
       expect(env.DYLD_INSERT_LIBRARIES).toBe(undefined)

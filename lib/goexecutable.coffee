@@ -33,8 +33,8 @@ class GoExecutable
     @currentgo = ''
     @emit('reset')
 
-  detect: =>
-    executables = []
+  buildCandidates: =>
+    candidates = []
     goinstallation = atom.config.get('go-plus.goInstallation')
     switch os.platform()
       when 'darwin', 'freebsd', 'linux', 'sunos'
@@ -42,105 +42,117 @@ class GoExecutable
         if goinstallation? and goinstallation.trim() isnt ''
           if fs.existsSync(goinstallation)
             if fs.lstatSync(goinstallation)?.isDirectory()
-              executables.push(path.normalize(path.join(goinstallation, 'bin', 'go')))
+              candidates.push(path.normalize(path.join(goinstallation, 'bin', 'go')))
             else if goinstallation.lastIndexOf(path.sep + 'go') is goinstallation.length - 3 or goinstallation.lastIndexOf(path.sep + 'goapp') is goinstallation.length - 6
-              executables.push(path.normalize(goinstallation))
+              candidates.push(path.normalize(goinstallation))
 
         # PATH
         if @env.PATH?
           elements = @env.PATH.split(path.delimiter)
           for element in elements
-            executables.push(path.normalize(path.join(element, 'go')))
+            candidates.push(path.normalize(path.join(element, 'go')))
 
         # Binary Distribution
-        executables.push(path.normalize(path.join('/usr', 'local', 'go', 'bin', 'go')))
+        candidates.push(path.normalize(path.join('/usr', 'local', 'go', 'bin', 'go')))
         # Homebrew
-        executables.push(path.normalize(path.join('/usr', 'local', 'bin', 'go', )))
+        candidates.push(path.normalize(path.join('/usr', 'local', 'bin', 'go', )))
       when 'win32'
         # Configuration
         if goinstallation? and goinstallation.trim() isnt ''
           if goinstallation.lastIndexOf(path.sep + 'go.exe') is goinstallation.length - 7 or goinstallation.lastIndexOf(path.sep + 'goapp.bat') is goinstallation.length - 10
-            executables.push(path.normalize(goinstallation))
+            candidates.push(path.normalize(goinstallation))
 
         # PATH
         if @env.Path?
           elements = @env.Path.split(path.delimiter)
           for element in elements
-            executables.push(path.normalize(path.join(element, 'go.exe')))
+            candidates.push(path.normalize(path.join(element, 'go.exe')))
 
         # Binary Distribution
-        executables.push(path.normalize(path.join('C:', 'go', 'bin', 'go.exe')))
+        candidates.push(path.normalize(path.join('C:', 'go', 'bin', 'go.exe')))
 
         # Chocolatey
-        executables.push(path.normalize(path.join('C:', 'tools', 'go', 'bin', 'go.exe')))
+        candidates.push(path.normalize(path.join('C:', 'tools', 'go', 'bin', 'go.exe')))
 
     # De-duplicate entries
-    executables = _.chain(executables).uniq().map((e) -> path.resolve(path.normalize(e))).filter((e) -> fs.existsSync(e)).reject((e) -> fs.lstatSync(e)?.isDirectory()).value()
-    async.map executables, @introspect, (err, results) =>
-      console.log('Error mapping go: ' + err) if err?
-      @gos = _.compact(results)
-      @gos = _.filter(@gos, (go) -> go?.executable?.length > 0)
-      @emit('detect-complete', @current())
+    candidates = _.chain(candidates).uniq().map((e) -> path.resolve(path.normalize(e))).filter((e) -> fs.existsSync(e)).reject((e) -> fs.lstatSync(e)?.isDirectory()).value()
+    return candidates
 
-  introspect: (executable, outercallback) =>
-    go = new Go(executable, @pathexpander)
-    async.series([
-      (callback) =>
-        done = (exitcode, stdout, stderr) =>
-          unless stderr? and stderr isnt ''
-            if stdout? and stdout isnt ''
-              components = stdout.replace(/\r?\n|\r/g, '').split(' ')
-              go?.name = components[2] + ' ' + components[3]
-              go?.version = components[2]
-              go?.env = @env
-          console.log('Error running go version: ' + err) if err?
-          console.log('Error detail: ' + stderr) if stderr? and stderr isnt ''
+  detect: =>
+    return new Promise((resolve) =>
+      @gos = []
+      try
+        candidates = @buildCandidates()
+        for candidate in candidates
+          break unless candidate? and candidate.trim() isnt ''
 
-          callback(null)
-        try
-          @executor.exec(executable, false, @env, done, ['version'])
-        catch error
-          console.log('go [' + executable + '] is not a valid go')
-          go = null
-      (callback) =>
-        done = (exitcode, stdout, stderr) ->
-          unless stderr? and stderr isnt ''
-            if stdout? and stdout isnt ''
-              items = stdout.split('\n')
-              for item in items
-                if item? and item isnt '' and item.trim() isnt ''
-                  tuple = item.split('=')
-                  key = tuple[0]
-                  value = ''
-                  if os.platform() is 'win32'
-                    value = tuple[1]
-                  else
-                    value = tuple[1].substring(1, tuple[1].length - 1) if tuple[1].length > 2
-                  if os.platform() is 'win32'
-                    switch key
-                      when 'set GOARCH' then go.arch = value
-                      when 'set GOOS' then go.os = value
-                      when 'set GOPATH' then go.gopath = value
-                      when 'set GOROOT' then go.goroot = value
-                      when 'set GOTOOLDIR' then go.gotooldir = value
-                      when 'set GOEXE' then go.exe = value
-                  else
-                    switch key
-                      when 'GOARCH' then go.arch = value
-                      when 'GOOS' then go.os = value
-                      when 'GOPATH' then go.gopath = value
-                      when 'GOROOT' then go.goroot = value
-                      when 'GOTOOLDIR' then go.gotooldir = value
-                      when 'GOEXE' then go.exe = value
-          console.log('Error running go env: ' + err) if err?
-          console.log('Error detail: ' + stderr) if stderr? and stderr isnt ''
-          callback(null)
-        try
-          @executor.exec(executable, false, @env, done, ['env']) unless go is null
-        catch error
-          console.log('go [' + executable + '] is not a valid go')
-    ], (err, results) ->
-      outercallback(err, go)
+          # Run go version
+          versionResult = @executor.execSync(candidate, false, @env, ['version'])
+
+          # Handle invalid go
+          break unless versionResult?
+          if versionResult.error?
+            console.log('Error running go version for go: [' + candidate + '] (probably not a valid go)')
+            console.log('Error detail: ' + versionResult.error)
+            break
+          if versionResult.stderr? and versionResult.stderr isnt ''
+            console.log versionResult.stderr
+            break
+
+          if versionResult.stdout? and versionResult.stdout isnt ''
+            versionComponents = versionResult.stdout.replace(/\r?\n|\r/g, '').split(' ')
+            go = new Go(candidate, @pathexpander)
+            go?.name = versionComponents[2] + ' ' + versionComponents[3]
+            go?.version = versionComponents[2]
+            go?.env = @env
+
+          # Run go env
+          envResult = @executor.execSync(candidate, false, @env, ['env']) unless go is null
+
+          # Handle invalid go
+          break unless envResult?
+          if envResult.error?
+            console.log('Error running go env for go: [' + candidate + '] (probably not a valid go)')
+            console.log('Error detail: ' + envResult.error)
+            break
+          if envResult.stderr? and envResult.stderr isnt ''
+            console.log envResult.stderr
+            break
+
+          if envResult.stdout? and envResult.stdout isnt ''
+            items = envResult.stdout.split('\n')
+            for item in items
+              if item? and item isnt '' and item.trim() isnt ''
+                tuple = item.split('=')
+                key = tuple[0]
+                value = ''
+                if os.platform() is 'win32'
+                  value = tuple[1]
+                else
+                  value = tuple[1].substring(1, tuple[1].length - 1) if tuple[1].length > 2
+                if os.platform() is 'win32'
+                  switch key
+                    when 'set GOARCH' then go.arch = value
+                    when 'set GOOS' then go.os = value
+                    when 'set GOPATH' then go.gopath = value
+                    when 'set GOROOT' then go.goroot = value
+                    when 'set GOTOOLDIR' then go.gotooldir = value
+                    when 'set GOEXE' then go.exe = value
+                else
+                  switch key
+                    when 'GOARCH' then go.arch = value
+                    when 'GOOS' then go.os = value
+                    when 'GOPATH' then go.gopath = value
+                    when 'GOROOT' then go.goroot = value
+                    when 'GOTOOLDIR' then go.gotooldir = value
+                    when 'GOEXE' then go.exe = value
+
+          # Crude Validation Of The Go
+          if go? and go.executable? and go.gotooldir? and go.gotooldir isnt ''
+            @gos.push(go)
+      catch error
+        console.log error
+      resolve(@gos)
     )
 
   gettools: (go, updateExistingTools) =>

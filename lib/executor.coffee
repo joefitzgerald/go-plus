@@ -19,7 +19,8 @@ class Executor
     args = [] unless args?
     done = spawnSync(command, args, options)
     result =
-      code: done.status
+      error: done?.error
+      code: done?.status
       stdout: if done?.stdout? then done.stdout else ''
       stderr: if done?.stderr? then done.stderr else ''
       messages: []
