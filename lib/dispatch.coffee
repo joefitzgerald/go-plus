@@ -42,8 +42,6 @@ class Dispatch
 
     @messagepanel = new MessagePanelView({title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true}) unless @messagepanel?
 
-    @on('run-detect', => @detect())
-
     # Reset State If Requested
     gofmtsubscription = @gofmt.on('reset', (editor) => @resetState(editor))
     golintsubscription = @golint.on('reset', (editor) => @resetState(editor))
@@ -61,7 +59,7 @@ class Dispatch
 
     @on('dispatch-complete', (editor) => @displayMessages(editor))
     @subscribeToAtomEvents()
-    @emit('run-detect')
+    @detect()
 
   destroy: =>
     @destroyItems()
@@ -152,11 +150,10 @@ class Dispatch
 
   detect: =>
     @ready = false
-    @goexecutable.once 'detect-complete', =>
+    @goexecutable.detect().then (gos) =>
       @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools')
       @displayGoInfo(false)
       @emitReady()
-    @goexecutable.detect()
 
   resetAndDisplayMessages: (editor, msgs) =>
     return unless @isValidEditor(editor)
