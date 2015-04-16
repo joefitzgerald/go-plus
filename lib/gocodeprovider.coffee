@@ -123,7 +123,7 @@ class GocodeProvider
     args = _.map args, (a) ->
       return a unless a?.length > 2
       if a.substring(a.length - 2, a.length) is '{}'
-        return a.substring(0, a.length - 1) + '\\\\}'
+        return a.substring(0, a.length - 1) + '\\}'
       return a
 
     return signature + '(${1:' + args[0] + '})' if args.length is 1
