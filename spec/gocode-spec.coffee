@@ -96,7 +96,6 @@ describe 'gocode', ->
         expect(provider.getSuggestions).not.toHaveBeenCalled()
         expect(autocompleteManager.displaySuggestions).not.toHaveBeenCalled()
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
         editor.setCursorScreenPosition([5, 6])
         advanceClock(completionDelay)
 
@@ -108,13 +107,16 @@ describe 'gocode', ->
         advanceClock(completionDelay)
 
       waitsFor ->
-        autocompleteManager.displaySuggestions.calls.length is 1
+        autocompleteManager.showSuggestionList.calls.length is 1
+
+      waitsFor ->
+        editorView.querySelector('.autocomplete-plus span.word')?
 
       runs ->
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
-        expect(editorView.querySelector('.autocomplete-plus span.word').innerHTML).toBe('<span class="character-match">P</span>rint(<span class="snippet-completion">a ...interface</span>)')
+        expect(editorView.querySelector('.autocomplete-plus span.word').innerHTML).toBe('<span class="character-match">P</span>rint(<span class="snippet-completion">a ...interface{}</span>)')
         expect(editorView.querySelector('.autocomplete-plus span.left-label').innerHTML).toBe('n int, err error')
         editor.backspace()
 
