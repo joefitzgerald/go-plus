@@ -86,7 +86,6 @@ describe 'executor', ->
           expect(stdout).toBeDefined()
           expect(stdout).toBe('')
           expect(stderr).toBeDefined()
-          expect(stderr).toBe('')
           complete = true
 
         result = executor.exec('nonexistentcommand', null, null, done, null)
