@@ -16,8 +16,11 @@ class GocodeProvider
       @suppressForCharacters = _.map value, (c) ->
         char = c?.trim() or ''
         char = switch
-          when char.toLowerCase() is 'space' then ' '
           when char.toLowerCase() is 'comma' then ','
+          when char.toLowerCase() is 'newline' then '\n'
+          when char.toLowerCase() is 'space' then ' '
+          when char.toLowerCase() is 'tab' then '\t'
+          else char
         return char
       @suppressForCharacters = _.compact(@suppressForCharacters)
 
@@ -41,7 +44,7 @@ class GocodeProvider
       index = buffer.characterIndexForPosition(options.bufferPosition)
       offset = 'c' + index.toString()
       text = options.editor.getText()
-      return resolve() if text[index - 1] in @suppressForCharacters
+      return resolve() if index > 0 and text[index - 1] in @suppressForCharacters
       quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.bufferPosition)
       return resolve() if quotedRange
 
