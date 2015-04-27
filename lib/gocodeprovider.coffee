@@ -16,9 +16,13 @@ class GocodeProvider
       @suppressForCharacters = _.map value, (c) ->
         char = c?.trim() or ''
         char = switch
-          when char.toLowerCase() is 'space' then ' '
           when char.toLowerCase() is 'comma' then ','
+          when char.toLowerCase() is 'newline' then '\n'
+          when char.toLowerCase() is 'space' then ' '
+          when char.toLowerCase() is 'tab' then '\t'
+          else char.split ''
         return char
+      @suppressForCharacters = _.flatten(@suppressForCharacters)
       @suppressForCharacters = _.compact(@suppressForCharacters)
 
   setDispatch: (dispatch) ->
