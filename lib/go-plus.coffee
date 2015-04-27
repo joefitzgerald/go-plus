@@ -107,7 +107,11 @@ module.exports =
       title: 'Suppress Autocomplete Activation For Characters'
       description: 'Suggestions will not be provided when you type one of these characters.'
       type: 'array'
-      default: ['comma', 'newline', 'space', 'tab', ':', '/', '\\', '(', ')', '"', '\'', ':', ';', '<', '>', '~', '!', '@', '#', '$', '<', '%', '^', '&', '*', '|', '+', '=', '[', ']', '{', '}', '`', '~', '?', '-']
+      default: [
+        'comma', 'newline', 'space', 'tab', '/', '\\', '(', ')', '"', '\'', ':',
+        ';', '<', '>', '~', '!', '@', '#', '$', '%', '^', '&', '*', '|', '+',
+        '=', '[', ']', '{', '}', '`', '~', '?', '-'
+      ]
       items:
         type: 'string'
       order: 18

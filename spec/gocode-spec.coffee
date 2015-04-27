@@ -150,8 +150,10 @@ describe 'gocode', ->
       waitsFor ->
         autocompleteManager.hideSuggestionList.calls.length is 1
 
+      waitsFor ->
+        autocompleteManager.displaySuggestions.calls.length is 0
+
       runs ->
-        editor.backspace()
         editor.insertText(')')
         advanceClock(completionDelay)
 
