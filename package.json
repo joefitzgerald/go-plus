@@ -4,14 +4,18 @@
   "keywords": [
     "go",
     "golang",
+    "autocomplete",
     "gofmt",
+    "gocode",
     "format",
     "fmt",
+    "godef",
     "goimports",
-    "gocode",
-    "vet",
-    "go fmt",
-    "go vet"
+    "gorename",
+    "goreturns",
+    "lint",
+    "oracle",
+    "vet"
   ],
   "version": "3.3.8",
   "main": "./lib/go-plus",
