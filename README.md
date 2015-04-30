@@ -1,6 +1,9 @@
 # [go-plus](https://atom.io/packages/go-plus) [![OSX Build Status](https://travis-ci.org/joefitzgerald/go-plus.svg?branch=master)](https://travis-ci.org/joefitzgerald/go-plus) [![Windows Build status](https://ci.appveyor.com/api/projects/status/d0cekvaprt9wo1et)](https://ci.appveyor.com/project/joefitzgerald/go-plus) [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/joefitzgerald/go-plus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 > An Improved [Go](https://www.golang.org) Experience For The [Atom Editor](https://atom.io)
 
+* Github: https://github.com/joefitzgerald/go-plus
+* Atom: https://atom.io/packages/go-plus
+
 ## Installing
 
 1. Install `autocomplete-plus`: `apm install autocomplete-plus` or open Atom and go to `Preferences > Packages`, search for `autocomplete-plus`, and install it
