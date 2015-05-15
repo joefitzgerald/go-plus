@@ -73,6 +73,7 @@ describe 'gocode', ->
       expect(goplusMain.provider).toBeDefined()
       provider = goplusMain.provider
       spyOn(provider, 'getSuggestions').andCallThrough()
+      provider.onDidInsertSuggestion = jasmine.createSpy()
       expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.go'))).toEqual(1)
       expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.go')[0]).toEqual(provider)
       buffer = editor.getBuffer()
@@ -119,6 +120,82 @@ describe 'gocode', ->
         expect(editorView.querySelector('.autocomplete-plus span.word').innerHTML).toBe('<span class="character-match">P</span>rint(<span class="snippet-completion">a ...interface{}</span>)')
         expect(editorView.querySelector('.autocomplete-plus span.left-label').innerHTML).toBe('n int, err error')
         editor.backspace()
+
+    it 'confirms a suggestion when the prefix case does not match', ->
+      runs ->
+        expect(provider).toBeDefined()
+        expect(provider.getSuggestions).not.toHaveBeenCalled()
+        expect(autocompleteManager.displaySuggestions).not.toHaveBeenCalled()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+        editor.setCursorScreenPosition([7, 0])
+        advanceClock(completionDelay)
+
+      waitsFor ->
+        autocompleteManager.hideSuggestionList.calls.length is 1
+
+      runs ->
+        editor.insertText('    fmt.')
+        editor.insertText('p')
+        advanceClock(completionDelay)
+
+      waitsFor ->
+        autocompleteManager.showSuggestionList.calls.length is 1
+
+      waitsFor ->
+        editorView.querySelector('.autocomplete-plus span.word')?
+
+      runs ->
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(1)
+        expect(provider.onDidInsertSuggestion).not.toHaveBeenCalled()
+        expect(editorView.querySelector('.autocomplete-plus span.word').innerHTML).toBe('<span class="character-match">P</span>rint(<span class="snippet-completion">a ...interface{}</span>)')
+        suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+      waitsFor ->
+        provider.onDidInsertSuggestion.calls.length is 1
+
+      runs ->
+        expect(provider.onDidInsertSuggestion).toHaveBeenCalled()
+        expect(buffer.getTextInRange([[7, 4], [7, 9]])).toBe('fmt.P')
+
+    it 'confirms a suggestion when the prefix case does not match', ->
+      runs ->
+        expect(provider).toBeDefined()
+        expect(provider.getSuggestions).not.toHaveBeenCalled()
+        expect(autocompleteManager.displaySuggestions).not.toHaveBeenCalled()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+        editor.setCursorScreenPosition([7, 0])
+        advanceClock(completionDelay)
+
+      waitsFor ->
+        autocompleteManager.hideSuggestionList.calls.length is 1
+
+      runs ->
+        editor.insertText('    fmt.p')
+        editor.insertText('r')
+        advanceClock(completionDelay)
+
+      waitsFor ->
+        autocompleteManager.showSuggestionList.calls.length is 1
+
+      waitsFor ->
+        editorView.querySelector('.autocomplete-plus span.word')?
+
+      runs ->
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(1)
+        expect(provider.onDidInsertSuggestion).not.toHaveBeenCalled()
+        expect(editorView.querySelector('.autocomplete-plus span.word').innerHTML).toBe('<span class="character-match">P</span><span class="character-match">r</span>int(<span class="snippet-completion">a ...interface{}</span>)')
+        suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+      waitsFor ->
+        provider.onDidInsertSuggestion.calls.length is 1
+
+      runs ->
+        expect(provider.onDidInsertSuggestion).toHaveBeenCalled()
+        expect(buffer.getTextInRange([[7, 4], [7, 10]])).toBe('fmt.Pr')
 
     xit 'does not display suggestions when no gocode suggestions exist', ->
       runs ->

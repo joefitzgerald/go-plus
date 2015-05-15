@@ -67,14 +67,14 @@ class GocodeProvider
 
       done = (exitcode, stdout, stderr, messages) =>
         console.log(@name + ' - stderr: ' + stderr) if stderr? and stderr.trim() isnt ''
-        messages = @mapMessages(stdout, text, index) if stdout? and stdout.trim() isnt ''
+        messages = @mapMessages(stdout, options.editor, options.bufferPosition) if stdout? and stdout.trim() isnt ''
         return resolve() if messages?.length < 1
         resolve(messages)
 
       @dispatch.executor.exec(cmd, cwd, env, done, args, text)
     )
 
-  mapMessages: (data, text, index) ->
+  mapMessages: (data, editor, position) ->
     return [] unless data?
     res = JSON.parse(data)
 
@@ -83,12 +83,15 @@ class GocodeProvider
 
     return [] unless candidates
 
+    prefix = editor.getTextInBufferRange([[position.row, position.column - numPrefix], position])
+
     suggestions = []
     for c in candidates
       suggestion =
-        replacementPrefix: c.name.substring(0, numPrefix)
+        replacementPrefix: prefix
         leftLabel: c.type or c.class
         type: @translateType(c.class)
+
       if c.class is 'func'
         suggestion = @upgradeSuggestion(suggestion, c)
       else
