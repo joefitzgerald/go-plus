@@ -6,7 +6,6 @@
 
 ## Installing
 
-1. Install `autocomplete-plus`: `apm install autocomplete-plus` or open Atom and go to `Preferences > Packages`, search for `autocomplete-plus`, and install it
 1. Install `go-plus`: `apm install go-plus` or open Atom and go to `Preferences > Packages`, search for `go-plus`, and install it
 
 ## Overview
