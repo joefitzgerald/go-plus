@@ -48,14 +48,14 @@ class Golint
       callback(null)
       @dispatch.displayGoInfo(false)
       return
-    gopath = go.buildgopath()
+    cwd = path.dirname(buffer.getPath())
+    gopath = go.buildgopath(cwd)
     if not gopath? or gopath is ''
       @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     env = @dispatch.env()
     env['GOPATH'] = gopath
-    cwd = path.dirname(buffer.getPath())
     args = [buffer.getPath()]
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.golintArgs'))
     args = _.union(configArgs, args) if configArgs? and _.size(configArgs) > 0

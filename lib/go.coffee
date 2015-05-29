@@ -33,7 +33,7 @@ class Go
     return false unless fs.existsSync(@executable)
     return fs.realpathSync(@executable)
 
-  buildgopath: ->
+  buildgopath: (cwd) ->
     result = ''
     gopathConfig = atom.config.get('go-plus.goPath')
     environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')? and atom.config.get('go-plus.environmentOverridesConfiguration')
@@ -42,6 +42,22 @@ class Go
     result = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig.trim() isnt ''
     result = gopathConfig if result is '' and gopathConfig? and gopathConfig.trim() isnt ''
     result = result.replace('\n', '').replace('\r', '')
+
+    # Whenever we build GOPATH, go up the directory tree to identify where there
+    # might be a Godeps directory. If we find it in any parent/ancestor directory,
+    # add it to GOPATH.
+    goDepCheck = ""
+    goDepDir = null
+    if cwd?
+      cwdParts = cwd.split(path.sep)
+      for cwdPart in cwdParts
+        if cwdPart.length > 0
+          goDepCheck = goDepCheck+path.sep+cwdPart
+          if fs.existsSync(goDepCheck+path.sep+"Godeps")
+            goDepDir = goDepCheck+path.sep+"Godeps"+path.sep+"_workspace"
+    if goDepDir?
+      result = goDepDir+path.delimiter+result
+
     return @pathexpander.expand(result, '')
 
   splitgopath: ->

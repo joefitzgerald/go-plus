@@ -52,7 +52,8 @@ class Gobuild
       callback(null)
       @dispatch.displayGoInfo(false)
       return
-    gopath = go.buildgopath()
+    cwd = path.dirname(buffer.getPath())
+    gopath = go.buildgopath(cwd)
     if not gopath? or gopath is ''
       @emit(@name + '-complete', editor, saving)
       callback(null)
@@ -60,7 +61,6 @@ class Gobuild
     splitgopath = go.splitgopath()
     env = @dispatch.env()
     env['GOPATH'] = gopath
-    cwd = path.dirname(buffer.getPath())
     output = ''
     outputPath = ''
     files = []

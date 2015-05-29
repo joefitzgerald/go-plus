@@ -53,7 +53,7 @@ class Gofmt
       callback(null)
       @dispatch.displayGoInfo(false)
       return
-    gopath = go.buildgopath()
+    gopath = go.buildgopath(cwd)
     if not gopath? or gopath is ''
       @emit(@name + '-complete', editor, saving)
       callback(null)
