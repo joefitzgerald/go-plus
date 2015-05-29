@@ -48,17 +48,22 @@ class Go
     # Whenever we build GOPATH, go up the directory tree to identify where there
     # might be a Godeps directory. If we find it in any parent/ancestor directory,
     # add it to GOPATH.
-    goDepCheck = ""
     goDepDir = null
     if cwd?
       goDepDir = @goDepLookupCache.get(cwd)
       if goDepDir is undefined
-        cwdParts = cwd.split(path.sep)
-        for cwdPart in cwdParts
-          if cwdPart.length > 0
-            goDepCheck = goDepCheck + path.sep + cwdPart
-            if fs.existsSync(goDepCheck + path.sep + "Godeps")
-              goDepDir = goDepCheck + path.sep + "Godeps" + path.sep + "_workspace"
+        minLastSeparator = 0
+        if os.platform() is 'win32' and cwd.contains(':\\')
+          minLastSeparator = 2
+
+        goDepCheck = cwd
+        lastSeparator = cwd.lastIndexOf(path.sep)
+        while lastSeparator > minLastSeparator
+          goDepCheck = cwd.substring(0, lastSeparator)
+          if fs.existsSync(goDepCheck + path.sep + "Godeps")
+            goDepDir = goDepCheck + path.sep + "Godeps" + path.sep + "_workspace"
+            break
+          lastSeparator = goDepCheck.lastIndexOf(path.sep)
         @goDepLookupCache.set(cwd, goDepDir)
 
     if goDepDir?
