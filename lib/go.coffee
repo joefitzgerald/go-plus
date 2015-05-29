@@ -1,6 +1,7 @@
 fs = require('fs-plus')
-path = require('path')
+nodeCache = require('node-cache')
 os = require('os')
+path = require('path')
 _ = require('underscore-plus')
 
 module.exports =
@@ -24,6 +25,7 @@ class Go
     @gopath = options.gopath if options?.gopath?
     @goroot = options.goroot if options?.goroot?
     @gotooldir = options.gotooldir if options?.gotooldir?
+    @goDepLookupCache = new nodeCache({stdTTL: 120, checkperiod: 150})
 
   description: ->
     return @name + ' (@ ' + @goroot + ')'
@@ -49,14 +51,18 @@ class Go
     goDepCheck = ""
     goDepDir = null
     if cwd?
-      cwdParts = cwd.split(path.sep)
-      for cwdPart in cwdParts
-        if cwdPart.length > 0
-          goDepCheck = goDepCheck + path.sep + cwdPart
-          if fs.existsSync(goDepCheck + path.sep + "Godeps")
-            goDepDir = goDepCheck + path.sep + "Godeps" + path.sep + "_workspace"
+      goDepDir = @goDepLookupCache.get(cwd)
+      if goDepDir is undefined
+        cwdParts = cwd.split(path.sep)
+        for cwdPart in cwdParts
+          if cwdPart.length > 0
+            goDepCheck = goDepCheck + path.sep + cwdPart
+            if fs.existsSync(goDepCheck + path.sep + "Godeps")
+              goDepDir = goDepCheck + path.sep + "Godeps" + path.sep + "_workspace"
+        @goDepLookupCache.set(cwd, goDepDir)
+
     if goDepDir?
-      result = goDepDir+path.delimiter+result
+      result = goDepDir + path.delimiter + result
 
     return @pathexpander.expand(result, '')
 

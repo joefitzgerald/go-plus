@@ -1,13 +1,15 @@
 _ = require('underscore-plus')
-path = require('path')
+fs = require('fs-plus')
 os = require('os')
+path = require('path')
+temp = require('temp').track()
 Go = require('./../lib/go')
 PathExpander = require('./../lib/util/pathexpander')
 PathHelper = require('./util/pathhelper')
 Environment = require('./../lib/environment')
 
 describe 'go', ->
-  [go, environment, pathexpander, pathhelper, env] = []
+  [go, environment, pathexpander, pathhelper, env, tmpDir] = []
 
   beforeEach ->
     environment = new Environment(process.env)
@@ -62,3 +64,16 @@ describe 'go', ->
         expect(result[2]).toBeDefined()
         expected = prefix + path.sep + path.join('usr', 'local', 'go')
         expect(result[2].toLowerCase()).toBe(expected.toLowerCase())
+
+  describe 'when working in a directory with Godeps in it', ->
+    beforeEach ->
+      tmpDir = temp.mkdirSync()
+      fs.mkdirSync(tmpDir + path.sep + 'Godeps')
+      fs.mkdirSync(tmpDir + path.sep + 'Godeps' + path.sep + '_workspace')
+      fs.mkdirSync(tmpDir + path.sep + 'main')
+      go.gopath = pathhelper.home() + path.sep + 'go'
+
+    it 'finds Godeps and adds them to the path', ->
+      runs ->
+        result = go.buildgopath(tmpDir + path.sep + 'main')
+        expect(result).toBe(tmpDir + path.sep + 'Godeps' + path.sep + '_workspace' + path.delimiter + go.gopath)
