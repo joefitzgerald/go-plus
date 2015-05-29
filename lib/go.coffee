@@ -52,9 +52,9 @@ class Go
       cwdParts = cwd.split(path.sep)
       for cwdPart in cwdParts
         if cwdPart.length > 0
-          goDepCheck = goDepCheck+path.sep+cwdPart
-          if fs.existsSync(goDepCheck+path.sep+"Godeps")
-            goDepDir = goDepCheck+path.sep+"Godeps"+path.sep+"_workspace"
+          goDepCheck = goDepCheck + path.sep + cwdPart
+          if fs.existsSync(goDepCheck + path.sep + "Godeps")
+            goDepDir = goDepCheck + path.sep + "Godeps" + path.sep + "_workspace"
     if goDepDir?
       result = goDepDir+path.delimiter+result
 
