@@ -26,6 +26,7 @@ class Go
     @goroot = options.goroot if options?.goroot?
     @gotooldir = options.gotooldir if options?.gotooldir?
     @goDepLookupCache = new nodeCache({stdTTL: 120, checkperiod: 150})
+    @goPackLookupCache = new nodeCache({stdTTL: 120, checkperiod: 150})
 
   description: ->
     return @name + ' (@ ' + @goroot + ')'
@@ -57,7 +58,7 @@ class Go
           minLastSeparator = 2
 
         goDepCheck = cwd
-        lastSeparator = cwd.lastIndexOf(path.sep)
+        lastSeparator = cwd.length
         while lastSeparator > minLastSeparator
           goDepCheck = cwd.substring(0, lastSeparator)
           if fs.existsSync(goDepCheck + path.sep + "Godeps")
@@ -68,6 +69,30 @@ class Go
 
     if goDepDir?
       result = goDepDir + path.delimiter + result
+
+    # Whenever we build GOPATH, go up the directory tree to identify where there
+    # might be a .gopack directory. If we find it in any parent/ancestor directory,
+    # add it to GOPATH.
+    goPackDir = null
+    if cwd?
+      goPackDir = @goPackLookupCache.get(cwd)
+      if goPackDir is undefined
+        minLastSeparator = 0
+        if os.platform() is 'win32' and cwd.contains(':\\')
+          minLastSeparator = 2
+
+        goPackCheck = cwd
+        lastSeparator = cwd.length
+        while lastSeparator > minLastSeparator
+          goPackCheck = cwd.substring(0, lastSeparator)
+          if fs.existsSync(goPackCheck + path.sep + ".gopack")
+            goPackDir = goPackCheck + path.sep + ".gopack" + path.sep + "vendor"
+            break
+          lastSeparator = goPackCheck.lastIndexOf(path.sep)
+        @goPackLookupCache.set(cwd, goPackDir)
+
+    if goPackDir?
+      result = goPackDir + path.delimiter + result
 
     return @pathexpander.expand(result, '')
 
