@@ -3,3 +3,4 @@
 'atom-text-editor':
   'ctrl-alt-c': 'golang:gocover'
   'ctrl-alt-shift-c': 'golang:cleargocover'
+  'alt-cmd-g': 'golang:godef'

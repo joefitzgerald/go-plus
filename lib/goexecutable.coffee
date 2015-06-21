@@ -216,6 +216,13 @@ class GoExecutable
       (callback) =>
         done = (exitcode, stdout, stderr) ->
           callback(null)
+        if go.godef() isnt false and not updateExistingTools
+          done()
+        else
+          @executor.exec(go.executable, false, gogetenv, done, ['get', '-u', 'code.google.com/p/rog-go/exp/cmd/godef'])
+      (callback) =>
+        done = (exitcode, stdout, stderr) =>
+          callback(null)
         if go.oracle() isnt false and not updateExistingTools
           done()
         else
