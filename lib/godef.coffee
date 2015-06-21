@@ -1,6 +1,6 @@
-{Emitter, Subscriber} = require 'emissary'
-path = require 'path'
-fs = require 'fs'
+{Emitter, Subscriber} = require('emissary')
+path = require('path')
+fs = require('fs')
 
 module.exports =
 class Godef
@@ -21,64 +21,64 @@ class Godef
     @dispatch = null
 
   reset: (editor) ->
-    @emit 'reset', @editor
+    @emit('reset', @editor)
     @cursorOnChangeSubscription?.dispose()
 
   # new pattern as per http://blog.atom.io/2014/09/16/new-event-subscription-api.html
   # (but so far unable to get event-kit subscriptions to work, so keeping emissary)
   onDidComplete: (callback) =>
-    @on @didCompleteNotification, callback
+    @on(@didCompleteNotification, callback)
 
   gotoDefinitionForWordAtCursor: ->
     @editor = atom?.workspace?.getActiveTextEditor()
     done = (err, messages) =>
-      @dispatch.resetAndDisplayMessages @editor, messages
+      @dispatch.resetAndDisplayMessages(@editor, messages)
 
-    unless @dispatch.isValidEditor @editor
-      @emit @didCompleteNotification, @editor, false
+    unless @dispatch.isValidEditor(@editor)
+      @emit(@didCompleteNotification, @editor, false)
       return
     if @editor.hasMultipleCursors()
-      @bailWithWarning "Godef only works with a single cursor", done
+      @bailWithWarning('Godef only works with a single cursor', done)
       return
     {word, range} = @wordAtCursor()
     unless word.length > 0
-      @bailWithWarning "No word under cursor to define", done
+      @bailWithWarning('No word under cursor to define', done)
       return
 
-    @reset @editor
-    @gotoDefinitionForWord word, done
+    @reset(@editor)
+    @gotoDefinitionForWord(word, done)
 
   gotoDefinitionForWord: (word, callback = ->) ->
     message = null
     done = (exitcode, stdout, stderr, messages) =>
-      unless exitcode == 0
+      unless exitcode is 0
         # little point parsing the error further, given godef bugs eg
         # "godef: cannot parse expression: <arg>:1:1: expected operand, found 'return'"
-        @bailWithWarning stderr, callback
+        @bailWithWarning(stderr, callback)
         return
-      outputs = stdout.split ":"
+      outputs = stdout.split(':')
       targetFilePath = outputs[0]
       unless fs.existsSync(targetFilePath)
-        @bailWithWarning "godef suggested a file path (\"#{targetFilePath}\") that does not exist)", callback
+        @bailWithWarning("godef suggested a file path (\"#{targetFilePath}\") that does not exist)", callback)
         return
       # atom's cursors 0-based; godef uses diff-like 1-based
-      row = parseInt(outputs[1],10) - 1
-      col = parseInt(outputs[2],10) - 1
-      if targetFilePath == @editor.getPath()
+      row = parseInt(outputs[1], 10) - 1
+      col = parseInt(outputs[2], 10) - 1
+      if @editor.getPath() is targetFilePath
         @editor.setCursorBufferPosition [row, col]
         @cursorOnChangeSubscription = @highlightWordAtCursor()
-        @emit @didCompleteNotification, @editor, false
-        callback null, [message]
+        @emit(@didCompleteNotification, @editor, false)
+        callback(null, [message])
       else
-        atom.workspace.open(targetFilePath, {initialLine:row, initialColumn:col}).then (e) =>
+        atom.workspace.open(targetFilePath, {initialLine: row, initialColumn: col}).then (e) =>
           @cursorOnChangeSubscription = @highlightWordAtCursor(atom.workspace.getActiveTextEditor())
-          @emit @didCompleteNotification, @editor, false
-          callback null, [message]
+          @emit(@didCompleteNotification, @editor, false)
+          callback(null, [message])
 
     go = @dispatch.goexecutable.current()
     cmd = go.godef()
     if cmd is false
-      @bailWithError 'Godef Tool Missing' , callback
+      @bailWithError('Godef Tool Missing' , callback)
       return
     env = @dispatch.env()
     filePath = @editor.getPath()
@@ -88,10 +88,10 @@ class Godef
     @dispatch.executor.exec(cmd, cwd, env, done, args)
 
   bailWithWarning: (warning, callback) ->
-    @bailWithMessage 'warning', warning, callback
+    @bailWithMessage('warning', warning, callback)
 
   bailWithError: (error, callback) ->
-    @bailWithMessage 'error', error, callback
+    @bailWithMessage('error', error, callback)
 
   bailWithMessage: (type, msg, callback) ->
     message =
@@ -100,7 +100,7 @@ class Godef
       msg: msg
       type: type
       source: @name
-    callback null, [message]
+    callback(null, [message])
 
   wordAtCursor: (editor = @editor) ->
     options =
@@ -112,7 +112,7 @@ class Godef
 
   highlightWordAtCursor: (editor = @editor) ->
     {word, range} = @wordAtCursor(editor)
-    highlightMarker = editor.markBufferRange(range, {invalidate:'inside'})
-    highlightDecoration = editor.decorateMarker(highlightMarker, {type:'highlight', class:'goplus-godef-highlight'})
+    marker = editor.markBufferRange(range, {invalidate: 'inside'})
+    decoration = editor.decorateMarker(marker, {type: 'highlight', class: 'definition'})
     cursor = editor.getLastCursor()
-    cursor.onDidChangePosition ->  highlightMarker.destroy()
+    cursor.onDidChangePosition -> marker.destroy()
