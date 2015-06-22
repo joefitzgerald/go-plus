@@ -25,17 +25,8 @@ describe 'gocover parser', ->
     fs.writeFileSync(filePath, 'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
     fs.writeFileSync(testFilePath, 'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
 
-    runs ->
-      goexecutable.once 'detect-complete', (thego) ->
-        go = thego
-        done = true
-      goexecutable.detect()
-
-    waitsFor ->
-      done is true
-
-    runs ->
-      done = false
+    waitsForPromise -> goexecutable.detect().then (gos) ->
+      go = goexecutable.current()
 
   it 'parses the file for a single package correctly', ->
     done = false

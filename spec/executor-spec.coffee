@@ -21,11 +21,11 @@ describe 'executor', ->
       runs ->
         command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe') else 'env'
         done = (exitcode, stdout, stderr, messages) ->
-          expect(exitcode).toBeDefined
+          expect(exitcode).toBeDefined()
           expect(exitcode).toBe(0)
-          expect(stdout).toBeDefined
+          expect(stdout).toBeDefined()
           expect(stdout).not.toBe('')
-          expect(stderr).toBeUndefined
+          expect(stderr).toBeDefined()
           expect(stderr).toBe('')
           expect(_.size(messages)).toBe(0)
           complete = true
@@ -39,11 +39,12 @@ describe 'executor', ->
       runs ->
         command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'pwd', 'pwd_windows_amd64.exe') else 'pwd'
         done = (exitcode, stdout, stderr, messages) ->
-          expect(exitcode).toBeDefined
+          expect(exitcode).toBeDefined()
           expect(exitcode).toBe(0)
-          expect(stdout).toBeDefined
+          expect(stdout).toBeDefined()
           expect(stdout).toBe(pathhelper.home() + '\n')
-          expect(stderr).toBeUndefined
+          expect(stderr).toBeDefined()
+          expect(stderr).toBe('')
           expect(_.size(messages)).toBe(0)
           complete = true
         result = executor.exec(command, pathhelper.home(), null, done, null)
@@ -56,11 +57,12 @@ describe 'executor', ->
       runs ->
         command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe') else 'env'
         done = (exitcode, stdout, stderr, messages) ->
-          expect(exitcode).toBeDefined
+          expect(exitcode).toBeDefined()
           expect(exitcode).toBe(0)
-          expect(stdout).toBeDefined
+          expect(stdout).toBeDefined()
           expect(stdout).toContain('testenv=testing\n') # TODO: ensure this works on Windows
-          expect(stderr).toBeUndefined
+          expect(stderr).toBeDefined()
+          expect(stderr).toBe('')
           expect(_.size(messages)).toBe(0)
           complete = true
         env =
@@ -75,14 +77,15 @@ describe 'executor', ->
       complete = false
       runs ->
         done = (exitcode, stdout, stderr, messages) ->
-          expect(exitcode).toBeDefined
+          expect(exitcode).toBeDefined()
           expect(exitcode).not.toBe(0)
           expect(exitcode).toBe(127)
           expect(_.size(messages)).toBe(1)
-          expect(messages[0]).toBeDefined
+          expect(messages[0]).toBeDefined()
           expect(messages[0]?.msg).toBe('No file or directory: [nonexistentcommand]')
-          expect(stdout).toBeUndefined
-          expect(stderr).toBeUndefined
+          expect(stdout).toBeDefined()
+          expect(stdout).toBe('')
+          expect(stderr).toBeDefined()
           complete = true
 
         result = executor.exec('nonexistentcommand', null, null, done, null)
@@ -94,21 +97,21 @@ describe 'executor', ->
     it 'succeeds', ->
       command = if os.platform() is 'win32' then path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe') else 'env'
       result = executor.execSync(command)
-      expect(result.code).toBeDefined
+      expect(result.code).toBeDefined()
       expect(result.code).toBe(0)
-      expect(result.stdout).toBeDefined
+      expect(result.stdout).toBeDefined()
       expect(result.stdout).not.toBe('')
-      expect(result.stderr).toBeUndefined
+      expect(result.stderr).toBeDefined()
       expect(result.stderr).toBe('')
 
     it 'returns a message if the command was not found', ->
       result = executor.execSync('nonexistentcommand')
-      expect(result.code).toBeDefined
+      expect(result.code).toBeDefined()
       expect(result.code).toBe(127)
       expect(_.size(result.messages)).toBe(1)
-      expect(result.messages[0]).toBeDefined
+      expect(result.messages[0]).toBeDefined()
       expect(result.messages[0].msg).toBe('No file or directory: [nonexistentcommand]')
-      expect(result.stdout).toBeUndefined
+      expect(result.stdout).toBeDefined()
       expect(result.stdout).toBe('')
-      expect(result.stderr).toBeUndefined
+      expect(result.stderr).toBeDefined()
       expect(result.stderr).toBe('')

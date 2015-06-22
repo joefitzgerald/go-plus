@@ -19,7 +19,8 @@ class Executor
     args = [] unless args?
     done = spawnSync(command, args, options)
     result =
-      code: done.status
+      error: done?.error
+      code: done?.status
       stdout: if done?.stdout? then done.stdout else ''
       stderr: if done?.stderr? then done.stderr else ''
       messages: []
@@ -33,8 +34,12 @@ class Executor
             source: 'executor'
         result.messages.push(message)
         result.code = 127
+      else if done.error.code is 'ENOTCONN' # https://github.com/iojs/io.js/pull/1214
+        result.error = null
+        result.code = 0
       else
-        console.log('Error: ' + done.error)
+        console.log('Error: ' + JSON.stringify(done.error))
+
     return result
 
   exec: (command, cwd, env, callback, args, input = null) =>
@@ -76,7 +81,7 @@ class Executor
             source: 'executor'
         messages.push(message)
       else
-        console.log(err.error)
+        console.log 'Error: ' + JSON.stringify(err.error)
       err.handle()
       callback(127, output, error, messages)
 

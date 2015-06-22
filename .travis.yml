@@ -11,7 +11,7 @@ env:
 before_install:
   - brew update
   - if brew outdated | grep -qx go; then brew upgrade go; fi
-  
+
 before_script:
   - pushd $HOME
   - mkdir -p go
@@ -28,3 +28,6 @@ before_script:
   - popd
 
 script: 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
+
+git:
+  depth: 10

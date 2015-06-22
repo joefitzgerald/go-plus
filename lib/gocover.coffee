@@ -124,6 +124,10 @@ class Gocover
     @clearMarkersFromEditors()
     tempFile = @createCoverageFile()
     go = @dispatch.goexecutable.current()
+    unless go?
+      callback(null)
+      @dispatch.displayGoInfo(false)
+      return
     gopath = go.buildgopath()
     if not gopath? or gopath is ''
       @emit(@name + '-complete', editor, saving)

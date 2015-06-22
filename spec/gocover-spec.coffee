@@ -49,6 +49,7 @@ describe 'gocover', ->
         dispatch = mainModule.dispatch
 
     it 'displays coverage for go source', ->
+      [buffer] = []
       done = false
       runs ->
         buffer = editor.getBuffer()
@@ -64,19 +65,22 @@ describe 'gocover', ->
             expect(_.size(dispatch.messages)).toBe(0)
             markers = buffer.findMarkers({class: 'gocover'})
             expect(markers).toBeDefined()
-            expect(_.size(markers)).toBe(2)
-            expect(markers[0]).toBeDefined
-            expect(markers[0].range).toBeDefined
-            expect(markers[0].range.start.row).toBe(4)
-            expect(markers[0].range.start.column).toBe(13)
-            expect(markers[0].range.end.row).toBe(6)
-            expect(markers[0].range.end.column).toBe(1)
-            expect(markers[1]).toBeDefined
-            expect(markers[1].range).toBeDefined
-            expect(markers[1].range.start.row).toBe(8)
-            expect(markers[1].range.start.column).toBe(20)
-            expect(markers[1].range.end.row).toBe(10)
-            expect(markers[1].range.end.column).toBe(1)
+
+            expect(markers.length).toBe(2)
+            expect(markers[0]).toBeDefined()
+            range = markers[0].getRange()
+            expect(range.start.row).toBe(4)
+            expect(range.start.column).toBe(13)
+            expect(range.end.row).toBe(6)
+            expect(range.end.column).toBe(1)
+
+            expect(markers[1]).toBeDefined()
+            range = markers[1].getRange()
+            expect(range).toBeDefined()
+            expect(range.start.row).toBe(8)
+            expect(range.start.column).toBe(20)
+            expect(range.end.row).toBe(10)
+            expect(range.end.column).toBe(1)
             done = true
           testBuffer.save()
         buffer.save()

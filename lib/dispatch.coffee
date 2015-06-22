@@ -9,6 +9,7 @@ Gorename = require('./gorename')
 Executor = require('./executor')
 Environment = require('./environment')
 GoExecutable = require('./goexecutable')
+Godef = require('./godef')
 SplicerSplitter = require('./util/splicersplitter')
 _ = require('underscore-plus')
 {MessagePanelView, LineMessageView, PlainMessageView} = require('atom-message-panel')
@@ -40,11 +41,10 @@ class Dispatch
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
+    @godef = new Godef(this)
     @gorename = new Gorename(this)
 
     @messagepanel = new MessagePanelView({title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true}) unless @messagepanel?
-
-    @on('run-detect', => @detect())
 
     # Reset State If Requested
     gofmtsubscription = @gofmt.on('reset', (editor) => @resetState(editor))
@@ -63,7 +63,7 @@ class Dispatch
 
     @on('dispatch-complete', (editor) => @displayMessages(editor))
     @subscribeToAtomEvents()
-    @emit('run-detect')
+    @detect()
 
   destroy: =>
     @destroyItems()
@@ -77,12 +77,16 @@ class Dispatch
     @govet.destroy()
     @gopath.destroy()
     @gofmt.destroy()
+    @godef.destroy()
+    @gorename.destroy()
     @gocover = null
     @gobuild = null
     @golint = null
     @govet = null
     @gopath = null
     @gofmt = null
+    @godef = null
+    @gorename = null
     @ready = false
     @activated = false
     @emit('destroyed')
@@ -154,11 +158,10 @@ class Dispatch
 
   detect: =>
     @ready = false
-    @goexecutable.once 'detect-complete', =>
+    @goexecutable.detect().then (gos) =>
       @gettools(false) if atom.config.get('go-plus.getMissingTools')? and atom.config.get('go-plus.getMissingTools')
       @displayGoInfo(false)
       @emitReady()
-    @goexecutable.detect()
 
   resetAndDisplayMessages: (editor, msgs) =>
     return unless @isValidEditor(editor)
@@ -222,6 +225,12 @@ class Dispatch
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Gocode Tool:</b> ' + go.gocode(), className: 'text-subtle'}))
       else
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Gocode Tool:</b> Not Found', className: 'text-error'}))
+
+      # godef
+      if go.godef()? and go.godef() isnt false
+        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Godef Tool:</b> ' + go.godef(), className: 'text-subtle'}))
+      else
+        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Godef Tool:</b> Not Found', className: 'text-error'}))
 
       # gocode active
       if _.contains(atom.packages.getAvailablePackageNames(), 'autocomplete-plus')

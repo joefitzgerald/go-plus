@@ -114,10 +114,10 @@ describe 'build', ->
         testBuffer.setText("")
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', ->
-          expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe ""
-          expect(dispatch.messages?).toBe true
-          expect(_.size(dispatch.messages)).toBe 1
-          expect(dispatch.messages[0]?.msg).toBe "expected 'package', found 'EOF'"
+          expect(fs.readFileSync(testFilePath, {encoding: 'utf8'})).toBe('')
+          expect(dispatch.messages?).toBe(true)
+          expect(_.size(dispatch.messages)).toBe(1)
+          expect(dispatch.messages[0]?.msg).toBe("expected 'package', found 'EOF'")
           done = true
         testBuffer.save()
 
@@ -125,7 +125,14 @@ describe 'build', ->
         done is true
 
   describe 'when working with multiple files', ->
+    [buffer, secondBuffer, thirdBuffer, testBuffer, done] = []
+
     beforeEach ->
+      buffer = null
+      secondBuffer = null
+      thirdBuffer = null
+      testBuffer = null
+      done = false
       atom.config.set('go-plus.goPath', directory)
       atom.config.set('go-plus.syntaxCheckOnSave', true)
       filePath = path.join(directory, 'src', 'github.com', 'testuser', 'example', 'go-plus.go')
@@ -162,7 +169,6 @@ describe 'build', ->
         dispatch = mainModule.dispatch
 
     it 'does not display errors for dependent functions spread across multiple files in the same package', ->
-      done = false
       runs ->
         fs.unlinkSync(testFilePath)
         buffer = editor.getBuffer()
@@ -174,6 +180,11 @@ describe 'build', ->
         buffer.save()
         secondBuffer.save()
         thirdBuffer.save()
+
+      waitsFor ->
+        not buffer.isModified() and not secondBuffer.isModified() and not thirdBuffer.isModified()
+
+      runs ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', ->
           expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe('package util\n\nimport "fmt"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println("Processing...")\n\tfmt.Println(Stringify("Testing"))\n}')
@@ -186,7 +197,6 @@ describe 'build', ->
         done is true
 
     it 'does display errors for errors in dependent functions spread across multiple files in the same package', ->
-      done = false
       runs ->
         fs.unlinkSync(testFilePath)
         buffer = editor.getBuffer()
@@ -198,6 +208,11 @@ describe 'build', ->
         buffer.save()
         secondBuffer.save()
         thirdBuffer.save()
+
+      waitsFor ->
+        not buffer.isModified() and not secondBuffer.isModified() and not thirdBuffer.isModified()
+
+      runs ->
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', ->
           expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe('package util\n\nimport "fmt"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println("Processing...")\n\tfmt.Println(Stringify("Testing"))\n}')
@@ -215,7 +230,6 @@ describe 'build', ->
         done is true
 
     it 'displays errors for unused code in a file under test', ->
-      done = false
       runs ->
         fs.unlinkSync(filePath)
         secondBuffer = secondEditor.getBuffer()
@@ -226,9 +240,17 @@ describe 'build', ->
         testBuffer.setText('package util\n\nimport "testing"\nimport "fmt"\n\nfunc TestExample(t *testing.T) {\n\tfmt.Println(Stringify("Testing"))\n}')
         secondBuffer.save()
         thirdBuffer.save()
+        testBuffer.save()
+
+      waitsFor ->
+        not secondBuffer.isModified() and not thirdBuffer.isModified() and not testBuffer.isModified()
+
+      runs ->
+        expect(fs.readFileSync(thirdFilePath, {encoding: 'utf8'})).toBe('package util\n\n// Stringify stringifies text\nfunc Stringify(text string) string {\n\t42\n\treturn text + "-stringified"\n}')
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
         dispatch.once 'dispatch-complete', ->
           expect(fs.readFileSync(secondFilePath, {encoding: 'utf8'})).toBe('package util\n\nimport "fmt"\n\n// ProcessString processes strings\nfunc ProcessString(text string) {\n\tfmt.Println("Processing...")\n\tfmt.Println(Stringify("Testing"))\n}')
+          expect(fs.readFileSync(thirdFilePath, {encoding: 'utf8'})).toBe('package util\n\n// Stringify stringifies text\nfunc Stringify(text string) string {\n\t42\n\treturn text + "-stringified"\n}')
           expect(dispatch.messages?).toBe(true)
           expect(_.size(dispatch.messages)).toBe(1)
           expect(dispatch.messages[0].file).toBe(thirdFilePath)

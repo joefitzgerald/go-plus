@@ -7,6 +7,7 @@
         { 'label': 'Display Go Information', 'command': 'golang:goinfo' },
         { 'label': 'Get Missing Tools', 'command': 'golang:getmissingtools' },
         { 'label': 'Update Tools', 'command': 'golang:updatetools' },
+        { 'label': 'Go To Definition', 'command': 'golang:godef' },
         { 'label': 'Format File', 'command': 'golang:gofmt' },
         { 'label': 'Vet File', 'command': 'golang:govet' },
         { 'label': 'Lint File', 'command': 'golang:golint' },

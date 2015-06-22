@@ -22,17 +22,17 @@ describe 'go', ->
     it 'expands the path', ->
       runs ->
         result = go.buildgopath()
-        expect(result).toBeDefined
-        expect(result).toBeTruthy
+        expect(result).toBeDefined()
+        expect(result).toBeTruthy()
         expect(result).toBe(path.join(pathhelper.home(), 'go'))
 
     it 'splits the path', ->
       runs ->
         result = go.splitgopath()
-        expect(result).toBeDefined
-        expect(result).toBeTruthy
+        expect(result).toBeDefined()
+        expect(result).toBeTruthy()
         expect(_.size(result)).toBe(1)
-        expect(result[0]).toBeDefined
+        expect(result[0]).toBeDefined()
         expect(result[0]).toBe(path.join(pathhelper.home(), 'go'))
 
   describe 'when working with a multi-item gopath', ->
@@ -43,8 +43,8 @@ describe 'go', ->
       runs ->
         prefix = if os.platform() is 'win32' then 'c:' else ''
         result = go.buildgopath()
-        expect(result).toBeDefined
-        expect(result).toBeTruthy
+        expect(result).toBeDefined()
+        expect(result).toBeTruthy()
         expected = path.join(pathhelper.home(), 'go') + path.delimiter + path.join(pathhelper.home(), 'go2') + path.delimiter + prefix + path.sep + 'usr' + path.sep + 'local' + path.sep + 'go'
         expect(result.toLowerCase()).toBe(expected.toLowerCase())
 
@@ -52,13 +52,13 @@ describe 'go', ->
       runs ->
         prefix = if os.platform() is 'win32' then 'c:' else ''
         result = go.splitgopath()
-        expect(result).toBeDefined
-        expect(result).toBeTruthy
+        expect(result).toBeDefined()
+        expect(result).toBeTruthy()
         expect(_.size(result)).toBe(3)
-        expect(result[0]).toBeDefined
+        expect(result[0]).toBeDefined()
         expect(result[0]).toBe(path.join(pathhelper.home(), 'go'))
-        expect(result[1]).toBeDefined
+        expect(result[1]).toBeDefined()
         expect(result[1]).toBe(path.join(pathhelper.home(), 'go2'))
-        expect(result[2]).toBeDefined
+        expect(result[2]).toBeDefined()
         expected = prefix + path.sep + path.join('usr', 'local', 'go')
         expect(result[2].toLowerCase()).toBe(expected.toLowerCase())
