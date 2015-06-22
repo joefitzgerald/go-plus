@@ -39,7 +39,6 @@ build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
   - SET PATH=%LOCALAPPDATA%\atom\bin;%GOPATH%\bin;%PATH%
   - apm clean
-  - apm install autocomplete-plus
   - apm install
   - apm test
 

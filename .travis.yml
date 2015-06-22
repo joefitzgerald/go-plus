@@ -5,9 +5,6 @@ notifications:
     on_success: never
     on_failure: change
 
-env:
-  - APM_TEST_PACKAGES="autocomplete-plus"
-
 before_install:
   - brew update
   - if brew outdated | grep -qx go; then brew upgrade go; fi
