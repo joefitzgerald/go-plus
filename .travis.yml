@@ -22,6 +22,7 @@ before_script:
   - go get -u golang.org/x/tools/cmd/oracle
   - go get -u sourcegraph.com/sqs/goreturns
   - go get -u github.com/nsf/gocode
+  - go get -u github.com/rogpeppe/godef
   - popd
 
 script: 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
