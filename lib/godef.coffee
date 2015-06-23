@@ -48,7 +48,7 @@ class Godef
     @reset(@editor)
     @gotoDefinitionForWord(word, done)
 
-  gotoDefinitionForWord: (word, callback = ->) ->
+  gotoDefinitionForWord: (word, callback = -> ) ->
     message = null
     done = (exitcode, stdout, stderr, messages) =>
       unless exitcode is 0
