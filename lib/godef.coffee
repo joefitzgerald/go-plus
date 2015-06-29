@@ -80,7 +80,12 @@ class Godef
     if cmd is false
       @bailWithError('Godef Tool Missing' , callback)
       return
+    gopath = go.buildgopath()
+    if not gopath? or gopath is ''
+      @bailWithError('GOPATH is Missing' , callback)
+      return
     env = @dispatch.env()
+    env['GOPATH'] = gopath
     filePath = @editor.getPath()
     cwd = path.dirname(filePath)
     args = ['-f', filePath, word]
