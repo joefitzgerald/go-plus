@@ -57,13 +57,21 @@ class Godef
         @bailWithWarning(stderr, callback)
         return
       outputs = stdout.split(':')
-      targetFilePath = outputs[0]
+      if process.platform == 'win32'
+        targetFilePath = "#{outputs[0]}:#{outputs[1]}"
+        rowNumber = outputs[2]
+        colNumber = outputs[3]
+      else
+        targetFilePath = outputs[0]
+        rowNumber = outputs[1]
+        colNumber = outputs[2]
+
       unless fs.existsSync(targetFilePath)
         @bailWithWarning("godef suggested a file path (\"#{targetFilePath}\") that does not exist)", callback)
         return
       # atom's cursors 0-based; godef uses diff-like 1-based
-      row = parseInt(outputs[1], 10) - 1
-      col = parseInt(outputs[2], 10) - 1
+      row = parseInt(rowNumber, 10) - 1
+      col = parseInt(colNumber, 10) - 1
       if @editor.getPath() is targetFilePath
         @editor.setCursorBufferPosition [row, col]
         @cursorOnChangeSubscription = @highlightWordAtCursor()
