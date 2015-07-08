@@ -48,7 +48,7 @@ class Godef
     @reset(@editor)
     @gotoDefinitionForWord(word, done)
 
-  gotoDefinitionForWord: (word, callback = -> ) ->
+  gotoDefinitionForWord: (word, callback = -> undefined) ->
     message = null
     done = (exitcode, stdout, stderr, messages) =>
       unless exitcode is 0
@@ -57,7 +57,7 @@ class Godef
         @bailWithWarning(stderr, callback)
         return
       outputs = stdout.split(':')
-      if process.platform == 'win32'
+      if process.platform is 'win32'
         targetFilePath = "#{outputs[0]}:#{outputs[1]}"
         rowNumber = outputs[2]
         colNumber = outputs[3]
