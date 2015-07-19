@@ -22,7 +22,7 @@ This package adds extra Atom functionality for the go language:
 
 ## Example
 
-![A screenshot of go-plus in action](http://cl.ly/image/392z2L0f0E41/go-plus-example.gif)
+![An example of go-plus in action](https://cloud.githubusercontent.com/assets/744740/8767613/68718e22-2e1f-11e5-9e3c-afe5c23792d7.gif)
 
 ## Platforms
 
