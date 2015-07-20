@@ -196,13 +196,13 @@ class Dispatch
       if go.cover()? and go.cover() isnt false
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Cover Tool:</b> ' + go.cover(), className: 'text-subtle'}))
       else
-        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Cover Tool:</b> Not Found (Is Mercurial Installed?)', className: 'text-error'}))
+        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Cover Tool:</b> Not Found', className: 'text-error'}))
 
       # vet
       if go.vet()? and go.vet() isnt false
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Vet Tool:</b> ' + go.vet(), className: 'text-subtle'}))
       else
-        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Vet Tool:</b> Not Found (Is Mercurial Installed?)', className: 'text-error'}))
+        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Vet Tool:</b> Not Found', className: 'text-error'}))
 
       # gofmt / goimports
       if go.format()? and go.format() isnt false
@@ -245,12 +245,6 @@ class Dispatch
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Git:</b> ' + go.git(), className: 'text-subtle'}))
       else
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Git:</b> Not Found', className: 'text-warning'}))
-
-      # hg
-      if go.hg()? and go.hg() isnt false
-        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Mercurial:</b> ' + go.hg(), className: 'text-subtle'}))
-      else
-        @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Mercurial:</b> Not Found', className: 'text-warning'}))
 
       # PATH
       thepath = if os.platform() is 'win32' then @env()?.Path else @env()?.PATH
