@@ -4,6 +4,7 @@ Govet = require('./govet')
 Golint = require('./golint')
 Gopath = require('./gopath')
 Gobuild = require('./gobuild')
+Gogenerate = require('./gogenerate')
 Gocover = require('./gocover')
 Executor = require('./executor')
 Environment = require('./environment')
@@ -39,6 +40,7 @@ class Dispatch
     @golint = new Golint(this)
     @gopath = new Gopath(this)
     @gobuild = new Gobuild(this)
+    @gogenerate = new Gogenerate(this)
     @gocover = new Gocover(this)
     @godef = new Godef(this)
 
@@ -50,6 +52,7 @@ class Dispatch
     govetsubscription = @govet.on('reset', (editor) => @resetState(editor))
     gopathsubscription = @gopath.on('reset', (editor) => @resetState(editor))
     gobuildsubscription = @gobuild.on('reset', (editor) => @resetState(editor))
+    gogeneratesubscription = @gogenerate.on('reset', (editor) => @resetState(editor))
     gocoversubscription = @gocover.on('reset', (editor) => @resetState(editor))
 
     @subscribe(gofmtsubscription)
@@ -57,6 +60,7 @@ class Dispatch
     @subscribe(govetsubscription)
     @subscribe(gopathsubscription)
     @subscribe(gobuildsubscription)
+    @subscribe(gogeneratesubscription)
     @subscribe(gocoversubscription)
 
     @on('dispatch-complete', (editor) => @displayMessages(editor))
@@ -71,6 +75,7 @@ class Dispatch
     @messagepanel = null
     @gocover.destroy()
     @gobuild.destroy()
+    # @gogenerate.destroy()
     @golint.destroy()
     @govet.destroy()
     @gopath.destroy()
@@ -291,6 +296,8 @@ class Dispatch
           @gopath.check(editor, saving, callback)
         (callback) =>
           @gobuild.checkBuffer(editor, saving, callback)
+        (callback) =>
+          @gogenerate.checkBuffer(editor, saving, callback)
       ], (err, checkmessages) =>
         @collectMessages(checkmessages)
         @emit('dispatch-complete', editor)
