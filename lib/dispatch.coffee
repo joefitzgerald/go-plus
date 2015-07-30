@@ -9,6 +9,7 @@ Executor = require('./executor')
 Environment = require('./environment')
 GoExecutable = require('./goexecutable')
 Godef = require('./godef')
+Goimports = require('./goimports')
 SplicerSplitter = require('./util/splicersplitter')
 _ = require('underscore-plus')
 {MessagePanelView, LineMessageView, PlainMessageView} = require('atom-message-panel')
@@ -35,6 +36,7 @@ class Dispatch
     @goexecutable = new GoExecutable(@env())
 
     @gofmt = new Gofmt(this)
+    @goimports = new Goimports(this)
     @govet = new Govet(this)
     @golint = new Golint(this)
     @gopath = new Gopath(this)
@@ -42,10 +44,12 @@ class Dispatch
     @gocover = new Gocover(this)
     @godef = new Godef(this)
 
+
     @messagepanel = new MessagePanelView({title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true}) unless @messagepanel?
 
     # Reset State If Requested
     gofmtsubscription = @gofmt.on('reset', (editor) => @resetState(editor))
+    goimportssubscription = @goimports.on('reset', (editor) => @resetState(editor))
     golintsubscription = @golint.on('reset', (editor) => @resetState(editor))
     govetsubscription = @govet.on('reset', (editor) => @resetState(editor))
     gopathsubscription = @gopath.on('reset', (editor) => @resetState(editor))
@@ -53,6 +57,7 @@ class Dispatch
     gocoversubscription = @gocover.on('reset', (editor) => @resetState(editor))
 
     @subscribe(gofmtsubscription)
+    @subscribe(goimportssubscription)
     @subscribe(golintsubscription)
     @subscribe(govetsubscription)
     @subscribe(gopathsubscription)
@@ -75,6 +80,7 @@ class Dispatch
     @govet.destroy()
     @gopath.destroy()
     @gofmt.destroy()
+    @goimports.destroy()
     @godef.destroy()
     @gocover = null
     @gobuild = null
@@ -82,6 +88,7 @@ class Dispatch
     @govet = null
     @gopath = null
     @gofmt = null
+    @goimports = null
     @godef = null
     @ready = false
     @activated = false
