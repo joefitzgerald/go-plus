@@ -130,7 +130,7 @@ class GoList extends SelectListView
   getNewl: (str) ->
     elF = (el) ->
       return el is '\r\n'
-    newlines = (str.match(/(?:\r?\n)/g) || [])
+    newlines = (str.match(/(?:\r?\n)/g) or [])
     crlf = newlines.filter(elF).length
     lf = newlines.length - crlf
     if crlf > lf
