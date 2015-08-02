@@ -9,6 +9,7 @@ Executor = require('./executor')
 Environment = require('./environment')
 GoExecutable = require('./goexecutable')
 Godef = require('./godef')
+GoList = require('./golist')
 SplicerSplitter = require('./util/splicersplitter')
 _ = require('underscore-plus')
 {MessagePanelView, LineMessageView, PlainMessageView} = require('atom-message-panel')
@@ -41,6 +42,7 @@ class Dispatch
     @gobuild = new Gobuild(this)
     @gocover = new Gocover(this)
     @godef = new Godef(this)
+    @golist = new GoList(this)
 
     @messagepanel = new MessagePanelView({title: '<span class="icon-diff-added"></span> go-plus', rawTitle: true}) unless @messagepanel?
 
@@ -83,6 +85,7 @@ class Dispatch
     @gopath = null
     @gofmt = null
     @godef = null
+    @golist.destroy()
     @ready = false
     @activated = false
     @emit('destroyed')
@@ -118,6 +121,8 @@ class Dispatch
     @addItem(atom.config.observe('go-plus.environmentOverridesConfiguration', => @displayGoInfo(true) if @ready))
     @addItem(atom.config.observe('go-plus.goInstallation', => @detect() if @ready))
 
+    atom.commands.add 'atom-workspace', 'golang:list', => @goList()
+
     atom.commands.add 'atom-workspace',
       'golang:goinfo': => @displayGoInfo(true) if @ready and @activated
 
@@ -128,6 +133,9 @@ class Dispatch
       'golang:updatetools': => @gettools(true) if @activated
 
     @activated = true
+
+  goList: =>
+    @golist.toggle()
 
   handleEvents: (editor) =>
     buffer = editor?.getBuffer()
