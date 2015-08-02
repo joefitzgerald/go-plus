@@ -26,7 +26,7 @@ class GoList extends SelectListView
     else
       @show()
 
-  getpkgs: ()->
+  getpkgs: ->
     go = @dispatch.goexecutable.current()
     if go?
       done = spawnSync(go.executable, ['list', '...'])
@@ -128,12 +128,12 @@ class GoList extends SelectListView
     return t
 
   getNewl: (str) ->
-   elF = (el) ->
-    return el == '\r\n'
-   newlines = (str.match(/(?:\r?\n)/g) || [])
-   crlf = newlines.filter(elF).length
-   lf = newlines.length - crlf
-   if crlf > lf
-     return '\r\n'
-   else
-     return '\n'
+    elF = (el) ->
+      return el is '\r\n'
+    newlines = (str.match(/(?:\r?\n)/g) || [])
+    crlf = newlines.filter(elF).length
+    lf = newlines.length - crlf
+    if crlf > lf
+      return '\r\n'
+    else
+      return '\n'
