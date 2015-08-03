@@ -1,6 +1,6 @@
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
-'atom-text-editor':
+'atom-text-editor[data-grammar="source go"]:not(.mini)':
   'ctrl-alt-c': 'golang:gocover'
   'ctrl-alt-shift-c': 'golang:cleargocover'
   'alt-cmd-g': 'golang:godef'
