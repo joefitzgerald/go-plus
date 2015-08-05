@@ -7,13 +7,11 @@ class Godef
   Subscriber.includeInto(this)
   Emitter.includeInto(this)
 
-  constructor: (dispatch) ->
+  constructor: (@dispatch) ->
     @commandName = "golang:godef"
-    @dispatch = dispatch
     @name = 'def'
     @didCompleteNotification = "#{@name}-complete"
-    atom.commands.add 'atom-workspace',
-      'golang:godef': => @gotoDefinitionForWordAtCursor()
+    atom.commands.add 'atom-workspace', 'golang:godef': => @gotoDefinitionForWordAtCursor()
     @cursorOnChangeSubscription = null
 
   destroy: ->
@@ -34,7 +32,7 @@ class Godef
     done = (err, messages) =>
       @dispatch.resetAndDisplayMessages(@editor, messages)
 
-    unless @dispatch.isValidEditor(@editor)
+    unless @dispatch?.isValidEditor(@editor)
       @emit(@didCompleteNotification, @editor, false)
       return
     if @editor.hasMultipleCursors()
