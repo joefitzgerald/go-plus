@@ -13,6 +13,7 @@
     "goimports",
     "gorename",
     "goreturns",
+    "gogenerate",
     "lint",
     "oracle",
     "vet"
