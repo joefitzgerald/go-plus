@@ -4,3 +4,4 @@
   'ctrl-alt-c': 'golang:gocover'
   'ctrl-alt-shift-c': 'golang:cleargocover'
   'alt-cmd-g': 'golang:godef'
+  'ctrl-alt-i': 'golang:list'
