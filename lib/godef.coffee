@@ -97,7 +97,7 @@ class Godef
 
     # godef on an import returns the imported package directory with no
     # row and column information: handle this appropriately
-    if targetFilePath.length == 0 && rowNumber
+    if targetFilePath.length is 0 and rowNumber
       targetFilePath = [rowNumber, colNumber].filter((x) -> x).join(':')
       rowNumber = colNumber = undefined
 
@@ -105,7 +105,7 @@ class Godef
     p = (rawPosition) -> parseInt(rawPosition, 10) - 1
 
     filepath: targetFilePath
-    pos: if rowNumber? && colNumber? then new Point(p(rowNumber), p(colNumber))
+    pos: if rowNumber? and colNumber? then new Point(p(rowNumber), p(colNumber))
     raw: godefStdout
 
   visitLocation: (loc, callback) ->
@@ -153,7 +153,7 @@ class Godef
 
   firstGoFilePath: (dir, files) ->
     isGoSourceFile = (file) ->
-      file.endsWith('.go') && file.indexOf('_test') == -1
+      file.endsWith('.go') and file.indexOf('_test') is -1
     for file in files
       return path.join(dir, file) if isGoSourceFile(file)
     return

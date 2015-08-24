@@ -4,7 +4,7 @@ doneAlready = ->
 
 module.exports =
   class EditorLocationStack
-    constructor: (@maxSize=500) ->
+    constructor: (@maxSize = 500) ->
       @maxSize = 1 if @maxSize < 1
       @stack = []
 
@@ -20,7 +20,7 @@ module.exports =
       loc =
         position: editor.getCursorBufferPosition()
         file: editor.getURI()
-      return unless loc.file && loc.position?.row && loc.position?.column
+      return unless loc.file and loc.position?.row and loc.position?.column
       @push(loc)
       return
 

@@ -57,28 +57,28 @@ describe "godef", ->
       testDisposables.push(dispatch.godef.onDidComplete(resolve))
       return
 
-  bufferTextOffset = (text, count=1, delta=0) ->
+  bufferTextOffset = (text, count = 1, delta = 0) ->
     buffer = editor.getText()
     index = -1
     for i in [1..count]
-      index = buffer.indexOf(text, (if index == -1 then 0 else index + text.length))
-      break if index == -1
-    return index if index == -1
+      index = buffer.indexOf(text, (if index is -1 then 0 else index + text.length))
+      break if index is -1
+    return index if index is -1
     index + delta
 
   offsetCursorPos = (offset) ->
     return if offset < 0
     editor.getBuffer().positionForCharacterIndex(offset)
 
-  bufferTextPos = (text, count=1, delta=0) ->
+  bufferTextPos = (text, count = 1, delta = 0) ->
     offsetCursorPos(bufferTextOffset(text, count, delta))
 
   cursorToOffset = (offset) ->
-    return if offset == -1
+    return if offset is -1
     editor.setCursorBufferPosition(offsetCursorPos(offset))
     return
 
-  cursorToText = (text, count=1, delta=0) ->
+  cursorToText = (text, count = 1, delta = 0) ->
     cursorToOffset(bufferTextOffset(text, count, delta))
 
   afterEach ->
