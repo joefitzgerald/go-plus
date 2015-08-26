@@ -13,7 +13,7 @@ describe "godef", ->
                 var testvar = "stringy"
 
                 func f(){
-                  localVar := " says hi!"
+                  localVar := " says 世界中の世界中の!"
                   fmt.Println( testvar + localVar )}
              """
 
