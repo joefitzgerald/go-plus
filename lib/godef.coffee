@@ -55,7 +55,7 @@ class Godef
     editorCursorUTF8Offset = (e) ->
       characterOffset = e.getBuffer().characterIndexForPosition(e.getCursorBufferPosition())
       text = e.getText().substring(0, characterOffset)
-      new Buffer(text, "utf8").length
+      Buffer.byteLength(text, "utf8")
 
     offset = editorCursorUTF8Offset(@editor)
     @reset(@editor)
