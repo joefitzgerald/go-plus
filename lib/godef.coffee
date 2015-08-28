@@ -52,10 +52,12 @@ class Godef
       @bailWithWarning('Godef only works with a single cursor', done)
       return
 
-    editorCursorOffset = (e) ->
-      e.getBuffer().characterIndexForPosition(e.getCursorBufferPosition())
+    editorCursorUTF8Offset = (e) ->
+      characterOffset = e.getBuffer().characterIndexForPosition(e.getCursorBufferPosition())
+      text = e.getText().substring(0, characterOffset)
+      Buffer.byteLength(text, "utf8")
 
-    offset = editorCursorOffset(@editor)
+    offset = editorCursorUTF8Offset(@editor)
     @reset(@editor)
     @gotoDefinitionWithParameters(['-o', offset, '-i'], @editor.getText(), done)
 
