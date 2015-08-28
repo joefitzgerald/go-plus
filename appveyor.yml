@@ -21,6 +21,7 @@ install:
   - appveyor DownloadFile https://atom.io/download/windows -FileName AtomSetup.exe
   - AtomSetup.exe /silent
   - set PATH=%LOCALAPPDATA%\atom\bin;%GOPATH%\bin;c:\go\bin;%PATH%
+  - rmdir c:\go /s /q
   - appveyor DownloadFile https://storage.googleapis.com/golang/go1.5.windows-amd64.msi
   - msiexec /i go1.5.windows-amd64.msi /q
   - go version
