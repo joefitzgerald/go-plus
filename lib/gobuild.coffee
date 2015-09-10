@@ -60,6 +60,8 @@ class Gobuild
     splitgopath = go.splitgopath()
     env = @dispatch.env()
     env['GOPATH'] = gopath
+    if atom.config.get('go-plus.vendorExperiement')
+      env['GO15VENDOREXPERIMENT'] = '1'
     cwd = path.dirname(buffer.getPath())
     output = ''
     outputPath = ''

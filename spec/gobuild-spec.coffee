@@ -124,6 +124,24 @@ describe 'build', ->
       waitsFor ->
         done is true
 
+    it 'sets env for go vendor experiement', ->
+      done = false
+      runs ->
+        atom.config.set('go-plus.vendorExperiement', true)
+        fs.unlinkSync(testFilePath)
+        buffer = editor.getBuffer()
+        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {fmt.Println("Code that is just fine.")}\n')
+        dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
+        spyOn(dispatch.executor,'exec').andCallThrough()
+        dispatch.once 'dispatch-complete', ->
+          expect(dispatch.executor.exec.mostRecentCall.args[2]['GO15VENDOREXPERIMENT']).toEqual('1')
+
+          done = true
+        buffer.save()
+
+      waitsFor ->
+        done is true
+
   describe 'when working with multiple files', ->
     [buffer, secondBuffer, thirdBuffer, testBuffer, done] = []
 
