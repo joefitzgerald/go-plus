@@ -132,7 +132,7 @@ describe 'build', ->
         buffer = editor.getBuffer()
         buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {fmt.Println("Code that is just fine.")}\n')
         dispatch = atom.packages.getLoadedPackage('go-plus').mainModule.dispatch
-        spyOn(dispatch.executor,'exec').andCallThrough()
+        spyOn(dispatch.executor, 'exec').andCallThrough()
         dispatch.once 'dispatch-complete', ->
           expect(dispatch.executor.exec.mostRecentCall.args[2]['GO15VENDOREXPERIMENT']).toEqual('1')
 
