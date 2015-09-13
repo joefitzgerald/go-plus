@@ -60,7 +60,6 @@ class Gorename
 
     # save any unmodified Go source files before invoking gorename
     e.save() for e in atom.workspace.getTextEditors() when e.isModified() and @dispatch.isValidEditor(e)
-
     {code, stdout, stderr, messages} = @dispatch.executor.execSync(cmd, cwd, env, args)
     msg =
       line: false
@@ -73,5 +72,6 @@ class Gorename
     callback(null, messages)
 
   positionToByte: (editor, point) ->
-    # TODO assumes single byte characters - fix later
-    editor.buffer.characterIndexForPosition(point)
+    charOffset = editor.buffer.characterIndexForPosition(point)
+    text = editor.getText().substring(0, charOffset)
+    Buffer.byteLength(text, "utf8")
