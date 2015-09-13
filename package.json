@@ -20,7 +20,7 @@
     "oracle",
     "vet"
   ],
-  "version": "3.3.12",
+  "version": "3.5.1",
   "main": "./lib/go-plus",
   "license": "Apache-2.0",
   "engines": {

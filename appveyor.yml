@@ -21,8 +21,9 @@ install:
   - appveyor DownloadFile https://atom.io/download/windows -FileName AtomSetup.exe
   - AtomSetup.exe /silent
   - set PATH=%LOCALAPPDATA%\atom\bin;%GOPATH%\bin;c:\go\bin;%PATH%
-  - appveyor DownloadFile https://storage.googleapis.com/golang/go1.4.2.windows-amd64.msi
-  - msiexec /i go1.4.2.windows-amd64.msi /q
+  - rmdir c:\go /s /q
+  - appveyor DownloadFile https://storage.googleapis.com/golang/go1.5.windows-amd64.msi
+  - msiexec /i go1.5.windows-amd64.msi /q
   - go version
   - go env
   - mkdir c:\gopath
@@ -33,13 +34,13 @@ install:
   - go get -u golang.org/x/tools/cmd/oracle
   - go get -u sourcegraph.com/sqs/goreturns
   - go get -u github.com/nsf/gocode
+  - go get -u github.com/rogpeppe/godef
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
   - SET PATH=%LOCALAPPDATA%\atom\bin;%GOPATH%\bin;%PATH%
   - apm clean
-  - apm install autocomplete-plus
   - apm install
   - apm test
 

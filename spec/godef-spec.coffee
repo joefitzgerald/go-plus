@@ -3,10 +3,19 @@ fs = require('fs-plus')
 temp = require('temp').track()
 _ = require ("underscore-plus")
 {Subscriber} = require 'emissary'
+{Point} = require 'atom'
 
 describe "godef", ->
   [mainModule, editor, editorView, dispatch, filePath, workspaceElement] = []
-  testText = "package main\n import \"fmt\"\n var testvar = \"stringy\"\n\nfunc f(){fmt.Println( testvar )}\n\n"
+  testDisposables = []
+  testText = """package main
+                import "fmt"
+                var testvar = "stringy"
+
+                func f(){
+                  localVar := " says 世界中の世界中の!"
+                  fmt.Println( testvar + localVar )}
+             """
 
   beforeEach ->
     # don't run any of the on-save tools
@@ -39,6 +48,65 @@ describe "godef", ->
 
     runs ->
       dispatch = mainModule.dispatch
+
+  triggerCommand = (command) ->
+    atom.commands.dispatch(workspaceElement, dispatch.godef[command])
+
+  godefDone = ->
+    new Promise (resolve, reject) ->
+      testDisposables.push(dispatch.godef.onDidComplete(resolve))
+      return
+
+  bufferTextOffset = (text, count = 1, delta = 0) ->
+    buffer = editor.getText()
+    index = -1
+    for i in [1..count]
+      index = buffer.indexOf(text, (if index is -1 then 0 else index + text.length))
+      break if index is -1
+    return index if index is -1
+    index + delta
+
+  offsetCursorPos = (offset) ->
+    return if offset < 0
+    editor.getBuffer().positionForCharacterIndex(offset)
+
+  bufferTextPos = (text, count = 1, delta = 0) ->
+    offsetCursorPos(bufferTextOffset(text, count, delta))
+
+  cursorToOffset = (offset) ->
+    return if offset is -1
+    editor.setCursorBufferPosition(offsetCursorPos(offset))
+    return
+
+  cursorToText = (text, count = 1, delta = 0) ->
+    cursorToOffset(bufferTextOffset(text, count, delta))
+
+  afterEach ->
+    disposable.dispose() for disposable in testDisposables
+    testDisposables = []
+
+  waitsForCommand = (command) ->
+    godefPromise = undefined
+    runs ->
+      # Create the promise before triggering the command because triggerCommand
+      # may call onDidComplete synchronously.
+      godefPromise = godefDone()
+      triggerCommand(command)
+    waitsForPromise -> godefPromise
+    return
+
+  waitsForGodef = ->
+    waitsForCommand 'godefCommand'
+
+  waitsForGodefReturn = ->
+    waitsForCommand 'returnCommand'
+
+  waitsForDispatchComplete = (action) ->
+    dispatchComplete = false
+    runs ->
+      dispatch.once 'dispatch-complete', -> dispatchComplete = true
+    runs action
+    waitsFor -> dispatchComplete
 
   describe "wordAtCursor (| represents cursor pos)", ->
     godef = null
@@ -89,90 +157,121 @@ describe "godef", ->
   describe "when go-plus is loaded", ->
     it "should have registered the golang:godef command",  ->
       currentCommands = atom.commands.findCommands({target: editorView})
-      godefCommand = (cmd for cmd in currentCommands when cmd.name is dispatch.godef.commandName)
+      godefCommand = (cmd for cmd in currentCommands when cmd.name is dispatch.godef.godefCommand)
       expect(godefCommand.length).toEqual(1)
 
   describe "when godef command is invoked", ->
-
     describe "if there is more than one cursor", ->
       it "displays a warning message", ->
-        done = false
-        runs ->
-          dispatch.once 'dispatch-complete', ->
-            done = true
+        waitsForDispatchComplete ->
           editor.setText testText
           editor.save()
-        waitsFor ->
-          done is true
-        editor.setCursorBufferPosition([0, 0])
-        editor.addCursorAtBufferPosition([1, 0])
-        atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
+        runs ->
+          editor.setCursorBufferPosition([0, 0])
+          editor.addCursorAtBufferPosition([1, 0])
 
-        expect(dispatch.messages?).toBe(true)
-        expect(_.size(dispatch.messages)).toBe 1
-        expect(dispatch.messages[0].type).toBe("warning")
+        waitsForGodef()
+
+        runs ->
+          expect(dispatch.messages?).toBe(true)
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0].type).toBe("warning")
 
     describe "with no word under the cursor", ->
-
       it "displays a warning message", ->
         editor.setCursorBufferPosition([0, 0])
-        atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-        expect(dispatch.messages?).toBe(true)
-        expect(_.size(dispatch.messages)).toBe 1
-        expect(dispatch.messages[0].type).toBe("warning")
+        waitsForGodef()
+        runs ->
+          expect(dispatch.messages?).toBe(true)
+          expect(_.size(dispatch.messages)).toBe 1
+          expect(dispatch.messages[0].type).toBe("warning")
 
     describe "with a word under the cursor", ->
       beforeEach ->
-        done = false
-        runs ->
-          dispatch.once 'dispatch-complete', ->
-            done = true
+        waitsForDispatchComplete ->
           editor.setText testText
           editor.save()
-        waitsFor ->
-          done is true
 
       describe "defined within the current file", ->
+        beforeEach ->
+          cursorToText("testvar", 2)
+          waitsForGodef()
+
         it "should move the cursor to the definition", ->
-          done = false
-          subscription = dispatch.godef.onDidComplete ->
-            # `new Point` always results in ReferenceError (why?), hence array
-            expect(editor.getCursorBufferPosition().toArray()).toEqual([2, 5]) #"testvar" decl
-            done = true
           runs ->
-            editor.setCursorBufferPosition([4, 24]) # "testvar" use
-            atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-          waitsFor ->
-            done is true
-          runs ->
-            subscription.dispose()
+            expect(editor.getCursorBufferPosition()).toEqual(bufferTextPos("testvar", 1))
 
         it "should create a highlight decoration of the correct class", ->
-          done = false
-          subscription = dispatch.godef.onDidComplete ->
+          runs ->
             higlightClass = 'definition'
             goPlusHighlightDecs = (d for d in editor.getHighlightDecorations() when d.getProperties()['class'] is higlightClass)
             expect(goPlusHighlightDecs.length).toBe(1)
-            done = true
-          runs ->
-            editor.setCursorBufferPosition([4, 24]) # "testvar"
-            atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-          waitsFor ->
-            done is true
-          runs ->
-            subscription.dispose()
 
       describe "defined outside the current file", ->
         it "should open a new text editor", ->
-          done = false
-          subscription = dispatch.godef.onDidComplete ->
+          runs ->
+            # Go to the Println in fmt.Println:
+            cursorToText("fmt.Println", 1, "fmt.".length)
+          waitsForGodef()
+          runs ->
             currentEditor = atom.workspace.getActiveTextEditor()
             expect(currentEditor.getTitle()).toBe('print.go')
-            done = true
+
+      describe "defined as a local variable", ->
+        it "should jump to the local var definition", ->
           runs ->
-            editor.setCursorBufferPosition([4, 10]) # "fmt.Println"
-            atom.commands.dispatch(workspaceElement, dispatch.godef.commandName)
-          waitsFor ->
-            done is true
+            cursorToText("localVar", 2)
+          waitsForGodef()
           runs ->
-            subscription.dispose()
+            expect(editor.getCursorBufferPosition()).toEqual(bufferTextPos("localVar", 1))
+
+      describe "defined as a local import prefix", ->
+        it "should jump to the import", ->
+          runs -> cursorToText("fmt.Println")
+          waitsForGodef()
+          runs ->
+            expect(editor.getCursorBufferPosition()).toEqual(bufferTextPos("\"fmt\""))
+
+      describe "an import statement", ->
+        it "should open the first (lexicographical) .go file in the imported package", ->
+          runs -> cursorToText("\"fmt\"")
+          waitsForGodef()
+          runs ->
+            activeEditor = atom.workspace.getActiveTextEditor()
+            file = activeEditor.getURI()
+            expect(path.basename(file)).toEqual("doc.go")
+            expect(path.basename(path.dirname(file))).toEqual("fmt")
+
+  describe "when godef-return command is invoked", ->
+    beforeEach ->
+      waitsForDispatchComplete ->
+        editor.setText testText
+        editor.save()
+
+    it "will return across files to the location where godef was invoked", ->
+      runs -> cursorToText("fmt.Println", 1, "fmt.".length)
+      waitsForGodef()
+      runs ->
+        activeEditor = atom.workspace.getActiveTextEditor()
+        expect(path.basename(activeEditor.getURI())).toEqual("print.go")
+      waitsForGodefReturn()
+      runs ->
+        expect(atom.workspace.getActiveTextEditor()).toBe(editor)
+        expect(editor.getCursorBufferPosition()).toEqual(bufferTextPos("fmt.Println", 1, "fmt.".length))
+
+    it "will return within the same file to the location where godef was invoked", ->
+      runs -> cursorToText("localVar", 2)
+      waitsForGodef()
+      runs ->
+        expect(editor.getCursorBufferPosition()).toEqual(bufferTextPos("localVar", 1))
+      waitsForGodefReturn()
+      runs ->
+        expect(editor.getCursorBufferPosition()).toEqual(bufferTextPos("localVar", 2))
+
+    it 'will do nothing if the return stack is empty', ->
+      runs ->
+        dispatch.godef.clearReturnHistory()
+        cursorToText("localVar", 2)
+      waitsForGodefReturn()
+      runs ->
+        expect(editor.getCursorBufferPosition()).toEqual(bufferTextPos("localVar", 2))

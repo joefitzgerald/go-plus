@@ -6,23 +6,23 @@
 
 ## Installing
 
-1. Install `go-plus`: `apm install go-plus` or open Atom and go to `Preferences > Packages`, search for `go-plus`, and install it
+1. Install `go-plus`: `apm install go-plus` or open Atom and go to `Preferences > Install`, search for `go-plus`, and install it
 
 ## Overview
 
 This package adds extra Atom functionality for the go language:
 
-* Autocomplete using `gocode` (you _must_ have the `autocomplete-plus` package installed for this to work)
-* Formatting source using `gofmt`
-* Formatting and managing imports using `goimports`, `goreturns`, or `gofmt`
+* Autocomplete using `gocode` (you _must_ have the `autocomplete-plus` package activated for this to work)
+* Formatting source using `gofmt`, `goimports`, or `goreturns`
 * Code quality inspection using `go vet`
 * Linting using `golint`
 * Syntax checking using `go build` and `go test`
 * Display of test coverage using `go test -coverprofile`
+* Go to definition using `godef`
 
 ## Example
 
-![A screenshot of go-plus in action](http://cl.ly/image/392z2L0f0E41/go-plus-example.gif)
+![An example of go-plus in action](https://cloud.githubusercontent.com/assets/744740/8767613/68718e22-2e1f-11e5-9e3c-afe5c23792d7.gif)
 
 ## Platforms
 
@@ -100,25 +100,13 @@ test` powered syntax checking.
 
 The following features will be added soon:
 
-* `go oracle` / `godef` integration ([#11](https://github.com/joefitzgerald/go-plus/issues/11))
 * `godoc` integration ([#12](https://github.com/joefitzgerald/go-plus/issues/12))
+* `gb` support
+* go `vendor experiment` support
+* `gorename` integration ([#174](https://github.com/joefitzgerald/go-plus/issues/174))
 * ... and others: https://github.com/joefitzgerald/go-plus/issues
 
-
 ## Troubleshooting
-
-### Missing Tools
-
-> <b>Question:</b> Why are some of the tools found, not `cover`, `goimports`, or `vet`?
-
-> <b>Answer:</b> Do you have Mercurial Installed?
-
-Many `go` tools live at https://code.google.com/p/go.tools. This repository is a Mercurial repository. If you have the `Get Missing Tools` option enabled, `go-plus` will attempt to install required tools from this repository. If you do not have Mercurial (`hg`) installed, `go-plus` will not succeed in installing `cover`, `goimports`, or `vet`.
-
-To resolve issues installing cover or vet, install Mercurial:
-
-* OS X: Run `brew install mercurial`
-* Windows + Others: http://mercurial.selenic.com/wiki/Download
 
 ### GOPATH
 
@@ -144,7 +132,6 @@ Vet Tool: /usr/local/Cellar/go/1.3.3/libexec/pkg/tool/darwin_amd64/vet
 Format Tool: /Users/jfitzgerald/go/bin/goimports
 Lint Tool: /Users/jfitzgerald/go/bin/golint
 Git: /usr/bin/git
-Mercurial: /usr/local/Cellar/mercurial/3.1.2/bin/hg
 PATH: /Users/jfitzgerald/go/bin:/usr/local/bin:/Users/jfitzgerald/.rbenv/shims:/usr/local/bin:/usr/local/sbin:/Users/jfitzgerald/go/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/usr/texbin
 Atom: 0.143.0 (darwin x64 14.0.0)
 ```

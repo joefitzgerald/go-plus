@@ -94,9 +94,6 @@ class Go
   git: ->
     return @pathItem('git')
 
-  hg: ->
-    return @pathItem('hg')
-
   goTooldirOrGopathBinOrPathItem: (name) ->
     result = @goTooldirItem(name)
     result = @gopathBinOrPathItem(name) unless result? and result
@@ -156,6 +153,5 @@ class Go
     return true if @oracle() is false
     return true if @gorename() is false
     return true if @git() is false
-    return true if @hg() is false
     return true if @godef() is false
     return false

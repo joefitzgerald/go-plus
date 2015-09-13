@@ -85,5 +85,5 @@ class Executor
       err.handle()
       callback(127, output, error, messages)
 
-    if input
+    if input?
       bufferedprocess.process.stdin.end(input)

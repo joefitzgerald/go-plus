@@ -5,9 +5,6 @@ notifications:
     on_success: never
     on_failure: change
 
-env:
-  - APM_TEST_PACKAGES="autocomplete-plus"
-
 before_install:
   - brew update
   - if brew outdated | grep -qx go; then brew upgrade go; fi
@@ -25,6 +22,7 @@ before_script:
   - go get -u golang.org/x/tools/cmd/oracle
   - go get -u sourcegraph.com/sqs/goreturns
   - go get -u github.com/nsf/gocode
+  - go get -u github.com/rogpeppe/godef
   - popd
 
 script: 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
