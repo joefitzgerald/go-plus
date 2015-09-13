@@ -14,7 +14,7 @@
     "gorename",
     "vet",
     "go fmt",
-    "go vet"
+    "go vet",
     "goreturns",
     "lint",
     "oracle",
