@@ -46,7 +46,13 @@
   "providedServices": {
     "autocomplete.provider": {
       "versions": {
-        "2.0.0": "provide"
+        "2.0.0": "provideAutocomplete"
+      }
+    },
+
+    "linter": {
+      "versions": {
+        "1.0.0": "provideLinter"
       }
     }
   }

@@ -79,30 +79,36 @@ module.exports =
       type: 'boolean'
       default: true
       order: 13
-    showPanel:
-      title: 'Show Message Panel'
-      description: 'Show the go-plus message panel to provide information about issues with your source'
+    useAtomLinter:
+      title: 'Show Issues using Atom Linter'
+      description: 'Shows issues with your source using the Atom Linter: this setting disables the go-plus message panel'
       type: 'boolean'
       default: true
       order: 14
+    showPanel:
+      title: 'Show Message Panel'
+      description: 'Show the go-plus message panel to provide information about issues with your source: this is ignored when using the Atom Linter'
+      type: 'boolean'
+      default: true
+      order: 15
     showPanelWhenNoIssuesExist:
       title: 'Show Message Panel When No Issues Exist'
       description: 'Show the go-plus message panel even when no issues exist'
       type: 'boolean'
       default: false
-      order: 15
+      order: 16
     autocompleteBlacklist:
       title: 'Autocomplete Scope Blacklist'
       description: 'Autocomplete suggestions will not be shown when the cursor is inside the following comma-delimited scope(s).'
       type: 'string'
       default: '.source.go .comment'
-      order: 16
+      order: 17
     suppressBuiltinAutocompleteProvider:
       title: 'Suppress Built-In Autocomplete Plus Provider'
       description: 'Suppress the provider built-in to the autocomplete-plus package when editing .go files.'
       type: 'boolean'
       default: true
-      order: 17
+      order: 18
     suppressAutocompleteActivationForCharacters:
       title: 'Suppress Autocomplete Activation For Characters'
       description: 'Suggestions will not be provided when you type one of these characters.'
@@ -114,16 +120,16 @@ module.exports =
       ]
       items:
         type: 'string'
-      order: 18
+      order: 19
 
   activate: (state) ->
     run = =>
       @getDispatch()
-    setTimeout(run.bind(this), 0)
+    setTimeout(run, 0)
 
   deactivate: ->
-    @provider?.dispose()
-    @provider = null
+    @autocompleteProvider?.dispose()
+    @autocompleteProvider = null
     @dispatch?.destroy()
     @dispatch = null
 
@@ -135,14 +141,19 @@ module.exports =
     return @dispatch
 
   setDispatch: ->
-    @provider.setDispatch(@dispatch) if @provider? and @dispatch?
+    @autocompleteProvider.setDispatch(@dispatch) if @autocompleteProvider? and @dispatch?
 
-  getProvider: ->
-    return @provider if @provider?
+  getAutocompleteProvider: ->
+    return @autocompleteProvider if @autocompleteProvider?
     GocodeProvider = require('./gocodeprovider')
-    @provider = new GocodeProvider()
+    @autocompleteProvider = new GocodeProvider()
     @setDispatch()
-    return @provider
+    return @autocompleteProvider
 
-  provide: ->
-    return @getProvider()
+  provideAutocomplete: ->
+    return @getAutocompleteProvider()
+
+  provideLinter: ->
+    @linter ?= do =>
+      LintProvider = require './lint-provider'
+      new LintProvider(@getDispatch())

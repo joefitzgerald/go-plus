@@ -23,7 +23,7 @@ describe 'gocode', ->
 
       pack = atom.packages.loadPackage('go-plus')
       goplusMain = pack.mainModule
-      spyOn(goplusMain, 'provide').andCallThrough()
+      spyOn(goplusMain, 'provideAutocomplete').andCallThrough()
       spyOn(goplusMain, 'setDispatch').andCallThrough()
       pack = atom.packages.loadPackage('autocomplete-plus')
       autocompleteMain = pack.mainModule
@@ -50,14 +50,14 @@ describe 'gocode', ->
       atom.packages.activatePackage('language-go')
 
     runs ->
-      expect(goplusMain.provide).not.toHaveBeenCalled()
-      expect(goplusMain.provide.calls.length).toBe(0)
+      expect(goplusMain.provideAutocomplete).not.toHaveBeenCalled()
+      expect(goplusMain.provideAutocomplete.calls.length).toBe(0)
 
     waitsForPromise ->
       atom.packages.activatePackage('go-plus')
 
     waitsFor ->
-      goplusMain.provide.calls.length is 1
+      goplusMain.provideAutocomplete.calls.length is 1
 
     waitsFor ->
       autocompleteMain.consumeProvider.calls.length is 1
@@ -69,9 +69,9 @@ describe 'gocode', ->
       goplusMain.setDispatch.calls.length >= 1
 
     runs ->
-      expect(goplusMain.provide).toHaveBeenCalled()
-      expect(goplusMain.provider).toBeDefined()
-      provider = goplusMain.provider
+      expect(goplusMain.provideAutocomplete).toHaveBeenCalled()
+      expect(goplusMain.autocompleteProvider).toBeDefined()
+      provider = goplusMain.autocompleteProvider
       spyOn(provider, 'getSuggestions').andCallThrough()
       provider.onDidInsertSuggestion = jasmine.createSpy()
       expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.go'))).toEqual(1)
@@ -81,7 +81,7 @@ describe 'gocode', ->
       dispatch.goexecutable.detect()
 
   afterEach ->
-    jasmine.unspy(goplusMain, 'provide')
+    jasmine.unspy(goplusMain, 'provideAutocomplete')
     jasmine.unspy(goplusMain, 'setDispatch')
     jasmine.unspy(autocompleteManager, 'displaySuggestions')
     jasmine.unspy(autocompleteMain, 'consumeProvider')
