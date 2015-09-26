@@ -34,8 +34,7 @@ describe 'go-plus atom-linter integration', ->
     waitsForPromise ->
       atom.packages.activatePackage('go-plus').then (g) ->
         goplus = g.mainModule
-    runs ->
-      lintProvider = goplus.provideLinter()
+        lintProvider = goplus.provideLinter()
 
   PathHelper.createTempGopath (path) ->
     gopath = path
@@ -61,30 +60,52 @@ describe 'go-plus atom-linter integration', ->
     atom.config.set('go-plus.useAtomLinter', true)
     atom.config.set('go-plus.syntaxCheckOnSave', true)
 
-  it 'will report gobuild errors to Atom linter', ->
-    lintMessages = null
+  describe "when atom linter is available", ->
+    beforeEach ->
+      goplus.activateAtomLinterSupport() # tell go-plus the atom linter is available
 
-    isValidAtomLinterMessage = (msg) ->
-      msg.type? and msg.text? and msg.filePath? and msg.range?
+    it 'will know the atom linter is available', ->
+      runs ->
+        expect(goplus.getDispatch().isAtomLinterAvailable()).toBeTruthy()
+        expect(goplus.getDispatch().isAtomLinterActive()).toBeTruthy()
 
-    messagesFor = (filename) ->
-      _.filter(lintMessages, (m) -> m.filePath.indexOf(filename) isnt -1)
+    it 'will report gobuild errors to Atom linter', ->
+      lintMessages = null
 
-    waitsForPromise ->
-      lintProvider.lint(testEditor).then (msg) -> lintMessages = msg
+      isValidAtomLinterMessage = (msg) ->
+        msg.type? and msg.text? and msg.filePath? and msg.range?
 
-    runs ->
-      expect(lintMessages.length).toBe(2)
-      expect(_.every(lintMessages, isValidAtomLinterMessage)).toBe(true)
-      expect(messagesFor("lintee.go").length).toBe(1)
-      expect(messagesFor("lintee_test.go").length).toBe(1)
+      messagesFor = (filename) ->
+        _.filter(lintMessages, (m) -> m.filePath.indexOf(filename) isnt -1)
 
-      # The editor for lintee.go isn't open, so the error will point at the
-      # start of the line.
-      lint1 = messagesFor("lintee.go")[0]
-      expect(lint1.range).toEqual([[4, 0], [4, 0]])
-      expect(lint1.text.indexOf('missing return')).not.toBe(-1)
+      waitsForPromise ->
+        lintProvider.lint(testEditor).then (msg) ->
+          lintMessages = msg
 
-      lint2 = messagesFor("lintee_test.go")[0]
-      expect(lint2.range).toEqual([[8, 1], [8, 14]])
-      expect(lint2.text.indexOf('undefined: brokenheretoo')).not.toBe(-1)
+      runs ->
+        expect(lintMessages.length).toBe(2)
+        expect(_.every(lintMessages, isValidAtomLinterMessage)).toBe(true)
+        expect(messagesFor("lintee.go").length).toBe(1)
+        expect(messagesFor("lintee_test.go").length).toBe(1)
+
+        # The editor for lintee.go isn't open, so the error will point at the
+        # start of the line.
+        lint1 = messagesFor("lintee.go")[0]
+        expect(lint1.range).toEqual([[4, 0], [4, 0]])
+        expect(lint1.text.indexOf('missing return')).not.toBe(-1)
+
+        lint2 = messagesFor("lintee_test.go")[0]
+        expect(lint2.range).toEqual([[8, 1], [8, 14]])
+        expect(lint2.text.indexOf('undefined: brokenheretoo')).not.toBe(-1)
+
+    describe 'when the user has disabled atom linter integration', ->
+      beforeEach ->
+        atom.config.set('go-plus.useAtomLinter', false)
+
+      it 'will know the atom linter is active, but the user does not want to use it', ->
+        expect(goplus.getDispatch().isAtomLinterAvailable()).toBeTruthy()
+        expect(goplus.getDispatch().isAtomLinterActive()).toBeFalsy()
+
+  it 'will know when the atom linter is unavailable', ->
+    expect(goplus.getDispatch().isAtomLinterAvailable()).toBeFalsy()
+    expect(goplus.getDispatch().isAtomLinterActive()).toBeFalsy()

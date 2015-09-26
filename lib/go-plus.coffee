@@ -1,3 +1,5 @@
+{Disposable} = require 'atom'
+
 module.exports =
   config:
     environmentOverridesConfiguration:
@@ -132,6 +134,8 @@ module.exports =
     @autocompleteProvider = null
     @dispatch?.destroy()
     @dispatch = null
+    @linter?.destroy()
+    @linter = null
 
   getDispatch: ->
     return @dispatch if @dispatch?
@@ -154,6 +158,15 @@ module.exports =
     return @getAutocompleteProvider()
 
   provideLinter: ->
+    @goLinter()
+
+  activateAtomLinterSupport: ->
+    @getDispatch().setAtomLinterAvailable(true)
+    new Disposable =>
+      @dispatch?.setAtomLinterAvailable(false)
+      return
+
+  goLinter: ->
     @linter ?= do =>
       LintProvider = require './lint-provider'
       new LintProvider(@getDispatch())

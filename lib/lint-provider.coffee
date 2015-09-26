@@ -8,7 +8,9 @@ module.exports =
     lintOnFly: false
 
     constructor: (@dispatch) ->
-      @dispatch.setAtomLinterAvailable(true)
+      return
+
+    destroy: ->
       return
 
     lint: (editor) =>

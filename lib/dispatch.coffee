@@ -90,6 +90,10 @@ class Dispatch
   setAtomLinterAvailable: (@atomLinterAvailable) ->
     return
 
+  # is the atom linter available?
+  isAtomLinterAvailable: -> @atomLinterAvailable
+
+  # is the atom linter available and the option to use atom linter set?
   isAtomLinterActive: ->
     @atomLinterAvailable and atom.config.get('go-plus.useAtomLinter')
 
