@@ -32,7 +32,7 @@ class Gobuild
       @dispatch.resetAndDisplayMessages(editor, messages)
     @checkBuffer(editor, false, done)
 
-  checkBuffer: (editor, saving, callback = -> ) ->
+  checkBuffer: (editor, saving, callback = -> undefined) ->
     unless @dispatch.isValidEditor(editor)
       @emit(@name + '-complete', editor, saving)
       callback(null)
@@ -112,6 +112,7 @@ class Gobuild
       if matchLine[2]? and matchLine[2] is '#'
         # Found A Package Indicator, Skip For Now
         # pkg = @absolutePathForPackage(matchLine[3], splitgopath)
+        null
       else
         file = null
         if matchLine[5]? and matchLine[5] isnt ''
