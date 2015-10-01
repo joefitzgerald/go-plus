@@ -115,6 +115,12 @@ module.exports =
       items:
         type: 'string'
       order: 18
+    fuzzyAutocomplete:
+      title: 'Enable fuzzy autocomplete'
+      description: 'Enable fuzzy matching when autocompleting'
+      type: 'boolean'
+      default: false
+      order: 19
 
   activate: (state) ->
     run = =>
