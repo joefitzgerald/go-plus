@@ -42,11 +42,12 @@ class GocodeProvider
 
       return resolve() unless options.bufferPosition
       index = buffer.characterIndexForPosition(options.bufferPosition)
-      offset = 'c' + index.toString()
       text = options.editor.getText()
       return resolve() if index > 0 and text[index - 1] in @suppressForCharacters
       quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.bufferPosition)
       return resolve() if quotedRange
+      
+      offset = Buffer.byteLength(text.substring(0, index), "utf8")
 
       env = @dispatch.env()
       env['GOPATH'] = gopath
