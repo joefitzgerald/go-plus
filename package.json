@@ -1,6 +1,6 @@
 {
   "name": "go-plus",
-  "description": "Adds `gocode`, `gofmt`, `goimports`, `go vet`, `golint`, `go build` and `go test` functionality for the go language.",
+  "description": "Adds `gocode`, `gofmt`, `goimports`, `gorename`, `go vet`, `golint`, `go build` and `go test` functionality for the go language.",
   "keywords": [
     "go",
     "golang",
@@ -12,6 +12,9 @@
     "godef",
     "goimports",
     "gorename",
+    "vet",
+    "go fmt",
+    "go vet",
     "goreturns",
     "lint",
     "oracle",
@@ -33,6 +36,7 @@
   "dependencies": {
     "async": ">=0.9.0",
     "atom-message-panel": "git+https://github.com/joefitzgerald/atom-message-panel.git#go-plus",
+    "atom-space-pen-views": "^2.0.0",
     "emissary": "1.x",
     "event-kit": ">=0.8.1",
     "fs-plus": "2.x",

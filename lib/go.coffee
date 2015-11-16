@@ -73,6 +73,9 @@ class Go
   goimports: ->
     return @gopathBinOrPathItem('goimports')
 
+  gorename: ->
+    return @gopathBinOrPathItem('gorename')
+
   goreturns: ->
     return @gopathBinOrPathItem('goreturns')
 
@@ -148,6 +151,7 @@ class Go
     return true if @cover() is false
     return true if @gocode() is false
     return true if @oracle() is false
+    return true if @gorename() is false
     return true if @git() is false
     return true if @godef() is false
     return false
