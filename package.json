@@ -36,7 +36,7 @@
     "emissary": "1.x",
     "event-kit": ">=0.8.1",
     "fs-plus": "2.x",
-    "glob": ">=4.0.6",
+    "glob": ">=6.0.4",
     "temp": ">=0.8.1",
     "underscore-plus": "1.x"
   },
