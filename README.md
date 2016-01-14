@@ -120,6 +120,21 @@ The most common reason `GOPATH` might not be set in the environment on OS X is d
 
 Consider launching Atom via your shell – using the Atom Shell Commands – where Atom should inherit your environment. Alternatively, try one of the suggestions at http://apple.stackexchange.com/a/87283 to set the `GOPATH` for processes launched by `launchd` (and their children, which will include Atom).
 
+### Autocompletion
+
+>**Note:** First of all, make sure [autocomplete-plus](https://atom.io/packages/autocomplete-plus) is present on your setup. Go-plus provides autocompletion through [gocode](https://github.com/nsf/gocode) tool, so you should ensure it's in PATH and available.
+
+If you can't get autocompletion for the user-defined packages working, while it's there for packages from standard library, it's likely a trivial gocode-related issue. Try running `gocode set`. Some expected output'd be:
+```
+propose-builtins false
+lib-path ""
+autobuild false
+force-debug-output ""
+package-lookup-mode "go"
+```
+
+What you gotta do is switching autobuild to true, by running `gocode set autobuild true`. Check autocompletion now, it must be working right.
+
 ### Still Having Issues?
 
 If you are having issues and the information above isn't helping, feel free to create an issue at https://github.com/joefitzgerald/go-plus/issues. When you create the issue, please be sure to paste the information from `Packages > Go Plus > Display Go Information` to help us form a response that is targeted to your situation. This looks something like:
