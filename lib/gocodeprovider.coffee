@@ -1,6 +1,7 @@
 {Range, CompositeDisposable}  = require('atom')
 _ = require('underscore-plus')
 path = require('path')
+{filter} = require 'fuzzaldrin'
 
 module.exports =
 class GocodeProvider
@@ -23,6 +24,8 @@ class GocodeProvider
           else char
         return char
       @suppressForCharacters = _.compact(@suppressForCharacters)
+    @cachedCandidates = []
+    @lastIndex = 0
 
   setDispatch: (dispatch) ->
     @dispatch = dispatch
@@ -46,7 +49,7 @@ class GocodeProvider
       return resolve() if index > 0 and text[index - 1] in @suppressForCharacters
       quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.bufferPosition)
       return resolve() if quotedRange
-      
+
       offset = Buffer.byteLength(text.substring(0, index), "utf8")
 
       env = @dispatch.env()
@@ -66,25 +69,28 @@ class GocodeProvider
         resolve()
         return
 
-      done = (exitcode, stdout, stderr, messages) =>
+      done = (exitcode, stdout, stderr, suggestions) =>
+        fuzz = atom.config.get('go-plus.fuzzyAutocomplete')
         console.log(@name + ' - stderr: ' + stderr) if stderr? and stderr.trim() isnt ''
-        messages = @mapMessages(stdout, options.editor, options.bufferPosition) if stdout? and stdout.trim() isnt ''
-        return resolve() if messages?.length < 1
-        resolve(messages)
+        candidates = @getCandidates(stdout, options.editor, options.bufferPosition) if stdout? and stdout.trim() isnt ''
+        if fuzz
+          if index < @lastIndex && candidates.length != 0 || @makeSuggestions(options.prefix, @cachedCandidates, fuzz).length == 0
+            @cachedCandidates = candidates
+          candidates = @cachedCandidates
+        @lastIndex = index
+        suggestions = @makeSuggestions(options.prefix, candidates, fuzz)
+        return resolve() if suggestions?.length < 1
+        resolve(suggestions)
 
       @dispatch.executor.exec(cmd, cwd, env, done, args, text)
     )
 
-  mapMessages: (data, editor, position) ->
-    return [] unless data?
-    res = JSON.parse(data)
+  makeSuggestions: (prefix, candidates, fuzz) ->
+    return [] if candidates.length == 0
 
-    numPrefix = res[0]
-    candidates = res[1]
-
-    return [] unless candidates
-
-    prefix = editor.getTextInBufferRange([[position.row, position.column - numPrefix], position])
+    if fuzz
+      candidates = candidates.filter (e) -> e.name[0].toUpperCase() == prefix[0].toUpperCase()
+      candidates = filter(candidates,prefix,key:'name')
 
     suggestions = []
     for c in candidates
@@ -102,6 +108,16 @@ class GocodeProvider
       suggestions.push(suggestion)
 
     return suggestions
+
+  getCandidates: (data, editor, position) ->
+    return [] unless data?
+    res = JSON.parse(data)
+
+    numPrefix = res[0]
+    candidates = res[1]
+
+    return [] unless candidates
+    return candidates
 
   translateType: (type) ->
     switch type

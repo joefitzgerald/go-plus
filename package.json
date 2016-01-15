@@ -38,7 +38,8 @@
     "fs-plus": "2.x",
     "glob": ">=4.0.6",
     "temp": ">=0.8.1",
-    "underscore-plus": "1.x"
+    "underscore-plus": "1.x",
+    "fuzzaldrin": "2.x"
   },
   "devDependencies": {
     "coffeelint": ">=1.8.1"

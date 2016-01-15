@@ -49,6 +49,7 @@ The package is currently known to work on OS X, Windows (7+) and Ubuntu. CI jobs
 | Automatically Get Missing Tools         | `go-plus.getMissingTools`                   | `true`      | Run `go get -u` to retrieve any tools that are required but not currently available in the go tool directory, the PATH, or your GOPATH                                                                                                 |
 | Show Message Panel                      | `go-plus.showPanel`                         | `true`      | Show the go-plus message panel to provide information about issues with your source                                                                                                                                                    |
 | Show Message Panel When No Issues Exist | `go-plus.showPanelWhenNoIssuesExist`        | `false`     | Show the go-plus message panel even when no issues exist                                                                                                                                                                               |
+| Use Fuzzy Matching When Autocompleting  | `go-plus.fuzzAutocomplete`                  | `false`     | Use fuzzy matching for autocomplete candidates                                                                                                                                                                               |
 
 ### Detection Of Your Go Installation
 
