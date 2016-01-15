@@ -1,6 +1,7 @@
 fs = require('fs-plus')
-path = require('path')
+nodeCache = require('node-cache')
 os = require('os')
+path = require('path')
 _ = require('underscore-plus')
 
 module.exports =
@@ -24,6 +25,8 @@ class Go
     @gopath = options.gopath if options?.gopath?
     @goroot = options.goroot if options?.goroot?
     @gotooldir = options.gotooldir if options?.gotooldir?
+    @goDepLookupCache = new nodeCache({stdTTL: 120, checkperiod: 150})
+    @goPackLookupCache = new nodeCache({stdTTL: 120, checkperiod: 150})
 
   description: ->
     return @name + ' (@ ' + @goroot + ')'
@@ -33,7 +36,7 @@ class Go
     return false unless fs.existsSync(@executable)
     return fs.realpathSync(@executable)
 
-  buildgopath: ->
+  buildgopath: (cwd) ->
     result = ''
     gopathConfig = atom.config.get('go-plus.goPath')
     environmentOverridesConfig = atom.config.get('go-plus.environmentOverridesConfiguration')? and atom.config.get('go-plus.environmentOverridesConfiguration')
@@ -42,6 +45,55 @@ class Go
     result = gopathConfig if not environmentOverridesConfig and gopathConfig? and gopathConfig.trim() isnt ''
     result = gopathConfig if result is '' and gopathConfig? and gopathConfig.trim() isnt ''
     result = result.replace('\n', '').replace('\r', '')
+
+    # Whenever we build GOPATH, go up the directory tree to identify where there
+    # might be a Godeps directory. If we find it in any parent/ancestor directory,
+    # add it to GOPATH.
+    goDepDir = null
+    if cwd?
+      goDepDir = @goDepLookupCache.get(cwd)
+      if goDepDir is undefined
+        minLastSeparator = 0
+        if os.platform() is 'win32' and cwd.contains(':\\')
+          minLastSeparator = 2
+
+        goDepCheck = cwd
+        lastSeparator = cwd.length
+        while lastSeparator > minLastSeparator
+          goDepCheck = cwd.substring(0, lastSeparator)
+          if fs.existsSync(goDepCheck + path.sep + "Godeps")
+            goDepDir = goDepCheck + path.sep + "Godeps" + path.sep + "_workspace"
+            break
+          lastSeparator = goDepCheck.lastIndexOf(path.sep)
+        @goDepLookupCache.set(cwd, goDepDir)
+
+    if goDepDir?
+      result = goDepDir + path.delimiter + result
+
+    # Whenever we build GOPATH, go up the directory tree to identify where there
+    # might be a .gopack directory. If we find it in any parent/ancestor directory,
+    # add it to GOPATH.
+    goPackDir = null
+    if cwd?
+      goPackDir = @goPackLookupCache.get(cwd)
+      if goPackDir is undefined
+        minLastSeparator = 0
+        if os.platform() is 'win32' and cwd.contains(':\\')
+          minLastSeparator = 2
+
+        goPackCheck = cwd
+        lastSeparator = cwd.length
+        while lastSeparator > minLastSeparator
+          goPackCheck = cwd.substring(0, lastSeparator)
+          if fs.existsSync(goPackCheck + path.sep + ".gopack")
+            goPackDir = goPackCheck + path.sep + ".gopack" + path.sep + "vendor"
+            break
+          lastSeparator = goPackCheck.lastIndexOf(path.sep)
+        @goPackLookupCache.set(cwd, goPackDir)
+
+    if goPackDir?
+      result = goPackDir + path.delimiter + result
+
     return @pathexpander.expand(result, '')
 
   splitgopath: ->

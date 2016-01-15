@@ -35,9 +35,10 @@ class GocodeProvider
       buffer = options.editor.getBuffer()
       return resolve() unless buffer?
 
+      cwd = path.dirname(buffer.getPath())
       go = @dispatch.goexecutable.current()
       return resolve() unless go?
-      gopath = go.buildgopath()
+      gopath = go.buildgopath(cwd)
       return resolve() if not gopath? or gopath is ''
 
       return resolve() unless options.bufferPosition
@@ -51,7 +52,6 @@ class GocodeProvider
 
       env = @dispatch.env()
       env['GOPATH'] = gopath
-      cwd = path.dirname(buffer.getPath())
       args = ['-f=json', 'autocomplete', buffer.getPath(), offset]
       configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.gocodeArgs'))
       args = _.union(configArgs, args) if configArgs? and _.size(configArgs) > 0

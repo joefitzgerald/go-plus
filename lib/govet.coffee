@@ -48,14 +48,14 @@ class Govet
       callback(null)
       @dispatch.displayGoInfo(false)
       return
-    gopath = go.buildgopath()
+    cwd = path.dirname(buffer.getPath())
+    gopath = go.buildgopath(cwd)
     if not gopath? or gopath is ''
       @emit(@name + '-complete', editor, saving)
       callback(null)
       return
     env = @dispatch.env()
     env['GOPATH'] = gopath
-    cwd = path.dirname(buffer.getPath())
     args = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.vetArgs'))
     args = _.union(args, [buffer.getPath()])
     cmd = @dispatch.goexecutable.current().vet()
