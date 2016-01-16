@@ -19,6 +19,10 @@ describe 'build', ->
     atom.project.setPaths(directory)
     jasmine.unspy(window, 'setTimeout')
 
+    # Turn off atom linter integration, since it invokes linters asynchronously
+    # and complicates the spec.
+    atom.config.set('go-plus.useAtomLinter', false)
+
   afterEach ->
     process.env['GOPATH'] = oldGoPath
 

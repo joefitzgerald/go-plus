@@ -23,7 +23,7 @@ class PathExpander
     p = @replaceGoPathToken(p, gopath)
     switch os.platform()
       when 'darwin', 'freebsd', 'linux', 'sunos'
-        unless p.indexOf('~') is -1
+        if (/^~(?:\/|$)/).test(p)
           home = @env.HOME or @env.HOMEPATH or @env.USERPROFILE
           p = p.replace(/~/i, home)
         unless p.toUpperCase().indexOf('$HOME') is -1
@@ -33,7 +33,7 @@ class PathExpander
           goroot = @env.GOROOT
           p = p.replace(/\$GOROOT/i, goroot) if goroot? and goroot isnt ''
       when 'win32'
-        unless p.indexOf('~') is -1
+        if (/^~(?:[\/\\]|$)/).test(p)
           home = @env.USERPROFILE
           p = p.replace(/~/i, home)
         unless p.toUpperCase().indexOf('%HOME%') is -1
