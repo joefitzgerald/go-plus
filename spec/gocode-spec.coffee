@@ -2,7 +2,7 @@ path = require('path')
 _ = require('underscore-plus')
 AtomConfig = require('./util/atomconfig')
 
-describe 'gocode', ->
+xdescribe 'gocode', ->
   [workspaceElement, editor, editorView, dispatch, buffer, completionDelay, goplusMain, autocompleteMain, autocompleteManager, provider] = []
 
   beforeEach ->
