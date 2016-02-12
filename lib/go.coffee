@@ -113,12 +113,16 @@ class Go
     return false unless name? and name isnt ''
     pathresult = false
     # PATH
-    p = if os.platform() is 'win32' then @env.Path else @env.PATH
+    p = @env.PATH
+    if os.platform() is 'win32'
+      p = @env.Path or @env.PATH
     if p?
       elements = p.split(path.delimiter)
       for element in elements
         target = path.resolve(path.normalize(path.join(element, name + @exe)))
-        pathresult = fs.realpathSync(target) if fs.existsSync(target)
+        if fs.existsSync(target)
+          pathresult = fs.realpathSync(target)
+          return pathresult
 
     return pathresult
 
