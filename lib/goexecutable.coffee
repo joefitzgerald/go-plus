@@ -63,8 +63,9 @@ class GoExecutable
             candidates.push(path.normalize(goinstallation))
 
         # PATH
-        if @env.Path?
-          elements = @env.Path.split(path.delimiter)
+        p = @env.Path or @env.PATH
+        if p?
+          elements = p.split(path.delimiter)
           for element in elements
             candidates.push(path.normalize(path.join(element, 'go.exe')))
 

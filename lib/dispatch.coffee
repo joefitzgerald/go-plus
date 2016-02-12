@@ -247,7 +247,8 @@ class Dispatch
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>Git:</b> Not Found', className: 'text-warning'}))
 
       # PATH
-      thepath = if os.platform() is 'win32' then @env()?.Path else @env()?.PATH
+      thepath = @env()?.PATH
+      thepath = if os.platform() is 'win32' then @env()?.Path or @env()?.PATH
       if thepath? and thepath.trim() isnt ''
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>PATH:</b> ' + thepath, className: 'text-subtle'}))
       else
