@@ -1,0 +1,12 @@
+{
+  "extends": "standard",
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+  },
+  "globals": {
+    "atom": true,
+  },
+}
