@@ -248,7 +248,7 @@ class Dispatch
 
       # PATH
       thepath = @env()?.PATH
-      thepath = if os.platform() is 'win32' then @env()?.Path or @env()?.PATH
+      thepath = (@env()?.Path or @env()?.PATH) if os.platform() is 'win32'
       if thepath? and thepath.trim() isnt ''
         @messagepanel.add(new PlainMessageView({raw: true, message: '<b>PATH:</b> ' + thepath, className: 'text-subtle'}))
       else
