@@ -61,48 +61,54 @@ module.exports =
       type: 'boolean'
       default: true
       order: 10
+    vendorExperiement:
+      title: 'Enable GO15VENDOREXPERIMENT'
+      description: 'Enable support for Go 1.5 Vendor experiement'
+      type: 'boolean'
+      default: false
+      order: 11
     vetOnSave:
       title: 'Run Vet Tool On Save'
       description: 'Run `go vet` each time a file is saved'
       type: 'boolean'
       default: true
-      order: 11
+      order: 12
     vetArgs:
       title: 'Vet Arguments'
       description: 'Arguments to pass to `go vet` (these are not usually needed)'
       type: 'string'
       default: ''
-      order: 12
+      order: 13
     getMissingTools:
       title: 'Automatically Get Missing Tools'
       description: 'Run `go get -u` to retrieve any tools that are required but not currently available in the go tool directory, the PATH, or your GOPATH'
       type: 'boolean'
       default: true
-      order: 13
+      order: 14
     showPanel:
       title: 'Show Message Panel'
       description: 'Show the go-plus message panel to provide information about issues with your source'
       type: 'boolean'
       default: true
-      order: 14
+      order: 15
     showPanelWhenNoIssuesExist:
       title: 'Show Message Panel When No Issues Exist'
       description: 'Show the go-plus message panel even when no issues exist'
       type: 'boolean'
       default: false
-      order: 15
+      order: 16
     autocompleteBlacklist:
       title: 'Autocomplete Scope Blacklist'
       description: 'Autocomplete suggestions will not be shown when the cursor is inside the following comma-delimited scope(s).'
       type: 'string'
       default: '.source.go .comment'
-      order: 16
+      order: 17
     suppressBuiltinAutocompleteProvider:
       title: 'Suppress Built-In Autocomplete Plus Provider'
       description: 'Suppress the provider built-in to the autocomplete-plus package when editing .go files.'
       type: 'boolean'
       default: true
-      order: 17
+      order: 18
     suppressAutocompleteActivationForCharacters:
       title: 'Suppress Autocomplete Activation For Characters'
       description: 'Suggestions will not be provided when you type one of these characters.'
@@ -114,7 +120,7 @@ module.exports =
       ]
       items:
         type: 'string'
-      order: 18
+      order: 19
 
   activate: (state) ->
     run = =>
