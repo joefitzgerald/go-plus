@@ -278,6 +278,9 @@ class Dispatch
       @dispatching = false
       return
 
+    @messagepanel.add(new PlainMessageView({message: 'Working..', className: 'text-info'}))
+    @messagepanel.attach()
+
     async.series([
       (callback) =>
         @gofmt.formatBuffer(editor, saving, callback)
@@ -352,7 +355,7 @@ class Dispatch
     @messagepanel?.clear()
 
   updatePane: (editor, messages) ->
-    @resetPanel
+    @resetPanel()
     return unless messages?
     if messages.length <= 0 and atom.config.get('go-plus.showPanelWhenNoIssuesExist')
       @messagepanel.add(new PlainMessageView({message: 'No Issues', className: 'text-success'}))
