@@ -46,7 +46,7 @@ class GocodeProvider
       return resolve() if index > 0 and text[index - 1] in @suppressForCharacters
       quotedRange = options.editor.displayBuffer.bufferRangeForScopeAtPosition('.string.quoted', options.bufferPosition)
       return resolve() if quotedRange
-      
+
       offset = Buffer.byteLength(text.substring(0, index), "utf8")
 
       env = @dispatch.env()
@@ -77,7 +77,7 @@ class GocodeProvider
 
   mapMessages: (data, editor, position) ->
     return [] unless data?
-    res = JSON.parse(data)
+     try res = JSON.parse(data) catch e then return []
 
     numPrefix = res[0]
     candidates = res[1]
