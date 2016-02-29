@@ -121,11 +121,20 @@ module.exports =
       @getDispatch()
     setTimeout(run.bind(this), 0)
 
+  consumeStatusBar: (statusBar) ->
+    @getDispatch().on('ready', () =>
+      @statusBarTile = statusBar.addLeftTile(item: @getStatusBarSignatureView(), priority: 50) unless @statusBarTile?
+    )
+
   deactivate: ->
     @provider?.dispose()
     @provider = null
     @dispatch?.destroy()
     @dispatch = null
+    @statusBarTile?.destroy()
+    @statusBarTile = null
+    @statusBarSignatureView?.destroy()
+    @statusBarSignatureView = null
 
   getDispatch: ->
     return @dispatch if @dispatch?
@@ -143,6 +152,14 @@ module.exports =
     @provider = new GocodeProvider()
     @setDispatch()
     return @provider
+
+  getStatusBarSignatureView: ->
+    return @statusBarSignatureView if @statusBarSignatureView?
+    StatusBarSignatureView = require './status-bar-signature'
+    @statusBarSignatureView = new StatusBarSignatureView()
+    @statusBarSignatureView.setProvider(@getProvider())
+    @statusBarSignatureView.init()
+    return @statusBarSignatureView
 
   provide: ->
     return @getProvider()
