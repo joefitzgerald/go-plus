@@ -122,9 +122,8 @@ module.exports =
     setTimeout(run.bind(this), 0)
 
   consumeStatusBar: (statusBar) ->
-    @getDispatch().on('ready', () =>
+    @getDispatch().on 'ready', =>
       @statusBarTile = statusBar.addLeftTile(item: @getStatusBarSignatureView(), priority: 50) unless @statusBarTile?
-    )
 
   deactivate: ->
     @provider?.dispose()

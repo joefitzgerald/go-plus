@@ -3,7 +3,7 @@ require 'atom'
 class StatusBarSignatureView extends HTMLElement
   activate: ->
     @changeTextContent('')
-    return unless @getActiveTextEditor()?.getGrammar().name == 'Go'
+    return unless @getActiveTextEditor()?.getGrammar().name is 'Go'
     @displaySignature(@getActiveTextEditor().getLastCursor()) if @getActiveTextEditor()?
     @subscribeToActiveTextEditor()
 
@@ -20,7 +20,7 @@ class StatusBarSignatureView extends HTMLElement
     line = cursor.getCurrentBufferLine()
     func = @extractFunc(line, cursor.getBufferPosition().column)
 
-    if func == ''
+    if func is ''
       @changeTextContent('')
       return
 
@@ -58,21 +58,21 @@ class StatusBarSignatureView extends HTMLElement
 
     matches = line.match(/([\w\.]+\()/g)
 
-    return '' if matches == null
-    return '' if matches.length == 0
+    return '' if matches is null
+    return '' if matches.length is 0
 
-    funcs.push {name: func.slice(0, -1), start: line.indexOf(func)} for func in matches.reverse() when line.indexOf('func ' + func) == -1
-    return '' if funcs.length == 0
+    funcs.push {name: func.slice(0, -1), start: line.indexOf(func)} for func in matches.reverse() when line.indexOf('func ' + func) is -1
+    return '' if funcs.length is 0
     return funcs[0].name if line.endsWith(funcs[0].name + '(')
 
     pos = 0
     for i in [0..line.length]
-      if line[i] == ')' && funcs[pos]?
+      if line[i] is ')' and funcs[pos]?
         funcs[pos].end = i + 1
-        pos++
+        pos += 1
 
     for f in funcs
-      return f.name if cursorPos >= f.start && cursorPos <= f.end
+      return f.name if cursorPos >= f.start and cursorPos <= f.end
 
     return ''
 
