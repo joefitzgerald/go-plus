@@ -46,6 +46,9 @@ class Gobuild
       @emit(@name + '-complete', editor, saving)
       callback(null)
       return
+    unless saving
+      @dispatch.dispatching = true
+      buffer.save()
 
     go = @dispatch.goexecutable.current()
     unless go?

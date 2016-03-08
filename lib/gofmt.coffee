@@ -43,6 +43,9 @@ class Gofmt
       @emit(@name + '-complete', editor, saving)
       callback(null)
       return
+    unless saving
+      @dispatch.dispatching = true
+      buffer.save()
     cwd = path.dirname(buffer.getPath())
     args = ['-w']
     configArgs = @dispatch.splicersplitter.splitAndSquashToArray(' ', atom.config.get('go-plus.formatArgs'))
