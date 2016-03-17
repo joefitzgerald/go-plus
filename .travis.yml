@@ -19,6 +19,7 @@ go:
 env:
   global:
     - APM_TEST_PACKAGES="environment go-config go-get autocomplete-go gofmt navigator-godef tester-go gorename gometalinter-linter linter"
+    - ATOM_ACCESS_TOKEN=da809a6077bb1b0aa7c5623f7b2d5f1fec2faae4
 
   matrix:
     - ATOM_CHANNEL=beta

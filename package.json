@@ -21,7 +21,7 @@
   "main": "./lib/main",
   "license": "Apache-2.0",
   "engines": {
-    "atom": ">=1.5.4 <2.0.0",
+    "atom": ">=1.5.3 <2.0.0",
     "node": "*"
   },
   "author": "Joe Fitzgerald <jfitzgerald@pivotal.io> (http://github.com/joefitzgerald)",
