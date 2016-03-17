@@ -1,4 +1,4 @@
-# [go-plus](https://atom.io/packages/go-plus) [![OSX Build Status](https://travis-ci.org/joefitzgerald/go-plus.svg?branch=master)](https://travis-ci.org/joefitzgerald/go-plus) [![Windows Build status](https://ci.appveyor.com/api/projects/status/d0cekvaprt9wo1et)](https://ci.appveyor.com/project/joefitzgerald/go-plus)
+# [go-plus](https://atom.io/packages/go-plus) [![Build Status](https://travis-ci.org/joefitzgerald/go-plus.svg?branch=master)](https://travis-ci.org/joefitzgerald/go-plus) [![Build status](https://ci.appveyor.com/api/projects/status/d0cekvaprt9wo1et/branch/master?svg=true)](https://ci.appveyor.com/project/joefitzgerald/go-plus/branch/master)
 
 > An Improved [Go](https://www.golang.org) Experience For The [Atom Editor](https://atom.io)
 
