@@ -5,27 +5,42 @@ notifications:
     on_success: never
     on_failure: change
 
-before_install:
-  - brew update
-  - if brew outdated | grep -qx go; then brew upgrade go; fi
+sudo: false
 
-before_script:
-  - pushd $HOME
-  - mkdir -p go
-  - export GOPATH="$HOME/go"
-  - export PATH=$PATH:$GOPATH/bin
-  - go version
-  - go get -u github.com/golang/lint/golint
+os:
+  - linux
+  - osx
+
+language: go
+
+go:
+  - 1.6
+
+env:
+  global:
+    - APM_TEST_PACKAGES="environment go-config go-get autocomplete-go gofmt navigator-godef tester-go gorename gometalinter-linter linter"
+
+  matrix:
+    - ATOM_CHANNEL=beta
+    - ATOM_CHANNEL=stable
+
+script:
   - go get -u golang.org/x/tools/cmd/cover
   - go get -u golang.org/x/tools/cmd/goimports
-  - go get -u golang.org/x/tools/cmd/vet
-  - go get -u golang.org/x/tools/cmd/oracle
   - go get -u sourcegraph.com/sqs/goreturns
-  - go get -u github.com/nsf/gocode
   - go get -u github.com/rogpeppe/godef
-  - popd
-
-script: 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
+  - go get -u github.com/nsf/gocode
+  - go get -u github.com/alecthomas/gometalinter
+  - gometalinter --install --update
+  - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
 
 git:
   depth: 10
+
+addons:
+  apt:
+    packages:
+    - build-essential
+    - git
+    - libgnome-keyring-dev
+    - fakeroot

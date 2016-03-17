@@ -1,51 +1,38 @@
-# version format
 version: "{build}"
 
-# Operating system (build VM template)
-os: Windows Server 2012 R2
+platform: x64
 
-# environment variables
+branches:
+  only:
+    - master
+
+skip_tags: true
+
 environment:
   GOPATH: c:\gopath
+  GOVERSION: 1.6
+  APM_TEST_PACKAGES: environment go-config go-get autocomplete-go gofmt navigator-godef tester-go gorename gometalinter-linter linter
 
-init:
-- ps: >-
-    $app = Get-WmiObject -Class Win32_Product -Filter "Vendor = 'http://golang.org'"
+  matrix:
+  - ATOM_CHANNEL: stable
+  - ATOM_CHANNEL: beta
 
-    if ($app) {
-      $app.Uninstall()
-    }
-
-# scripts that run after cloning repository
 install:
-  - appveyor DownloadFile https://atom.io/download/windows -FileName AtomSetup.exe
-  - AtomSetup.exe /silent
-  - set PATH=%LOCALAPPDATA%\atom\bin;%GOPATH%\bin;c:\go\bin;%PATH%
+  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - rmdir c:\go /s /q
   - appveyor DownloadFile https://storage.googleapis.com/golang/go1.5.windows-amd64.msi
   - msiexec /i go1.5.windows-amd64.msi /q
   - go version
   - go env
   - mkdir c:\gopath
-  - go get -u github.com/golang/lint/golint
   - go get -u golang.org/x/tools/cmd/cover
   - go get -u golang.org/x/tools/cmd/goimports
-  - go get -u golang.org/x/tools/cmd/vet
-  - go get -u golang.org/x/tools/cmd/oracle
   - go get -u sourcegraph.com/sqs/goreturns
-  - go get -u github.com/nsf/gocode
   - go get -u github.com/rogpeppe/godef
+  - go get -u github.com/nsf/gocode
+  - go get -u github.com/alecthomas/gometalinter
+  - gometalinter --install --update
+  - ps: Install-Product node 5
 
-# to run your custom scripts instead of automatic MSBuild
 build_script:
-  - cd %APPVEYOR_BUILD_FOLDER%
-  - SET PATH=%LOCALAPPDATA%\atom\bin;%GOPATH%\bin;%PATH%
-  - apm clean
-  - apm install
-  - apm test
-
-# to disable automatic tests
-test: off
-
-# to disable deployment
-deploy: off
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/atom/ci/master/build-package.ps1'))

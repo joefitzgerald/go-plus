@@ -1,8 +1,0 @@
-# For more detailed documentation see
-# https://atom.io/docs/latest/advanced/keymaps
-'atom-text-editor[data-grammar="source go"]:not(.mini)':
-  'ctrl-alt-c': 'golang:gocover'
-  'ctrl-alt-shift-c': 'golang:cleargocover'
-  # Shouldn't these be ctrl-alt for portability?
-  'alt-cmd-g': 'golang:godef'
-  'alt-cmd-shift-g': 'golang:godef-return'

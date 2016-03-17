@@ -9,4 +9,7 @@
   "globals": {
     "atom": true,
   },
+  "plugins": [
+    "promise"
+  ],
 }
