@@ -17,7 +17,7 @@
     "vet",
     "gometalinter"
   ],
-  "version": "4.0.0",
+  "version": "4.0.1",
   "main": "./lib/main",
   "license": "Apache-2.0",
   "engines": {
