@@ -48,7 +48,8 @@
     "navigator-godef",
     "gofmt",
     "tester-go",
-    "gorename"
+    "gorename",
+    "builder-go"
   ],
   "configSchema": {},
   "standard": {
