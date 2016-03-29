@@ -1,5 +1,3 @@
-language: objective-c
-
 notifications:
   email:
     on_success: never
@@ -18,7 +16,7 @@ go:
 
 env:
   global:
-    - APM_TEST_PACKAGES="environment go-config go-get autocomplete-go gofmt navigator-godef tester-go gorename gometalinter-linter linter"
+    - APM_TEST_PACKAGES="environment go-config go-get autocomplete-go gofmt navigator-godef tester-go gorename gometalinter-linter linter builder-go"
 
   matrix:
     - ATOM_CHANNEL=beta
@@ -34,9 +32,6 @@ script:
   - gometalinter --install --update
   - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
 
-git:
-  depth: 10
-
 addons:
   apt:
     packages:
@@ -44,3 +39,10 @@ addons:
     - git
     - libgnome-keyring-dev
     - fakeroot
+
+git:
+  depth: 10
+
+branches:
+  only:
+    - master
