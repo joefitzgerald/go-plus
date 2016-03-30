@@ -16,6 +16,7 @@ This package adds extra functionality to Atom for the go language by installing 
 * [navigator-godef](https://atom.io/packages/navigator-godef): Go to definition using `godef`
 * [tester-go](https://atom.io/packages/tester-go): Display test coverage using `go test -coverprofile`
 * [gorename](https://atom.io/packages/gorename): Rename the symbol under your cursor using `gorename`
+* [go-debug](https://atom.io/packages/go-debug): Debug your package / tests using [`delve`](https://github.com/derekparker/delve)
 
 ## Platforms
 
@@ -41,6 +42,7 @@ If you are missing any required tools, you may be prompted by [go-get](https://a
 * [`go to definition / godef`](https://github.com/joefitzgerald/navigator-godef): [create issue](https://github.com/joefitzgerald/navigator-godef/issues/new)
 * [`test coverage`](https://github.com/joefitzgerald/tester-go/issues/new)
 * [`gorename`](https://github.com/zmb3/gorename): [create issue](https://github.com/zmb3/gorename/issues/new)
+* [`go-debug`](https://github.com/lloiser/go-debug): [create issue](https://github.com/lloiser/go-debug/issues/new)
 
 ## Contributors
 A list of contributors can be found at https://github.com/joefitzgerald/go-plus/graphs/contributors. Joe Fitzgerald ([@joefitzgerald](https://github.com/joefitzgerald)) is the maintainer of this project.

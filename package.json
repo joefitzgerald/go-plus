@@ -15,7 +15,9 @@
     "goreturns",
     "lint",
     "vet",
-    "gometalinter"
+    "gometalinter",
+    "go-debug",
+    "delve"
   ],
   "version": "4.1.0",
   "main": "./lib/main",
@@ -49,7 +51,8 @@
     "gofmt",
     "tester-go",
     "gorename",
-    "builder-go"
+    "builder-go",
+    "go-debug"
   ],
   "configSchema": {},
   "standard": {
