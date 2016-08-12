@@ -31,7 +31,7 @@
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
   "dependencies": {
-    "atom-package-deps": "4.0.1"
+    "atom-package-deps": "4.2.0"
   },
   "devDependencies": {
     "eslint": "^2.5.1",
