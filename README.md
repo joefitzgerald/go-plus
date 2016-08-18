@@ -17,6 +17,7 @@ This package adds extra functionality to Atom for the go language by installing 
 * [tester-go](https://atom.io/packages/tester-go): Display test coverage using `go test -coverprofile`
 * [gorename](https://atom.io/packages/gorename): Rename the symbol under your cursor using `gorename`
 * [go-debug](https://atom.io/packages/go-debug): Debug your package / tests using [`delve`](https://github.com/derekparker/delve)
+* [godoc](https://atom.io/packages/godoc): Display documentation for identifiers in source code using [`gogetdoc`](https://github.com/zmb3/gogetdoc)
 
 ## Platforms
 
@@ -43,6 +44,7 @@ If you are missing any required tools, you may be prompted by [go-get](https://a
 * [`test coverage`](https://github.com/joefitzgerald/tester-go/issues/new)
 * [`gorename`](https://github.com/zmb3/gorename): [create issue](https://github.com/zmb3/gorename/issues/new)
 * [`go-debug`](https://github.com/lloiser/go-debug): [create issue](https://github.com/lloiser/go-debug/issues/new)
+* [`godoc`](https://github.com/zmb3/godoc): [create issue](https://github.com/zmb3/godoc/issues/new)
 
 ## Contributors
 A list of contributors can be found at https://github.com/joefitzgerald/go-plus/graphs/contributors. Joe Fitzgerald ([@joefitzgerald](https://github.com/joefitzgerald)) is the maintainer of this project.

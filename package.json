@@ -48,7 +48,8 @@
     "tester-go",
     "gorename",
     "builder-go",
-    "go-debug"
+    "go-debug",
+    "godoc"
   ],
   "configSchema": {},
   "standard": {
