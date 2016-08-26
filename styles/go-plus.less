@@ -1,0 +1,85 @@
+@import "ui-variables";
+
+// Status Bar --------------------
+
+.go-plus-status-bar {
+  color: @text-color-success;
+  &:hover {
+    color: lighten(@text-color-success, 15%);
+  }
+
+  &.go-plus-status-unknown {
+    color: @text-color-info;
+  }
+
+  &.go-plus-status-pending {
+    color: @text-color-warning;
+  }
+
+  &.go-plus-status-success {
+    color: @text-color-success;
+  }
+
+  &.go-plus-status-fail {
+    color: @text-color-error;
+  }
+}
+
+
+// Panel --------------------
+
+.go-plus-panel {
+
+  .panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: @component-padding / 2;
+  }
+
+  .panel-button {
+    color: inherit;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    cursor: default;
+
+    &:hover {
+      color: @text-color-highlight;
+    }
+    &:active {
+      color: @text-color-subtle;
+    }
+
+    &:before {
+      margin-right: 0;
+    }
+  }
+
+  .panel-body {
+    overflow: auto;
+  }
+
+  .panel-nav {
+    margin-bottom: -@component-padding/2 - 1px;
+  }
+  .panel-nav-item {
+    display: inline-block;
+    color: @text-color-subtle;
+    border: 1px solid transparent;
+    border-bottom: none;
+    padding: @component-padding/1.5 @component-padding;
+    cursor: default;
+
+    &:hover {
+      color: @text-color-highlight;
+    }
+    &:active,
+    &.is-selected {
+      color: @text-color-selected;
+      border-color: @panel-heading-border-color;
+      border-radius: @component-border-radius @component-border-radius 0 0;
+      background-color: @inset-panel-background-color;
+    }
+  }
+}

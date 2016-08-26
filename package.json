@@ -23,7 +23,7 @@
   "main": "./lib/main",
   "license": "Apache-2.0",
   "engines": {
-    "atom": ">=1.5.3 <2.0.0",
+    "atom": ">=1.9.9 <2.0.0",
     "node": "*"
   },
   "author": "Joe Fitzgerald <jfitzgerald@pivotal.io> (http://github.com/joefitzgerald)",
@@ -33,10 +33,11 @@
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
   "dependencies": {
-    "atom-package-deps": "4.2.0"
+    "atom-package-deps": "4.2.0",
+    "etch": "^0.6.3"
   },
   "devDependencies": {
-    "standard": "^8.0.0-beta.4"
+    "standard": "^8.0.0"
   },
   "package-deps": [
     "go-config",
@@ -51,7 +52,34 @@
     "go-debug",
     "godoc"
   ],
-  "configSchema": {},
+  "consumedServices": {
+    "status-bar": {
+      "versions": {
+        "^1.0.0": "consumeStatusBar"
+      }
+    }
+  },
+  "configSchema": {
+    "panelDisplayMode": {
+      "title": "Panel Display Mode",
+      "description": "Control the behavior of the go-plus panel when a new Atom window is opened",
+      "type": "string",
+      "default": "open",
+      "enum": [
+        "open",
+        "collapsed",
+        "closed"
+      ],
+      "order": 1
+    },
+    "maxPanelHeight": {
+      "title": "Maximum Panel Height",
+      "description": "Prevent the panel from occupying the entire window",
+      "type": "string",
+      "default": "15vh",
+      "order": 2
+    }
+  },
   "standard": {
     "globals": [
       "atom",
