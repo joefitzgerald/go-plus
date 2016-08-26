@@ -35,6 +35,7 @@
     align-items: center;
     padding: 0;
     cursor: default;
+    background-color: @tool-panel-background-color;
   }
 
   .panel-group {
@@ -70,7 +71,7 @@
     &.is-selected {
       color: @text-color-selected;
       border-color: @panel-heading-border-color;
-      background-color: @inset-panel-background-color;
+      background-color: @base-background-color;
     }
   }
 
@@ -98,5 +99,6 @@
 
   .panel-body {
     overflow: auto;
+    background-color: @base-background-color;
   }
 }
