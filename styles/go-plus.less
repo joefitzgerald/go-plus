@@ -42,7 +42,7 @@
 
   .panel-nav {
     flex: 1 1 0;
-    padding: @component-padding/3 0 0 0;
+    padding: 0;
     margin-bottom: -1px; // cover border
     border-left: 1px solid @base-border-color;
     border-right: 1px solid @base-border-color;
@@ -57,10 +57,10 @@
     display: inline-block;
     color: @text-color-subtle;
     border: 1px solid transparent;
-    border-bottom: none;
+    border-width: 0 1px;
     line-height: 1;
     text-align: center;
-    padding: @component-padding/3 @component-padding @component-padding/2 @component-padding;
+    padding: @component-padding/1.5 @component-padding;
     cursor: default;
 
     &:hover {
@@ -70,7 +70,6 @@
     &.is-selected {
       color: @text-color-selected;
       border-color: @panel-heading-border-color;
-      border-radius: @component-border-radius @component-border-radius 0 0;
       background-color: @inset-panel-background-color;
     }
   }
