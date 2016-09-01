@@ -58,6 +58,11 @@
         "^1.0.0": "consumeStatusBar"
       }
     },
+    "go-config": {
+      "versions": {
+        "1.0.0": "consumeGoconfig"
+      }
+    },
     "go-plus.view": {
       "versions": {
         "0.1.0": "consumeViewProvider"
