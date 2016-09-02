@@ -29,6 +29,18 @@
 // Panel --------------------
 
 .go-plus-panel {
+  position: relative;;
+
+  // drag handle
+  &:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 4px;
+    cursor: row-resize;
+  }
 
   .panel-heading {
     display: flex;
