@@ -28,20 +28,18 @@
 
 // Panel --------------------
 
+.go-plus-panel-resize-handle {
+   position: absolute;
+   left: 0;
+   right: 0;
+   top: 0;
+   height: 4px;
+   cursor: row-resize;
+   z-index: 3;
+ }
 .go-plus-panel {
   position: relative;
   -webkit-user-select: none;
-
-  // drag handle
-  &:before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 4px;
-    cursor: row-resize;
-  }
 
   .panel-heading {
     display: flex;
@@ -113,6 +111,7 @@
   .panel-body {
     position: relative;
     overflow: auto;
+    height: 100%;
     background-color: @base-background-color;
     -webkit-user-select: text;
   }

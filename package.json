@@ -86,6 +86,20 @@
       "title": "Maximum Panel Height",
       "description": "Prevent the panel from occupying the entire window",
       "type": "string",
+      "default": "50vh",
+      "order": 2
+    },
+    "minPanelHeight": {
+      "title": "Maximum Panel Height",
+      "description": "Ensure the panel doesn't disappear when open",
+      "type": "string",
+      "default": "10vh",
+      "order": 3
+    },
+    "currentPanelHeight": {
+      "title": "Current Panel Height",
+      "description": "The height of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
+      "type": "string",
       "default": "15vh",
       "order": 2
     }
