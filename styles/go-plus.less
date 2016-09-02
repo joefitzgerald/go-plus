@@ -29,7 +29,8 @@
 // Panel --------------------
 
 .go-plus-panel {
-  position: relative;;
+  position: relative;
+  -webkit-user-select: none;
 
   // drag handle
   &:before {
@@ -113,5 +114,6 @@
     position: relative;
     overflow: auto;
     background-color: @base-background-color;
+    -webkit-user-select: text;
   }
 }
