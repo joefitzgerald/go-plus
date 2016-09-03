@@ -39,9 +39,12 @@
  }
 .go-plus-panel {
   position: relative;
+  display: flex;
+  flex-direction: column;
   -webkit-user-select: none;
 
   .panel-heading {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     padding: 0;
@@ -111,7 +114,8 @@
   .panel-body {
     position: relative;
     overflow: auto;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
     background-color: @base-background-color;
     -webkit-user-select: text;
   }
