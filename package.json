@@ -101,7 +101,7 @@
       "description": "The height of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
       "type": "string",
       "default": "15vh",
-      "order": 2
+      "order": 3
     }
   },
   "standard": {
