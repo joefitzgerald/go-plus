@@ -114,10 +114,25 @@
   .panel-body {
     position: relative;
     overflow: auto;
+    display: flex;
     flex: 1;
     min-height: 0;
     padding: 10px;
     background-color: @base-background-color;
     -webkit-user-select: text;
+  }
+
+  .go-plus-empty-tab {
+    display: flex;
+    margin: auto;
+    font-size: 36px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .edge-octicon {
+    fill: white;
   }
 }

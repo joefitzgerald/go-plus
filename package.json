@@ -34,7 +34,8 @@
   },
   "dependencies": {
     "atom-package-deps": "4.2.0",
-    "etch": "^0.6.3"
+    "etch": "^0.6.3",
+    "etch-octicon": "0.0.1"
   },
   "devDependencies": {
     "standard": "^8.0.0"
