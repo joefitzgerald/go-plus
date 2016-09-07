@@ -1,0 +1,36 @@
+
+// Edge Octicon
+
+.edge-octicon,
+.mega-edge-octicon {
+  display: inline-block;
+  line-height: inherit;
+  margin-right: .2em;
+  fill: currentColor;
+
+  svg {
+    width: auto;
+    height: 1em;
+    vertical-align: middle;
+  }
+
+  &.no-margin {
+    margin-right: 0;
+  }
+}
+
+// Default size
+.edge-octicon {
+  font-size: 16px;
+}
+
+// Double size
+.mega-edge-octicon {
+  font-size: 32px;
+  vertical-align: text-bottom;
+}
+
+// Automatically change size based on the font-size
+.edge-octicon.auto-size {
+  font-size: 1em;
+}
