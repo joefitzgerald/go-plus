@@ -1,47 +1,22 @@
 @import "ui-variables";
 
-// Status Bar --------------------
-
-.go-plus-status-bar {
-  color: @text-color-success;
-  &:hover {
-    color: lighten(@text-color-success, 15%);
-  }
-
-  &.go-plus-status-unknown {
-    color: @text-color-info;
-  }
-
-  &.go-plus-status-pending {
-    color: @text-color-warning;
-  }
-
-  &.go-plus-status-success {
-    color: @text-color-success;
-  }
-
-  &.go-plus-status-fail {
-    color: @text-color-error;
-  }
-}
-
-
 // Panel --------------------
 
-.go-plus-panel-resize-handle {
-   position: absolute;
-   left: 0;
-   right: 0;
-   top: 0;
-   height: 4px;
-   cursor: row-resize;
-   z-index: 3;
- }
 .go-plus-panel {
   position: relative;
   display: flex;
   flex-direction: column;
   -webkit-user-select: none;
+
+  &-resize-handle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 4px;
+    cursor: row-resize;
+    z-index: 3;
+  }
 
   .panel-heading {
     flex: 0 0 auto;

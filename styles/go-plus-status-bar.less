@@ -1,0 +1,26 @@
+@import "ui-variables";
+
+// Status Bar --------------------
+
+.go-plus-status-bar {
+  color: @text-color-success;
+  &:hover {
+    color: lighten(@text-color-success, 15%);
+  }
+
+  &.go-plus-status-unknown {
+    color: @text-color-info;
+  }
+
+  &.go-plus-status-pending {
+    color: @text-color-warning;
+  }
+
+  &.go-plus-status-success {
+    color: @text-color-success;
+  }
+
+  &.go-plus-status-fail {
+    color: @text-color-error;
+  }
+}
