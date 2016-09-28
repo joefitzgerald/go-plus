@@ -34,11 +34,11 @@
   },
   "dependencies": {
     "atom-package-deps": "4.2.0",
-    "etch": "^0.6.3",
+    "etch": "^0.7.1",
     "etch-octicon": "^0.0.4"
   },
   "devDependencies": {
-    "standard": "^8.0.0"
+    "standard": "^8.2.0"
   },
   "package-deps": [
     "go-config",
