@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "atom-package-deps": "4.2.0",
-    "etch": "^0.6.2",
+    "etch": "0.6.3",
     "etch-octicon": "^0.0.4"
   },
   "devDependencies": {
@@ -78,7 +78,6 @@
       "default": "open",
       "enum": [
         "open",
-        "collapsed",
         "closed"
       ],
       "order": 1
@@ -91,7 +90,7 @@
       "order": 2
     },
     "minPanelHeight": {
-      "title": "Maximum Panel Height",
+      "title": "Minimum Panel Height",
       "description": "Ensure the panel doesn't disappear when open",
       "type": "string",
       "default": "10vh",
