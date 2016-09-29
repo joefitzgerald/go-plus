@@ -38,7 +38,7 @@
     "etch-octicon": "^0.0.4"
   },
   "devDependencies": {
-    "standard": "^8.2.0"
+    "standard": "^8.3.0"
   },
   "package-deps": [
     "go-config",
