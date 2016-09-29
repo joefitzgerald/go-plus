@@ -1,0 +1,36 @@
+
+// Etch Octicon
+
+.etch-octicon,
+.mega-etch-octicon {
+  display: inline-block;
+  line-height: inherit;
+  margin-right: .2em;
+  vertical-align: middle;
+  fill: currentColor;
+
+  svg {
+    width: auto;
+    height: 1em;
+    vertical-align: text-top;
+  }
+
+  &.no-margin {
+    margin-right: 0;
+  }
+}
+
+// Default size
+.etch-octicon {
+  font-size: 16px;
+}
+
+// Double size
+.mega-etch-octicon {
+  font-size: 32px;
+}
+
+// Automatically change size based on the font-size
+.etch-octicon.auto-size {
+  font-size: 1em;
+}
