@@ -11,7 +11,7 @@ skip_tags: true
 environment:
   GOPATH: c:\gopath
   GOVERSION: 1.7
-  APM_TEST_PACKAGES: environment go-config go-get autocomplete-go gofmt navigator-godef tester-go gorename gometalinter-linter linter builder-go go-debug godoc
+  APM_TEST_PACKAGES: environment go-config go-get autocomplete-go gofmt navigator-go tester-go gorename gometalinter-linter linter builder-go go-debug godoc
   ATOM_LINT_WITH_BUNDLED_NODE: "false"
 
   matrix:

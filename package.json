@@ -45,7 +45,7 @@
     "go-get",
     "gometalinter-linter",
     "autocomplete-go",
-    "navigator-godef",
+    "navigator-go",
     "gofmt",
     "tester-go",
     "gorename",
