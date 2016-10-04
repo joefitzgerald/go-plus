@@ -15,7 +15,7 @@ os:
 
 env:
   global:
-    - APM_TEST_PACKAGES="environment go-config go-get autocomplete-go gofmt navigator-go tester-go gorename gometalinter-linter linter builder-go go-debug godoc"
+    - APM_TEST_PACKAGES="environment go-config"
     - ATOM_LINT_WITH_BUNDLED_NODE="false"
     - NVM_DIR="$HOME/.nvm"
   matrix:
@@ -35,13 +35,6 @@ install:
   - nvm use node
 
 script:
-  - go get -u golang.org/x/tools/cmd/cover
-  - go get -u golang.org/x/tools/cmd/goimports
-  - go get -u sourcegraph.com/sqs/goreturns
-  - go get -u github.com/rogpeppe/godef
-  - go get -u github.com/nsf/gocode
-  - go get -u github.com/alecthomas/gometalinter
-  - gometalinter --install --update
   - 'curl -s https://raw.githubusercontent.com/atom/ci/943a16cd32926bdfcca703f16ec6a958a2db38a5/build-package.sh | sh'
 
 sudo: false
