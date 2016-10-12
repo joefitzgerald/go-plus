@@ -1,5 +1,9 @@
 {
   "atom-workspace": {
-    "ctrl-alt-shift-g p": "golang:toggle-panel"
+    "ctrl-alt-shift-g p": "golang:toggle-panel",
+
+    "ctrl-alt-shift-g f": "golang:gofmt",
+    "ctrl-alt-shift-g i": "golang:goimports",
+    "ctrl-alt-shift-g r": "golang:goreturns"
   }
 }

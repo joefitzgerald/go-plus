@@ -1,0 +1,42 @@
+{
+  "context-menu": {
+    "atom-text-editor[data-grammar~=\"go\"]:not([mini])": [
+      {
+        "label": "Run gofmt",
+        "command": "golang:gofmt"
+      },
+      {
+        "label": "Run goimports",
+        "command": "golang:goimports"
+      },
+      {
+        "label": "Run goreturns",
+        "command": "golang:goreturns"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "Go",
+          "submenu": [
+            {
+              "label": "Format With gofmt",
+              "command": "golang:gofmt"
+            },
+            {
+              "label": "Format With goimports",
+              "command": "golang:goimports"
+            },
+            {
+              "label": "Format With goreturns",
+              "command": "golang:goreturns"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

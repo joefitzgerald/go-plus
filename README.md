@@ -10,7 +10,6 @@
 This package adds extra functionality to Atom for the go language by installing the following packages:
 
 * [autocomplete-go](https://atom.io/packages/autocomplete-go): Autocomplete using `gocode`
-* [gofmt](https://atom.io/packages/gofmt): Formatting source using `gofmt`, `goimports`, or `goreturns`
 * [builder-go](https://atom.io/packages/builder-go): Run `go install .` and `go test -c -o {tempdir} .` to verify your code can compile and to keep gocode suggestions up to date
 * [gometalinter-linter](https://atom.io/packages/gometalinter-linter): Run a variety of linters (e.g. `golint`, `vet`, `gotype`, etc.) against your code
 * [navigator-go](https://atom.io/packages/navigator-go): Go to definition using `godef`
@@ -39,7 +38,6 @@ If you are missing any required tools, you may be prompted by [go-get](https://a
 * [`autocompletion / gocode`](https://github.com/joefitzgerald/autocomplete-go): [create issue](https://github.com/joefitzgerald/autocomplete-go/issues/new)
 * [`building`](https://github.com/joefitzgerald/builder-go): [create issue](https://github.com/joefitzgerald/builder-go/issues/new)
 * [`linting / gometalinter`](https://github.com/joefitzgerald/gometalinter-linter): [create issue](https://github.com/joefitzgerald/gometalinter-linter/issues/new)
-* [`gofmt / goimports / goreturns`](https://github.com/joefitzgerald/gofmt): [create issue](https://github.com/joefitzgerald/gofmt/issues/new)
 * [`go to definition / godef`](https://github.com/joefitzgerald/navigator-go): [create issue](https://github.com/joefitzgerald/navigator-go/issues/new)
 * [`test coverage`](https://github.com/joefitzgerald/tester-go/issues/new)
 * [`gorename`](https://github.com/zmb3/gorename): [create issue](https://github.com/zmb3/gorename/issues/new)
