@@ -108,24 +108,30 @@
       "default": "15vh",
       "order": 3
     },
-    "formatOnSave": {
-      "title": "Run Format Tool On Save",
-      "description": "Run the configured format tool each time a file is saved",
-      "type": "boolean",
-      "default": true,
-      "order": 4
-    },
-    "formatTool": {
-      "title": "Format Tool",
-      "description": "Choose one: goimports, goreturns, or gofmt",
-      "type": "string",
-      "default": "goimports",
-      "enum": [
-        "goimports",
-        "goreturns",
-        "gofmt"
-      ],
-      "order": 5
+    "gofmt": {
+      "title": "gofmt",
+      "type": "object",
+      "properties": {
+        "formatOnSave": {
+          "title": "Run Format Tool On Save",
+          "description": "Run the configured format tool each time a file is saved",
+          "type": "boolean",
+          "default": true,
+          "order": 1
+        },
+        "formatTool": {
+          "title": "Format Tool",
+          "description": "Choose one: goimports, goreturns, or gofmt",
+          "type": "string",
+          "default": "goimports",
+          "enum": [
+            "goimports",
+            "goreturns",
+            "gofmt"
+          ],
+          "order": 2
+        }
+      }
     }
   },
   "standard": {
