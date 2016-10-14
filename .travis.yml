@@ -33,6 +33,8 @@ install:
   - source "$NVM_DIR/nvm.sh"
   - nvm install node
   - nvm use node
+  - go get -u golang.org/x/tools/cmd/goimports
+  - go get -u github.com/sqs/goreturns
 
 script:
   - 'curl -s https://raw.githubusercontent.com/atom/ci/943a16cd32926bdfcca703f16ec6a958a2db38a5/build-package.sh | sh'

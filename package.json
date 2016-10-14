@@ -1,6 +1,6 @@
 {
   "name": "go-plus",
-  "description": "Makes working with go in Atom awesome.",
+  "description": "Makes working with Go in Atom awesome.",
   "keywords": [
     "go",
     "golang",
@@ -38,7 +38,8 @@
     "etch-octicon": "^0.0.4"
   },
   "devDependencies": {
-    "standard": "^8.3.0"
+    "standard": "^8.3.0",
+    "temp": "^0.8.3"
   },
   "package-deps": [
     "go-config",
@@ -46,7 +47,6 @@
     "gometalinter-linter",
     "autocomplete-go",
     "navigator-go",
-    "gofmt",
     "tester-go",
     "gorename",
     "builder-go",
@@ -67,6 +67,11 @@
     "go-plus.view": {
       "versions": {
         "0.1.0": "consumeViewProvider"
+      }
+    },
+    "go-get": {
+      "versions": {
+        "2.0.0": "consumeGoget"
       }
     }
   },
@@ -102,6 +107,31 @@
       "type": "string",
       "default": "15vh",
       "order": 3
+    },
+    "gofmt": {
+      "title": "gofmt",
+      "type": "object",
+      "properties": {
+        "formatOnSave": {
+          "title": "Run Format Tool On Save",
+          "description": "Run the configured format tool each time a file is saved",
+          "type": "boolean",
+          "default": true,
+          "order": 1
+        },
+        "formatTool": {
+          "title": "Format Tool",
+          "description": "Choose one: goimports, goreturns, or gofmt",
+          "type": "string",
+          "default": "goimports",
+          "enum": [
+            "goimports",
+            "goreturns",
+            "gofmt"
+          ],
+          "order": 2
+        }
+      }
     }
   },
   "standard": {
