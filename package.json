@@ -35,11 +35,12 @@
   "dependencies": {
     "atom-package-deps": "4.2.0",
     "etch": "0.6.3",
-    "etch-octicon": "^0.0.4"
+    "etch-octicon": "^0.0.4",
+    "temp": "^0.8.3",
+    "rimraf": "^2.5.4"
   },
   "devDependencies": {
-    "standard": "^8.3.0",
-    "temp": "^0.8.3"
+    "standard": "^8.3.0"
   },
   "package-deps": [
     "go-config",
@@ -49,7 +50,6 @@
     "navigator-go",
     "tester-go",
     "gorename",
-    "builder-go",
     "go-debug",
     "godoc"
   ],
@@ -72,6 +72,13 @@
     "go-get": {
       "versions": {
         "2.0.0": "consumeGoget"
+      }
+    }
+  },
+  "providedServices": {
+    "linter": {
+      "versions": {
+        "1.0.0": "provideLinter"
       }
     }
   },

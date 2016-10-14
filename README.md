@@ -10,13 +10,28 @@
 This package adds extra functionality to Atom for the go language by installing the following packages:
 
 * [autocomplete-go](https://atom.io/packages/autocomplete-go): Autocomplete using `gocode`
-* [builder-go](https://atom.io/packages/builder-go): Run `go install .` and `go test -c -o {tempdir} .` to verify your code can compile and to keep gocode suggestions up to date
 * [gometalinter-linter](https://atom.io/packages/gometalinter-linter): Run a variety of linters (e.g. `golint`, `vet`, `gotype`, etc.) against your code
 * [navigator-go](https://atom.io/packages/navigator-go): Go to definition using `godef`
 * [tester-go](https://atom.io/packages/tester-go): Display test coverage using `go test -coverprofile`
 * [gorename](https://atom.io/packages/gorename): Rename the symbol under your cursor using `gorename`
 * [go-debug](https://atom.io/packages/go-debug): Debug your package / tests using [`delve`](https://github.com/derekparker/delve)
 * [godoc](https://atom.io/packages/godoc): Display documentation for identifiers in source code using [`gogetdoc`](https://github.com/zmb3/gogetdoc)
+
+## Builds
+
+### How Are The Builds Performed?
+
+The following commands are run for the directory of the current file:
+* `go install .` (for normal `.go` files)
+* `go test -o {tmpdir} -c .` (for `_test.go` files)
+
+### Why Are You Running `go install` Instead Of `go build`?
+
+`gocode` (and a few other tools, like `gotype`) work on `.a` files (i.e. the package object archive), and the way to keep these up to date is to run `go install` periodically. This ensures your autocomplete suggestions are kept up to date without having to resort to `gocode set autobuild true` :tada:.
+
+### But What About `gb`?
+
+I'm open to suggestions for detecting a package which is built with gb; please feel free to submit a pull request that detects a gb package without any explicit configuration and runs it.
 
 ## Platforms
 
@@ -36,7 +51,6 @@ If you are missing any required tools, you may be prompted by [go-get](https://a
 
 * [`runtime detection`](https://github.com/joefitzgerald/go-config): [create issue](https://github.com/joefitzgerald/go-config/issues/new)
 * [`autocompletion / gocode`](https://github.com/joefitzgerald/autocomplete-go): [create issue](https://github.com/joefitzgerald/autocomplete-go/issues/new)
-* [`building`](https://github.com/joefitzgerald/builder-go): [create issue](https://github.com/joefitzgerald/builder-go/issues/new)
 * [`linting / gometalinter`](https://github.com/joefitzgerald/gometalinter-linter): [create issue](https://github.com/joefitzgerald/gometalinter-linter/issues/new)
 * [`go to definition / godef`](https://github.com/joefitzgerald/navigator-go): [create issue](https://github.com/joefitzgerald/navigator-go/issues/new)
 * [`test coverage`](https://github.com/joefitzgerald/tester-go/issues/new)
