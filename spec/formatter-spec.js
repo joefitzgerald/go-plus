@@ -13,7 +13,7 @@ describe('formatter', () => {
 
   beforeEach(() => {
     temp.track()
-    atom.config.set('go-plus.gofmt.formatOnSave', false)
+    atom.config.set('go-plus.format.formatOnSave', false)
     atom.config.set('editor.defaultLineEnding', 'LF')
 
     waitsForPromise(() => {
@@ -71,10 +71,10 @@ describe('formatter', () => {
 
     describe('when format on save is disabled and gofmt is the tool', () => {
       beforeEach(() => {
-        atom.config.set('go-plus.gofmt.formatOnSave', false)
+        atom.config.set('go-plus.format.formatOnSave', false)
         formatter.resetFormatterCache()
         formatter.updateFormatterCache()
-        atom.config.set('go-plus.gofmt.formatTool', 'gofmt')
+        atom.config.set('go-plus.format.tool', 'gofmt')
         waitsFor(() => {
           return formatter.ready()
         })
@@ -129,10 +129,10 @@ describe('formatter', () => {
 
     describe('when format on save is enabled and gofmt is the tool', () => {
       beforeEach(() => {
-        atom.config.set('go-plus.gofmt.formatOnSave', true)
+        atom.config.set('go-plus.format.formatOnSave', true)
         formatter.resetFormatterCache()
         formatter.updateFormatterCache()
-        atom.config.set('go-plus.gofmt.formatTool', 'gofmt')
+        atom.config.set('go-plus.format.tool', 'gofmt')
         waitsFor(() => {
           return formatter.ready()
         })
@@ -160,10 +160,10 @@ describe('formatter', () => {
 
     describe('when format on save is enabled and goimports is the tool', () => {
       beforeEach(() => {
-        atom.config.set('go-plus.gofmt.formatOnSave', true)
+        atom.config.set('go-plus.format.formatOnSave', true)
         formatter.resetFormatterCache()
         formatter.updateFormatterCache()
-        atom.config.set('go-plus.gofmt.formatTool', 'goimports')
+        atom.config.set('go-plus.format.tool', 'goimports')
         waitsFor(() => {
           return formatter.ready()
         })
@@ -191,10 +191,10 @@ describe('formatter', () => {
 
     describe('when format on save is enabled and goreturns is the tool', () => {
       beforeEach(() => {
-        atom.config.set('go-plus.gofmt.formatOnSave', true)
+        atom.config.set('go-plus.format.formatOnSave', true)
         formatter.resetFormatterCache()
         formatter.updateFormatterCache()
-        atom.config.set('go-plus.gofmt.formatTool', 'goreturns')
+        atom.config.set('go-plus.format.tool', 'goreturns')
         waitsFor(() => {
           return formatter.ready()
         })
@@ -259,7 +259,7 @@ describe 'format', ->
 
   describe 'when format on save is enabled', ->
     beforeEach ->
-      atom.config.set('go-plus.gofmt.formatOnSave', true)
+      atom.config.set('go-plus.format.formatOnSave', true)
 
     it 'reformats the file', ->
       done = false
@@ -329,7 +329,7 @@ describe 'format', ->
     it 'uses goimports to reorganize imports if enabled', ->
       done = false
       runs ->
-        atom.config.set('go-plus.gofmt.formatTool', 'goimports')
+        atom.config.set('go-plus.format.tool', 'goimports')
         dispatch.once 'dispatch-complete', ->
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe('package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, 世界")\n}\n')
           expect(dispatch.messages?).toBe(true)
@@ -344,7 +344,7 @@ describe 'format', ->
     it 'uses goreturns to handle returns if enabled', ->
       done = false
       runs ->
-        atom.config.set('go-plus.gofmt.formatTool', 'goreturns')
+        atom.config.set('go-plus.format.tool', 'goreturns')
         dispatch.once 'dispatch-complete', ->
           expect(fs.readFileSync(filePath, {encoding: 'utf8'})).toBe('package demo\n\nimport "errors"\n\nfunc F() (string, int, error) {\n\treturn "", 0, errors.New("foo")\n}\n')
           expect(dispatch.messages?).toBe(true)
@@ -358,7 +358,7 @@ describe 'format', ->
 
   describe 'when format on save is disabled', ->
     beforeEach ->
-      atom.config.set('go-plus.gofmt.formatOnSave', false)
+      atom.config.set('go-plus.format.formatOnSave', false)
 
     it 'does not reformat the file', ->
       done = false

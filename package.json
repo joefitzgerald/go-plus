@@ -108,8 +108,8 @@
       "default": "15vh",
       "order": 3
     },
-    "gofmt": {
-      "title": "gofmt",
+    "format": {
+      "title": "Format",
       "type": "object",
       "properties": {
         "formatOnSave": {
@@ -119,7 +119,7 @@
           "default": true,
           "order": 1
         },
-        "formatTool": {
+        "tool": {
           "title": "Format Tool",
           "description": "Choose one: goimports, goreturns, or gofmt",
           "type": "string",
