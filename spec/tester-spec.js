@@ -15,7 +15,8 @@ describe('tester', () => {
       if (process.env.GOPATH) {
         oldGopath = process.env.GOPATH
       }
-      atom.config.set('tester-go.coverageHighlightMode', 'covered-and-uncovered')
+      atom.config.set('go-plus.format.formatOnSave', false)
+      atom.config.set('go-plus.test.coverageHighlightMode', 'covered-and-uncovered')
       gopath = temp.mkdirSync()
       process.env.GOPATH = gopath
       atom.project.setPaths(gopath)
@@ -23,7 +24,7 @@ describe('tester', () => {
 
     waitsForPromise(() => {
       return atom.packages.activatePackage('go-config').then(() => {
-        return atom.packages.activatePackage('tester-go')
+        return atom.packages.activatePackage('go-plus')
       }).then((pack) => {
         mainModule = pack.mainModule
         return atom.packages.activatePackage('language-go')
