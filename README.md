@@ -7,13 +7,18 @@
 
 ## Overview
 
-This package adds extra functionality to Atom for the go language by installing the following packages:
+This package includes the following functionality:
+
+* Display information about your current go installation, by running `go version` and `go env`
+* Format your code with `gofmt`, `goimports`, or `goreturns`; optionally run one of these tools on save of any `.go` file
+* Run tests, display test output, and display test coverage using `go test -coverprofile`
+
+This package adds extra functionality by installing the following additional packages:
 
 * [autocomplete-go](https://atom.io/packages/autocomplete-go): Autocomplete using `gocode`
 * [builder-go](https://atom.io/packages/builder-go): Run `go install .` and `go test -c -o {tempdir} .` to verify your code can compile and to keep gocode suggestions up to date
 * [gometalinter-linter](https://atom.io/packages/gometalinter-linter): Run a variety of linters (e.g. `golint`, `vet`, `gotype`, etc.) against your code
 * [navigator-go](https://atom.io/packages/navigator-go): Go to definition using `godef`
-* [tester-go](https://atom.io/packages/tester-go): Display test coverage using `go test -coverprofile`
 * [gorename](https://atom.io/packages/gorename): Rename the symbol under your cursor using `gorename`
 * [go-debug](https://atom.io/packages/go-debug): Debug your package / tests using [`delve`](https://github.com/derekparker/delve)
 * [godoc](https://atom.io/packages/godoc): Display documentation for identifiers in source code using [`gogetdoc`](https://github.com/zmb3/gogetdoc)
@@ -22,30 +27,40 @@ This package adds extra functionality to Atom for the go language by installing 
 
 The package has CI for OS X, Windows and Ubuntu.
 
-## Detection Of Your Go Installation
-
-This package relies on [go-config](https://atom.io/packages/go-config) to detect your go installation(s), your `GOPATH`, and the location of your installed tools.
-
 ## Installing Missing Tools
 
-If you are missing any required tools, you may be prompted by [go-get](https://atom.io/packages/go-get) to install them. You can also manually install the required tools in your terminal.
+If you are missing any required tools, you may be prompted to install them. You can also manually install the required tools in your terminal:
+
+```
+go get -u golang.org/x/tools/cmd/goimports
+go get -u github.com/sqs/goreturns
+go get -u golang.org/x/tools/cmd/cover
+go get -u github.com/nsf/gocode
+go get -u github.com/alecthomas/gometalinter
+go get -u github.com/zmb3/gogetdoc
+go get -u github.com/rogpeppe/godef
+```
 
 ## Having Issues?
 
-`go-plus` has evolved over time, and is now a collection of curated single-purpose packages. If you are having issues, please file an issue at the relevant repository:
+You can file any `go-plus` issues [here](https://github.com/joefitzgerald/go-plus/issues/new). You can optionally file an issue in a downstream repository for anything related to a bundled package:
 
 * [`runtime detection`](https://github.com/joefitzgerald/go-config): [create issue](https://github.com/joefitzgerald/go-config/issues/new)
 * [`autocompletion / gocode`](https://github.com/joefitzgerald/autocomplete-go): [create issue](https://github.com/joefitzgerald/autocomplete-go/issues/new)
 * [`building`](https://github.com/joefitzgerald/builder-go): [create issue](https://github.com/joefitzgerald/builder-go/issues/new)
 * [`linting / gometalinter`](https://github.com/joefitzgerald/gometalinter-linter): [create issue](https://github.com/joefitzgerald/gometalinter-linter/issues/new)
 * [`go to definition / godef`](https://github.com/joefitzgerald/navigator-go): [create issue](https://github.com/joefitzgerald/navigator-go/issues/new)
-* [`test coverage`](https://github.com/joefitzgerald/tester-go/issues/new)
 * [`gorename`](https://github.com/zmb3/gorename): [create issue](https://github.com/zmb3/gorename/issues/new)
 * [`go-debug`](https://github.com/lloiser/go-debug): [create issue](https://github.com/lloiser/go-debug/issues/new)
 * [`godoc`](https://github.com/zmb3/godoc): [create issue](https://github.com/zmb3/godoc/issues/new)
 
+## Maintainers
+* Joe Fitzgerald ([@joefitzgerald](https://github.com/joefitzgerald))
+* Zac Bergquist ([@zmb3](https://github.com/zmb3))
+* Lukas Beranek ([@lloiser](https://github.com/lloiser))
+
 ## Contributors
-A list of contributors can be found at https://github.com/joefitzgerald/go-plus/graphs/contributors. Joe Fitzgerald ([@joefitzgerald](https://github.com/joefitzgerald)) is the maintainer of this project.
+A list of contributors can be found at https://github.com/joefitzgerald/go-plus/graphs/contributors. Thank you so much to everyone has contributed to the package :heart:. You are awesome!
 
 ## Contributing
 
