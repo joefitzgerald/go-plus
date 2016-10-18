@@ -33,12 +33,17 @@
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
   "dependencies": {
+    "ansi-to-html": "^0.4.2",
     "atom-package-deps": "4.2.0",
     "etch": "0.6.3",
-    "etch-octicon": "^0.0.4"
+    "etch-octicon": "^0.0.4",
+    "lodash": "^4.16.4",
+    "rimraf": "^2.5.4",
+    "temp": "^0.8.3"
   },
   "devDependencies": {
-    "standard": "^8.3.0",
+    "fs-plus": "^2.9.2",
+    "standard": "^8.4.0",
     "temp": "^0.8.3"
   },
   "package-deps": [
@@ -47,7 +52,6 @@
     "gometalinter-linter",
     "autocomplete-go",
     "navigator-go",
-    "tester-go",
     "gorename",
     "builder-go",
     "go-debug",
@@ -130,6 +134,46 @@
             "gofmt"
           ],
           "order": 2
+        }
+      }
+    },
+    "test": {
+      "title": "Test",
+      "type": "object",
+      "properties": {
+        "runTestsOnSave": {
+          "title": "Run Tests On Save",
+          "description": "Run `go test -coverprofile` each time a file is saved",
+          "type": "boolean",
+          "default": true,
+          "order": 1
+        },
+        "runTestsWithShortFlag": {
+          "title": "Run Tests With Short Flag Set",
+          "description": "Runs `go test` with `-short` flag set",
+          "type": "boolean",
+          "default": true,
+          "order": 2
+        },
+        "coverageHighlightMode": {
+          "title": "Coverage Highlight Mode",
+          "description": "Control the way that coverage highlighting occurs",
+          "type": "string",
+          "default": "uncovered",
+          "enum": [
+            "covered-and-uncovered",
+            "covered",
+            "uncovered",
+            "disabled"
+          ],
+          "order": 3
+        },
+        "focusPanelIfTestsFail": {
+          "title": "Focus The go-plus Panel If Tests Fail",
+          "description": "If the panel is hidden, or the panel is showing a different tab, the panel will be expanded and the test tab focused when tests fail.",
+          "type": "boolean",
+          "default": true,
+          "order": 4
         }
       }
     }

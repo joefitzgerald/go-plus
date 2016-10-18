@@ -11,8 +11,7 @@ skip_tags: true
 environment:
   GOPATH: c:\gopath
   GOVERSION: 1.7
-  APM_TEST_PACKAGES: environment go-config
-  ATOM_LINT_WITH_BUNDLED_NODE: "false"
+  APM_TEST_PACKAGES: go-config
 
   matrix:
   - ATOM_CHANNEL: stable
@@ -28,6 +27,7 @@ install:
   - mkdir c:\gopath
   - go get -u golang.org/x/tools/cmd/goimports
   - go get -u github.com/sqs/goreturns
+  - go get -u golang.org/x/tools/cmd/cover
   - ps: Install-Product node 6
 
 build_script:

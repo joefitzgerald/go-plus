@@ -15,8 +15,7 @@ os:
 
 env:
   global:
-    - APM_TEST_PACKAGES="environment go-config"
-    - ATOM_LINT_WITH_BUNDLED_NODE="false"
+    - APM_TEST_PACKAGES="go-config"
     - NVM_DIR="$HOME/.nvm"
   matrix:
     - ATOM_CHANNEL=beta
@@ -35,6 +34,7 @@ install:
   - nvm use node
   - go get -u golang.org/x/tools/cmd/goimports
   - go get -u github.com/sqs/goreturns
+  - go get -u golang.org/x/tools/cmd/cover
 
 script:
   - 'curl -s https://raw.githubusercontent.com/atom/ci/943a16cd32926bdfcca703f16ec6a958a2db38a5/build-package.sh | sh'

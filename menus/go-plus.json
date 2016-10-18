@@ -12,6 +12,14 @@
       {
         "label": "Run goreturns",
         "command": "golang:goreturns"
+      },
+      {
+        "label": "Run Tests",
+        "command": "golang:run-tests"
+      },
+      {
+        "label": "Clear Test Coverage",
+        "command": "golang:hide-coverage"
       }
     ]
   },
@@ -33,6 +41,14 @@
             {
               "label": "Format With goreturns",
               "command": "golang:goreturns"
+            },
+            {
+              "label": "Run Tests",
+              "command": "golang:run-tests"
+            },
+            {
+              "label": "Clear Test Coverage",
+              "command": "golang:hide-coverage"
             }
           ]
         }
