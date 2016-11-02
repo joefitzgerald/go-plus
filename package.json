@@ -36,7 +36,7 @@
     "ansi-to-html": "^0.4.2",
     "atom-package-deps": "4.2.0",
     "etch": "0.6.3",
-    "etch-octicon": "^0.0.4",
+    "etch-octicon": "^0.1.0",
     "lodash": "^4.16.4",
     "rimraf": "^2.5.4",
     "temp": "^0.8.3"
