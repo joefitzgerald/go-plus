@@ -1,0 +1,15 @@
+{
+    "GOARCH": "amd64",
+    "GOBIN": "",
+    "GOEXE": "",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "linux",
+    "GOOS": "linux",
+    "GOROOT": "/usr/local/go",
+    "GOTOOLDIR": "/usr/local/go/pkg/tool/linux_amd64",
+    "CC": "gcc",
+    "GOGCCFLAGS": "-fPIC -m64 -pthread -fmessage-length=0",
+    "CXX": "g++",
+    "CGO_ENABLED": "1",
+    "VERSION": "go1.5.1"
+}

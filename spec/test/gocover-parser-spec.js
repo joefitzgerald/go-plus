@@ -1,6 +1,6 @@
 'use babel'
 /* eslint-env jasmine */
-import {ranges} from './../lib/gocover-parser'
+import {ranges} from './../../lib/test/gocover-parser'
 import fs from 'fs-plus'
 import os from 'os'
 import path from 'path'
@@ -16,8 +16,8 @@ describe('gocover-parser', () => {
 
   beforeEach(() => {
     waitsForPromise(() => {
-      return atom.packages.activatePackage('go-config').then((pack) => {
-        goconfig = pack.mainModule.provide()
+      return atom.packages.activatePackage('go-plus').then((pack) => {
+        goconfig = pack.mainModule.getGoconfig()
       })
     })
 

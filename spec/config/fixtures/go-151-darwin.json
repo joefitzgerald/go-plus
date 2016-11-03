@@ -1,0 +1,15 @@
+{
+    "GOARCH": "amd64",
+    "GOBIN": "",
+    "GOEXE": "",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "darwin",
+    "GOOS": "darwin",
+    "GOROOT": "/usr/local/Cellar/go/1.5.1/libexec",
+    "GOTOOLDIR": "/usr/local/Cellar/go/1.5.1/libexec/pkg/tool/darwin_amd64",
+    "CC": "clang",
+    "GOGCCFLAGS": "-fPIC -m64 -pthread -fno-caret-diagnostics -Qunused-arguments -fmessage-length=0 -fno-common",
+    "CXX": "clang++",
+    "CGO_ENABLED": "1",
+    "VERSION": "go1.5.1"
+}

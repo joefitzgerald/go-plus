@@ -49,6 +49,14 @@
             {
               "label": "Clear Test Coverage",
               "command": "golang:hide-coverage"
+            },
+            {
+              "label": "Get Package",
+              "command": "golang:get-package"
+            },
+            {
+              "label": "Update Tools",
+              "command": "golang:update-tools"
             }
           ]
         }

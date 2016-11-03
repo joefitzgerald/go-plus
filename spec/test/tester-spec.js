@@ -9,6 +9,7 @@ describe('tester', () => {
   let mainModule = null
   let gopath = null
   let oldGopath = null
+  let tester = null
 
   beforeEach(() => {
     runs(() => {
@@ -23,10 +24,10 @@ describe('tester', () => {
     })
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('go-config').then(() => {
-        return atom.packages.activatePackage('go-plus')
-      }).then((pack) => {
+      return atom.packages.activatePackage('go-plus').then((pack) => {
         mainModule = pack.mainModule
+        mainModule.loadTester()
+        tester = mainModule.tester
         return atom.packages.activatePackage('language-go')
       })
     })
@@ -51,7 +52,7 @@ describe('tester', () => {
     let testEditor
 
     beforeEach(() => {
-      atom.config.set('tester-go.runTestsOnSave', false)
+      atom.config.set('go-plus.test.runTestsOnSave', false)
       filePath = path.join(gopath, 'src', 'github.com', 'testuser', 'example', 'go-plus.go')
       testFilePath = path.join(gopath, 'src', 'github.com', 'testuser', 'example', 'go-plus_test.go')
       fs.writeFileSync(filePath, '')
@@ -76,12 +77,12 @@ describe('tester', () => {
       let testBuffer = testEditor.getBuffer()
       testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
       testBuffer.save()
-      let p = mainModule.getTester().runTests(editor)
+      let p = tester.runTests(editor)
 
       waitsForPromise(() => { return p })
 
       runs(() => {
-        let layerids = mainModule.getTester().markedEditors.get(editor.id).split(',')
+        let layerids = tester.markedEditors.get(editor.id).split(',')
         let coveredLayer = editor.getMarkerLayer(layerids[0])
         let uncoveredLayer = editor.getMarkerLayer(layerids[1])
         expect(coveredLayer).toBeTruthy()
@@ -109,12 +110,12 @@ describe('tester', () => {
         expect(range.end.column).toBe(1)
       })
 
-      p = mainModule.getTester().runTests(editor)
+      p = tester.runTests(editor)
 
       waitsForPromise(() => { return p })
 
       runs(() => {
-        let layerids = mainModule.getTester().markedEditors.get(editor.id).split(',')
+        let layerids = tester.markedEditors.get(editor.id).split(',')
         let coveredLayer = editor.getMarkerLayer(layerids[0])
         let uncoveredLayer = editor.getMarkerLayer(layerids[1])
         expect(coveredLayer).toBeTruthy()
@@ -145,7 +146,6 @@ describe('tester', () => {
       expect(mainModule).toBeDefined()
       expect(mainModule).toBeTruthy()
       expect(mainModule.getGoconfig).toBeDefined()
-      expect(mainModule.consumeGoconfig).toBeDefined()
       expect(mainModule.getGoconfig()).toBeTruthy()
       expect(mainModule.tester).toBeDefined()
       expect(mainModule.tester).toBeTruthy()
@@ -158,12 +158,12 @@ describe('tester', () => {
       let testBuffer = testEditor.getBuffer()
       testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
       testBuffer.save()
-      let p = mainModule.getTester().runTests(editor)
+      let p = tester.runTests(editor)
 
       waitsForPromise(() => { return p })
 
       runs(() => {
-        let layerids = mainModule.getTester().markedEditors.get(editor.id).split(',')
+        let layerids = tester.markedEditors.get(editor.id).split(',')
         let coveredLayer = editor.getMarkerLayer(layerids[0])
         let uncoveredLayer = editor.getMarkerLayer(layerids[1])
         expect(coveredLayer).toBeTruthy()
@@ -190,7 +190,7 @@ describe('tester', () => {
         expect(range.end.row).toBe(6)
         expect(range.end.column).toBe(1)
 
-        mainModule.getTester().clearMarkers(editor)
+        tester.clearMarkers(editor)
         expect(coveredLayer.getMarkers().length).toBe(0)
         expect(uncoveredLayer.getMarkers().length).toBe(0)
       })

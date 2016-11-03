@@ -17,26 +17,19 @@ describe('formatter', () => {
     atom.config.set('editor.defaultLineEnding', 'LF')
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('go-config').then(() => {
-        return atom.packages.activatePackage('language-go')
-      }).then(() => {
+      return atom.packages.activatePackage('language-go').then(() => {
         return atom.packages.activatePackage('go-plus')
       }).then((pack) => {
         mainModule = pack.mainModule
+        mainModule.getGoconfig()
+        mainModule.getGoget()
+        mainModule.loadFormatter()
       })
     })
 
     waitsFor(() => {
-      return mainModule.goconfig
-    })
-
-    waitsFor(() => {
-      formatter = mainModule.getFormatter()
+      formatter = mainModule.formatter
       return formatter
-    })
-
-    waitsFor(() => {
-      return formatter.ready()
     })
   })
 
@@ -72,12 +65,7 @@ describe('formatter', () => {
     describe('when format on save is disabled and gofmt is the tool', () => {
       beforeEach(() => {
         atom.config.set('go-plus.format.formatOnSave', false)
-        formatter.resetFormatterCache()
-        formatter.updateFormatterCache()
         atom.config.set('go-plus.format.tool', 'gofmt')
-        waitsFor(() => {
-          return formatter.ready()
-        })
       })
 
       it('does not format the file on save', () => {
@@ -99,7 +87,7 @@ describe('formatter', () => {
         })
       })
 
-      it('formats the file on command', () => {
+      fit('formats the file on command', () => {
         let text = 'package main' + nl + nl + 'func main()  {' + nl + '}' + nl
         let unformatted = text
         let formatted = 'package main' + nl + nl + 'func main() {' + nl + '}' + nl
@@ -130,12 +118,7 @@ describe('formatter', () => {
     describe('when format on save is enabled and gofmt is the tool', () => {
       beforeEach(() => {
         atom.config.set('go-plus.format.formatOnSave', true)
-        formatter.resetFormatterCache()
-        formatter.updateFormatterCache()
         atom.config.set('go-plus.format.tool', 'gofmt')
-        waitsFor(() => {
-          return formatter.ready()
-        })
       })
 
       it('formats the file on save', () => {
@@ -161,12 +144,7 @@ describe('formatter', () => {
     describe('when format on save is enabled and goimports is the tool', () => {
       beforeEach(() => {
         atom.config.set('go-plus.format.formatOnSave', true)
-        formatter.resetFormatterCache()
-        formatter.updateFormatterCache()
         atom.config.set('go-plus.format.tool', 'goimports')
-        waitsFor(() => {
-          return formatter.ready()
-        })
       })
 
       it('formats the file on save', () => {
@@ -192,12 +170,7 @@ describe('formatter', () => {
     describe('when format on save is enabled and goreturns is the tool', () => {
       beforeEach(() => {
         atom.config.set('go-plus.format.formatOnSave', true)
-        formatter.resetFormatterCache()
-        formatter.updateFormatterCache()
         atom.config.set('go-plus.format.tool', 'goreturns')
-        waitsFor(() => {
-          return formatter.ready()
-        })
       })
 
       it('formats the file on save', () => {

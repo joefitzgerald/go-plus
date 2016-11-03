@@ -1,0 +1,15 @@
+{
+    "GOARCH": "amd64",
+    "GOBIN": "",
+    "GOEXE": ".exe",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "windows",
+    "GOOS": "windows",
+    "GOROOT": "c:\\go",
+    "GOTOOLDIR": "c:\\go\\pkg\\tool\\windows_amd64",
+    "CC": "gcc",
+    "GOGCCFLAGS": "-m64 -mthreads -fmessage-length=0",
+    "CXX": "g++",
+    "CGO_ENABLED": "1",
+    "VERSION": "go1.5.1"
+}

@@ -32,23 +32,24 @@
   "bugs": {
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
+
   "dependencies": {
     "ansi-to-html": "^0.4.2",
     "atom-package-deps": "4.2.0",
-    "etch": "0.6.3",
-    "etch-octicon": "^0.0.4",
+    "etch": "^0.8.0",
+    "etch-octicon": "^0.1.0",
     "lodash": "^4.16.4",
     "rimraf": "^2.5.4",
+    "semver": "^5.3.0",
     "temp": "^0.8.3"
   },
   "devDependencies": {
+    "fs-extra": "^0.30.0",
     "fs-plus": "^2.9.2",
     "standard": "^8.4.0",
     "temp": "^0.8.3"
   },
   "package-deps": [
-    "go-config",
-    "go-get",
     "gometalinter-linter",
     "autocomplete-go",
     "navigator-go",
@@ -57,25 +58,28 @@
     "go-debug",
     "godoc"
   ],
+  "providedServices": {
+    "go-config": {
+      "versions": {
+        "1.0.0": "provideGoConfig"
+      }
+    },
+    "go-get": {
+      "versions": {
+        "2.0.0": "provideGoGet",
+        "1.0.0": "provideGoGet100"
+      }
+    }
+  },
   "consumedServices": {
     "status-bar": {
       "versions": {
         "^1.0.0": "consumeStatusBar"
       }
     },
-    "go-config": {
-      "versions": {
-        "1.0.0": "consumeGoconfig"
-      }
-    },
     "go-plus.view": {
       "versions": {
         "0.1.0": "consumeViewProvider"
-      }
-    },
-    "go-get": {
-      "versions": {
-        "2.0.0": "consumeGoget"
       }
     }
   },
@@ -111,6 +115,19 @@
       "type": "string",
       "default": "15vh",
       "order": 3
+    },
+    "config": {
+      "title": "Config",
+      "type": "object",
+      "properties": {
+        "gopath": {
+          "title": "GOPATH",
+          "description": "(Not Recommended For Use) If you have issues setting your GOPATH in your environment, you can use this to establish a fallback value. See https://github.com/joefitzgerald/go-config/wiki/GOPATH for more information.",
+          "type": "string",
+          "default": "",
+          "order": 1
+        }
+      }
     },
     "format": {
       "title": "Format",
