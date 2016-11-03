@@ -84,7 +84,7 @@
       "title": "Panel Display Mode",
       "description": "Control the behavior of the go-plus panel when a new Atom window is opened",
       "type": "string",
-      "default": "open",
+      "default": "closed",
       "enum": [
         "open",
         "closed"
