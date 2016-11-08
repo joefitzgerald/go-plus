@@ -1,0 +1,57 @@
+@import "ui-variables";
+
+// Vertical Panel --------------------
+
+.go-plus-panel.is-vertical {
+  flex-direction: row;
+  height: 100%;
+
+  .go-plus-panel-resize-handle {
+    width: 4px;
+    height: initial;
+    right: auto;
+    bottom: 0;
+    cursor: col-resize;
+  }
+
+  .panel-heading {
+    border: none;
+    text-align: center;
+    flex-direction: column;
+
+    .etch-octicon {
+      margin-right: 0;
+    }
+  }
+
+  .panel-group {
+    padding: 0;
+  }
+
+  .panel-logo {
+    display: none;
+  }
+
+  .panel-nav {
+    border: none;
+    &-label {
+      display: none;
+    }
+  }
+
+  .panel-nav-item {
+    display: block;
+    border-width: 1px 0;
+    &:first-child {
+      border-top: none;
+    }
+  }
+
+  .panel-icon-button {
+    display: block;
+  }
+  .panel-icon-button + .panel-icon-button {
+    margin: @component-padding 0;
+  }
+
+}

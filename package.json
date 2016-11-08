@@ -24,7 +24,7 @@
   "license": "Apache-2.0",
   "engines": {
     "atom": ">=1.9.9 <2.0.0",
-    "node": "*"
+    "node": ">=4"
   },
   "author": "Joe Fitzgerald <jfitzgerald@pivotal.io> (http://github.com/joefitzgerald)",
   "homepage": "https://atom.io/packages/go-plus",
@@ -95,26 +95,58 @@
       ],
       "order": 1
     },
+    "panelOrientation": {
+      "title": "Panel Orientation",
+      "description": "Dock the panel to the bottom or right of the window",
+      "type": "string",
+      "default": "horizontal",
+      "enum": [
+        "horizontal",
+        "vertical"
+      ],
+      "order": 2
+    },
     "maxPanelHeight": {
       "title": "Maximum Panel Height",
-      "description": "Prevent the panel from occupying the entire window",
+      "description": "When the panel orientation is horizontal, prevent the panel from occupying the entire window",
       "type": "string",
       "default": "50vh",
-      "order": 2
+      "order": 3
     },
     "minPanelHeight": {
       "title": "Minimum Panel Height",
-      "description": "Ensure the panel doesn't disappear when open",
+      "description": "When the panel orientation is horizontal, ensure the panel doesn't disappear when open",
       "type": "string",
       "default": "10vh",
-      "order": 3
+      "order": 4
     },
     "currentPanelHeight": {
       "title": "Current Panel Height",
-      "description": "The height of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
+      "description": "When the panel orientation is horizontal, the height of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
       "type": "string",
       "default": "15vh",
-      "order": 3
+      "order": 5
+    },
+    "maxPanelWidth": {
+      "title": "Maximum Panel Width",
+      "description": "When the panel orientation is vertical, prevent the panel from occupying the entire window",
+      "type": "string",
+      "default": "50vw",
+      "order": 6
+    },
+    "minPanelHeight": {
+      "title": "Minimum Panel Width",
+      "description": "When the panel orientation is vertical, ensure the panel doesn't disappear when open",
+      "type": "string",
+      "default": "10vw",
+      "order": 7
+    },
+    "currentPanelWidth": {
+      "title": "Current Panel Width",
+      "description": "When the panel orientation is vertical, the width of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
+      "type": "string",
+      "default": "15vw",
+      "order": 8
     },
     "config": {
       "title": "Config",
