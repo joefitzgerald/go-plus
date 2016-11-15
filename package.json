@@ -58,10 +58,9 @@
     "temp": "^0.8.3"
   },
   "devDependencies": {
-    "fs-extra": "^0.30.0",
-    "fs-plus": "^2.9.2",
-    "standard": "^8.4.0",
-    "temp": "^0.8.3"
+    "fs-extra": "^1.0.0",
+    "fs-plus": "^2.9.3",
+    "standard": "^8.5.0"
   },
   "package-deps": [
     "gometalinter-linter",
