@@ -5,11 +5,9 @@ describe('config', () => {
   let goplusMain = null
 
   beforeEach(() => {
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('go-plus').then((pack) => {
-        goplusMain = pack.mainModule
-      })
-    })
+    let pack = atom.packages.loadPackage('go-plus')
+    pack.activateNow()
+    goplusMain = pack.mainModule
   })
 
   describe('when the go-config package is activated', () => {

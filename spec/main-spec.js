@@ -5,12 +5,9 @@ describe('go-plus', () => {
   let mainModule = null
 
   beforeEach(() => {
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('go-plus').then((pack) => {
-        mainModule = pack.mainModule
-        return
-      })
-    })
+    let pack = atom.packages.loadPackage('go-plus')
+    pack.activateNow()
+    mainModule = pack.mainModule
   })
 
   describe('when the go-plus package is activated', () => {

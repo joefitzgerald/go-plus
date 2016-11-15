@@ -15,11 +15,9 @@ describe('gocover-parser', () => {
   let testFilePath
 
   beforeEach(() => {
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('go-plus').then((pack) => {
-        goconfig = pack.mainModule.getGoconfig()
-      })
-    })
+    let pack = atom.packages.loadPackage('go-plus')
+    pack.activateNow()
+    goconfig = pack.mainModule.getGoconfig()
 
     waitsFor(() => {
       return goconfig !== null

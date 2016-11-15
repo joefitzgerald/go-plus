@@ -12,11 +12,9 @@ describe('go-get', () => {
   temp.track()
 
   beforeEach(() => {
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('go-plus').then((pack) => {
-        mainModule = pack.mainModule
-      })
-    })
+    let pack = atom.packages.loadPackage('go-plus')
+    pack.activateNow()
+    mainModule = pack.mainModule
 
     waitsFor(() => {
       return mainModule.getGoconfig()

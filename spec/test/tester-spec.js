@@ -23,13 +23,16 @@ describe('tester', () => {
       atom.project.setPaths(gopath)
     })
 
+    runs(() => {
+      let pack = atom.packages.loadPackage('go-plus')
+      pack.activateNow()
+      mainModule = pack.mainModule
+      mainModule.loadTester()
+      tester = mainModule.tester
+    })
+
     waitsForPromise(() => {
-      return atom.packages.activatePackage('go-plus').then((pack) => {
-        mainModule = pack.mainModule
-        mainModule.loadTester()
-        tester = mainModule.tester
-        return atom.packages.activatePackage('language-go')
-      })
+      return atom.packages.activatePackage('language-go')
     })
 
     waitsFor(() => {

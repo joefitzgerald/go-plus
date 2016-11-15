@@ -17,14 +17,16 @@ describe('formatter', () => {
     atom.config.set('editor.defaultLineEnding', 'LF')
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go').then(() => {
-        return atom.packages.activatePackage('go-plus')
-      }).then((pack) => {
-        mainModule = pack.mainModule
-        mainModule.getGoconfig()
-        mainModule.getGoget()
-        mainModule.loadFormatter()
-      })
+      return atom.packages.activatePackage('language-go')
+    })
+
+    runs(() => {
+      let pack = atom.packages.loadPackage('go-plus')
+      pack.activateNow()
+      mainModule = pack.mainModule
+      mainModule.getGoconfig()
+      mainModule.getGoget()
+      mainModule.loadFormatter()
     })
 
     waitsFor(() => {
@@ -87,7 +89,7 @@ describe('formatter', () => {
         })
       })
 
-      fit('formats the file on command', () => {
+      it('formats the file on command', () => {
         let text = 'package main' + nl + nl + 'func main()  {' + nl + '}' + nl
         let unformatted = text
         let formatted = 'package main' + nl + nl + 'func main() {' + nl + '}' + nl
