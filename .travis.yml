@@ -15,7 +15,7 @@ os:
 
 env:
   global:
-    - APM_TEST_PACKAGES="go-config"
+    - APM_TEST_PACKAGES=""
   matrix:
     - ATOM_CHANNEL=beta
     - ATOM_CHANNEL=stable
