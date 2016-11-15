@@ -24,7 +24,7 @@
   "license": "Apache-2.0",
   "engines": {
     "atom": ">=1.9.9 <2.0.0",
-    "node": ">=4"
+    "node": ">= 4"
   },
   "author": "Joe Fitzgerald <jfitzgerald@pivotal.io> (http://github.com/joefitzgerald)",
   "homepage": "https://atom.io/packages/go-plus",
@@ -32,7 +32,21 @@
   "bugs": {
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
-
+  "activationHooks": ["core:loaded-shell-environment"],
+  "activationCommands": {
+    "atom-workspace": [
+      "golang:get-package",
+      "golang:update-tools",
+      "golang:toggle-panel",
+      "golang:gofmt",
+      "golang:goimports",
+      "golang:goreturns"
+	  ],
+    "atom-text-editor[data-grammar~=\"go\"]:not([mini])": [
+      "golang:run-tests",
+      "golang:hide-coverage"
+    ]
+	},
   "dependencies": {
     "ansi-to-html": "^0.4.2",
     "atom-package-deps": "4.2.0",
@@ -68,6 +82,11 @@
       "versions": {
         "2.0.0": "provideGoGet",
         "1.0.0": "provideGoGet100"
+      }
+    },
+    "linter": {
+      "versions": {
+        "1.0.0": "provideLinter"
       }
     }
   },
