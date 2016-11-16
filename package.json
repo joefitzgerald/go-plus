@@ -87,6 +87,11 @@
       "versions": {
         "1.0.0": "provideLinter"
       }
+    },
+    "autocomplete.provider": {
+      "versions": {
+        "2.0.0": "provideAutocomplete"
+      }
     }
   },
   "consumedServices": {
@@ -176,6 +181,97 @@
           "type": "string",
           "default": "",
           "order": 1
+        }
+      }
+    },
+    "autocomplete": {
+      "title": "Autocomplete",
+      "type": "object",
+      "properties": {
+        "scopeBlacklist": {
+          "title": "Scope Blacklist",
+          "description": "Suggestions will not be shown when the cursor is inside the following comma-delimited scope(s).",
+          "type": "string",
+          "default": ".source.go .comment, .source.go .constant.numeric, .source.go .string.quoted",
+          "order": 1
+        },
+        "suppressBuiltinAutocompleteProvider": {
+          "title": "Suppress The Provider Built-In To autocomplete-plus",
+          "description": "Suppress the provider built-in to the autocomplete-plus package when editing .go files.",
+          "type": "boolean",
+          "default": true,
+          "order": 2
+        },
+        "suppressActivationForCharacters": {
+          "title": "Suppress Activation For Characters",
+          "description": "Suggestions will not be provided when you type one of these characters.",
+          "type": "array",
+          "default": [
+            "comma",
+            "newline",
+            "space",
+            "tab",
+            "/",
+            "\\",
+            "(",
+            ")",
+            "\"",
+            "'",
+            ":",
+            ";",
+            "<",
+            ">",
+            "~",
+            "!",
+            "@",
+            "#",
+            "$",
+            "%",
+            "^",
+            "&",
+            "*",
+            "|",
+            "+",
+            "=",
+            "[",
+            "]",
+            "{",
+            "}",
+            "`",
+            "~",
+            "?",
+            "-"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "order": 3
+        },
+        "snippetMode": {
+          "title": "Snippet Mode",
+          "description": "When inserting suggestions for funcs, generate a snippet that includes parenthesis only (none), argument name (name), or argument name and type (nameAndType).",
+          "type": "string",
+          "default": "name",
+          "enum": [
+            "name",
+            "nameAndType",
+            "none"
+          ],
+          "order": 4
+        },
+        "proposeBuiltins": {
+          "title": "Propose Builtins",
+          "description": "Add built-in types, functions and constants to an autocompletion proposals. Default: true.",
+          "type": "boolean",
+          "default": true,
+          "order": 5
+        },
+        "unimportedPackages": {
+          "title": "Unimported Packages",
+          "description": "Provide suggestions for unimported packages. Default: true.",
+          "type": "boolean",
+          "default": true,
+          "order": 6
         }
       }
     },
