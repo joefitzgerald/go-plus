@@ -32,7 +32,10 @@
   "bugs": {
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
-  "activationHooks": ["core:loaded-shell-environment"],
+  "activationHooks": [
+    "core:loaded-shell-environment",
+    "language-go:grammar-used"
+  ],
   "activationCommands": {
     "atom-workspace": [
       "golang:get-package",
