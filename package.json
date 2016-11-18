@@ -32,6 +32,9 @@
   "bugs": {
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
+  "activationHooks": [
+    "language-go:grammar-used",
+  ],
   "dependencies": {
     "ansi-to-html": "^0.4.2",
     "atom-package-deps": "4.2.0",
