@@ -8,6 +8,7 @@
   },
   "atom-text-editor[data-grammar~=\"go\"]:not([mini])": {
     "ctrl-alt-shift-g t": "golang:run-tests",
-    "ctrl-alt-shift-g x": "golang:hide-coverage"
+    "ctrl-alt-shift-g x": "golang:hide-coverage",
+    "alt-d": "golang:showdoc"
   }
 }

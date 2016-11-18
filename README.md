@@ -13,6 +13,8 @@ This package includes the following functionality:
 * Format your code with `gofmt`, `goimports`, or `goreturns`; optionally run one of these tools on save of any `.go` file
 * Run `go install .` and `go test -c -o {tempdir} .` to verify your code can compile and to keep `gocode` suggestions up to date
 * Run tests, display test output, and display test coverage using `go test -coverprofile`
+* Display documentation for identifiers in source code using
+  [`gogetdoc`](https://github.com/zmb3/gogetdoc)
 
 This package adds extra functionality by installing the following additional packages:
 
@@ -21,7 +23,6 @@ This package adds extra functionality by installing the following additional pac
 * [navigator-go](https://atom.io/packages/navigator-go): Go to definition using `godef`
 * [gorename](https://atom.io/packages/gorename): Rename the symbol under your cursor using `gorename`
 * [go-debug](https://atom.io/packages/go-debug): Debug your package / tests using [`delve`](https://github.com/derekparker/delve)
-* [godoc](https://atom.io/packages/godoc): Display documentation for identifiers in source code using [`gogetdoc`](https://github.com/zmb3/gogetdoc)
 
 ## Builds
 
@@ -66,7 +67,6 @@ You can file any `go-plus` issues [here](https://github.com/joefitzgerald/go-plu
 * [`go to definition / godef`](https://github.com/joefitzgerald/navigator-go): [create issue](https://github.com/joefitzgerald/navigator-go/issues/new)
 * [`gorename`](https://github.com/zmb3/gorename): [create issue](https://github.com/zmb3/gorename/issues/new)
 * [`go-debug`](https://github.com/lloiser/go-debug): [create issue](https://github.com/lloiser/go-debug/issues/new)
-* [`godoc`](https://github.com/zmb3/godoc): [create issue](https://github.com/zmb3/godoc/issues/new)
 
 ## Maintainers
 * Joe Fitzgerald ([@joefitzgerald](https://github.com/joefitzgerald))

@@ -10,6 +10,7 @@
     "format",
     "fmt",
     "godef",
+    "godoc",
     "goimports",
     "gorename",
     "goreturns",
@@ -40,7 +41,8 @@
       "golang:toggle-panel",
       "golang:gofmt",
       "golang:goimports",
-      "golang:goreturns"
+      "golang:goreturns",
+      "golang:showdoc"
 	  ],
     "atom-text-editor[data-grammar~=\"go\"]:not([mini])": [
       "golang:run-tests",
@@ -68,8 +70,7 @@
     "navigator-go",
     "gorename",
     "builder-go",
-    "go-debug",
-    "godoc"
+    "go-debug"
   ],
   "providedServices": {
     "go-config": {
