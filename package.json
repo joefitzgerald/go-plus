@@ -66,11 +66,10 @@
   },
   "package-deps": [
     "gometalinter-linter",
-    "autocomplete-go",
     "navigator-go",
     "gorename",
-    "builder-go",
-    "go-debug"
+    "go-debug",
+    "godoc"
   ],
   "providedServices": {
     "go-config": {
