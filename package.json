@@ -46,7 +46,8 @@
 	  ],
     "atom-text-editor[data-grammar~=\"go\"]:not([mini])": [
       "golang:run-tests",
-      "golang:hide-coverage"
+      "golang:hide-coverage",
+      "golang:gorename"
     ]
 	},
   "dependencies": {
@@ -68,7 +69,6 @@
     "gometalinter-linter",
     "autocomplete-go",
     "navigator-go",
-    "gorename",
     "builder-go",
     "go-debug"
   ],

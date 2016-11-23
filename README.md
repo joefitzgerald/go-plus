@@ -15,13 +15,13 @@ This package includes the following functionality:
 * Run tests, display test output, and display test coverage using `go test -coverprofile`
 * Display documentation for identifiers in source code using
   [`gogetdoc`](https://github.com/zmb3/gogetdoc)
+* Rename the symbol under your cursor using `gorename`
 
 This package adds extra functionality by installing the following additional packages:
 
 * [autocomplete-go](https://atom.io/packages/autocomplete-go): Autocomplete using `gocode`
 * [gometalinter-linter](https://atom.io/packages/gometalinter-linter): Run a variety of linters (e.g. `golint`, `vet`, `gotype`, etc.) against your code
 * [navigator-go](https://atom.io/packages/navigator-go): Go to definition using `godef`
-* [gorename](https://atom.io/packages/gorename): Rename the symbol under your cursor using `gorename`
 * [go-debug](https://atom.io/packages/go-debug): Debug your package / tests using [`delve`](https://github.com/derekparker/delve)
 
 ## Builds
@@ -50,8 +50,9 @@ If you are missing any required tools, you may be prompted to install them. You 
 
 ```
 go get -u golang.org/x/tools/cmd/goimports
-go get -u github.com/sqs/goreturns
 go get -u golang.org/x/tools/cmd/cover
+go get -u golang.org/x/tools/cmd/gorename
+go get -u github.com/sqs/goreturns
 go get -u github.com/nsf/gocode
 go get -u github.com/alecthomas/gometalinter
 go get -u github.com/zmb3/gogetdoc
@@ -65,7 +66,6 @@ You can file any `go-plus` issues [here](https://github.com/joefitzgerald/go-plu
 * [`autocompletion / gocode`](https://github.com/joefitzgerald/autocomplete-go): [create issue](https://github.com/joefitzgerald/autocomplete-go/issues/new)
 * [`linting / gometalinter`](https://github.com/joefitzgerald/gometalinter-linter): [create issue](https://github.com/joefitzgerald/gometalinter-linter/issues/new)
 * [`go to definition / godef`](https://github.com/joefitzgerald/navigator-go): [create issue](https://github.com/joefitzgerald/navigator-go/issues/new)
-* [`gorename`](https://github.com/zmb3/gorename): [create issue](https://github.com/zmb3/gorename/issues/new)
 * [`go-debug`](https://github.com/lloiser/go-debug): [create issue](https://github.com/lloiser/go-debug/issues/new)
 
 ## Maintainers
