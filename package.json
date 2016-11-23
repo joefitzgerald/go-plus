@@ -67,9 +67,7 @@
   },
   "package-deps": [
     "gometalinter-linter",
-    "autocomplete-go",
     "navigator-go",
-    "builder-go",
     "go-debug"
   ],
   "providedServices": {
