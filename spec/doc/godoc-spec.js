@@ -16,6 +16,7 @@ describe('godoc', () => {
   let target = null
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     runs(() => {
       if (process.env.GOPATH) {
         oldGopath = process.env.GOPATH

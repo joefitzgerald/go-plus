@@ -12,6 +12,7 @@ describe('go-get', () => {
   temp.track()
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     let pack = atom.packages.loadPackage('go-plus')
     pack.activateNow()
     mainModule = pack.mainModule

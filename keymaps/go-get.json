@@ -1,6 +1,0 @@
-{
-  "atom-workspace": {
-    "ctrl-alt-shift-g g": "golang:get-package",
-    "ctrl-alt-shift-g u": "golang:update-tools"
-  }
-}

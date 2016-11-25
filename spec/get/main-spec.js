@@ -5,6 +5,7 @@ describe('go-get', () => {
   let mainModule = null
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     let pack = atom.packages.loadPackage('go-plus')
     pack.activateNow()
     mainModule = pack.mainModule

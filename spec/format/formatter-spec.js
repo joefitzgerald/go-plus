@@ -12,6 +12,7 @@ describe('formatter', () => {
   let formatter = null
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     temp.track()
     atom.config.set('go-plus.format.formatOnSave', false)
     atom.config.set('editor.defaultLineEnding', 'LF')

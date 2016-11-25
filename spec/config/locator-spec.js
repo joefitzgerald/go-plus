@@ -19,6 +19,7 @@ describe('Locator', () => {
   let originalEnv = null
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     originalEnv = process.env
     process.env = Object.assign({}, process.env)
     temp.track()

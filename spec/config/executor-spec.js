@@ -13,6 +13,7 @@ describe('executor', () => {
   let error = null
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     runs(() => {
       result = null
       error = null

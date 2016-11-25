@@ -8,6 +8,7 @@ describe('builder', () => {
   let builder = null
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     waitsForPromise(() => {
       return atom.packages.activatePackage('language-go')
     })

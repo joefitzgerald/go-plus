@@ -15,6 +15,7 @@ describe('gocodeprovider', () => {
   let suggestionsPromise = null
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     jasmine.unspy(window, 'setTimeout')
     atom.packages.activatePackage('go-plus').then((pack) => {
       mainModule = pack.mainModule

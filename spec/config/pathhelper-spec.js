@@ -9,6 +9,7 @@ describe('pathhelper', () => {
   let gopathToken = ''
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     runs(() => {
       gopathToken = '$GOPATH'
       if (os.platform() === 'win32') {

@@ -1,12 +1,13 @@
 {
   "atom-workspace": {
     "ctrl-alt-shift-g p": "golang:toggle-panel",
-
-    "ctrl-alt-shift-g f": "golang:gofmt",
-    "ctrl-alt-shift-g i": "golang:goimports",
-    "ctrl-alt-shift-g r": "golang:goreturns"
+    "ctrl-alt-shift-g g": "golang:get-package",
+    "ctrl-alt-shift-g u": "golang:update-tools"
   },
   "atom-text-editor[data-grammar~=\"go\"]:not([mini])": {
+    "ctrl-alt-shift-g f": "golang:gofmt",
+    "ctrl-alt-shift-g i": "golang:goimports",
+    "ctrl-alt-shift-g r": "golang:goreturns",
     "ctrl-alt-shift-g t": "golang:run-tests",
     "ctrl-alt-shift-g x": "golang:hide-coverage",
     "alt-d": "golang:showdoc"

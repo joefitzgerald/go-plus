@@ -15,6 +15,7 @@ describe('gocover-parser', () => {
   let testFilePath
 
   beforeEach(() => {
+    atom.config.set('go-plus.disableToolCheck', true)
     let pack = atom.packages.loadPackage('go-plus')
     pack.activateNow()
     goconfig = pack.mainModule.getGoconfig()
