@@ -63,7 +63,6 @@ describe('godoc', () => {
       waitsForPromise(() => {
         return atom.workspace.open(path.join(target, 'doc.go')).then((e) => {
           editor = e
-          return
         })
       })
     })
