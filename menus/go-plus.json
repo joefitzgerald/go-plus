@@ -2,6 +2,14 @@
   "context-menu": {
     "atom-text-editor[data-grammar~=\"go\"]:not([mini])": [
       {
+        "label": "Go To Definition",
+        "command": "golang:godef"
+      },
+      {
+        "label": "Return From Definition",
+        "command": "golang:godef-return"
+      },
+      {
         "label": "Run gofmt",
         "command": "golang:gofmt"
       },
@@ -38,6 +46,14 @@
         {
           "label": "Go",
           "submenu": [
+            {
+              "label": "Go To Definition",
+              "command": "golang:godef"
+            },
+            {
+              "label": "Return From Definition",
+              "command": "golang:godef-return"
+            },
             {
               "label": "Format With gofmt",
               "command": "golang:gofmt"

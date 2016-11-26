@@ -12,5 +12,13 @@
     "ctrl-alt-shift-g x": "golang:hide-coverage",
     "alt-d": "golang:showdoc",
     "alt-r": "golang:gorename"
+  },
+  ".platform-darwin atom-text-editor[data-grammar~=\"go\"]:not([mini])": {
+    "alt-cmd-g": "golang:godef",
+    "alt-cmd-shift-g": "golang:godef-return"
+  },
+  ":not(.platform-darwin) atom-text-editor[data-grammar~=\"go\"]:not([mini])": {
+    "alt-ctrl-g": "golang:godef",
+    "alt-ctrl-shift-g": "golang:godef-return"
   }
 }
