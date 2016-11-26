@@ -2,21 +2,7 @@
 /* eslint-env jasmine */
 
 describe('godef', () => {
-  let mainModule = null
 
-  beforeEach(() => {
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('go-config').then(() => {
-        return atom.packages.activatePackage('navigator-go')
-      }).then((pack) => {
-        mainModule = pack.mainModule
-      })
-    })
-
-    waitsFor(() => {
-      return mainModule.getGoconfig() !== false
-    })
-  })
 })
 
 /*
