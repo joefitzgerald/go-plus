@@ -17,6 +17,7 @@ describe('gorename', () => {
 
   beforeEach(() => {
     runs(() => {
+      atom.config.set('go-plus.disableToolCheck', true)
       if (process.env.GOPATH) {
         oldGopath = process.env.GOPATH
       }
@@ -77,6 +78,14 @@ describe('gorename', () => {
       let cwd = path.dirname(file)
       let r = false
       let cmd
+
+      waitsFor(() => {
+        if (mainModule.getGoconfig()) {
+          return true
+        }
+        return false
+      }, '', 750)
+
       waitsForPromise(() => {
         return mainModule.getGoconfig().locator.findTool('gorename').then((c) => {
           expect(c).toBeTruthy()
