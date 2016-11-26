@@ -62,7 +62,7 @@
   "devDependencies": {
     "fs-extra": "^1.0.0",
     "fs-plus": "^2.9.3",
-    "standard": "^8.5.0"
+    "standard": "^8.6.0"
   },
   "providedServices": {
     "go-config": {
