@@ -20,6 +20,14 @@
       {
         "label": "Clear Test Coverage",
         "command": "golang:hide-coverage"
+      },
+      {
+        "label": "Rename symbol under cursor",
+        "command": "golang:gorename"
+      },
+      {
+        "label": "Get godoc for symbol under cursor",
+        "command": "golang:showdoc"
       }
     ]
   },

@@ -10,6 +10,7 @@
     "ctrl-alt-shift-g r": "golang:goreturns",
     "ctrl-alt-shift-g t": "golang:run-tests",
     "ctrl-alt-shift-g x": "golang:hide-coverage",
-    "alt-d": "golang:showdoc"
+    "alt-d": "golang:showdoc",
+    "alt-r": "golang:gorename"
   }
 }
