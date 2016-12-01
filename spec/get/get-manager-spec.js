@@ -5,6 +5,7 @@ import temp from 'temp'
 import fs from 'fs-plus'
 import path from 'path'
 import os from 'os'
+import {setup} from './../spec-helpers'
 
 describe('go-get', () => {
   let mainModule = null
@@ -12,7 +13,7 @@ describe('go-get', () => {
   temp.track()
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
+    setup()
     let pack = atom.packages.loadPackage('go-plus')
     pack.activateNow()
     mainModule = pack.mainModule

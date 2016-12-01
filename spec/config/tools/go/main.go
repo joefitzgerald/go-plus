@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -16,23 +17,24 @@ func main() {
 	}
 
 	command := os.Args[1]
-	if command != "env" && command != "version" && command != "printjson" {
+	if command != "env" && command != "version" && command != "printjson" && command != "get" {
 		fmt.Println("unknown argument " + os.Args[1])
 		os.Exit(1)
 	}
 
-	g := readGo()
-
 	if command == "version" {
+		g := readGo()
 		fmt.Printf("go version %s %s/%s\n", g.VERSION, g.GOOS, g.GOARCH)
 		os.Exit(0)
 	}
 
 	if command == "env" {
+		g := readGo()
 		printEnv(&g)
 	}
 
 	if command == "printjson" {
+		g := readGo()
 		b, err := json.MarshalIndent(g, "", "    ")
 		if err != nil {
 			printErr(err)
@@ -41,6 +43,30 @@ func main() {
 		fmt.Println(string(b[:]))
 		os.Exit(1)
 	}
+
+	if command == "get" {
+		get(os.Args[2])
+	}
+}
+
+func get(packagePath string) {
+	if packagePath == "" {
+		fmt.Println("no package path was supplied to go get")
+		os.Exit(1)
+	}
+
+	paths := strings.Split(packagePath, "/")
+	if len(paths) <= 1 {
+		fmt.Println("invalid package path: " + packagePath)
+		os.Exit(1)
+	}
+	p := paths[len(paths)-1]
+	suffix := ""
+	if runtime.GOOS == "windows" {
+		suffix = ".exe"
+	}
+
+	ioutil.WriteFile(path.Join(os.Getenv("GOPATH"), "bin", p+suffix), []byte("dummy file"), 0755)
 }
 
 func readGo() Go {
@@ -70,6 +96,7 @@ func printEnv(g *Go) {
 		{"GOARCH", g.GOARCH},
 		{"GOBIN", g.GOBIN},
 		{"GOEXE", g.GOEXE},
+		{"GORACE", g.GORACE},
 		{"GOHOSTARCH", g.GOHOSTARCH},
 		{"GOHOSTOS", g.GOHOSTOS},
 		{"GOOS", g.GOOS},
@@ -128,6 +155,7 @@ type Go struct {
 	GOARCH     string
 	GOBIN      string
 	GOEXE      string
+	GORACE     string
 	GOHOSTARCH string
 	GOHOSTOS   string
 	GOOS       string

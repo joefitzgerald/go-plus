@@ -294,7 +294,7 @@ describe('Locator', () => {
     })
   })
 
-  describe('when the path includes a directory with go 1.5.1 in it', () => {
+  describe('when the path includes a directory with go 1.7.3 in it', () => {
     let godir = null
     let gopathdir = null
     let gorootdir = null
@@ -351,9 +351,9 @@ describe('Locator', () => {
       runs(() => {
         expect(runtimes).toBeTruthy()
         expect(runtimes.length).toBeGreaterThan(0)
-        expect(runtimes[0].name).toBe('go1.5.1')
-        expect(runtimes[0].semver).toBe('1.5.1')
-        expect(runtimes[0].version).toBe('go version go1.5.1 ' + platform + '/' + arch)
+        expect(runtimes[0].name).toBe('go1.7.3')
+        expect(runtimes[0].semver).toBe('1.7.3')
+        expect(runtimes[0].version).toBe('go version go1.7.3 ' + platform + '/' + arch)
         expect(runtimes[0].path).toBe(go)
         expect(runtimes[0].GOARCH).toBe(arch)
         expect(runtimes[0].GOBIN).toBe('')
