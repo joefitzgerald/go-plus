@@ -4,12 +4,13 @@
 import pathhelper from './../../lib/config/pathhelper'
 import os from 'os'
 import path from 'path'
+import {lifecycle} from './../spec-helpers'
 
 describe('pathhelper', () => {
   let gopathToken = ''
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
+    lifecycle.setup()
     runs(() => {
       gopathToken = '$GOPATH'
       if (os.platform() === 'win32') {

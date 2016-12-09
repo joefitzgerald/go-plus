@@ -2,26 +2,22 @@
 /* eslint-env jasmine */
 
 import path from 'path'
-import temp from 'temp'
 import fs from 'fs-plus'
+import {lifecycle} from './../spec-helpers'
 
 describe('tester', () => {
   let mainModule = null
   let gopath = null
-  let oldGopath = null
   let tester = null
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
+    lifecycle.setup()
     runs(() => {
-      if (process.env.GOPATH) {
-        oldGopath = process.env.GOPATH
-      }
       atom.config.set('go-plus.format.formatOnSave', false)
       atom.config.set('go-plus.test.coverageHighlightMode', 'covered-and-uncovered')
-      gopath = temp.mkdirSync()
+      gopath = lifecycle.temp.mkdirSync()
       process.env.GOPATH = gopath
-      atom.project.setPaths(gopath)
+      atom.project.setPaths([gopath])
     })
 
     runs(() => {
@@ -31,6 +27,8 @@ describe('tester', () => {
       mainModule.loadTester()
       tester = mainModule.tester
     })
+
+    waitsFor(() => { return mainModule && mainModule.loaded })
 
     waitsForPromise(() => {
       return atom.packages.activatePackage('language-go')
@@ -42,11 +40,7 @@ describe('tester', () => {
   })
 
   afterEach(() => {
-    if (oldGopath) {
-      process.env.GOPATH = oldGopath
-    } else {
-      delete process.env.GOPATH
-    }
+    lifecycle.teardown()
   })
 
   describe('when run coverage on save is disabled', () => {

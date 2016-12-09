@@ -2,13 +2,14 @@
 /* eslint-env jasmine */
 
 import path from 'path'
+import {lifecycle} from './../spec-helpers'
 
 describe('builder', () => {
   let mainModule = null
   let builder = null
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
+    lifecycle.setup()
     waitsForPromise(() => {
       return atom.packages.activatePackage('language-go')
     })
@@ -19,10 +20,16 @@ describe('builder', () => {
       mainModule = pack.mainModule
     })
 
+    waitsFor(() => { return mainModule && mainModule.loaded })
+
     waitsFor(() => {
       builder = mainModule.getBuilder()
       return builder
     })
+  })
+
+  afterEach(() => {
+    lifecycle.teardown()
   })
 
   describe('getMessages', () => {

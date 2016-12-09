@@ -45,7 +45,11 @@ func main() {
 	}
 
 	if command == "get" {
-		get(os.Args[2])
+		if os.Args[2] == "-u" {
+			get(os.Args[3])
+		} else {
+			get(os.Args[2])
+		}		
 	}
 }
 

@@ -4,10 +4,10 @@
 import {Executor} from './../../lib/config/executor'
 import pathhelper from './../../lib/config/pathhelper'
 import {Locator} from './../../lib/config/locator'
-import temp from 'temp'
 import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
+import {lifecycle} from './../spec-helpers'
 
 describe('Locator', () => {
   let executor = null
@@ -16,13 +16,9 @@ describe('Locator', () => {
   let executableSuffix = null
   let pathkey = null
   let locator = null
-  let originalEnv = null
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
-    originalEnv = process.env
-    process.env = Object.assign({}, process.env)
-    temp.track()
+    lifecycle.setup()
     if (process.env.GOROOT) {
       delete process.env.GOROOT
     }
@@ -54,7 +50,7 @@ describe('Locator', () => {
   })
 
   afterEach(() => {
-    process.env = originalEnv
+    lifecycle.teardown()
     if (executor !== null) {
       executor.dispose()
       executor = null
@@ -205,7 +201,7 @@ describe('Locator', () => {
     let godir = null
     let go = null
     beforeEach(() => {
-      godir = temp.mkdirSync('go-')
+      godir = lifecycle.temp.mkdirSync('go-')
       go = path.join(godir, 'go' + executableSuffix)
       fs.writeFileSync(go, '.', {encoding: 'utf8', mode: 511})
       process.env[pathkey] = godir
@@ -229,11 +225,11 @@ describe('Locator', () => {
     let gorootbindir = null
 
     beforeEach(() => {
-      gorootdir = temp.mkdirSync('goroot-')
+      gorootdir = lifecycle.temp.mkdirSync('goroot-')
       gorootbindir = path.join(gorootdir, 'bin')
       fs.mkdirSync(gorootbindir)
       gorootgo = path.join(gorootbindir, 'go' + executableSuffix)
-      godir = temp.mkdirSync('go-')
+      godir = lifecycle.temp.mkdirSync('go-')
       go = path.join(godir, 'go' + executableSuffix)
       fs.writeFileSync(gorootgo, '.', {encoding: 'utf8', mode: 511})
       fs.writeFileSync(go, '.', {encoding: 'utf8', mode: 511})
@@ -262,8 +258,8 @@ describe('Locator', () => {
     let go = null
     let go1 = null
     beforeEach(() => {
-      godir = temp.mkdirSync('go-')
-      go1dir = temp.mkdirSync('go1-')
+      godir = lifecycle.temp.mkdirSync('go-')
+      go1dir = lifecycle.temp.mkdirSync('go1-')
       go = path.join(godir, 'go' + executableSuffix)
       go1 = path.join(go1dir, 'go' + executableSuffix)
       fs.writeFileSync(go, '.', {encoding: 'utf8', mode: 511})
@@ -306,9 +302,9 @@ describe('Locator', () => {
     beforeEach(() => {
       gorootbintools = ['go', 'godoc', 'gofmt']
       gotooldirtools = ['addr2line', 'cgo', 'dist', 'link', 'pack', 'trace', 'api', 'compile', 'doc', 'nm', 'pprof', 'vet', 'asm', 'cover', 'fix', 'objdump', 'yacc']
-      godir = temp.mkdirSync('go-')
-      gopathdir = temp.mkdirSync('gopath-')
-      gorootdir = temp.mkdirSync('goroot-')
+      godir = lifecycle.temp.mkdirSync('go-')
+      gopathdir = lifecycle.temp.mkdirSync('gopath-')
+      gorootdir = lifecycle.temp.mkdirSync('goroot-')
       gorootbindir = path.join(gorootdir, 'bin')
       fs.mkdirSync(gorootbindir)
       gotooldir = path.join(gorootdir, 'pkg', 'tool', platform + '_' + arch)
@@ -469,8 +465,8 @@ describe('Locator', () => {
     beforeEach(() => {
       pathtools = ['gometalinter', 'gb']
       gopathbintools = ['somerandomtool', 'gb']
-      pathdir = temp.mkdirSync('path-')
-      gopathdir = temp.mkdirSync('gopath-')
+      pathdir = lifecycle.temp.mkdirSync('path-')
+      gopathdir = lifecycle.temp.mkdirSync('gopath-')
       gopathbindir = path.join(gopathdir, 'bin')
       fs.mkdirSync(gopathbindir)
       process.env['GOPATH'] = gopathdir

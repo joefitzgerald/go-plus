@@ -4,8 +4,8 @@ import {ranges} from './../../lib/test/gocover-parser'
 import fs from 'fs-plus'
 import os from 'os'
 import path from 'path'
-import temp from 'temp'
 import _ from 'lodash'
+import {lifecycle} from './../spec-helpers'
 
 describe('gocover-parser', () => {
   let goconfig = null
@@ -13,20 +13,23 @@ describe('gocover-parser', () => {
   let directory
   let filePath
   let testFilePath
+  let mainModule
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
+    lifecycle.setup()
     let pack = atom.packages.loadPackage('go-plus')
     pack.activateNow()
-    goconfig = pack.mainModule.getGoconfig()
+    mainModule = pack.mainModule
 
     waitsFor(() => {
+      goconfig = pack.mainModule.getGoconfig()
       return goconfig !== null
     })
 
+    waitsFor(() => { return mainModule && mainModule.loaded })
+
     runs(() => {
-      temp.track()
-      directory = temp.mkdirSync()
+      directory = lifecycle.temp.mkdirSync()
       env = Object.assign({}, goconfig.environment())
       env['GOPATH'] = directory
       filePath = path.join(directory, 'src', 'github.com', 'testuser', 'example', 'go-plus.go')
@@ -36,9 +39,13 @@ describe('gocover-parser', () => {
     })
   })
 
+  afterEach(() => {
+    lifecycle.teardown()
+  })
+
   it('parses the file for a single package correctly', () => {
     let cmd
-    let tempDir = temp.mkdirSync()
+    let tempDir = lifecycle.temp.mkdirSync()
     let tempFile = path.join(tempDir, 'coverage.out')
     let args = ['test', '-coverprofile=' + tempFile]
     let cwd = path.join(directory, 'src', 'github.com', 'testuser', 'example')

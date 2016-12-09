@@ -1,22 +1,18 @@
 'use babel'
 /* eslint-env jasmine */
 
+import {lifecycle} from './../spec-helpers'
+import mainModule from './../../lib/main'
+
 describe('go-get service provider', () => {
-  let mainModule = null
-
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
-    let pack = atom.packages.loadPackage('go-plus')
-    pack.activateNow()
-    mainModule = pack.mainModule
+    lifecycle.setup()
+    mainModule.activate()
+  })
 
-    waitsFor(() => {
-      return mainModule.getGoconfig()
-    })
-
-    waitsFor(() => {
-      return mainModule.getGetManager()
-    })
+  afterEach(() => {
+    lifecycle.teardown()
+    mainModule.deactivate()
   })
 
   describe('the provider', () => {

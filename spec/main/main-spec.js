@@ -1,14 +1,22 @@
 'use babel'
 /* eslint-env jasmine */
 
+import {lifecycle} from './../spec-helpers'
+
 describe('go-plus', () => {
   let mainModule = null
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
+    lifecycle.setup()
     let pack = atom.packages.loadPackage('go-plus')
     pack.activateNow()
     mainModule = pack.mainModule
+
+    waitsFor(() => { return mainModule && mainModule.loaded })
+  })
+
+  afterEach(() => {
+    lifecycle.teardown()
   })
 
   describe('when the go-plus package is activated', () => {

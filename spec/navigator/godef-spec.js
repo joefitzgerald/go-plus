@@ -1,22 +1,19 @@
 'use babel'
 /* eslint-env jasmine */
 
-import temp from 'temp'
 import path from 'path'
 import fs from 'fs-plus'
+import {lifecycle} from './../spec-helpers'
 
 describe('godef', () => {
-  temp.track()
   let godef = null
-  let oldGopath = null
   let gopath = null
+  let mainModule = null
 
   beforeEach(() => {
     runs(() => {
-      if (process.env.GOPATH) {
-        oldGopath = process.env.GOPATH
-      }
-      gopath = fs.realpathSync(temp.mkdirSync('gopath-'))
+      lifecycle.setup()
+      gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
       process.env.GOPATH = gopath
     })
 
@@ -27,19 +24,17 @@ describe('godef', () => {
     runs(() => {
       let pack = atom.packages.loadPackage('go-plus')
       pack.activateNow()
-      let mainModule = pack.mainModule
+      mainModule = pack.mainModule
       mainModule.getGoconfig()
       mainModule.getGoget()
       godef = mainModule.getGodef()
     })
+
+    waitsFor(() => { return mainModule && mainModule.loaded })
   })
 
   afterEach(() => {
-    if (oldGopath) {
-      process.env.GOPATH = oldGopath
-    } else {
-      delete process.env.GOPATH
-    }
+    lifecycle.teardown()
   })
 
   describe('when invoked on a valid project file', () => {

@@ -2,6 +2,7 @@
 /* eslint-env jasmine */
 
 import path from 'path'
+import {lifecycle} from './../spec-helpers'
 
 describe('gocodeprovider', () => {
   let completionDelay = null
@@ -15,15 +16,18 @@ describe('gocodeprovider', () => {
   let suggestionsPromise = null
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
-    jasmine.unspy(window, 'setTimeout')
-    atom.packages.activatePackage('go-plus').then((pack) => {
+    lifecycle.setup()
+    runs(() => {
+      atom.packages.activatePackage('go-plus').then((pack) => {
+        mainModule = pack.mainModule
+        spyOn(mainModule, 'provideAutocomplete').andCallThrough()
+      })
+      let pack = atom.packages.loadPackage('go-plus')
+      pack.activateNow()
       mainModule = pack.mainModule
-      spyOn(mainModule, 'provideAutocomplete').andCallThrough()
     })
-    let pack = atom.packages.loadPackage('go-plus')
-    pack.activateNow()
-    mainModule = pack.mainModule
+
+    waitsFor(() => { return mainModule && mainModule.loaded })
 
     waitsForPromise(() => {
       return atom.packages.activatePackage('language-go').then(() => {
@@ -69,6 +73,10 @@ describe('gocodeprovider', () => {
     waitsFor(() => {
       return provider.ready()
     })
+  })
+
+  afterEach(() => {
+    lifecycle.teardown()
   })
 
   describe('matchFunc', () => {

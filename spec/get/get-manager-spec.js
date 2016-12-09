@@ -1,58 +1,75 @@
 'use babel'
 /* eslint-env jasmine */
 
-import temp from 'temp'
-import fs from 'fs-plus'
+import fs from 'fs-extra'
 import path from 'path'
-import os from 'os'
-import {setup} from './../spec-helpers'
+import {lifecycle} from './../spec-helpers'
 
 describe('go-get', () => {
   let mainModule = null
   let manager = null
-  temp.track()
+  let gopath
+  let platform = process.platform
+  let arch
+  let executableSuffix = ''
+  let pathkey = 'PATH'
+  let go
 
   beforeEach(() => {
-    setup()
+    lifecycle.setup()
+    gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
+    const goroot = fs.realpathSync(lifecycle.temp.mkdirSync('goroot-'))
+    const gorootbin = path.join(goroot, 'bin')
+    fs.mkdirSync(gorootbin)
+    if (process.arch === 'arm') {
+      arch = 'arm'
+    } else if (process.arch === 'ia32') {
+      if (platform === 'win32') {
+        arch = 'amd64'
+      } else {
+        arch = '386'
+      }
+    } else {
+      arch = 'amd64'
+    }
+
+    if (process.platform === 'win32') {
+      platform = 'windows'
+      executableSuffix = '.exe'
+      pathkey = 'Path'
+    }
+    const fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
+    const fakego = path.join(__dirname, '..', 'config', 'tools', 'go', fakeexecutable)
+    go = path.join(gorootbin, 'go' + executableSuffix)
+    fs.copySync(fakego, go)
+    process.env[pathkey] = gorootbin
+    process.env['GOPATH'] = gopath
+    process.env['GOROOT'] = goroot
+
     let pack = atom.packages.loadPackage('go-plus')
     pack.activateNow()
     mainModule = pack.mainModule
 
-    waitsFor(() => {
-      return mainModule.getGoconfig()
-    })
-
-    waitsFor(() => {
-      return mainModule.getGetManager()
-    })
+    waitsFor(() => { return mainModule && mainModule.loaded })
 
     runs(() => {
       manager = mainModule.getGetManager()
     })
   })
 
+  afterEach(() => {
+    lifecycle.teardown()
+  })
+
   describe('manager', () => {
-    let oldEnv
-    let gopath
     let gocodebinary
     let goimportsbinary
     beforeEach(() => {
-      let exeSuffix = ''
-      if (os.platform() === 'win32') {
-        exeSuffix = '.exe'
-      }
-      oldEnv = process.env
-      gopath = fs.realpathSync(temp.mkdirSync('gopath-'))
-      process.env.GOPATH = gopath
       fs.mkdirSync(path.join(gopath, 'bin'))
-      gocodebinary = path.join(gopath, 'bin', 'gocode' + exeSuffix)
+      gocodebinary = path.join(gopath, 'bin', 'gocode' + executableSuffix)
       fs.writeFileSync(gocodebinary, '', {encoding: 'utf8', mode: 511})
-      goimportsbinary = path.join(gopath, 'bin', 'goimports' + exeSuffix)
+      goimportsbinary = path.join(gopath, 'bin', 'goimports' + executableSuffix)
       fs.writeFileSync(goimportsbinary, '', {encoding: 'utf8', mode: 511})
-    })
-
-    afterEach(() => {
-      process.env = oldEnv
     })
 
     it('updates packages', () => {

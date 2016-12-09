@@ -5,6 +5,7 @@ import {Executor} from './../../lib/config/executor'
 import pathhelper from './../../lib/config/pathhelper'
 import os from 'os'
 import path from 'path'
+import {lifecycle} from './../spec-helpers'
 
 describe('executor', () => {
   let executor = null
@@ -13,7 +14,7 @@ describe('executor', () => {
   let error = null
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
+    lifecycle.setup()
     runs(() => {
       result = null
       error = null

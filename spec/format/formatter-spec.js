@@ -3,7 +3,7 @@
 
 import fs from 'fs'
 import path from 'path'
-import temp from 'temp'
+import {lifecycle} from './../spec-helpers'
 
 const nl = '\n'
 const unformattedText = 'package main' + nl + nl + 'func main()  {' + nl + '}' + nl
@@ -14,9 +14,8 @@ describe('formatter', () => {
   let formatter = null
 
   beforeEach(() => {
-    atom.config.set('go-plus.disableToolCheck', true)
+    lifecycle.setup()
     atom.config.set('editor.defaultLineEnding', 'LF')
-    temp.track()
 
     waitsForPromise(() => {
       return atom.packages.activatePackage('language-go')
@@ -31,10 +30,16 @@ describe('formatter', () => {
       mainModule.loadFormatter()
     })
 
+    waitsFor(() => { return mainModule && mainModule.loaded })
+
     waitsFor(() => {
       formatter = mainModule.formatter
       return formatter
     })
+  })
+
+  afterEach(() => {
+    lifecycle.teardown()
   })
 
   describe('when a simple file is opened', () => {
@@ -44,7 +49,7 @@ describe('formatter', () => {
     let actual
 
     beforeEach(() => {
-      const directory = fs.realpathSync(temp.mkdirSync())
+      const directory = fs.realpathSync(lifecycle.temp.mkdirSync())
       atom.project.setPaths([directory])
       filePath = path.join(directory, 'gofmt.go')
       fs.writeFileSync(filePath, '')

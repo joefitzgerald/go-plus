@@ -1,27 +1,22 @@
 'use babel'
 /* eslint-env jasmine */
 
-import temp from 'temp'
 import path from 'path'
 import fs from 'fs-plus'
+import {lifecycle} from './../spec-helpers'
 
 describe('gorename', () => {
-  temp.track()
   let mainModule = null
   let gorename = null
   let editor = null
   let gopath = null
-  let oldGopath = null
   let source = null
   let target = null
 
   beforeEach(() => {
     runs(() => {
-      atom.config.set('go-plus.disableToolCheck', true)
-      if (process.env.GOPATH) {
-        oldGopath = process.env.GOPATH
-      }
-      gopath = fs.realpathSync(temp.mkdirSync('gopath-'))
+      lifecycle.setup()
+      gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
       process.env.GOPATH = gopath
     })
 
@@ -37,6 +32,8 @@ describe('gorename', () => {
       mainModule.getGoget()
       mainModule.loadGorename()
     })
+    
+    waitsFor(() => { return mainModule && mainModule.loaded })
 
     waitsFor(() => {
       gorename = mainModule.gorename
@@ -45,11 +42,7 @@ describe('gorename', () => {
   })
 
   afterEach(() => {
-    if (oldGopath) {
-      process.env.GOPATH = oldGopath
-    } else {
-      delete process.env.GOPATH
-    }
+    lifecycle.teardown()
   })
 
   describe('when a simple file is open', () => {
@@ -102,6 +95,17 @@ describe('gorename', () => {
         expect(r).toBeTruthy()
         expect(r.success).toBe(true)
         expect(r.result.stdout.trim()).toBe('Renamed 2 occurrences in 1 file in 1 package.')
+        editor.destroy()
+      })
+
+      waitsForPromise(() => {
+        return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
+          editor = e
+          return
+        })
+      })
+
+      runs(() => {
         let expected = fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'gorename', 'expected'), 'utf8')
         let actual = editor.getText()
         expect(actual).toBe(expected)

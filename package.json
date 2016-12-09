@@ -298,6 +298,19 @@
         }
       }
     },
+    "get": {
+      "title": "Go Get",
+      "type": "object",
+      "properties": {
+        "timeout": {
+          "title": "Timeout",
+          "description": "Stop trying to update tools after this number of milliseconds",
+          "type": "integer",
+          "default": 60000,
+          "order": 1
+        }
+      }
+    },
     "lint": {
       "title": "Lint",
       "type": "object",
