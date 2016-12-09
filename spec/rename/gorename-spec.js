@@ -32,7 +32,7 @@ describe('gorename', () => {
       mainModule.getGoget()
       mainModule.loadGorename()
     })
-    
+
     waitsFor(() => { return mainModule && mainModule.loaded })
 
     waitsFor(() => {
