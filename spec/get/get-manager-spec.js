@@ -9,7 +9,7 @@ describe('go-get', () => {
   let mainModule = null
   let manager = null
   let gopath
-  let platform = process.platform
+  let platform
   let arch
   let executableSuffix = ''
   let pathkey = 'PATH'
@@ -21,9 +21,11 @@ describe('go-get', () => {
     const goroot = fs.realpathSync(lifecycle.temp.mkdirSync('goroot-'))
     const gorootbin = path.join(goroot, 'bin')
     fs.mkdirSync(gorootbin)
+    platform = process.platform
     if (process.arch === 'arm') {
       arch = 'arm'
     } else if (process.arch === 'ia32') {
+      // Ugh, Atom is 32-bit on Windows... for now.
       if (platform === 'win32') {
         arch = 'amd64'
       } else {
