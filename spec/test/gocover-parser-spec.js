@@ -49,8 +49,7 @@ describe('gocover-parser', () => {
     let tempFile = path.join(tempDir, 'coverage.out')
     let args = ['test', '-coverprofile=' + tempFile]
     let cwd = path.join(directory, 'src', 'github.com', 'testuser', 'example')
-    let locatorOptions = {directory: cwd, env: env}
-    let p = goconfig.locator.findTool('go', locatorOptions).then((c) => {
+    let p = goconfig.locator.findTool('go').then((c) => {
       expect(c).toBeTruthy()
       cmd = c
       return
