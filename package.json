@@ -18,7 +18,8 @@
     "vet",
     "gometalinter",
     "go-debug",
-    "delve"
+    "delve",
+    "hyperclick"
   ],
   "version": "4.3.2",
   "main": "./lib/main",
@@ -349,19 +350,26 @@
           "default": true,
           "order": 1
         },
+        "timeout": {
+          "title": "Timeout",
+          "description": "Stop running tests after this number of milliseconds",
+          "type": "integer",
+          "default": 60000,
+          "order": 2
+        },
         "runTestsWithShortFlag": {
           "title": "Run Tests With Short Flag Set",
           "description": "Runs `go test` with `-short` flag set",
           "type": "boolean",
           "default": true,
-          "order": 2
+          "order": 3
         },
         "runTestsWithVerboseFlag": {
           "title": "Run Tests With Verbose Flag Set",
           "description": "Runs `go test` with `-v` flag set",
           "type": "boolean",
           "default": false,
-          "order": 3
+          "order": 4
         },
         "coverageHighlightMode": {
           "title": "Coverage Highlight Mode",
@@ -374,14 +382,14 @@
             "uncovered",
             "disabled"
           ],
-          "order": 4
+          "order": 5
         },
         "focusPanelIfTestsFail": {
           "title": "Focus The go-plus Panel If Tests Fail",
           "description": "If the panel is hidden, or the panel is showing a different tab, the panel will be expanded and the test tab focused when tests fail.",
           "type": "boolean",
           "default": true,
-          "order": 5
+          "order": 6
         }
       }
     }
