@@ -19,7 +19,8 @@
     "gometalinter",
     "go-debug",
     "delve",
-    "hyperclick"
+    "hyperclick",
+    "guru"
   ],
   "version": "4.3.2",
   "main": "./lib/main",
@@ -335,6 +336,23 @@
           "items": {
             "type": "string"
           },
+          "order": 1
+        }
+      }
+    },
+    "navigator": {
+      "title": "Navigator",
+      "type": "object",
+      "properties": {
+        "mode": {
+          "title": "Mode",
+          "description": "Use guru or godef for go to definition",
+          "type": "string",
+          "default": "guru",
+          "enum": [
+            "guru",
+            "godef"
+          ],
           "order": 1
         }
       }
