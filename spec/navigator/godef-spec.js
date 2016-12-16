@@ -5,7 +5,7 @@ import path from 'path'
 import fs from 'fs-plus'
 import {lifecycle} from './../spec-helpers'
 
-describe('godef', () => {
+describe('go to definition', () => {
   let godef = null
   let gopath = null
   let mainModule = null
@@ -56,24 +56,57 @@ describe('godef', () => {
       })
     })
 
-    it('navigates to the correct location', () => {
-      runs(() => {
-        editor.setCursorBufferPosition([3, 20])
+    describe('when using the godef navigator mode', () => {
+      beforeEach(() => {
+        atom.config.set('go-plus.navigator.mode', 'godef')
       })
 
-      waitsForPromise(() => {
-        return godef.gotoDefinitionForWordAtCursor()
+      it('navigates to the correct location', () => {
+        runs(() => {
+          editor.setCursorBufferPosition([3, 17])
+        })
+
+        waitsForPromise(() => {
+          return godef.gotoDefinitionForWordAtCursor()
+        })
+
+        runs(() => {
+          const activeEditor = atom.workspace.getActiveTextEditor()
+          expect(activeEditor.getTitle()).toBe('bar.go')
+
+          const pos = activeEditor.getCursorBufferPosition()
+          expect(pos.row).toBe(2)
+          expect(pos.column).toBe(5)
+
+          expect(godef.navigationStack.isEmpty()).toBe(false)
+        })
+      })
+    })
+
+    describe('when using the guru navigator mode', () => {
+      beforeEach(() => {
+        atom.config.set('go-plus.navigator.mode', 'godef')
       })
 
-      runs(() => {
-        const activeEditor = atom.workspace.getActiveTextEditor()
-        expect(activeEditor.getTitle()).toBe('bar.go')
+      it('navigates to the correct location', () => {
+        runs(() => {
+          editor.setCursorBufferPosition([3, 17])
+        })
 
-        const pos = activeEditor.getCursorBufferPosition()
-        expect(pos.row).toBe(2)
-        expect(pos.column).toBe(5)
+        waitsForPromise(() => {
+          return godef.gotoDefinitionForWordAtCursor()
+        })
 
-        expect(godef.navigationStack.isEmpty()).toBe(false)
+        runs(() => {
+          const activeEditor = atom.workspace.getActiveTextEditor()
+          expect(activeEditor.getTitle()).toBe('bar.go')
+
+          const pos = activeEditor.getCursorBufferPosition()
+          expect(pos.row).toBe(2)
+          expect(pos.column).toBe(5)
+
+          expect(godef.navigationStack.isEmpty()).toBe(false)
+        })
       })
     })
   })

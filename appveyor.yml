@@ -33,6 +33,7 @@ install:
   - go get -u github.com/alecthomas/gometalinter
   - go get -u github.com/zmb3/gogetdoc
   - go get -u github.com/rogpeppe/godef
+  - go get -u golang.org/x/tools/cmd/guru
 
 build_script:
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/atom/ci/943a16cd32926bdfcca703f16ec6a958a2db38a5/build-package.ps1'))
