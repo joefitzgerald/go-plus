@@ -2,6 +2,14 @@
   "context-menu": {
     "atom-text-editor[data-grammar~=\"go\"]:not([mini])": [
       {
+        "label": "Go To Definition",
+        "command": "golang:godef"
+      },
+      {
+        "label": "Return From Definition",
+        "command": "golang:godef-return"
+      },
+      {
         "label": "Run gofmt",
         "command": "golang:gofmt"
       },
@@ -20,6 +28,14 @@
       {
         "label": "Clear Test Coverage",
         "command": "golang:hide-coverage"
+      },
+      {
+        "label": "Rename symbol under cursor",
+        "command": "golang:gorename"
+      },
+      {
+        "label": "Get godoc for symbol under cursor",
+        "command": "golang:showdoc"
       }
     ]
   },
@@ -30,6 +46,14 @@
         {
           "label": "Go",
           "submenu": [
+            {
+              "label": "Go To Definition",
+              "command": "golang:godef"
+            },
+            {
+              "label": "Return From Definition",
+              "command": "golang:godef-return"
+            },
             {
               "label": "Format With gofmt",
               "command": "golang:gofmt"
@@ -49,6 +73,14 @@
             {
               "label": "Clear Test Coverage",
               "command": "golang:hide-coverage"
+            },
+            {
+              "label": "Get Package",
+              "command": "golang:get-package"
+            },
+            {
+              "label": "Update Tools",
+              "command": "golang:update-tools"
             }
           ]
         }

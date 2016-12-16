@@ -1,3 +1,9 @@
 .DS_Store
 npm-debug.log
 node_modules
+/spec/config/tools/go/go.json
+/spec/config/tools/**/*openbsd*
+/spec/config/tools/**/*freebsd*
+/spec/config/tools/**/*netbsd*
+/spec/config/tools/**/*386*
+/spec/config/tools/**/*arm*
