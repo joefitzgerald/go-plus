@@ -53,7 +53,7 @@
     ]
 	},
   "dependencies": {
-    "ansi-to-html": "^0.4.2",
+    "ansi-to-html": "^0.5.0",
     "etch": "^0.8.0",
     "etch-octicon": "^0.1.0",
     "lodash": "^4.17.2",
