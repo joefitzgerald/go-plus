@@ -402,12 +402,23 @@
           ],
           "order": 5
         },
+        "coverageDisplayMode": {
+          "title": "Coverage Display Mode",
+          "description": "Control the way that coverage is displayed in the editor: gutter, or highlight",
+          "type": "string",
+          "default": "highlight",
+          "enum":[
+            "highlight",
+            "gutter"
+          ],
+          "order": 6
+        },
         "focusPanelIfTestsFail": {
           "title": "Focus The go-plus Panel If Tests Fail",
           "description": "If the panel is hidden, or the panel is showing a different tab, the panel will be expanded and the test tab focused when tests fail.",
           "type": "boolean",
           "default": true,
-          "order": 6
+          "order": 7
         }
       }
     }
