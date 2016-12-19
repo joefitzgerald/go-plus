@@ -50,7 +50,6 @@ If you are missing any required tools, you may be prompted to install them. You 
 
 ```
 go get -u golang.org/x/tools/cmd/goimports
-go get -u golang.org/x/tools/cmd/cover
 go get -u golang.org/x/tools/cmd/gorename
 go get -u github.com/sqs/goreturns
 go get -u github.com/nsf/gocode
