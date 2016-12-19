@@ -22,7 +22,7 @@
     "hyperclick",
     "guru"
   ],
-  "version": "4.3.2",
+  "version": "5.0.0",
   "main": "./lib/main",
   "license": "Apache-2.0",
   "engines": {
@@ -35,7 +35,9 @@
   "bugs": {
     "url": "https://github.com/joefitzgerald/go-plus/issues"
   },
-  "activationHooks": ["core:loaded-shell-environment"],
+  "activationHooks": [
+    "core:loaded-shell-environment"
+  ],
   "activationCommands": {
     "atom-workspace": [
       "golang:get-package",
@@ -45,13 +47,13 @@
       "golang:goimports",
       "golang:goreturns",
       "golang:showdoc"
-	  ],
+    ],
     "atom-text-editor[data-grammar~=\"go\"]:not([mini])": [
       "golang:run-tests",
       "golang:hide-coverage",
       "golang:gorename"
     ]
-	},
+  },
   "dependencies": {
     "ansi-to-html": "^0.5.0",
     "etch": "^0.8.0",
@@ -137,11 +139,11 @@
       "order": 3
     },
     "minPanelHeight": {
-      "title": "Minimum Panel Height",
-      "description": "When the panel orientation is horizontal, ensure the panel doesn't disappear when open",
+      "title": "Minimum Panel Width",
+      "description": "When the panel orientation is vertical, ensure the panel doesn't disappear when open",
       "type": "string",
-      "default": "10vh",
-      "order": 4
+      "default": "10vw",
+      "order": 7
     },
     "currentPanelHeight": {
       "title": "Current Panel Height",
@@ -157,13 +159,6 @@
       "default": "50vw",
       "order": 6
     },
-    "minPanelHeight": {
-      "title": "Minimum Panel Width",
-      "description": "When the panel orientation is vertical, ensure the panel doesn't disappear when open",
-      "type": "string",
-      "default": "10vw",
-      "order": 7
-    },
     "currentPanelWidth": {
       "title": "Current Panel Width",
       "description": "When the panel orientation is vertical, the width of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
@@ -175,8 +170,7 @@
       "title": "Disabled Bundled Packages",
       "description": "go-plus bundles some third party packages; if you indicate that you do not want to be prompted for package installation, this comma separated list of package names will be updated",
       "type": "array",
-      "default": [
-      ],
+      "default": [],
       "items": {
         "type": "string"
       },
@@ -418,7 +412,7 @@
           "description": "Control the way that coverage is displayed in the editor: gutter, or highlight",
           "type": "string",
           "default": "highlight",
-          "enum":[
+          "enum": [
             "highlight",
             "gutter"
           ],
