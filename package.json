@@ -171,6 +171,17 @@
       "default": "15vw",
       "order": 8
     },
+    "disabledBundledPackages": {
+      "title": "Disabled Bundled Packages",
+      "description": "go-plus bundles some third party packages; if you indicate that you do not want to be prompted for package installation, this comma separated list of package names will be updated",
+      "type": "array",
+      "default": [
+      ],
+      "items": {
+        "type": "string"
+      },
+      "order": 9
+    },
     "config": {
       "title": "Config",
       "type": "object",
