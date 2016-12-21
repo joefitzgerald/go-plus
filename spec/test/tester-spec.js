@@ -80,7 +80,9 @@ describe('tester', () => {
       waitsForPromise(() => { return p })
 
       runs(() => {
-        let layerids = tester.markedEditors.get(editor.id).split(',')
+        const layers = tester.markedEditors.get(editor.id)
+        expect(layers).toBeTruthy()
+        let layerids = layers.split(',')
         let coveredLayer = editor.getMarkerLayer(layerids[0])
         let uncoveredLayer = editor.getMarkerLayer(layerids[1])
         expect(coveredLayer).toBeTruthy()
