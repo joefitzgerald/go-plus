@@ -424,6 +424,13 @@
           "type": "boolean",
           "default": true,
           "order": 7
+        },
+        "customTestDirectory": {
+          "title": "Use Custom Directory",
+          "description": "Use a custom directory when executing tests (defaults to your OS temp).",
+          "type": "string",
+          "default": "",
+          "order": 7
         }
       }
     }
