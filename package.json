@@ -76,8 +76,7 @@
     },
     "go-get": {
       "versions": {
-        "2.0.0": "provideGoGet",
-        "1.0.0": "provideGoGet100"
+        "2.0.0": "provideGoGet"
       }
     },
     "linter": {

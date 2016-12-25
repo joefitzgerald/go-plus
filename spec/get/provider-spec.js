@@ -91,23 +91,4 @@ describe('go-get service provider', () => {
       })
     })
   })
-
-  describe('the 1.0.0 provider', () => {
-    it('is truthy', () => {
-      expect(mainModule.provideGoGet100).toBeDefined()
-      expect(mainModule.provideGoGet100()).toBeTruthy()
-    })
-
-    it('has a get function', () => {
-      expect(mainModule.provideGoGet100().get).toBeDefined()
-    })
-
-    it('has a check function', () => {
-      expect(mainModule.provideGoGet100().check).toBeDefined()
-    })
-
-    it('does not have a register function', () => {
-      expect(mainModule.provideGoGet100().register).not.toBeDefined()
-    })
-  })
 })
