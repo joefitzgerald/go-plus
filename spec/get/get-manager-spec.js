@@ -16,46 +16,52 @@ describe('go-get', () => {
   let go
 
   beforeEach(() => {
-    lifecycle.setup()
-    gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
-    const goroot = fs.realpathSync(lifecycle.temp.mkdirSync('goroot-'))
-    const gorootbin = path.join(goroot, 'bin')
-    fs.mkdirSync(gorootbin)
-    platform = process.platform
-    if (process.arch === 'arm') {
-      arch = 'arm'
-    } else if (process.arch === 'ia32') {
-      // Ugh, Atom is 32-bit on Windows... for now.
-      if (platform === 'win32') {
-        arch = 'amd64'
+    runs(() => {
+      lifecycle.setup()
+      atom.packages.triggerDeferredActivationHooks()
+      gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
+      const goroot = fs.realpathSync(lifecycle.temp.mkdirSync('goroot-'))
+      const gorootbin = path.join(goroot, 'bin')
+      fs.mkdirSync(gorootbin)
+      platform = process.platform
+      if (process.arch === 'arm') {
+        arch = 'arm'
+      } else if (process.arch === 'ia32') {
+        // Ugh, Atom is 32-bit on Windows... for now.
+        if (platform === 'win32') {
+          arch = 'amd64'
+        } else {
+          arch = '386'
+        }
       } else {
-        arch = '386'
+        arch = 'amd64'
       }
-    } else {
-      arch = 'amd64'
-    }
 
-    if (process.platform === 'win32') {
-      platform = 'windows'
-      executableSuffix = '.exe'
-      pathkey = 'Path'
-    }
-    const fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
-    const fakego = path.join(__dirname, '..', 'config', 'tools', 'go', fakeexecutable)
-    go = path.join(gorootbin, 'go' + executableSuffix)
-    fs.copySync(fakego, go)
-    process.env[pathkey] = gorootbin
-    process.env['GOPATH'] = gopath
-    process.env['GOROOT'] = goroot
+      if (process.platform === 'win32') {
+        platform = 'windows'
+        executableSuffix = '.exe'
+        pathkey = 'Path'
+      }
+      const fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
+      const fakego = path.join(__dirname, '..', 'config', 'tools', 'go', fakeexecutable)
+      go = path.join(gorootbin, 'go' + executableSuffix)
+      fs.copySync(fakego, go)
+      process.env[pathkey] = gorootbin
+      process.env['GOPATH'] = gopath
+      process.env['GOROOT'] = goroot
 
-    let pack = atom.packages.loadPackage('go-plus')
-    pack.activateNow()
-    mainModule = pack.mainModule
+      let pack = atom.packages.loadPackage('go-plus')
+      pack.activateNow()
+      atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
+      mainModule = pack.mainModule
+    })
 
     waitsFor(() => { return mainModule && mainModule.loaded })
 
     runs(() => {
-      manager = mainModule.getGetManager()
+      mainModule.provideGoGet()
+      manager = mainModule.getservice.getmanager
     })
   })
 

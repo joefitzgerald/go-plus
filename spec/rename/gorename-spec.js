@@ -16,6 +16,7 @@ describe('gorename', () => {
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
+      atom.packages.triggerDeferredActivationHooks()
       gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
       process.env.GOPATH = gopath
     })
@@ -27,9 +28,11 @@ describe('gorename', () => {
     runs(() => {
       let pack = atom.packages.loadPackage('go-plus')
       pack.activateNow()
+      atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
       mainModule = pack.mainModule
-      mainModule.getGoconfig()
-      mainModule.getGoget()
+      mainModule.provideGoConfig()
+      mainModule.provideGoGet()
       mainModule.loadGorename()
     })
 
@@ -73,14 +76,14 @@ describe('gorename', () => {
       let cmd
 
       waitsFor(() => {
-        if (mainModule.getGoconfig()) {
+        if (mainModule.provideGoConfig()) {
           return true
         }
         return false
       }, '', 750)
 
       waitsForPromise(() => {
-        return mainModule.getGoconfig().locator.findTool('gorename').then((c) => {
+        return mainModule.provideGoConfig().locator.findTool('gorename').then((c) => {
           expect(c).toBeTruthy()
           cmd = c
         })

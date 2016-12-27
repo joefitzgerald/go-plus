@@ -40,8 +40,8 @@ describe('go-get service provider', () => {
       let manager
       let provider
       beforeEach(() => {
-        manager = mainModule.getGetManager()
         provider = mainModule.provideGoGet()
+        manager = mainModule.getservice.getmanager
         expect(manager).toBeTruthy()
         expect(manager.packages).toBeTruthy()
         expect(manager.packages.size).toBe(0)

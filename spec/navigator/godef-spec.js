@@ -13,6 +13,7 @@ describe('go to definition', () => {
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
+      atom.packages.triggerDeferredActivationHooks()
       gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
       process.env.GOPATH = gopath
     })
@@ -24,9 +25,11 @@ describe('go to definition', () => {
     runs(() => {
       let pack = atom.packages.loadPackage('go-plus')
       pack.activateNow()
+      atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
       mainModule = pack.mainModule
-      mainModule.getGoconfig()
-      mainModule.getGoget()
+      mainModule.provideGoConfig()
+      mainModule.provideGoGet()
       godef = mainModule.getGodef()
     })
 

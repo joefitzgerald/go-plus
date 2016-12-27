@@ -11,8 +11,9 @@ describe('tester', () => {
   let tester = null
 
   beforeEach(() => {
-    lifecycle.setup()
     runs(() => {
+      lifecycle.setup()
+      atom.packages.triggerDeferredActivationHooks()
       atom.config.set('go-plus.format.formatOnSave', false)
       atom.config.set('go-plus.test.coverageHighlightMode', 'covered-and-uncovered')
       gopath = lifecycle.temp.mkdirSync()
@@ -23,6 +24,8 @@ describe('tester', () => {
     runs(() => {
       let pack = atom.packages.loadPackage('go-plus')
       pack.activateNow()
+      atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
       mainModule = pack.mainModule
       mainModule.loadTester()
       tester = mainModule.tester
@@ -35,7 +38,7 @@ describe('tester', () => {
     })
 
     waitsFor(() => {
-      return mainModule.getGoconfig() !== false
+      return mainModule.provideGoConfig() !== false
     })
   })
 
@@ -145,8 +148,8 @@ describe('tester', () => {
 
       expect(mainModule).toBeDefined()
       expect(mainModule).toBeTruthy()
-      expect(mainModule.getGoconfig).toBeDefined()
-      expect(mainModule.getGoconfig()).toBeTruthy()
+      expect(mainModule.provideGoConfig).toBeDefined()
+      expect(mainModule.provideGoConfig()).toBeTruthy()
       expect(mainModule.tester).toBeDefined()
       expect(mainModule.tester).toBeTruthy()
     })

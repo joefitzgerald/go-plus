@@ -10,6 +10,7 @@ describe('builder', () => {
 
   beforeEach(() => {
     lifecycle.setup()
+    atom.packages.triggerDeferredActivationHooks()
     waitsForPromise(() => {
       return atom.packages.activatePackage('language-go')
     })
@@ -18,6 +19,8 @@ describe('builder', () => {
       let pack = atom.packages.loadPackage('go-plus')
       pack.activateNow()
       mainModule = pack.mainModule
+      atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
     })
 
     waitsFor(() => { return mainModule && mainModule.loaded })

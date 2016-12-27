@@ -14,8 +14,11 @@ describe('formatter', () => {
   let formatter = null
 
   beforeEach(() => {
-    lifecycle.setup()
-    atom.config.set('editor.defaultLineEnding', 'LF')
+    runs(() => {
+      lifecycle.setup()
+      atom.packages.triggerDeferredActivationHooks()
+      atom.config.set('editor.defaultLineEnding', 'LF')
+    })
 
     waitsForPromise(() => {
       return atom.packages.activatePackage('language-go')
@@ -24,9 +27,11 @@ describe('formatter', () => {
     runs(() => {
       const pack = atom.packages.loadPackage('go-plus')
       pack.activateNow()
+      atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
       mainModule = pack.mainModule
-      mainModule.getGoconfig()
-      mainModule.getGoget()
+      mainModule.provideGoConfig()
+      mainModule.provideGoGet()
       mainModule.loadFormatter()
     })
 

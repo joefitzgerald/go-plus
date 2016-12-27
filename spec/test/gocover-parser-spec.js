@@ -16,14 +16,15 @@ describe('gocover-parser', () => {
   let mainModule
 
   beforeEach(() => {
-    lifecycle.setup()
-    let pack = atom.packages.loadPackage('go-plus')
-    pack.activateNow()
-    mainModule = pack.mainModule
-
-    waitsFor(() => {
-      goconfig = pack.mainModule.getGoconfig()
-      return goconfig !== null
+    runs(() => {
+      lifecycle.setup()
+      atom.packages.triggerDeferredActivationHooks()
+      let pack = atom.packages.loadPackage('go-plus')
+      pack.activateNow()
+      atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
+      mainModule = pack.mainModule
+      goconfig = pack.mainModule.provideGoConfig()
     })
 
     waitsFor(() => { return mainModule && mainModule.loaded })
