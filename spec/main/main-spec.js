@@ -7,10 +7,15 @@ describe('go-plus', () => {
   let mainModule = null
 
   beforeEach(() => {
-    lifecycle.setup()
-    let pack = atom.packages.loadPackage('go-plus')
-    pack.activateNow()
-    mainModule = pack.mainModule
+    runs(() => {
+      lifecycle.setup()
+      atom.packages.triggerDeferredActivationHooks()
+      let pack = atom.packages.loadPackage('go-plus')
+      pack.activateNow()
+      atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
+      mainModule = pack.mainModule
+    })
 
     waitsFor(() => { return mainModule && mainModule.loaded })
   })

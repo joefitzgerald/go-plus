@@ -16,29 +16,34 @@ describe('gocodeprovider', () => {
   let suggestionsPromise = null
 
   beforeEach(() => {
-    lifecycle.setup()
     runs(() => {
-      atom.packages.activatePackage('go-plus').then((pack) => {
-        mainModule = pack.mainModule
-        spyOn(mainModule, 'provideAutocomplete').andCallThrough()
-      })
-      let pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      mainModule = pack.mainModule
+      lifecycle.setup()
+      atom.packages.triggerDeferredActivationHooks()
     })
 
-    waitsFor(() => { return mainModule && mainModule.loaded })
-
     waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go').then(() => {
-        return atom.packages.activatePackage('autocomplete-plus')
-      }).then((pack) => {
+      return atom.packages.activatePackage('autocomplete-plus').then((pack) => {
         autocompleteplusMain = pack.mainModule
       })
     })
 
-    waitsFor(() => {
+    waitsForPromise(() => {
+      return atom.packages.activatePackage('language-go')
+    })
+
+    runs(() => {
       atom.packages.triggerActivationHook('core:loaded-shell-environment')
+      atom.packages.triggerActivationHook('language-go:grammar-used')
+    })
+
+    waitsForPromise(() => {
+      return atom.packages.activatePackage('go-plus').then((pack) => {
+        mainModule = pack.mainModule
+        spyOn(mainModule, 'provideAutocomplete').andCallThrough()
+      })
+    })
+
+    waitsFor(() => {
       return autocompleteplusMain.autocompleteManager && autocompleteplusMain.autocompleteManager.ready
     })
 
