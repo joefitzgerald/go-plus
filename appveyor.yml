@@ -5,6 +5,7 @@ platform: x64
 branches:
   only:
     - master
+    - /^greenkeeper-.*$/
 
 skip_tags: true
 
