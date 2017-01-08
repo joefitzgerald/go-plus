@@ -63,7 +63,7 @@ describe('godoc', () => {
       })
     })
 
-    it('gets the correct documentation', () => {
+    it('executes gogetdoc successfully', () => {
       let result = false
       editor.setCursorBufferPosition([24, 10])
       waitsForPromise(() => {
@@ -114,7 +114,10 @@ describe('godoc', () => {
         expect(result.success).toBe(true)
         expect(result.result.exitcode).toBe(0)
         expect(result.result.stdout).toBeTruthy()
-        expect(result.result.stdout.startsWith('import "fmt"')).toBe(true)
+
+        expect(result.doc).toBeTruthy()
+        expect(result.doc.import).toBe('fmt')
+        expect(result.doc.decl).toBe('func Printf(format string, a ...interface{}) (n int, err error)')
       })
     })
   })
