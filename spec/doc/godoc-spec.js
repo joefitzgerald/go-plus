@@ -48,7 +48,33 @@ describe('godoc', () => {
     lifecycle.teardown()
   })
 
+  describe('when determining if the decl is a method', () => {
+    it('returns the type of the method receiver (non-pointer)', () => {
+      const receiverType = godoc.declIsMethod('func (a Auth) Foo() error')
+      expect(receiverType).toBeDefined()
+      expect(receiverType).toBe('Auth')
+    })
+
+    it('returns the type of the method receiver (pointer)', () => {
+      const receiverType = godoc.declIsMethod('func (a *Auth) Foo() error')
+      expect(receiverType).toBeDefined()
+      expect(receiverType).toBe('Auth')
+    })
+
+    it('returns undefined for non-methods', () => {
+      for (const decl of [
+        'func Foo() error',
+        'var w io.Writer',
+        'const Foo = "Bar"'
+      ]) {
+        const result = godoc.declIsMethod(decl)
+        expect(result).not.toBeDefined()
+      }
+    })
+  })
+
   describe('when the godoc command is invoked on a valid go file', () => {
+    let result = false
     beforeEach(() => {
       runs(() => {
         source = path.join(__dirname, '..', 'fixtures')
@@ -61,20 +87,29 @@ describe('godoc', () => {
           editor = e
         })
       })
+
+      runs(() => {
+        editor.setCursorBufferPosition([24, 10])
+
+        waitsForPromise(() => {
+          return godoc.commandInvoked().then((r) => {
+            result = r
+          })
+        })
+      })
     })
 
     it('executes gogetdoc successfully', () => {
-      let result = false
-      editor.setCursorBufferPosition([24, 10])
-      waitsForPromise(() => {
-        return godoc.commandInvoked().then((r) => {
-          result = r
-        })
-      })
       runs(() => {
         expect(result).toBeTruthy()
         expect(result.success).toBe(true)
         expect(result.result.exitcode).toBe(0)
+      })
+    })
+
+    it('returns a godoc.org link', () => {
+      runs(() => {
+        expect(result.doc.gddo).toBe('https://godoc.org/godoctest#Foo.ChangeMessage')
       })
     })
   })
@@ -118,6 +153,7 @@ describe('godoc', () => {
         expect(result.doc).toBeTruthy()
         expect(result.doc.import).toBe('fmt')
         expect(result.doc.decl).toBe('func Printf(format string, a ...interface{}) (n int, err error)')
+        expect(result.doc.gddo).toBe('https://godoc.org/fmt#Printf')
       })
     })
   })
