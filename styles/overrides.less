@@ -1,0 +1,39 @@
+// This overrides themes and other packages
+
+// atom-material-ui
+
+.theme-atom-material-ui .go-plus-panel {
+
+  .panel-heading {
+    font-size: 0.8rem;
+    font-weight: normal;
+    margin-bottom: 0;
+  }
+
+  .panel-icon-button {
+    width: 2.25rem;
+    text-align: center;
+    .etch-octicon {
+      margin-right: 0;
+    }
+  }
+
+  .panel-nav-item {
+    border: none;
+    border-bottom: 0.125rem solid transparent;
+    &.is-selected {
+      border-color: currentColor;
+    }
+  }
+
+  &.is-vertical {
+    .panel-nav-item {
+      border-bottom: none;
+      border-right: 0.125rem solid transparent;
+      &.is-selected {
+        border-color: currentColor;
+      }
+    }
+  }
+
+}
