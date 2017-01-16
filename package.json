@@ -65,7 +65,7 @@
     "temp": "^0.8.3"
   },
   "devDependencies": {
-    "fs-extra": "^1.0.0",
+    "fs-extra": "^2.0.0",
     "standard": "^8.6.0"
   },
   "providedServices": {
