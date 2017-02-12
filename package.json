@@ -393,6 +393,13 @@
           "default": false,
           "order": 4
         },
+        "additionalTestFlags": {
+          "title": "Additional Test Flags",
+          "description": "Flags to pass to `go test`",
+          "type": "string",
+          "default": "",
+          "order": 5
+        },
         "coverageHighlightMode": {
           "title": "Coverage Highlight Mode",
           "description": "Control the way that coverage highlighting occurs",
@@ -404,7 +411,7 @@
             "uncovered",
             "disabled"
           ],
-          "order": 5
+          "order": 6
         },
         "coverageDisplayMode": {
           "title": "Coverage Display Mode",
@@ -415,14 +422,14 @@
             "highlight",
             "gutter"
           ],
-          "order": 6
+          "order": 7
         },
         "focusPanelIfTestsFail": {
           "title": "Focus The go-plus Panel If Tests Fail",
           "description": "If the panel is hidden, or the panel is showing a different tab, the panel will be expanded and the test tab focused when tests fail.",
           "type": "boolean",
           "default": true,
-          "order": 7
+          "order": 8
         }
       }
     }
