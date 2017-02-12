@@ -47,6 +47,10 @@ describe('tester', () => {
   })
 
   describe('go test args', () => {
+    beforeEach(() => {
+      atom.config.unset('go-plus.test.additionalTestFlags')
+    })
+
     afterEach(() => {
       atom.config.set('go-plus.test.runTestsWithShortFlag', true)
       atom.config.set('go-plus.test.runTestsWithVerboseFlag', false)
@@ -54,11 +58,14 @@ describe('tester', () => {
 
     it('uses the specified timeout', () => {
       const args = tester.buildGoTestArgs(10000)
+      let foundTimeout = false
       for (const arg of args) {
         if (arg.startsWith('-timeout')) {
+          foundTimeout = true
           expect(arg).toBe('-timeout=10000ms')
         }
       }
+      expect(foundTimeout).toBe(true)
     })
 
     it('invokes the go test command with a coverprofile', () => {
@@ -71,11 +78,14 @@ describe('tester', () => {
       it('prefers timeout from the custom args (if specified)', () => {
         atom.config.set('go-plus.test.additionalTestFlags', '-timeout=4000ms')
         const args = tester.buildGoTestArgs(8000)
+        let foundTimeout = false
         for (const arg of args) {
           if (arg.startsWith('-timeout')) {
+            foundTimeout = true
             expect(arg).toBe('-timeout=4000ms')
           }
         }
+        expect(foundTimeout).toBe(true)
       })
 
       it('does not duplicate the -short or -verbose flags', () => {
