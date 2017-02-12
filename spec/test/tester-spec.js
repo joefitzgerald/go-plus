@@ -100,6 +100,13 @@ describe('tester', () => {
         expect(shortFlags).toBe(1)
         expect(verboseFlags).toBe(1)
       })
+
+      it('handles args with spaces', () => {
+        atom.config.set('go-plus.test.additionalTestFlags', '-myarg="hello world"')
+        const args = tester.buildGoTestArgs()
+        expect(args.length >= 3).toBeTruthy()
+        expect(args[2]).toBe('-myarg=hello world')
+      })
     })
   })
 

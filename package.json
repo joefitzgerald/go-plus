@@ -62,7 +62,8 @@
     "lodash": "^4.17.4",
     "rimraf": "^2.5.4",
     "semver": "^5.3.0",
-    "temp": "^0.8.3"
+    "temp": "^0.8.3",
+    "yargs-parser": "^4.2.1"
   },
   "devDependencies": {
     "fs-extra": "^1.0.0",
