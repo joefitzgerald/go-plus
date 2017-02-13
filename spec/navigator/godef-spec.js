@@ -88,12 +88,33 @@ describe('go to definition', () => {
 
     describe('when using the guru navigator mode', () => {
       beforeEach(() => {
-        atom.config.set('go-plus.navigator.mode', 'godef')
+        atom.config.set('go-plus.navigator.mode', 'guru')
       })
 
       it('navigates to the correct location', () => {
         runs(() => {
-          editor.setCursorBufferPosition([3, 17])
+          editor.setCursorBufferPosition([3, 17]) // at the beginning of -> `Bar()`
+        })
+
+        waitsForPromise(() => {
+          return godef.gotoDefinitionForWordAtCursor()
+        })
+
+        runs(() => {
+          const activeEditor = atom.workspace.getActiveTextEditor()
+          expect(activeEditor.getTitle()).toBe('bar.go')
+
+          const pos = activeEditor.getCursorBufferPosition()
+          expect(pos.row).toBe(2)
+          expect(pos.column).toBe(5)
+
+          expect(godef.navigationStack.isEmpty()).toBe(false)
+        })
+      })
+
+      it('navigates to the correct location if at the end of a word', () => {
+        runs(() => {
+          editor.setCursorBufferPosition([3, 20]) // at the end of `Bar()` <-
         })
 
         waitsForPromise(() => {
