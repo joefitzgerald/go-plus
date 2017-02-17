@@ -6,7 +6,6 @@ import path from 'path'
 import {lifecycle} from './../spec-helpers'
 
 describe('go-get', () => {
-  let mainModule = null
   let manager = null
   let gopath
   let platform
@@ -18,7 +17,7 @@ describe('go-get', () => {
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      atom.packages.triggerDeferredActivationHooks()
+
       gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
       const goroot = fs.realpathSync(lifecycle.temp.mkdirSync('goroot-'))
       const gorootbin = path.join(goroot, 'bin')
@@ -49,17 +48,14 @@ describe('go-get', () => {
       process.env[pathkey] = gorootbin
       process.env['GOPATH'] = gopath
       process.env['GOROOT'] = goroot
-
-      let pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-      mainModule = pack.mainModule
     })
 
-    waitsFor(() => { return mainModule && mainModule.loaded })
+    waitsForPromise(() => {
+      return lifecycle.activatePackage()
+    })
 
     runs(() => {
+      const { mainModule } = lifecycle
       mainModule.provideGoGet()
       manager = mainModule.getservice.getmanager
     })

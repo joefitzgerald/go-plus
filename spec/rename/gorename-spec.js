@@ -6,7 +6,6 @@ import fs from 'fs-plus'
 import {lifecycle} from './../spec-helpers'
 
 describe('gorename', () => {
-  let mainModule = null
   let gorename = null
   let editor = null
   let gopath = null
@@ -16,30 +15,24 @@ describe('gorename', () => {
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      atom.packages.triggerDeferredActivationHooks()
+
       gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
       process.env.GOPATH = gopath
     })
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go')
+      return lifecycle.activatePackage()
     })
 
     runs(() => {
-      let pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-      mainModule = pack.mainModule
+      const { mainModule } = lifecycle
       mainModule.provideGoConfig()
       mainModule.provideGoGet()
       mainModule.loadGorename()
     })
 
-    waitsFor(() => { return mainModule && mainModule.loaded })
-
     waitsFor(() => {
-      gorename = mainModule.gorename
+      gorename = lifecycle.mainModule.gorename
       return gorename
     })
   })
@@ -76,14 +69,14 @@ describe('gorename', () => {
       let cmd
 
       waitsFor(() => {
-        if (mainModule.provideGoConfig()) {
+        if (lifecycle.mainModule.provideGoConfig()) {
           return true
         }
         return false
       }, '', 750)
 
       waitsForPromise(() => {
-        return mainModule.provideGoConfig().locator.findTool('gorename').then((c) => {
+        return lifecycle.mainModule.provideGoConfig().locator.findTool('gorename').then((c) => {
           expect(c).toBeTruthy()
           cmd = c
         })

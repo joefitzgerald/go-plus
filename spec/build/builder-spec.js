@@ -5,28 +5,17 @@ import path from 'path'
 import {lifecycle} from './../spec-helpers'
 
 describe('builder', () => {
-  let mainModule = null
   let builder = null
 
   beforeEach(() => {
     lifecycle.setup()
-    atom.packages.triggerDeferredActivationHooks()
+
     waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go')
+      return lifecycle.activatePackage()
     })
-
-    runs(() => {
-      let pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      mainModule = pack.mainModule
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-    })
-
-    waitsFor(() => { return mainModule && mainModule.loaded })
 
     waitsFor(() => {
-      builder = mainModule.getBuilder()
+      builder = lifecycle.mainModule.getBuilder()
       return builder
     })
   })

@@ -6,14 +6,13 @@ import fs from 'fs-plus'
 import {lifecycle} from './../spec-helpers'
 
 describe('tester', () => {
-  let mainModule = null
   let gopath = null
   let tester = null
 
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      atom.packages.triggerDeferredActivationHooks()
+
       atom.config.set('go-plus.format.formatOnSave', false)
       atom.config.set('go-plus.test.coverageHighlightMode', 'covered-and-uncovered')
       gopath = lifecycle.temp.mkdirSync()
@@ -21,24 +20,18 @@ describe('tester', () => {
       atom.project.setPaths([gopath])
     })
 
+    waitsForPromise(() => {
+      return lifecycle.activatePackage()
+    })
+
     runs(() => {
-      let pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-      mainModule = pack.mainModule
+      const { mainModule } = lifecycle
       mainModule.loadTester()
       tester = mainModule.tester
     })
 
-    waitsFor(() => { return mainModule && mainModule.loaded })
-
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go')
-    })
-
     waitsFor(() => {
-      return mainModule.provideGoConfig() !== false
+      return lifecycle.mainModule.provideGoConfig() !== false
     })
   })
 
@@ -145,13 +138,6 @@ describe('tester', () => {
         expect(range.end.row).toBe(6)
         expect(range.end.column).toBe(1)
       })
-
-      expect(mainModule).toBeDefined()
-      expect(mainModule).toBeTruthy()
-      expect(mainModule.provideGoConfig).toBeDefined()
-      expect(mainModule.provideGoConfig()).toBeTruthy()
-      expect(mainModule.tester).toBeDefined()
-      expect(mainModule.tester).toBeTruthy()
     })
 
     it('clears coverage for go source', () => {

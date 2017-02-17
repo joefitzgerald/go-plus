@@ -6,7 +6,6 @@ import fs from 'fs-plus'
 import {lifecycle} from './../spec-helpers'
 
 describe('godoc', () => {
-  let mainModule = null
   let godoc = null
   let editor = null
   let gopath = null
@@ -16,30 +15,24 @@ describe('godoc', () => {
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      atom.packages.triggerDeferredActivationHooks()
+
       gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
       process.env.GOPATH = gopath
     })
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go')
+      return lifecycle.activatePackage()
     })
 
     runs(() => {
-      let pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-      mainModule = pack.mainModule
+      const { mainModule } = lifecycle
       mainModule.provideGoConfig()
       mainModule.provideGoGet()
       mainModule.loadDoc()
     })
 
-    waitsFor(() => { return mainModule && mainModule.loaded })
-
     waitsFor(() => {
-      godoc = mainModule.godoc
+      godoc = lifecycle.mainModule.godoc
       return godoc
     })
   })

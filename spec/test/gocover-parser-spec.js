@@ -13,21 +13,19 @@ describe('gocover-parser', () => {
   let directory
   let filePath
   let testFilePath
-  let mainModule
 
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      atom.packages.triggerDeferredActivationHooks()
-      let pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-      mainModule = pack.mainModule
-      goconfig = pack.mainModule.provideGoConfig()
     })
 
-    waitsFor(() => { return mainModule && mainModule.loaded })
+    waitsForPromise(() => {
+      return lifecycle.activatePackage()
+    })
+
+    runs(() => {
+      goconfig = lifecycle.mainModule.provideGoConfig()
+    })
 
     runs(() => {
       directory = lifecycle.temp.mkdirSync()
