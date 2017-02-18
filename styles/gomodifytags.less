@@ -1,0 +1,55 @@
+@import "ui-variables";
+
+@margin: .5 * @component-padding;
+
+.gomodifytags {
+  font-size: @font-size;
+
+  label {
+    font-size: 1.25 * @font-size;
+    padding-right: @component-padding;
+  }
+
+  .go-tags-flex-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-content: stretch;
+      align-items: center;
+      vertical-align: middle;
+
+      button {
+        order: 0;
+        flex: 0 1 auto;
+        align-self: auto;
+        margin-bottom: 10px;
+      }
+
+      div {
+        order: 0;
+        flex: 2 1 auto;
+        align-self: auto;
+      }
+  }
+
+  .go-tags-list {
+    font-size: 16px;
+
+    h3 {
+      font-size: 115%;
+    }
+  }
+
+  .btn {
+    margin-right: @margin;
+    margin-left: @margin;
+  }
+
+  .case-radio-buttons {
+    .input-label {
+      padding-right: @component-padding;
+      padding-bottom: @component-padding;
+    }
+  }
+}

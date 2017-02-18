@@ -10,6 +10,8 @@
     "ctrl-alt-shift-g r": "golang:goreturns",
     "ctrl-alt-shift-g t": "golang:run-tests",
     "ctrl-alt-shift-g x": "golang:hide-coverage",
+    "ctrl-alt-shift-g t": "golang:add-tags",
+    "ctrl-alt-shift-g u": "golang:remove-tags",
     "alt-d": "golang:showdoc",
     "alt-r": "golang:gorename"
   },
@@ -20,5 +22,9 @@
   ":not(.platform-darwin) atom-text-editor[data-grammar~=\"go\"]:not([mini])": {
     "alt-ctrl-g": "golang:godef",
     "alt-ctrl-shift-g": "golang:godef-return"
+  },
+  ".gomodifytags": {
+    "tab": "gomodifytags:focus-next",
+    "shift-tab": "gomodifytags:focus-previous"
   }
 }
