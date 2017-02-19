@@ -8,7 +8,6 @@ describe('gocodeprovider', () => {
   let completionDelay = null
   let autocompleteplusMain = null
   let autocompleteManager = null
-  let mainModule = null
   let provider = null
   let editor = null
   let editorView = null
@@ -18,7 +17,6 @@ describe('gocodeprovider', () => {
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      atom.packages.triggerDeferredActivationHooks()
     })
 
     waitsForPromise(() => {
@@ -26,29 +24,16 @@ describe('gocodeprovider', () => {
         autocompleteplusMain = pack.mainModule
       })
     })
-
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go')
-    })
-
-    runs(() => {
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-    })
-
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('go-plus').then((pack) => {
-        mainModule = pack.mainModule
-        spyOn(mainModule, 'provideAutocomplete').andCallThrough()
-      })
-    })
-
     waitsFor(() => {
       return autocompleteplusMain.autocompleteManager && autocompleteplusMain.autocompleteManager.ready
     })
 
-    waitsFor(() => {
-      return mainModule && mainModule.loaded === true
+    waitsForPromise(() => {
+      return lifecycle.activatePackage()
+    })
+
+    runs(() => {
+      spyOn(lifecycle.mainModule, 'provideAutocomplete').andCallThrough()
     })
 
     runs(() => {
@@ -67,7 +52,7 @@ describe('gocodeprovider', () => {
 
       // autocomplete-go
       atom.config.set('go-plus.autocomplete.snippetMode', 'nameAndType')
-      provider = mainModule.provideAutocomplete()
+      provider = lifecycle.mainModule.provideAutocomplete()
       spyOn(provider, 'getSuggestions').andCallThrough()
       provider.onDidInsertSuggestion = jasmine.createSpy()
       provider.onDidGetSuggestions((p) => {

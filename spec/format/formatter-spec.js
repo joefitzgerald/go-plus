@@ -10,35 +10,27 @@ const unformattedText = 'package main' + nl + nl + 'func main()  {' + nl + '}' +
 const formattedText = 'package main' + nl + nl + 'func main() {' + nl + '}' + nl
 
 describe('formatter', () => {
-  let mainModule = null
   let formatter = null
 
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      atom.packages.triggerDeferredActivationHooks()
       atom.config.set('editor.defaultLineEnding', 'LF')
     })
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go')
+      return lifecycle.activatePackage()
     })
 
     runs(() => {
-      const pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-      mainModule = pack.mainModule
+      const { mainModule } = lifecycle
       mainModule.provideGoConfig()
       mainModule.provideGoGet()
       mainModule.loadFormatter()
     })
 
-    waitsFor(() => { return mainModule && mainModule.loaded })
-
     waitsFor(() => {
-      formatter = mainModule.formatter
+      formatter = lifecycle.mainModule.formatter
       return formatter
     })
   })

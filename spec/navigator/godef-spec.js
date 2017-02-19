@@ -8,32 +8,25 @@ import {lifecycle} from './../spec-helpers'
 describe('go to definition', () => {
   let godef = null
   let gopath = null
-  let mainModule = null
 
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      atom.packages.triggerDeferredActivationHooks()
+
       gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
       process.env.GOPATH = gopath
     })
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go')
+      return lifecycle.activatePackage()
     })
 
     runs(() => {
-      let pack = atom.packages.loadPackage('go-plus')
-      pack.activateNow()
-      atom.packages.triggerActivationHook('core:loaded-shell-environment')
-      atom.packages.triggerActivationHook('language-go:grammar-used')
-      mainModule = pack.mainModule
+      const { mainModule } = lifecycle
       mainModule.provideGoConfig()
       mainModule.provideGoGet()
       godef = mainModule.getGodef()
     })
-
-    waitsFor(() => { return mainModule && mainModule.loaded })
   })
 
   afterEach(() => {
