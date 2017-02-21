@@ -1,6 +1,6 @@
 package foo
 
-struct Bar {
-  QuickBrownFox int
-  LazyDog string
+type Bar struct {
+	QuickBrownFox int
+	LazyDog       string
 }

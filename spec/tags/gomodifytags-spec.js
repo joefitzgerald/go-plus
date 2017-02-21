@@ -97,7 +97,7 @@ describe('gomodifytags', () => {
         const args = gomodifytags.buildArgs(editor, options, 'Add')
         expect(args.length).toBeGreaterThan(3)
         expect(args[2]).toBe('-offset')
-        expect(args[3]).toBe(51)
+        expect(args[3]).toBe(54)
       })
 
       it('uses the -line flag when there is a selection', () => {
@@ -170,6 +170,67 @@ describe('gomodifytags', () => {
         const i = args.indexOf('-remove-options')
         expect(i).not.toBe(-1)
         expect(args[i + 1]).toBe('json=omitempty')
+      })
+    })
+
+    describe('when modifying tags', () => {
+      it('adds json tags with options', () => {
+        let result = null
+        let command = null
+
+        runs(() => {
+          editor.setCursorBufferPosition([4, 6])
+        })
+
+        waitsForPromise(() => {
+          return lifecycle.mainModule.provideGoConfig().locator.findTool('gomodifytags').then((cmd) => {
+            expect(cmd).toBeTruthy()
+            command = cmd
+          })
+        })
+
+        waitsForPromise(() => {
+          return gomodifytags.modifyTags(editor, {
+            tags: [{tag: 'json', option: 'omitempty'}],
+            useSnakeCase: true,
+            sortTags: false
+          }, 'Add', command).then((r) => {
+            result = r
+          })
+        })
+
+        runs(() => {
+          expect(result).toBeTruthy()
+          expect(result.success).toBe(true)
+          expect(result.result.stdout).toBe('package foo\n\ntype Bar struct {\n\tQuickBrownFox int    `json:"quick_brown_fox,omitempty"`\n\tLazyDog       string `json:"lazy_dog,omitempty"`\n}\n\n')
+        })
+      })
+
+      it('returns an error if the cursor is not inside a struct declaration', () => {
+        let result = null
+        let command = null
+
+        runs(() => {
+          editor.setCursorBufferPosition([0, 2])
+        })
+
+        waitsForPromise(() => {
+          return lifecycle.mainModule.provideGoConfig().locator.findTool('gomodifytags').then((cmd) => {
+            expect(cmd).toBeTruthy()
+            command = cmd
+          })
+        })
+
+        waitsForPromise(() => {
+          return gomodifytags.modifyTags(editor, {tags: []}, 'Add', command).then((r) => {
+            result = r
+          })
+        })
+
+        runs(() => {
+          expect(result).toBeTruthy()
+          expect(result.success).toBe(false)
+        })
       })
     })
   })
