@@ -152,7 +152,7 @@ describe('gomodifytags', () => {
         expect(args.includes('-clear-tags')).toBe(true)
       })
 
-      it ('includes the -remove-tags flag if no options are specified for remove', () => {
+      it('includes the -remove-tags flag if no options are specified for remove', () => {
         editor.setCursorBufferPosition([4, 6])
         options.tags = [{tag: 'json', option: null}]
         const args = gomodifytags.buildArgs(editor, options, 'Remove')
@@ -162,7 +162,7 @@ describe('gomodifytags', () => {
         expect(args[i + 1]).toBe('json')
       })
 
-      it ('includes the -remove-options flag if options are specified for remove', () => {
+      it('includes the -remove-options flag if options are specified for remove', () => {
         editor.setCursorBufferPosition([4, 6])
         options.tags = [{tag: 'json', option: 'omitempty'}]
         const args = gomodifytags.buildArgs(editor, options, 'Remove')
