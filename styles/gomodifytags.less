@@ -27,6 +27,8 @@
       }
 
       div {
+        margin-left: 2px;
+        margin-right: 2px;
         order: 0;
         flex: 2 1 auto;
         align-self: auto;
@@ -50,6 +52,22 @@
     .input-label {
       padding-right: @component-padding;
       padding-bottom: @component-padding;
+    }
+  }
+
+  atom-text-editor[mini] {
+    &.invalid-input-value {
+      border-color: @text-color-error;
+      box-shadow: 0 0 0 1px @text-color-error;
+      background-color: mix(@text-color-error, @input-background-color, 10%);
+
+      .selection .region {
+        background-color: mix(@text-color-error, @input-background-color, 50%);
+      }
+
+      .cursor {
+        border-color: @text-color-error;
+      }
     }
   }
 }
