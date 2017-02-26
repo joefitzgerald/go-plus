@@ -2,7 +2,7 @@
 /* eslint-env jasmine */
 
 import path from 'path'
-import fs from 'fs-plus'
+import fs from 'fs-extra'
 import {lifecycle} from './../spec-helpers'
 
 describe('gorename', () => {
