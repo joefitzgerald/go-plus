@@ -2,7 +2,7 @@
 /* eslint-env jasmine */
 
 import path from 'path'
-import fs from 'fs-plus'
+import fs from 'fs-extra'
 import {lifecycle} from './../spec-helpers'
 
 describe('tester', () => {
@@ -49,6 +49,8 @@ describe('tester', () => {
       atom.config.set('go-plus.test.runTestsOnSave', false)
       filePath = path.join(gopath, 'src', 'github.com', 'testuser', 'example', 'go-plus.go')
       testFilePath = path.join(gopath, 'src', 'github.com', 'testuser', 'example', 'go-plus_test.go')
+      fs.ensureDirSync(path.dirname(filePath))
+      fs.ensureDirSync(path.dirname(testFilePath))
       fs.writeFileSync(filePath, '')
       fs.writeFileSync(testFilePath, '')
       waitsForPromise(() => {
