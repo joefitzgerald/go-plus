@@ -2,40 +2,57 @@
   "context-menu": {
     "atom-text-editor[data-grammar~=\"go\"]:not([mini])": [
       {
-        "label": "Go To Definition",
-        "command": "golang:godef"
-      },
-      {
-        "label": "Return From Definition",
-        "command": "golang:godef-return"
-      },
-      {
-        "label": "Run gofmt",
-        "command": "golang:gofmt"
-      },
-      {
-        "label": "Run goimports",
-        "command": "golang:goimports"
-      },
-      {
-        "label": "Run goreturns",
-        "command": "golang:goreturns"
-      },
-      {
-        "label": "Run Tests",
-        "command": "golang:run-tests"
-      },
-      {
-        "label": "Clear Test Coverage",
-        "command": "golang:hide-coverage"
-      },
-      {
-        "label": "Rename symbol under cursor",
-        "command": "golang:gorename"
-      },
-      {
-        "label": "Get godoc for symbol under cursor",
-        "command": "golang:showdoc"
+        "label": "Go",
+        "submenu": [
+          {
+            "label": "Go To Definition",
+            "command": "golang:godef"
+          },
+          {
+            "label": "Find Usage",
+            "command": "golang:find-usage"
+          },
+          {
+            "label": "Return From Definition",
+            "command": "golang:godef-return"
+          },
+          {
+            "label": "Run gofmt",
+            "command": "golang:gofmt"
+          },
+          {
+            "label": "Run goimports",
+            "command": "golang:goimports"
+          },
+          {
+            "label": "Run goreturns",
+            "command": "golang:goreturns"
+          },
+          {
+            "label": "Run Tests",
+            "command": "golang:run-tests"
+          },
+          {
+            "label": "Clear Test Coverage",
+            "command": "golang:hide-coverage"
+          },
+          {
+            "label": "Rename symbol under cursor",
+            "command": "golang:gorename"
+          },
+          {
+            "label": "Get godoc for symbol under cursor",
+            "command": "golang:showdoc"
+          },
+          {
+            "label": "Add Tags",
+            "command": "golang:add-tags"
+          },
+          {
+            "label": "Remove Tags",
+            "command": "golang:remove-tags"
+          }
+        ]
       }
     ]
   },
@@ -49,6 +66,10 @@
             {
               "label": "Go To Definition",
               "command": "golang:godef"
+            },
+            {
+              "label": "Find Usage",
+              "command": "golang:find-usage"
             },
             {
               "label": "Return From Definition",
