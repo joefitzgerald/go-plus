@@ -357,7 +357,7 @@
           "title": "Mode",
           "description": "Use guru or godef for go to definition",
           "type": "string",
-          "default": "guru",
+          "default": "godef",
           "enum": [
             "guru",
             "godef"
