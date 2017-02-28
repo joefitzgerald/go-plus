@@ -284,6 +284,19 @@
         }
       }
     },
+    "build": {
+      "title": "Build",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "title": "Build Tags",
+          "description": "If you need build tags to be used when compiling your package, specify them here (e.g. libsqlite3 darwin)",
+          "type": "string",
+          "default": "",
+          "order": 1
+        }
+      }
+    },
     "format": {
       "title": "Format",
       "type": "object",
