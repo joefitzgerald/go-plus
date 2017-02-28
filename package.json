@@ -128,6 +128,13 @@
       ],
       "order": 2
     },
+    "panelFontSize": {
+      "title": "Panel Font Size",
+      "description": "Control the font size for content displayed in the panel",
+      "type": "string",
+      "default": "1em",
+      "order": 3
+    },
     "maxPanelHeight": {
       "title": "Maximum Panel Height",
       "description": "When the panel orientation is horizontal, prevent the panel from occupying the entire window",
