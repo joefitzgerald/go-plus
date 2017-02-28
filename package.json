@@ -322,6 +322,19 @@
         }
       }
     },
+    "guru": {
+      "title": "Guru",
+      "type": "object",
+      "properties": {
+        "highlightIdentifiers": {
+          "title": "Highlight Identifiers When Cursor Moves",
+          "description": "When a cursor is moved, highlight all occurrences of the identifier in the document",
+          "type": "boolean",
+          "default": false,
+          "order": 1
+        }
+      }
+    },
     "lint": {
       "title": "Lint",
       "type": "object",
