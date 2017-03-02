@@ -397,19 +397,26 @@
           "default": 60000,
           "order": 2
         },
+        "runTestsWithCoverage": {
+          "title": "Run Tests With Coverage",
+          "description": "Runs `go test` with `-coverprofile` flag set, enabling coverage to be shown in the editor",
+          "type": "boolean",
+          "default": true,
+          "order": 3
+        },
         "runTestsWithShortFlag": {
           "title": "Run Tests With Short Flag Set",
           "description": "Runs `go test` with `-short` flag set",
           "type": "boolean",
           "default": true,
-          "order": 3
+          "order": 4
         },
         "runTestsWithVerboseFlag": {
           "title": "Run Tests With Verbose Flag Set",
           "description": "Runs `go test` with `-v` flag set",
           "type": "boolean",
           "default": false,
-          "order": 4
+          "order": 5
         },
         "coverageHighlightMode": {
           "title": "Coverage Highlight Mode",
@@ -422,7 +429,7 @@
             "uncovered",
             "disabled"
           ],
-          "order": 5
+          "order": 6
         },
         "coverageDisplayMode": {
           "title": "Coverage Display Mode",
@@ -433,14 +440,14 @@
             "highlight",
             "gutter"
           ],
-          "order": 6
+          "order": 7
         },
         "focusPanelIfTestsFail": {
           "title": "Focus The go-plus Panel If Tests Fail",
           "description": "If the panel is hidden, or the panel is showing a different tab, the panel will be expanded and the test tab focused when tests fail.",
           "type": "boolean",
           "default": true,
-          "order": 7
+          "order": 8
         }
       }
     }
