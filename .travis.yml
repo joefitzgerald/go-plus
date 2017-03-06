@@ -35,7 +35,7 @@ install:
   - go get -u golang.org/x/tools/cmd/guru
 
 script:
-  - 'curl -s https://raw.githubusercontent.com/atom/ci/943a16cd32926bdfcca703f16ec6a958a2db38a5/build-package.sh | sh'
+  - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
 
 sudo: false
 
