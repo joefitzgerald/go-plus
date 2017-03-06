@@ -36,7 +36,8 @@ describe('what', () => {
   it('monitors the config', () => {
     atom.config.set('go-plus.guru.highlightIdentifiers', false)
     expect(what.shouldDecorate).toBe(false)
-
+    atom.config.set('go-plus.guru.highlightIdentifiers', true)
+    expect(what.shouldDecorate).toBe(true)
     atom.config.set('go-plus.guru.highlightIdentifiers', false)
     expect(what.shouldDecorate).toBe(false)
   })
@@ -57,7 +58,7 @@ describe('what', () => {
         fs.copySync(source, target)
 
         // we'll manually invoke guru for easier testing
-        atom.config.set('go-plus.highlightIdentifiers', false)
+        atom.config.set('go-plus.guru.highlightIdentifiers', false)
       })
 
       waitsForPromise(() => {

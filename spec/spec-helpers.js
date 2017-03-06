@@ -21,6 +21,7 @@ class Lifecycle {
     this.env = Object.assign({}, process.env)
     atom.config.set('go-plus.disableToolCheck', true)
     atom.config.set('go-plus.testing', true)
+    atom.config.set('go-plus.guru.highlightIdentifiers', false)
   }
 
   activatePackage () {
