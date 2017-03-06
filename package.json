@@ -132,7 +132,7 @@
       "title": "Panel Font Size",
       "description": "Control the font size for content displayed in the panel",
       "type": "string",
-      "default": "1em",
+      "default": "1.2em",
       "order": 3
     },
     "maxPanelHeight": {
