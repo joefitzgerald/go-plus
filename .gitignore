@@ -7,3 +7,4 @@ node_modules
 /spec/config/tools/**/*netbsd*
 /spec/config/tools/**/*386*
 /spec/config/tools/**/*arm*
+/.vagrant
