@@ -39,6 +39,70 @@ describe('tester', () => {
     lifecycle.teardown()
   })
 
+  describe('go test args', () => {
+    beforeEach(() => {
+      atom.config.unset('go-plus.test.additionalTestFlags')
+    })
+
+    afterEach(() => {
+      atom.config.set('go-plus.test.runTestsWithShortFlag', true)
+      atom.config.set('go-plus.test.runTestsWithVerboseFlag', false)
+    })
+
+    it('uses the specified timeout', () => {
+      const args = tester.buildGoTestArgs(10000)
+      let foundTimeout = false
+      for (const arg of args) {
+        if (arg.startsWith('-timeout')) {
+          foundTimeout = true
+          expect(arg).toBe('-timeout=10000ms')
+        }
+      }
+      expect(foundTimeout).toBe(true)
+    })
+
+    it('invokes the go test command with a coverprofile', () => {
+      const args = tester.buildGoTestArgs(10000)
+      expect(args[0]).toBe('test')
+      expect(args[1].startsWith('-coverprofile=')).toBe(true)
+    })
+
+    describe('when specifying custom args', () => {
+      it('prefers timeout from the custom args (if specified)', () => {
+        atom.config.set('go-plus.test.additionalTestFlags', '-timeout=4000ms')
+        const args = tester.buildGoTestArgs(8000)
+        let foundTimeout = false
+        for (const arg of args) {
+          if (arg.startsWith('-timeout')) {
+            foundTimeout = true
+            expect(arg).toBe('-timeout=4000ms')
+          }
+        }
+        expect(foundTimeout).toBe(true)
+      })
+
+      it('does not duplicate the -short or -verbose flags', () => {
+        atom.config.set('go-plus.test.runTestsWithShortFlag', true)
+        atom.config.set('go-plus.test.runTestsWithVerboseFlag', true)
+        atom.config.set('go-plus.test.additionalTestFlags', '-short -verbose')
+
+        const args = tester.buildGoTestArgs()
+        const shortFlags = args.filter((a) => a === '-short').length
+        const verboseFlags = args.filter((a) => a === '-v').length
+
+        expect(shortFlags).toBe(1)
+        expect(verboseFlags).toBe(1)
+      })
+
+      it('handles args with spaces', () => {
+        atom.config.set('go-plus.test.additionalTestFlags', '-myarg="hello world"')
+        const args = tester.buildGoTestArgs()
+        expect(args.length >= 3).toBeTruthy()
+        expect(args[2]).toBe('-myarg=hello world')
+      })
+    })
+  })
+
   describe('when run coverage on save is disabled', () => {
     let filePath
     let testFilePath
