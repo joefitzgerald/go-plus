@@ -68,7 +68,9 @@ describe('what', () => {
     })
 
     it('highlights identifiers', () => {
-      editor.setCursorBufferPosition([22, 1])
+      runs(() => {
+        editor.setCursorBufferPosition([22, 1])
+      })
 
       waitsForPromise(() => {
         return what.run(editor, editor.getCursorBufferPosition(), editor.getCursors()[0], true)
