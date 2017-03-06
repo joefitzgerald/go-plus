@@ -330,7 +330,7 @@
           "title": "Highlight Identifiers When Cursor Moves",
           "description": "When a cursor is moved, highlight all occurrences of the identifier in the document",
           "type": "boolean",
-          "default": false,
+          "default": true,
           "order": 1
         }
       }
