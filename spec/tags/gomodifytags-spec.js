@@ -51,7 +51,6 @@ describe('gomodifytags', () => {
       waitsForPromise(() => {
         return atom.workspace.open(path.join(target, 'foo.go')).then((e) => {
           editor = e
-          return
         })
       })
     })

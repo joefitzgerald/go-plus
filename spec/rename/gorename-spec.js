@@ -52,7 +52,6 @@ describe('gorename', () => {
       waitsForPromise(() => {
         return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
           editor = e
-          return
         })
       })
     })
@@ -84,7 +83,6 @@ describe('gorename', () => {
       waitsForPromise(() => {
         return gorename.runGorename(file, info.offset, cwd, 'bar', cmd).then((result) => {
           r = result
-          return
         })
       })
       runs(() => {
@@ -97,7 +95,6 @@ describe('gorename', () => {
       waitsForPromise(() => {
         return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
           editor = e
-          return
         })
       })
 

@@ -122,7 +122,6 @@ describe('godoc', () => {
           e.insertText('fmt.Printf("this line has been modified\n")')
           expect(e.isModified()).toBe(true)
           editor = e
-          return
         })
       })
     })
