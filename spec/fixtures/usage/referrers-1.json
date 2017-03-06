@@ -1,0 +1,21 @@
+{
+	"objpos": "/Users/joe/go/src/github.com/kelseyhightower/envconfig/envconfig.go:33:6",
+	"desc": "type github.com/kelseyhightower/envconfig.Decoder interface{Decode(value string) error}"
+}
+{
+	"package": "github.com/kelseyhightower/envconfig",
+	"refs": [
+		{
+			"pos": "/Users/joe/go/src/github.com/kelseyhightower/envconfig/envconfig.go:306:42",
+			"text": "func decoderFrom(field reflect.Value) (d Decoder) {"
+		},
+		{
+			"pos": "/Users/joe/go/src/github.com/kelseyhightower/envconfig/envconfig.go:307:67",
+			"text": "\tinterfaceFrom(field, func(v interface{}, ok *bool) { d, *ok = v.(Decoder) })"
+		},
+		{
+			"pos": "/Users/joe/go/src/github.com/kelseyhightower/envconfig/usage.go:40:37",
+			"text": "\tdecoderType     = reflect.TypeOf((*Decoder)(nil)).Elem()"
+		}
+	]
+}

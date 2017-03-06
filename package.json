@@ -128,6 +128,13 @@
       ],
       "order": 2
     },
+    "panelFontSize": {
+      "title": "Panel Font Size",
+      "description": "Control the font size for content displayed in the panel",
+      "type": "string",
+      "default": "1em",
+      "order": 3
+    },
     "maxPanelHeight": {
       "title": "Maximum Panel Height",
       "description": "When the panel orientation is horizontal, prevent the panel from occupying the entire window",
@@ -315,6 +322,19 @@
         }
       }
     },
+    "guru": {
+      "title": "Guru",
+      "type": "object",
+      "properties": {
+        "highlightIdentifiers": {
+          "title": "Highlight Identifiers When Cursor Moves",
+          "description": "When a cursor is moved, highlight all occurrences of the identifier in the document",
+          "type": "boolean",
+          "default": false,
+          "order": 1
+        }
+      }
+    },
     "lint": {
       "title": "Lint",
       "type": "object",
@@ -350,7 +370,7 @@
           "title": "Mode",
           "description": "Use guru or godef for go to definition",
           "type": "string",
-          "default": "guru",
+          "default": "godef",
           "enum": [
             "guru",
             "godef"

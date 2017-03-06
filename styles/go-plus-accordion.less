@@ -1,0 +1,45 @@
+@import "ui-variables";
+
+//
+// Accordion Menu
+// --------------------------------
+
+.go-plus-accordion {
+  padding: 0;
+  margin: 0;
+}
+
+.go-plus-accordion-header {
+  padding: @component-padding/4 @component-padding/2;
+  background-color: @background-color-highlight;
+  cursor: default;
+  -webkit-user-select: none;
+}
+
+.go-plus-accordion-content {
+  padding: @component-padding / 2;
+}
+
+
+// States ------------------------------
+
+.go-plus-accordion-item[open] > .go-plus-accordion-header {
+  border-bottom: 1px solid @base-border-color;
+}
+
+
+// Special ------------------------------
+
+// Only add a border to the following item (not first-child)
+.go-plus-accordion-item + .go-plus-accordion-item .go-plus-accordion-header {
+  border-top: 1px solid @base-border-color;
+}
+
+// Add an "Empty" label for empty items
+.go-plus-accordion-content:empty::before {
+  content: "Empty";
+  display: block;
+  font-style: italic;
+  text-align: center;
+  color: @text-color-subtle;
+}

@@ -19,6 +19,8 @@ This package includes the following functionality:
   [`gogetdoc`](https://github.com/zmb3/gogetdoc)
 * Rename the symbol under your cursor using `gorename`
 * Go to definition using `guru` or `godef`
+* Highlight occurrences of an identifier using `guru`
+* Find usages of an identifier using `guru`
 
 You can add debug functionality to Atom by installing the following package:
 
