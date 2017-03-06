@@ -23,6 +23,7 @@ notifications:
     on_failure: change
 
 install:
+  - nvm install 6
   - go get -u golang.org/x/tools/cmd/goimports
   - go get -u golang.org/x/tools/cmd/gorename
   - go get -u github.com/sqs/goreturns
