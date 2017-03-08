@@ -26,6 +26,12 @@ You can add debug functionality to Atom by installing the following package:
 
 * [go-debug](https://atom.io/packages/go-debug): Debug your package / tests using [`delve`](https://github.com/derekparker/delve)
 
+## Per-Binary / Per-Library Configuration
+
+In some circumstances, you need to have a different configuration to the default
+for different binaries or libraries (e.g. to use build tags). In these
+circumstances you can use the `.go.json` file, which is documented here: https://github.com/joefitzgerald/go-plus/wiki/.go.json-Project-Configuration-File-Format.
+
 ## Builds
 
 ### How Are The Builds Performed?
