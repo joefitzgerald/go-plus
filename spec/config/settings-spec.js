@@ -1,29 +1,33 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {DotGoDotJson} from './../../lib/config/dotgodotjson'
+import {Settings} from './../../lib/config/settings'
 import {lifecycle} from './../spec-helpers'
 import path from 'path'
 import fs from 'fs-extra'
 
-describe('DotGoDotJson', () => {
-  let [dotgodotjson] = []
+describe('Settings', () => {
+  let [settings] = []
   beforeEach(() => {
-    dotgodotjson = new DotGoDotJson()
+    settings = new Settings()
   })
 
   afterEach(() => {
-    if (dotgodotjson) {
-      dotgodotjson.dispose()
+    if (settings) {
+      settings.dispose()
     }
-    dotgodotjson = null
+    settings = null
   })
 
   describe('when there are no .go.json files in the project', () => {
-    describe('search', () => {
+    describe('files', () => {
       it('returns a falsy value', () => {
-        expect(dotgodotjson.search()).toBeFalsy()
+        expect(settings.files()).toBeFalsy()
       })
+    })
+
+    describe('getCommand', () => {
+
     })
   })
 
@@ -31,14 +35,14 @@ describe('DotGoDotJson', () => {
     let [project, filepath] = []
     beforeEach(() => {
       project = lifecycle.temp.mkdirSync('godotjson')
-      dotgodotjson.getProjectPaths = () => { return [project] }
+      settings.getProjectPaths = () => { return [project] }
       filepath = path.join(project, '.go.json')
       fs.writeFileSync(filepath, '{}')
     })
 
-    describe('search', () => {
+    describe('files', () => {
       it('does not return a falsy value', () => {
-        const result = dotgodotjson.search()
+        const result = settings.files()
         expect(result).toBeTruthy()
         expect(result.length).toBeGreaterThan(0)
       })
@@ -51,14 +55,14 @@ describe('DotGoDotJson', () => {
       project = lifecycle.temp.mkdirSync('godotjson')
       folder = path.join(project, 'cmd', 'sample')
       fs.mkdirsSync(folder)
-      dotgodotjson.getProjectPaths = () => { return [project] }
+      settings.getProjectPaths = () => { return [project] }
       filepath = path.join(folder, '.go.json')
       fs.writeFileSync(filepath, '{}')
     })
 
-    describe('search', () => {
+    describe('files', () => {
       it('does not return a falsy value', () => {
-        const result = dotgodotjson.search()
+        const result = settings.files()
         expect(result).toBeTruthy()
         expect(result.length).toBeGreaterThan(0)
       })
