@@ -22,7 +22,7 @@
     "hyperclick",
     "guru"
   ],
-  "version": "5.3.2",
+  "version": "5.3.3",
   "main": "./lib/main",
   "license": "Apache-2.0",
   "engines": {
