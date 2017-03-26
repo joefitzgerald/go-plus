@@ -67,5 +67,25 @@ describe('test panel', () => {
       expect(elements[1].children[0].text).toBe('foo/bar.go:12')
       expect(elements[3].children[0].text).toBe('baz/quux.go:34')
     })
+
+    it('renders a link with prefix and suffix', () => {
+      const elements = testPanel.makeLink('prefix foo/bar.go:23 suffix')
+      expect(elements.length).toBe(3)
+      expect(elements[0].tagName).toBe('SPAN')
+      expect(elements[1].tagName).toBe('A')
+      expect(elements[2].tagName).toBe('SPAN')
+
+      expect(elements[0].children[0].text).toBe('prefix ')
+      expect(elements[1].children[0].text).toBe('foo/bar.go:23')
+      expect(elements[2].children[0].text).toBe(' suffix')
+    })
+
+    it('renders links in multi-line text', () => {
+      const elements = testPanel.makeLink('--- FAIL: TestFail (0.00s)\n\tbar_test.go:23: Error!\nFAIL')
+      expect(elements.length).toBe(3)
+      expect(elements[0].children[0].text).toBe('--- FAIL: TestFail (0.00s)\n\t')
+      expect(elements[1].children[0].text).toBe('bar_test.go:23')
+      expect(elements[2].children[0].text).toBe(': Error!\nFAIL')
+    })
   })
 })
