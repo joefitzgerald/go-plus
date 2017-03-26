@@ -29,8 +29,6 @@
   text-decoration: line-through;
 }
 
-// TODO(zb): offer a setting for different color palette(s) or maybe hook into syntax theme
-
 // Text Colors
 // -----------
 
@@ -59,7 +57,8 @@
 }
 
 .go-plus-ansi-white {
-  color: white;
+  // the 'white' color code from ansi-style-parser is \e[37m (light gray)
+  color: lighten(gray, 20%);
 }
 
 .go-plus-ansi-gray {
@@ -95,7 +94,8 @@
 }
 
 .go-plus-ansi-lightWhite {
-  color: lighten(white, 20%);
+  // default white: \e[97m
+  color: white;
 }
 
 // Background Colors
@@ -126,7 +126,8 @@
 }
 
 .go-plus-ansi-bgWhite {
-  background-color: white;
+  // the 'white' color code from ansi-style-parser is \e[37m (light gray)
+  background-color: lighten(gray, 20%);
 }
 
 .go-plus-ansi-bgGray {
@@ -158,5 +159,6 @@
 }
 
 .go-plus-ansi-bgLightWhite {
-  background-color: lighten(white, 20%);
+  // default white: \e[97m
+  background-color: white;
 }
