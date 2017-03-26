@@ -55,7 +55,7 @@
     ]
   },
   "dependencies": {
-    "ansi-to-html": "^0.6.0",
+    "ansi-style-parser": "^1.1.0",
     "etch": "0.8.0",
     "etch-octicon": "^0.1.0",
     "fs-extra": "^2.0.0",
