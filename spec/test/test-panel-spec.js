@@ -16,6 +16,16 @@ describe('test panel', () => {
       expect(elements.length).toBe(1)
     })
 
+    it('renders a link', () => {
+      const elements = testPanel.makeLink('/Users/user/go/src/foo/bar.go:23')
+      console.log(elements)
+      expect(elements.length).toBe(2)
+      expect(elements[0].tagName).toBe('SPAN')
+      expect(elements[1].tagName).toBe('A')
+      expect(elements[0].children[0].text).toBe('')
+      expect(elements[1].children[0].text).toBe('/Users/user/go/src/foo/bar.go:23')
+    })
+
     it('renders a link to a go file (relative path)', () => {
       const elements = testPanel.makeLink('failure at foo/bar.go:23')
       expect(elements.length).toBe(2)
