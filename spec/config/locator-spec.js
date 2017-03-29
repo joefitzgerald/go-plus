@@ -423,16 +423,6 @@ describe('Locator', () => {
       })
     })
 
-    it('stat() returns false for nonexistent files', () => {
-      let stat = null
-      let done = locator.stat('nonexistentthing').then((s) => { stat = s })
-      waitsForPromise(() => { return done })
-
-      runs(() => {
-        expect(stat).toBe(false)
-      })
-    })
-
     it('findTool() finds tools in GOTOOLDIR', () => {
       let tools = ['addr2line', 'cgo', 'dist', 'link', 'pack', 'trace', 'api', 'compile', 'doc', 'nm', 'pprof', 'vet', 'asm', 'cover', 'fix', 'objdump', 'yacc']
       let runtime = false
