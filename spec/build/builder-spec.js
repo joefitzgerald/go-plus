@@ -6,16 +6,24 @@ import {lifecycle} from './../spec-helpers'
 
 describe('builder', () => {
   let builder = null
+  let linter
 
   beforeEach(() => {
     lifecycle.setup()
+
+    // mock the Linter V1 Indie API
+    linter = {
+      deleteMessages: () => {},
+      setMessages: (messages) => {},
+      dispose: () => {}
+    }
 
     waitsForPromise(() => {
       return lifecycle.activatePackage()
     })
 
     waitsFor(() => {
-      builder = lifecycle.mainModule.getBuilder()
+      builder = lifecycle.mainModule.loadBuilder(linter)
       return builder
     })
   })

@@ -17,16 +17,16 @@ describe('save event orchestrator', () => {
 
   describe('onDidSave subscription', () => {
     it('throws an error if a callback is not provided', () => {
-      expect(() => { saveEvent.onDidSave() }).toThrow()
+      expect(() => { saveEvent.onDidSave('test') }).toThrow()
     })
 
     it('throws an error if the callback is not a function', () => {
-      expect(() => { saveEvent.onDidSave(42) }).toThrow()
+      expect(() => { saveEvent.onDidSave('test', 42) }).toThrow()
     })
 
     it('registers a callback that can be unregistered', () => {
       const callback = () => {}
-      const disp = saveEvent.onDidSave(callback)
+      const disp = saveEvent.onDidSave('test', callback)
       expect(saveEvent.didSaveCallbacks.size).toBe(1)
 
       disp.dispose()
@@ -37,8 +37,8 @@ describe('save event orchestrator', () => {
       let called = false
 
       runs(() => {
-        const callback = () => { called = true; return true }
-        saveEvent.onDidSave(callback)
+        const callback = () => { called = true; return Promise.resolve(true) }
+        saveEvent.onDidSave('test', callback)
       })
 
       waitsForPromise(() => {
@@ -57,10 +57,10 @@ describe('save event orchestrator', () => {
       let called = [false, false]
 
       runs(() => {
-        const callback0 = () => { called[0] = true; return true }
-        const callback1 = () => { called[1] = true; return true }
-        saveEvent.onDidSave(callback0)
-        saveEvent.onDidSave(callback1)
+        const callback0 = () => { called[0] = true; return Promise.resolve(true) }
+        const callback1 = () => { called[1] = true; return Promise.resolve(true) }
+        saveEvent.onDidSave('callback0', callback0)
+        saveEvent.onDidSave('callback1', callback1)
       })
 
       waitsForPromise(() => {
@@ -70,20 +70,24 @@ describe('save event orchestrator', () => {
         })
       })
 
+      waitsFor(() => {
+        return called[0] === true && called[1] === true
+      }, 'Both callbacks should be called', 1000)
+
       runs(() => {
         expect(called[0]).toBe(true)
         expect(called[1]).toBe(true)
       })
     })
 
-    it('stops invoking callbacks when encountering a non-true return value', () => {
+    it('stops invoking callbacks when a promise is rejected', () => {
       let called = [false, false]
 
       runs(() => {
-        const callback0 = () => { called[0] = true; return false }
-        const callback1 = () => { called[1] = true; return true }
-        saveEvent.onDidSave(callback0)
-        saveEvent.onDidSave(callback1)
+        const callback0 = () => { called[0] = true; return Promise.reject(new Error()) }
+        const callback1 = () => { called[1] = true; return Promise.resolve(true) }
+        saveEvent.onDidSave('callback0', callback0)
+        saveEvent.onDidSave('callback1', callback1)
       })
 
       waitsForPromise(() => {
