@@ -2,35 +2,41 @@
 /* eslint-env jasmine */
 
 import path from 'path'
-import SaveEventOrchestrator from './../lib/orchestrator'
+import Orchestrator from './../lib/orchestrator'
 
-describe('save event orchestrator', () => {
-  let saveEvent = null
+describe('orchestrator', () => {
+  let orchestrator = null
 
   beforeEach(() => {
-    saveEvent = new SaveEventOrchestrator()
+    runs(() => {
+      orchestrator = new Orchestrator()
+    })
+
+    waitsForPromise(() => {
+      return atom.packages.activatePackage('language-go')
+    })
   })
 
   afterEach(() => {
-    saveEvent.dispose()
+    orchestrator.dispose()
   })
 
-  describe('onDidSave subscription', () => {
+  describe('register', () => {
     it('throws an error if a callback is not provided', () => {
-      expect(() => { saveEvent.onDidSave('test') }).toThrow()
+      expect(() => { orchestrator.register('test') }).toThrow()
     })
 
     it('throws an error if the callback is not a function', () => {
-      expect(() => { saveEvent.onDidSave('test', 42) }).toThrow()
+      expect(() => { orchestrator.register('test', 42) }).toThrow()
     })
 
     it('registers a callback that can be unregistered', () => {
       const callback = () => {}
-      const disp = saveEvent.onDidSave('test', callback)
-      expect(saveEvent.didSaveCallbacks.size).toBe(1)
+      const disp = orchestrator.register('test', callback)
+      expect(orchestrator.didSaveCallbacks.size).toBe(1)
 
       disp.dispose()
-      expect(saveEvent.didSaveCallbacks.size).toBe(0)
+      expect(orchestrator.didSaveCallbacks.size).toBe(0)
     })
 
     it('runs a single callback', () => {
@@ -38,7 +44,7 @@ describe('save event orchestrator', () => {
 
       runs(() => {
         const callback = () => { called = true; return Promise.resolve(true) }
-        saveEvent.onDidSave('test', callback)
+        orchestrator.register('test', callback)
       })
 
       waitsForPromise(() => {
@@ -59,8 +65,8 @@ describe('save event orchestrator', () => {
       runs(() => {
         const callback0 = () => { called[0] = true; return Promise.resolve(true) }
         const callback1 = () => { called[1] = true; return Promise.resolve(true) }
-        saveEvent.onDidSave('callback0', callback0)
-        saveEvent.onDidSave('callback1', callback1)
+        orchestrator.register('callback0', callback0)
+        orchestrator.register('callback1', callback1)
       })
 
       waitsForPromise(() => {
@@ -86,8 +92,8 @@ describe('save event orchestrator', () => {
       runs(() => {
         const callback0 = () => { called[0] = true; return Promise.reject(new Error()) }
         const callback1 = () => { called[1] = true; return Promise.resolve(true) }
-        saveEvent.onDidSave('callback0', callback0)
-        saveEvent.onDidSave('callback1', callback1)
+        orchestrator.register('callback0', callback0)
+        orchestrator.register('callback1', callback1)
       })
 
       waitsForPromise(() => {
@@ -104,22 +110,22 @@ describe('save event orchestrator', () => {
     })
   })
 
-  describe('onWillSave subscription', () => {
+  describe('register / onWillSave', () => {
     it('throws an error if a callback is not provided', () => {
-      expect(() => { saveEvent.onWillSave() }).toThrow()
+      expect(() => { orchestrator.register('test', undefined, 'willSave') }).toThrow()
     })
 
     it('throws an error if the callback is not a function', () => {
-      expect(() => { saveEvent.onWillSave(42) }).toThrow()
+      expect(() => { orchestrator.register('test', 42, 'willSave') }).toThrow()
     })
 
     it('registers a callback that can be unregistered', () => {
       const callback = () => {}
-      const disp = saveEvent.onWillSave(callback)
-      expect(saveEvent.willSaveCallbacks.size).toBe(1)
+      const disp = orchestrator.register('test', callback, 'willSave')
+      expect(orchestrator.willSaveCallbacks.size).toBe(1)
 
       disp.dispose()
-      expect(saveEvent.willSaveCallbacks.size).toBe(0)
+      expect(orchestrator.willSaveCallbacks.size).toBe(0)
     })
 
     it('runs a single callback', () => {
@@ -127,7 +133,7 @@ describe('save event orchestrator', () => {
 
       runs(() => {
         const callback = () => { called = true; return true }
-        saveEvent.onWillSave(callback)
+        orchestrator.register('test', callback, 'willSave')
       })
 
       waitsForPromise(() => {
@@ -148,8 +154,8 @@ describe('save event orchestrator', () => {
       runs(() => {
         const callback0 = () => { called[0] = true; return true }
         const callback1 = () => { called[1] = true; return true }
-        saveEvent.onWillSave(callback0)
-        saveEvent.onWillSave(callback1)
+        orchestrator.register('test', callback0, 'willSave')
+        orchestrator.register('test', callback1, 'willSave')
       })
 
       waitsForPromise(() => {
@@ -171,8 +177,8 @@ describe('save event orchestrator', () => {
       runs(() => {
         const callback0 = () => { called[0] = true; return false }
         const callback1 = () => { called[1] = true; return true }
-        saveEvent.onWillSave(callback0)
-        saveEvent.onWillSave(callback1)
+        orchestrator.register('test', callback0, 'willSave')
+        orchestrator.register('test', callback1, 'willSave')
       })
 
       waitsForPromise(() => {
