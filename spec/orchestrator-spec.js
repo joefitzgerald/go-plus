@@ -2,7 +2,7 @@
 /* eslint-env jasmine */
 
 import path from 'path'
-import SaveEventOrchestrator from './../lib/save-event'
+import SaveEventOrchestrator from './../lib/orchestrator'
 
 describe('save event orchestrator', () => {
   let saveEvent = null
