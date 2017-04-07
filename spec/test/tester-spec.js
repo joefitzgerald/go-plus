@@ -107,39 +107,6 @@ describe('tester', () => {
         expect(range.end.row).toBe(6)
         expect(range.end.column).toBe(1)
       })
-
-      p = tester.runTests(editor)
-
-      waitsForPromise(() => { return p })
-
-      runs(() => {
-        let layerids = tester.markedEditors.get(editor.id).split(',')
-        let coveredLayer = editor.getMarkerLayer(layerids[0])
-        let uncoveredLayer = editor.getMarkerLayer(layerids[1])
-        expect(coveredLayer).toBeTruthy()
-        expect(uncoveredLayer).toBeTruthy()
-
-        let coveredmarkers = coveredLayer.getMarkers()
-        expect(coveredmarkers).toBeDefined()
-        expect(coveredmarkers.length).toBe(1)
-        expect(coveredmarkers[0]).toBeDefined()
-        let range = coveredmarkers[0].getBufferRange()
-        expect(range.start.row).toBe(8)
-        expect(range.start.column).toBe(20)
-        expect(range.end.row).toBe(10)
-        expect(range.end.column).toBe(1)
-
-        let uncoveredmarkers = uncoveredLayer.getMarkers()
-        expect(uncoveredmarkers).toBeDefined()
-        expect(uncoveredmarkers.length).toBe(1)
-        expect(uncoveredmarkers[0]).toBeDefined()
-        range = uncoveredmarkers[0].getBufferRange()
-        expect(range).toBeDefined()
-        expect(range.start.row).toBe(4)
-        expect(range.start.column).toBe(13)
-        expect(range.end.row).toBe(6)
-        expect(range.end.column).toBe(1)
-      })
     })
 
     it('clears coverage for go source', () => {
