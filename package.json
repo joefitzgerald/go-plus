@@ -106,70 +106,6 @@
     }
   },
   "configSchema": {
-    "panelDisplayMode": {
-      "title": "Panel Display Mode",
-      "description": "Control the behavior of the go-plus panel when a new Atom window is opened",
-      "type": "string",
-      "default": "open",
-      "enum": [
-        "open",
-        "closed"
-      ],
-      "order": 1
-    },
-    "panelOrientation": {
-      "title": "Panel Orientation",
-      "description": "Dock the panel to the bottom or right of the window",
-      "type": "string",
-      "default": "horizontal",
-      "enum": [
-        "horizontal",
-        "vertical"
-      ],
-      "order": 2
-    },
-    "panelFontSize": {
-      "title": "Panel Font Size",
-      "description": "Control the font size for content displayed in the panel",
-      "type": "string",
-      "default": "1.2em",
-      "order": 3
-    },
-    "maxPanelHeight": {
-      "title": "Maximum Panel Height",
-      "description": "When the panel orientation is horizontal, prevent the panel from occupying the entire window",
-      "type": "string",
-      "default": "50vh",
-      "order": 3
-    },
-    "minPanelHeight": {
-      "title": "Minimum Panel Width",
-      "description": "When the panel orientation is vertical, ensure the panel doesn't disappear when open",
-      "type": "string",
-      "default": "10vw",
-      "order": 7
-    },
-    "currentPanelHeight": {
-      "title": "Current Panel Height",
-      "description": "When the panel orientation is horizontal, the height of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
-      "type": "string",
-      "default": "15vh",
-      "order": 5
-    },
-    "maxPanelWidth": {
-      "title": "Maximum Panel Width",
-      "description": "When the panel orientation is vertical, prevent the panel from occupying the entire window",
-      "type": "string",
-      "default": "50vw",
-      "order": 6
-    },
-    "currentPanelWidth": {
-      "title": "Current Panel Width",
-      "description": "When the panel orientation is vertical, the width of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
-      "type": "string",
-      "default": "15vw",
-      "order": 8
-    },
     "disabledBundledPackages": {
       "title": "Disabled Bundled Packages",
       "description": "go-plus bundles some third party packages; if you indicate that you do not want to be prompted for package installation, this comma separated list of package names will be updated",
@@ -177,8 +113,84 @@
       "default": [],
       "items": {
         "type": "string"
-      },
-      "order": 9
+      }
+    },
+    "panel": {
+      "title": "Panel",
+      "type": "object",
+      "properties": {
+        "displayMode": {
+          "title": "Panel Display Mode",
+          "description": "Control the behavior of the go-plus panel when a new Atom window is opened",
+          "type": "string",
+          "default": "open",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "order": 1
+        },
+        "orientation": {
+          "title": "Panel Orientation",
+          "description": "Dock the panel to the bottom or right of the window",
+          "type": "string",
+          "default": "horizontal",
+          "enum": [
+            "horizontal",
+            "vertical"
+          ],
+          "order": 2
+        },
+        "focusOnFailure": {
+          "title": "Focus the go-plus panel on failure ",
+          "description": "If the panel is hidden, or the panel is showing a different tab, the panel will be expanded and the output tab focused when a failure occurs.",
+          "type": "boolean",
+          "default": true,
+          "order": 3
+        },
+        "fontSize": {
+          "title": "Panel Font Size",
+          "description": "Control the font size for content displayed in the panel",
+          "type": "string",
+          "default": "1.2em",
+          "order": 4
+        },
+        "maxHeight": {
+          "title": "Maximum Panel Height",
+          "description": "When the panel orientation is horizontal, prevent the panel from occupying the entire window",
+          "type": "string",
+          "default": "50vh",
+          "order": 5
+        },
+        "minHeight": {
+          "title": "Minimum Panel Width",
+          "description": "When the panel orientation is vertical, ensure the panel doesn't disappear when open",
+          "type": "string",
+          "default": "10vw",
+          "order": 6
+        },
+        "currentHeight": {
+          "title": "Current Panel Height",
+          "description": "When the panel orientation is horizontal, the height of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
+          "type": "string",
+          "default": "15vh",
+          "order": 7
+        },
+        "maxWidth": {
+          "title": "Maximum Panel Width",
+          "description": "When the panel orientation is vertical, prevent the panel from occupying the entire window",
+          "type": "string",
+          "default": "50vw",
+          "order": 8
+        },
+        "currentWidth": {
+          "title": "Current Panel Width",
+          "description": "When the panel orientation is vertical, the width of the panel (this is changed when you drag the panel to resize it, so the setting is preserved)",
+          "type": "string",
+          "default": "15vw",
+          "order": 9
+        }
+      }
     },
     "config": {
       "title": "Config",
@@ -441,13 +453,6 @@
             "gutter"
           ],
           "order": 7
-        },
-        "focusPanelIfTestsFail": {
-          "title": "Focus The go-plus Panel If Tests Fail",
-          "description": "If the panel is hidden, or the panel is showing a different tab, the panel will be expanded and the test tab focused when tests fail.",
-          "type": "boolean",
-          "default": true,
-          "order": 8
         }
       }
     }
