@@ -13,6 +13,10 @@
             "command": "golang:find-usage"
           },
           {
+            "label": "Implements",
+            "command": "golang:implements"
+          },
+          {
             "label": "Return From Definition",
             "command": "golang:godef-return"
           },
