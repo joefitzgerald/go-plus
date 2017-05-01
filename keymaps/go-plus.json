@@ -12,6 +12,7 @@
     "ctrl-alt-shift-g r": "golang:goreturns",
     "ctrl-alt-shift-g t": "golang:run-tests",
     "ctrl-alt-shift-g v": "golang:find-usage",
+    "ctrl-alt-shift-g b": "golang:implements",
     "ctrl-alt-shift-g x": "golang:hide-coverage",
     "alt-d": "golang:showdoc",
     "alt-r": "golang:gorename"
