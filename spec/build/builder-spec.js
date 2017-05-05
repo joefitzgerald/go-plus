@@ -32,6 +32,48 @@ describe('builder', () => {
     lifecycle.teardown()
   })
 
+  describe('build command', () => {
+    it('runs go build for code outside gopath', () => {
+      [{
+        gopath: 'C:\\Users\\jsmith\\go',
+        cwd: 'C:\\projects\\go\\test',
+        sep: '\\'
+      }, {
+        gopath: '/home/jsmith/go',
+        cwd: '/home/jsmith/go',
+        sep: '/'
+      }, {
+        gopath: '/home/jsmith/go',
+        cwd: '/home/jsmith/code/',
+        sep: '/'
+      }, {
+        gopath: '/Users/jsmith/go',
+        cwd: '/Users/jsmith/documents',
+        sep: '/'
+      }].forEach(({gopath, cwd, sep}) => {
+        expect(builder.buildCommand(gopath, cwd, sep)).toBe('build', cwd)
+      })
+    })
+
+    it('runs go install for code in gopath', () => {
+      [{
+        gopath: 'C:\\Users\\jsmith\\go',
+        cwd: 'C:\\Users\\jsmith\\go\\src\\github.com\\foo',
+        sep: '\\'
+      }, {
+        gopath: '/home/jsmith/go',
+        cwd: '/home/jsmith/go/src/bar',
+        sep: '/'
+      }, {
+        gopath: '/Users/jsmith/go',
+        cwd: '/Users/jsmith/go/src/github.com/foo/bar',
+        sep: '/'
+      }].forEach(({gopath, cwd, sep}) => {
+        expect(builder.buildCommand(gopath, cwd, sep)).toBe('install', cwd)
+      })
+    })
+  })
+
   describe('getMessages', () => {
     it('ignores duplicate errors', () => {
       // GIVEN the same results from both 'go install' and 'go test'
