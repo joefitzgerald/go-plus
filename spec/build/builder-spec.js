@@ -68,6 +68,10 @@ describe('builder', () => {
         gopath: '/Users/jsmith/go',
         cwd: '/Users/jsmith/go/src/github.com/foo/bar',
         sep: '/'
+      }, {
+        gopath: '/Users/jsmith/go/',
+        cwd: '/Users/jsmith/go/src/github.com/foo/bar',
+        sep: '/'
       }].forEach(({gopath, cwd, sep}) => {
         expect(builder.buildCommand(gopath, cwd, sep)).toBe('install', cwd)
       })
