@@ -96,10 +96,11 @@ describe('builder', () => {
 
       let message = messages[0]
       expect(message.name).toEqual('build')
-      expect(message.text.indexOf('syntax error: unexpected semicolon or newline, expecting comma or }') === 0).toBeTruthy()
-      expect(message.filePath.indexOf('the-file.go') > 0).toBeTruthy() // file is in the path
-      expect(message.filePath.indexOf('sample-project') > 0).toBeTruthy() // cwd is in the path
-      expect(message.row).toEqual('12')
+      console.log(message.excerpt)
+      expect(message.excerpt.indexOf('syntax error: unexpected semicolon or newline, expecting comma or }') === 0).toBeTruthy()
+      expect(message.location.file.indexOf('the-file.go') > 0).toBeTruthy() // file is in the path
+      expect(message.location.file.indexOf('sample-project') > 0).toBeTruthy() // cwd is in the path
+      expect(message.location.position.start.row).toEqual(11)
     })
   })
 })
