@@ -41,15 +41,17 @@ describe('gomodifytags', () => {
   })
 
   describe('when a file is open', () => {
+    let tempfile
     beforeEach(() => {
       runs(() => {
         source = path.join(__dirname, '..', 'fixtures', 'gomodifytags')
         target = path.join(gopath, 'src', 'gomodifytags')
         fs.copySync(source, target)
+        tempfile = path.join(target, 'foo.go')
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'foo.go')).then((e) => {
+        return atom.workspace.open(tempfile).then((e) => {
           editor = e
         })
       })
@@ -70,7 +72,7 @@ describe('gomodifytags', () => {
         const args = gomodifytags.buildArgs(editor, options, 'Add')
         expect(args.length).toBeGreaterThan(1)
         expect(args[0]).toBe('-file')
-        expect(args[1]).toBe('foo.go')
+        expect(args[1]).toBe(tempfile)
       })
 
       it('defaults to json if no tags are specified', () => {
