@@ -78,10 +78,10 @@ describe('formatter', () => {
         })
 
         it('does not format the file on save', () => {
-          runs(() => {
+          waitsForPromise(() => {
             const buffer = editor.getBuffer()
             buffer.setText(unformattedText)
-            buffer.save()
+            return buffer.save()
           })
 
           waitsFor(() => { return actual })
@@ -93,10 +93,10 @@ describe('formatter', () => {
         })
 
         it('formats the file on command', () => {
-          runs(() => {
+          waitsForPromise(() => {
             const buffer = editor.getBuffer()
             buffer.setText(unformattedText)
-            buffer.save()
+            return buffer.save()
           })
 
           waitsFor(() => {
@@ -127,10 +127,10 @@ describe('formatter', () => {
           atom.config.set('go-plus.format.tool', tool)
 
           it('formats on save using ' + tool, () => {
-            runs(() => {
+            waitsForPromise(() => {
               const buffer = editor.getBuffer()
               buffer.setText(unformattedText)
-              buffer.save()
+              return buffer.save()
             })
 
             waitsFor(() => {
