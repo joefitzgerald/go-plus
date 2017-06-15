@@ -5,6 +5,12 @@ import fs from 'fs'
 import path from 'path'
 import {lifecycle} from './../spec-helpers'
 
+function setTextAndSave (editor, text) {
+  const buffer = editor.getBuffer()
+  buffer.setText(unformattedText)
+  return Promise.resolve(buffer.save())
+}
+
 const nl = '\n'
 const unformattedText = 'package main' + nl + nl + 'func main()  {' + nl + '}' + nl
 const formattedText = 'package main' + nl + nl + 'func main() {' + nl + '}' + nl
@@ -78,10 +84,8 @@ describe('formatter', () => {
         })
 
         it('does not format the file on save', () => {
-          runs(() => {
-            const buffer = editor.getBuffer()
-            buffer.setText(unformattedText)
-            buffer.save()
+          waitsForPromise(() => {
+            return setTextAndSave(editor, unformattedText)
           })
 
           waitsFor(() => { return actual })
@@ -93,10 +97,8 @@ describe('formatter', () => {
         })
 
         it('formats the file on command', () => {
-          runs(() => {
-            const buffer = editor.getBuffer()
-            buffer.setText(unformattedText)
-            buffer.save()
+          waitsForPromise(() => {
+            return setTextAndSave(editor, unformattedText)
           })
 
           waitsFor(() => {
@@ -127,10 +129,8 @@ describe('formatter', () => {
           atom.config.set('go-plus.format.tool', tool)
 
           it('formats on save using ' + tool, () => {
-            runs(() => {
-              const buffer = editor.getBuffer()
-              buffer.setText(unformattedText)
-              buffer.save()
+            waitsForPromise(() => {
+              return setTextAndSave(editor, unformattedText)
             })
 
             waitsFor(() => {

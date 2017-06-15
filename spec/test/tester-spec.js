@@ -67,15 +67,24 @@ describe('tester', () => {
     })
 
     it('displays coverage for go source', () => {
-      let buffer = editor.getBuffer()
-      buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
-      buffer.save()
-      let testBuffer = testEditor.getBuffer()
-      testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
-      testBuffer.save()
-      let p = tester.runTests(editor)
+      let buffer
+      let testBuffer
 
-      waitsForPromise(() => { return p })
+      runs(() => {
+        buffer = editor.getBuffer()
+        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
+        testBuffer = testEditor.getBuffer()
+        testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
+      })
+
+      waitsForPromise(() => {
+        return Promise.all([
+          buffer.save(),
+          testBuffer.save()
+        ])
+      })
+
+      waitsForPromise(() => { return tester.runTests(editor) })
 
       runs(() => {
         const layers = tester.markedEditors.get(editor.id)
@@ -110,15 +119,24 @@ describe('tester', () => {
     })
 
     it('clears coverage for go source', () => {
-      let buffer = editor.getBuffer()
-      buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
-      buffer.save()
-      let testBuffer = testEditor.getBuffer()
-      testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
-      testBuffer.save()
-      let p = tester.runTests(editor)
+      let buffer
+      let testBuffer
 
-      waitsForPromise(() => { return p })
+      runs(() => {
+        buffer = editor.getBuffer()
+        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
+        testBuffer = testEditor.getBuffer()
+        testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
+      })
+
+      waitsForPromise(() => {
+        return Promise.all([
+          buffer.save(),
+          testBuffer.save()
+        ])
+      })
+
+      waitsForPromise(() => { return tester.runTests(editor) })
 
       runs(() => {
         let layerids = tester.markedEditors.get(editor.id).split(',')
