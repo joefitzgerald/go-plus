@@ -5,6 +5,12 @@ import fs from 'fs'
 import path from 'path'
 import {lifecycle} from './../spec-helpers'
 
+function setTextAndSave (editor, text) {
+  const buffer = editor.getBuffer()
+  buffer.setText(unformattedText)
+  return Promise.resolve(buffer.save())
+}
+
 const nl = '\n'
 const unformattedText = 'package main' + nl + nl + 'func main()  {' + nl + '}' + nl
 const formattedText = 'package main' + nl + nl + 'func main() {' + nl + '}' + nl
@@ -79,9 +85,7 @@ describe('formatter', () => {
 
         it('does not format the file on save', () => {
           waitsForPromise(() => {
-            const buffer = editor.getBuffer()
-            buffer.setText(unformattedText)
-            return buffer.save()
+            return setTextAndSave(editor, unformattedText)
           })
 
           waitsFor(() => { return actual })
@@ -94,9 +98,7 @@ describe('formatter', () => {
 
         it('formats the file on command', () => {
           waitsForPromise(() => {
-            const buffer = editor.getBuffer()
-            buffer.setText(unformattedText)
-            return buffer.save()
+            return setTextAndSave(editor, unformattedText)
           })
 
           waitsFor(() => {
@@ -128,9 +130,7 @@ describe('formatter', () => {
 
           it('formats on save using ' + tool, () => {
             waitsForPromise(() => {
-              const buffer = editor.getBuffer()
-              buffer.setText(unformattedText)
-              return buffer.save()
+              return setTextAndSave(editor, unformattedText)
             })
 
             waitsFor(() => {
