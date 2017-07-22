@@ -540,11 +540,11 @@ describe('gocodeprovider', () => {
   })
 
   describe('generateSnippet', () => {
-    let t = (context) => {
-      let result = provider.generateSnippet(context.input.name, context.input.type)
+    const t = (context) => {
+      const result = provider.generateSnippet(context.input.name, context.input.type)
       expect(result).toBeTruthy()
-      expect(result).toBeTruthy()
-      expect(result).toEqual(context.result)
+      expect(result.displayText).toEqual(context.result.displayText)
+      expect(result.snippet).toEqual(context.result.snippet)
     }
 
     it('parses the function into args and returns arrays', () => {
@@ -630,6 +630,49 @@ describe('gocodeprovider', () => {
         result: {
           snippet: 'ServeFunc(${1:pattern string}, ${2:func(${3:w} http.ResponseWriter, ${4:r} *http.Request) {\n\t$5\n\\}})$0', // eslint-disable-line no-template-curly-in-string
           displayText: 'ServeFunc(pattern string, func(w http.ResponseWriter, r *http.Request))'
+        }
+      })
+      t({
+        input: {
+          name: 'It',
+          type: {
+            match: ['func(text string, body interface{}, timeout ...float64) bool', 'text string', 'body interface{}', 'timeout ...float64', 'bool'],
+            isFunc: true,
+            name: 'func(text string, body interface{}, timeout ...float64) bool',
+            args: [
+              {
+                isFunc: false,
+                name: 'text string',
+                identifier: 'text',
+                type: 'string'
+              },
+              {
+                isFunc: false,
+                name: 'body interface{}',
+                identifier: 'body',
+                type: 'interface{}'
+              },
+              {
+                isFunc: false,
+                name: 'timeout ...float64',
+                identifier: 'timeout',
+                type: '...float64'
+              }
+            ],
+            returns: [
+              {
+                isFunc: false,
+                name: 'bool',
+                identifier: '',
+                type: 'bool'
+              }
+            ]
+          }
+        },
+        result: {
+          // snippet: 'It(${1:text string}, ${2:body interface{\\}}, ${3:timeout ...float64})$0',
+          snippet: 'It(${1:text string}, ${2:body interface{\\}})$0', // eslint-disable-line no-template-curly-in-string
+          displayText: 'It(text string, body interface{}, timeout ...float64)'
         }
       })
       t({
