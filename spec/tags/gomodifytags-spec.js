@@ -5,7 +5,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import {lifecycle} from './../spec-helpers'
 
-describe('gomodifytags', () => {
+fdescribe('gomodifytags', () => {
   let gopath = null
   let editor = null
   let gomodifytags = null
@@ -63,7 +63,7 @@ describe('gomodifytags', () => {
       beforeEach(() => {
         options = {
           tags: [{tag: 'xml', option: null}, {tag: 'bson', option: null}],
-          useSnakeCase: true,
+          transform: 'snakecase',
           sortTags: false
         }
       })
@@ -118,7 +118,7 @@ describe('gomodifytags', () => {
       })
 
       it('uses the -transform flag when camel case is specified', () => {
-        options.useSnakeCase = false
+        options.transform = 'camelcase'
         editor.setCursorBufferPosition([4, 6])
         const args = gomodifytags.buildArgs(editor, options, 'Add')
         const i = args.indexOf('-transform')
@@ -193,7 +193,7 @@ describe('gomodifytags', () => {
         waitsForPromise(() => {
           return gomodifytags.modifyTags(editor, {
             tags: [{tag: 'json', option: 'omitempty'}],
-            useSnakeCase: true,
+            transform: 'snakecase',
             sortTags: false
           }, 'Add', command).then((r) => {
             result = r
