@@ -5,7 +5,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import {lifecycle} from './../spec-helpers'
 
-fdescribe('gomodifytags', () => {
+describe('gomodifytags', () => {
   let gopath = null
   let editor = null
   let gomodifytags = null
