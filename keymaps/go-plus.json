@@ -5,6 +5,7 @@
     "ctrl-alt-shift-g u": "golang:update-tools"
   },
   "atom-text-editor[data-grammar~=\"go\"]:not([mini])": {
+    "ctrl-alt-shift-g c": "golang:toggle-test-with-coverage",
     "ctrl-alt-shift-g f": "golang:gofmt",
     "ctrl-alt-shift-g i": "golang:goimports",
     "ctrl-alt-shift-g k": "golang:add-tags",
