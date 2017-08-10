@@ -66,7 +66,7 @@ describe('tester', () => {
   })
 
   describe('when run tests on save is enabled, but compile on save is disabled', () => {
-    it('does not run tests', () => {
+    it('runs tests', () => {
       let buffer
       let testBuffer
 
@@ -93,7 +93,7 @@ describe('tester', () => {
       })
 
       runs(() => {
-        expect(tester.runTests).not.toHaveBeenCalled()
+        expect(tester.runTests).toHaveBeenCalled()
       })
     })
   })
