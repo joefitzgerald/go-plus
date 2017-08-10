@@ -9,6 +9,11 @@ describe('tester', () => {
   let gopath = null
   let tester = null
 
+  let filePath
+  let testFilePath
+  let editor
+  let testEditor
+
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
@@ -33,36 +38,96 @@ describe('tester', () => {
     waitsFor(() => {
       return lifecycle.mainModule.provideGoConfig() !== false
     })
-  })
 
-  afterEach(() => {
-    lifecycle.teardown()
-  })
-
-  describe('when run coverage on save is disabled', () => {
-    let filePath
-    let testFilePath
-    let editor
-    let testEditor
-
-    beforeEach(() => {
-      atom.config.set('go-plus.test.runTestsOnSave', false)
+    runs(() => {
       filePath = path.join(gopath, 'src', 'github.com', 'testuser', 'example', 'go-plus.go')
       testFilePath = path.join(gopath, 'src', 'github.com', 'testuser', 'example', 'go-plus_test.go')
       fs.ensureDirSync(path.dirname(filePath))
       fs.ensureDirSync(path.dirname(testFilePath))
       fs.writeFileSync(filePath, '')
       fs.writeFileSync(testFilePath, '')
-      waitsForPromise(() => {
-        return atom.workspace.open(filePath).then((e) => {
-          editor = e
-        })
+    })
+
+    waitsForPromise(() => {
+      return atom.workspace.open(filePath).then((e) => {
+        editor = e
+      })
+    })
+
+    waitsForPromise(() => {
+      return atom.workspace.open(testFilePath).then((e) => {
+        testEditor = e
+      })
+    })
+  })
+
+  afterEach(() => {
+    lifecycle.teardown()
+  })
+
+  describe('when run tests on save is enabled, but compile on save is disabled', () => {
+    it('does not run tests', () => {
+      let buffer
+      let testBuffer
+
+      runs(() => {
+        atom.config.set('go-plus.config.compileOnSave', false)
+        atom.config.set('go-plus.test.runTestsOnSave', true)
+
+        buffer = editor.getBuffer()
+        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
+        testBuffer = testEditor.getBuffer()
+        testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(testFilePath).then((e) => {
-          testEditor = e
-        })
+        return Promise.all([
+          buffer.save(),
+          testBuffer.save()
+        ])
+      })
+
+      waitsForPromise(() => {
+        spyOn(tester, 'runTests').andCallThrough()
+        return tester.handleSaveEvent()
+      })
+
+      runs(() => {
+        expect(tester.runTests).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('when run tests on save is disabled', () => {
+    beforeEach(() => {
+      atom.config.set('go-plus.test.runTestsOnSave', false)
+    })
+
+    it('does not run tests automatically on save', () => {
+      let buffer
+      let testBuffer
+
+      runs(() => {
+        buffer = editor.getBuffer()
+        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
+        testBuffer = testEditor.getBuffer()
+        testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
+      })
+
+      waitsForPromise(() => {
+        return Promise.all([
+          buffer.save(),
+          testBuffer.save()
+        ])
+      })
+
+      waitsForPromise(() => {
+        spyOn(tester, 'runTests').andCallThrough()
+        return tester.handleSaveEvent()
+      })
+
+      runs(() => {
+        expect(tester.runTests).not.toHaveBeenCalled()
       })
     })
 

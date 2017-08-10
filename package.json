@@ -203,6 +203,13 @@
           "type": "string",
           "default": "",
           "order": 1
+        },
+        "compileOnSave": {
+          "title": "Compile on Save",
+          "description": "Compile the current package when a file is saved and provide linter errors.",
+          "type": "boolean",
+          "default": true,
+          "order": 2
         }
       }
     },
