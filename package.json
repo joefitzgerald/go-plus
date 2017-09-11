@@ -59,7 +59,7 @@
     "etch": "0.12.4",
     "etch-octicon": "^1.0.0",
     "fs-extra": "^3.0.0",
-    "fuzzaldrin-plus": "^0.4.1",
+    "fuzzaldrin-plus": "^0.5.0",
     "lodash": "^4.17.4",
     "semver": "^5.3.0",
     "temp": "^0.8.3"
