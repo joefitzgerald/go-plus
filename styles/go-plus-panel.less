@@ -2,6 +2,12 @@
 
 // Panel --------------------
 
+.go-plus-panel.is-narrow {
+  .panel-nav-label {
+    display: none;
+  }
+}
+
 .go-plus-panel {
   position: relative;
   display: flex;
@@ -37,7 +43,12 @@
     &::-webkit-scrollbar {
       display: none;
     }
+
+    &-label {
+      display: inline;
+    }
   }
+
   .panel-nav-item {
     display: block;
     color: @text-color-subtle;
