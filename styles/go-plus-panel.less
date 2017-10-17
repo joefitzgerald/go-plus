@@ -2,26 +2,25 @@
 
 // Panel --------------------
 
+.go-plus-panel.is-narrow {
+  .panel-nav-label {
+    display: none;
+  }
+}
+
 .go-plus-panel {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   -webkit-user-select: none;
 
-  &-resize-handle {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 4px;
-    cursor: row-resize;
-    z-index: 3;
-  }
-
   .panel-heading {
+    border: none;
+    text-align: center;
+    flex-direction: column;
     flex: 0 0 auto;
     display: flex;
-    align-items: center;
+    align-items: left;
     padding: 0;
     cursor: default;
     background-color: @tool-panel-background-color;
@@ -31,11 +30,8 @@
     white-space: pre;
   }
 
-  .panel-group {
-    padding: @component-padding/2 @component-padding;
-  }
-
   .panel-nav {
+    border: none;
     flex: 1 1 0;
     padding: 0;
     margin-bottom: -1px; // cover border
@@ -47,12 +43,17 @@
     &::-webkit-scrollbar {
       display: none;
     }
+
+    &-label {
+      display: inline;
+    }
   }
+
   .panel-nav-item {
-    display: inline-block;
+    display: block;
     color: @text-color-subtle;
     border: 1px solid transparent;
-    border-width: 0 1px;
+    border-width: 1px 0;
     line-height: 1;
     text-align: center;
     padding: @component-padding/1.5 @component-padding;
