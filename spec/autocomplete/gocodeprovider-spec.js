@@ -41,7 +41,7 @@ describe('gocodeprovider', () => {
       jasmine.attachToDOM(workspaceElement)
 
       // autocomplete-plus
-      autocompleteManager = autocompleteplusMain.getAutocompleteManager()
+      autocompleteManager = autocompleteplusMain.autocompleteManager
       spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
       spyOn(autocompleteManager, 'showSuggestionList').andCallThrough()
       spyOn(autocompleteManager, 'hideSuggestionList').andCallThrough()
