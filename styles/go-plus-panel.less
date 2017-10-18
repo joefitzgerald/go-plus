@@ -35,7 +35,6 @@
     flex: 1 1 0;
     padding: 0;
     margin-bottom: -1px; // cover border
-    border-left: 1px solid @base-border-color;
     border-right: 1px solid @base-border-color;
     white-space: nowrap;
     overflow-x: auto;
@@ -66,6 +65,9 @@
       color: @text-color-selected;
       border-color: @panel-heading-border-color;
       background-color: @base-background-color;
+    }
+    &:first-child {
+      border-top: 0;
     }
   }
 
