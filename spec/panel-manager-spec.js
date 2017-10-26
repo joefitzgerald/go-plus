@@ -38,20 +38,13 @@ describe('panel manager', () => {
 
     beforeEach(() => {
       view = new EmptyTabView()
-      model = { key: 'foo' }
+      model = { key: 'foo', tab: { name: 'dummy' } }
 
       disp = pm.registerViewProvider(view, model)
     })
 
     afterEach(() => {
       disp.dispose()
-    })
-
-    it('provides the model with a requestFocus func that returns a promise', () => {
-      expect(typeof model.requestFocus).toBe('function')
-
-      const result = model.requestFocus()
-      expect(typeof result.then).toBe('function')
     })
 
     it('records the view provider by key', () => {
