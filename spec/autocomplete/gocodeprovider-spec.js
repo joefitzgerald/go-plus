@@ -182,7 +182,6 @@ describe('gocodeprovider', () => {
           type: {
             isFunc: true,
             name: 'func(t *testing.T)',
-            match: ['func(t *testing.T)', 't *testing.T', undefined],
             args: [{
               isFunc: false,
               name: 't *testing.T',
@@ -213,7 +212,6 @@ describe('gocodeprovider', () => {
           type: {
             isFunc: true,
             name: 'func(t *testing.T)',
-            match: ['func(t *testing.T)', 't *testing.T', undefined],
             args: [{
               isFunc: false,
               name: 't *testing.T',
@@ -244,7 +242,6 @@ describe('gocodeprovider', () => {
           type: {
             isFunc: true,
             name: 'func(http.ResponseWriter, *http.Request)',
-            match: ['func(http.ResponseWriter, *http.Request)', 'http.ResponseWriter, *http.Request', undefined],
             args: [{
               isFunc: false,
               name: 'http.ResponseWriter',
@@ -275,7 +272,6 @@ describe('gocodeprovider', () => {
           type: {
             isFunc: true,
             name: 'func(http.ResponseWriter, *http.Request)',
-            match: ['func(http.ResponseWriter, *http.Request)', 'http.ResponseWriter, *http.Request', undefined],
             args: [{
               isFunc: false,
               name: 'http.ResponseWriter',
@@ -296,7 +292,6 @@ describe('gocodeprovider', () => {
           type: {
             isFunc: true,
             name: 'func(http.ResponseWriter, *http.Request)',
-            match: ['func(http.ResponseWriter, *http.Request)', 'http.ResponseWriter, *http.Request', undefined],
             args: [{
               isFunc: false,
               name: 'http.ResponseWriter',
@@ -327,7 +322,6 @@ describe('gocodeprovider', () => {
           type: {
             isFunc: true,
             name: 'func(w http.ResponseWriter, r *http.Request)',
-            match: ['func(w http.ResponseWriter, r *http.Request)', 'w http.ResponseWriter, r *http.Request', undefined],
             args: [{
               isFunc: false,
               name: 'w http.ResponseWriter',
@@ -348,7 +342,6 @@ describe('gocodeprovider', () => {
           type: {
             isFunc: true,
             name: 'func(w http.ResponseWriter, r *http.Request)',
-            match: ['func(w http.ResponseWriter, r *http.Request)', 'w http.ResponseWriter, r *http.Request', undefined],
             args: [{
               isFunc: false,
               name: 'w http.ResponseWriter',
@@ -525,7 +518,6 @@ describe('gocodeprovider', () => {
           type: {
             isFunc: true,
             name: 'func(p *T)',
-            match: ['func(p *T)', 'p *T', undefined],
             args: [{
               isFunc: false,
               name: 'p *T',
@@ -552,7 +544,6 @@ describe('gocodeprovider', () => {
         input: {
           name: 'Print',
           type: {
-            match: ['func()', undefined, undefined],
             isFunc: true,
             name: 'func()',
             args: [],
@@ -568,7 +559,6 @@ describe('gocodeprovider', () => {
         input: {
           name: 'Print',
           type: {
-            match: ['func(x int) int', 'x int', 'int'],
             isFunc: true,
             name: 'func(x int) int',
             args: [{
@@ -594,7 +584,6 @@ describe('gocodeprovider', () => {
         input: {
           name: 'ServeFunc',
           type: {
-            match: ['func(pattern string, func(w http.ResponseWriter, r *http.Request))', 'pattern string, func(w http.ResponseWriter, r *http.Request)', undefined],
             isFunc: true,
             name: 'func(pattern string, func(w http.ResponseWriter, r *http.Request))',
             args: [{
@@ -609,7 +598,6 @@ describe('gocodeprovider', () => {
               type: {
                 isFunc: true,
                 name: 'func(w http.ResponseWriter, r *http.Request)',
-                match: ['func(w http.ResponseWriter, r *http.Request)', 'w http.ResponseWriter, r *http.Request', undefined],
                 args: [{
                   isFunc: false,
                   name: 'w http.ResponseWriter',
@@ -636,7 +624,6 @@ describe('gocodeprovider', () => {
         input: {
           name: 'It',
           type: {
-            match: ['func(text string, body interface{}, timeout ...float64) bool', 'text string', 'body interface{}', 'timeout ...float64', 'bool'],
             isFunc: true,
             name: 'func(text string, body interface{}, timeout ...float64) bool',
             args: [
@@ -679,7 +666,6 @@ describe('gocodeprovider', () => {
         input: {
           name: 'Bleh',
           type: {
-            match: ['func(f func() int)', 'f func() int', undefined],
             isFunc: true,
             name: 'func(f func() int)',
             args: [{
@@ -689,7 +675,6 @@ describe('gocodeprovider', () => {
               type: {
                 isFunc: true,
                 name: 'func() int',
-                match: ['func() int', undefined, 'int'],
                 args: [],
                 returns: [{
                   isFunc: false,
@@ -771,7 +756,7 @@ describe('gocodeprovider', () => {
         atom.config.set('go-plus.autocomplete.snippetMode', 'nameAndType')
       })
 
-      it('generates snippets with name and type argument placeholders', () => {
+      fit('generates snippets with name and type argument placeholders', () => {
         let suggestions = null
         runs(() => {
           expect(provider).toBeDefined()
