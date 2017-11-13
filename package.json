@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "ansi-style-parser": "^1.1.0",
-    "etch": "0.12.6",
+    "etch": "0.12.7",
     "etch-octicon": "^1.0.0",
     "fs-extra": "^4.0.2",
     "fuzzaldrin-plus": "^0.5.0",
