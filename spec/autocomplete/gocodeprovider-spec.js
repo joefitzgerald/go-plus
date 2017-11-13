@@ -756,7 +756,7 @@ describe('gocodeprovider', () => {
         atom.config.set('go-plus.autocomplete.snippetMode', 'nameAndType')
       })
 
-      fit('generates snippets with name and type argument placeholders', () => {
+      it('generates snippets with name and type argument placeholders', () => {
         let suggestions = null
         runs(() => {
           expect(provider).toBeDefined()
