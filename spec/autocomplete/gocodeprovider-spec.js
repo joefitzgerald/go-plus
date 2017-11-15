@@ -41,7 +41,7 @@ describe('gocodeprovider', () => {
       jasmine.attachToDOM(workspaceElement)
 
       // autocomplete-plus
-      autocompleteManager = autocompleteplusMain.getAutocompleteManager()
+      autocompleteManager = autocompleteplusMain.autocompleteManager
       spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
       spyOn(autocompleteManager, 'showSuggestionList').andCallThrough()
       spyOn(autocompleteManager, 'hideSuggestionList').andCallThrough()
@@ -888,6 +888,47 @@ describe('gocodeprovider', () => {
           expect(suggestions[0].type).toBe('function')
           expect(suggestions[0].leftLabel).toBe('(n int, err error)')
           editor.backspace()
+        })
+      })
+    })
+
+    describe('provides suggestions for unimported packages', () => {
+      beforeEach(() => {
+        atom.config.set('go-plus.autocomplete.snippetMode', 'nameAndType')
+      })
+
+      it('provides the exported types of the unimported package', () => {
+        let suggestions = null
+        runs(() => {
+          expect(provider).toBeDefined()
+          expect(provider.getSuggestions).not.toHaveBeenCalled()
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          editor.setCursorScreenPosition([7, 0])
+
+          // get suggestions for package 'github.com/sqs/goreturns/returns'
+          editor.insertText('returns')
+          advanceClock(completionDelay)
+          editor.insertText('.')
+          advanceClock(completionDelay)
+        })
+
+        waitsFor(() => {
+          return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+        })
+
+        waitsForPromise(() => {
+          return suggestionsPromise.then((s) => {
+            suggestions = s
+          })
+        })
+
+        runs(() => {
+          expect(provider.getSuggestions).toHaveBeenCalled()
+          expect(provider.getSuggestions.calls.length).toBe(1)
+          expect(suggestions).toBeTruthy()
+          expect(suggestions.length).toBeGreaterThan(0)
+          expect(suggestions[0]).toBeTruthy()
+          expect(suggestions[0].displayText).toBe('Process(pkgDir string, filename string, src []byte, opt *returns.Options)')
         })
       })
     })
