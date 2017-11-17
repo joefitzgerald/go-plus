@@ -35,6 +35,7 @@ install:
   - go get -u github.com/rogpeppe/godef
   - go get -u github.com/fatih/gomodifytags
   - go get -u golang.org/x/tools/cmd/guru
+  - go get -u github.com/tpng/gopkgs
 
 build_script:
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/atom/ci/master/build-package.ps1'))
