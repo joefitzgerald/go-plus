@@ -108,7 +108,7 @@ describe('executor', () => {
 
     it('handles and returns an ENOENT error if the command was not found', () => {
       waitsForPromise(() => {
-        return executor.exec('nonexistentcommand', []).then((r) => {
+        return executor.exec('nonexistentcommand', [], executor.getOptions()).then((r) => {
           result = r
         }).catch((e) => { error = e })
       })
@@ -145,7 +145,7 @@ describe('executor', () => {
         command = path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe')
       }
 
-      let result = executor.execSync(command)
+      let result = executor.execSync(command, [], executor.getOptions())
       expect(result.exitcode).toBeDefined()
       expect(result.exitcode).toBe(0)
       expect(result.stdout).toBeDefined()
@@ -156,7 +156,7 @@ describe('executor', () => {
     })
 
     it('returns a message if the command was not found', () => {
-      let result = executor.execSync('nonexistentcommand')
+      let result = executor.execSync('nonexistentcommand', [], executor.getOptions())
       expect(result.exitcode).toBeDefined()
       expect(result.exitcode).toBe(127)
       expect(result.stdout).toBeDefined()

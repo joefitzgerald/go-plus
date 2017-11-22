@@ -24,6 +24,10 @@
   ],
   "version": "5.6.0",
   "main": "./lib/main",
+  "scripts": {
+    "flow": "flow",
+    "lint": "standard"
+  },
   "license": "Apache-2.0",
   "engines": {
     "atom": ">=1.12.7 <2.0.0",
@@ -54,6 +58,18 @@
       "golang:gorename"
     ]
   },
+  "atomTranspilers": [
+    {
+      "glob": "{lib,test}/**/*.js",
+      "transpiler": "atom-babel6-transpiler",
+      "options": {
+        "cacheKeyFiles": [
+          "package.json",
+          ".babelrc"
+        ]
+      }
+    }
+  ],
   "dependencies": {
     "ansi-style-parser": "^1.1.0",
     "etch": "0.12.7",
@@ -66,7 +82,17 @@
     "temp": "^0.8.3"
   },
   "devDependencies": {
-    "standard": "^10.0.2"
+    "atom-babel6-transpiler": "^1.1.2",
+    "babel-eslint": "^8.0.1",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "flow-bin": "^0.57.3",
+    "standard": "^10.0.3"
   },
   "providedServices": {
     "go-config": {
@@ -418,6 +444,10 @@
       "advanceClock",
       "atom",
       "waitsForPromise"
-    ]
+    ],
+    "plugins": [
+      "flowtype"
+    ],
+    "parser": "babel-eslint"
   }
 }
