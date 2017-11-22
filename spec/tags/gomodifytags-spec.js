@@ -98,7 +98,7 @@ describe('gomodifytags', () => {
         const args = gomodifytags.buildArgs(editor, options, 'Add')
         expect(args.length).toBeGreaterThan(3)
         expect(args[2]).toBe('-offset')
-        expect(args[3]).toBe(54)
+        expect(args[3]).toBe('54')
       })
 
       it('uses the -line flag when there is a selection', () => {

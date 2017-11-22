@@ -884,6 +884,9 @@ describe('gocodeprovider', () => {
 
       it('provides the exported types of the unimported package', () => {
         let suggestions = null
+
+        waitsFor(() => provider.allPkgs.size > 0)
+
         runs(() => {
           expect(provider).toBeDefined()
           expect(provider.getSuggestions).not.toHaveBeenCalled()
