@@ -95,6 +95,8 @@ describe('go-get', () => {
         let stat = fs.statSync(gocodebinary)
         expect(stat.size).toBeGreaterThan(0)
         stat = fs.statSync(goimportsbinary)
+        expect(stat.size).toBeGreaterThan(0)
+
         expect(outcome).toBeTruthy()
         expect(outcome.success).toBe(true)
         expect(outcome.results).toBeTruthy()

@@ -49,7 +49,7 @@ func main() {
 			get(os.Args[3])
 		} else {
 			get(os.Args[2])
-		}		
+		}
 	}
 }
 
@@ -70,7 +70,11 @@ func get(packagePath string) {
 		suffix = ".exe"
 	}
 
-	ioutil.WriteFile(path.Join(os.Getenv("GOPATH"), "bin", p+suffix), []byte("dummy file"), 0755)
+	bin := path.Join(os.Getenv("GOPATH"), "bin", p+suffix)
+	if err := ioutil.WriteFile(bin, []byte("dummy file"), 0755); err != nil {
+		fmt.Printf("couldnt write to bin:", err)
+		os.Exit(1)
+	}
 }
 
 func readGo() Go {
