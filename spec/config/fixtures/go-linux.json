@@ -12,5 +12,5 @@
     "GOGCCFLAGS": "-fPIC -m64 -pthread -fmessage-length=0",
     "CXX": "g++",
     "CGO_ENABLED": "1",
-    "VERSION": "go1.7.3"
+    "VERSION": "go1.9.2"
 }

@@ -290,7 +290,7 @@ describe('Locator', () => {
     })
   })
 
-  describe('when the path includes a directory with go 1.7.3 in it', () => {
+  describe('when the path includes a directory with go executable in it', () => {
     let godir = null
     let gopathdir = null
     let gorootdir = null
@@ -299,6 +299,7 @@ describe('Locator', () => {
     let go = null
     let gorootbintools = null
     let gotooldirtools = null
+    let version = null
     beforeEach(() => {
       gorootbintools = ['go', 'godoc', 'gofmt']
       gotooldirtools = ['addr2line', 'cgo', 'dist', 'link', 'pack', 'trace', 'api', 'compile', 'doc', 'nm', 'pprof', 'vet', 'asm', 'cover', 'fix', 'objdump', 'yacc']
@@ -310,11 +311,12 @@ describe('Locator', () => {
       gotooldir = path.join(gorootdir, 'pkg', 'tool', platform + '_' + arch)
       fs.mkdirsSync(gotooldir)
       let fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
-      let go151json = path.join(__dirname, 'fixtures', 'go-151-' + platform + '.json')
+      let gojson = path.join(__dirname, 'fixtures', 'go-' + platform + '.json')
       let fakego = path.join(__dirname, 'tools', 'go', fakeexecutable)
       go = path.join(gorootbindir, 'go' + executableSuffix)
       fs.copySync(fakego, go)
-      fs.copySync(go151json, path.join(gorootbindir, 'go.json'))
+      fs.copySync(gojson, path.join(gorootbindir, 'go.json'))
+      version = JSON.parse(fs.readFileSync(gojson), 'utf8').VERSION.slice(2)
       process.env[pathkey] = godir
       process.env['GOPATH'] = gopathdir
       process.env['GOROOT'] = gorootdir
@@ -347,9 +349,9 @@ describe('Locator', () => {
       runs(() => {
         expect(runtimes).toBeTruthy()
         expect(runtimes.length).toBeGreaterThan(0)
-        expect(runtimes[0].name).toBe('go1.7.3')
-        expect(runtimes[0].semver).toBe('1.7.3')
-        expect(runtimes[0].version).toBe('go version go1.7.3 ' + platform + '/' + arch)
+        expect(runtimes[0].name).toBe('go' + version)
+        expect(runtimes[0].semver).toBe(version)
+        expect(runtimes[0].version).toBe('go version go' + version + ' ' + platform + '/' + arch)
         expect(runtimes[0].path).toBe(go)
         expect(runtimes[0].GOARCH).toBe(arch)
         expect(runtimes[0].GOBIN).toBe('')
@@ -460,7 +462,7 @@ describe('Locator', () => {
       gopathbindir = path.join(gopathdir, 'bin')
       fs.mkdirSync(gopathbindir)
       process.env['GOPATH'] = gopathdir
-      process.env[pathkey] = pathdir + path.delimiter + process.env['PATH']
+      process.env[pathkey] = pathdir + path.delimiter + process.env[pathkey]
       for (let tool of pathtools) {
         fs.writeFileSync(path.join(pathdir, tool + executableSuffix), '.', {encoding: 'utf8', mode: 511})
       }

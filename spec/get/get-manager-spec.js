@@ -42,9 +42,12 @@ describe('go-get', () => {
         pathkey = 'Path'
       }
       const fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
-      const fakego = path.join(__dirname, '..', 'config', 'tools', 'go', fakeexecutable)
+      const configPath = path.join(__dirname, '..', 'config')
+      const fakego = path.join(configPath, 'tools', 'go', fakeexecutable)
       go = path.join(gorootbin, 'go' + executableSuffix)
       fs.copySync(fakego, go)
+      let gojson = path.join(configPath, 'fixtures', 'go-' + platform + '.json')
+      fs.copySync(gojson, path.join(gorootbin, 'go.json'))
       process.env[pathkey] = gorootbin
       process.env['GOPATH'] = gopath
       process.env['GOROOT'] = goroot
