@@ -114,18 +114,12 @@ describe('executor', () => {
       })
 
       runs(() => {
-        expect(result).toBeDefined()
         expect(result).toBeTruthy()
-        expect(result.error).toBeDefined()
         expect(result.error).toBeTruthy()
-        expect(result.error.code).toBe('ENOENT')
         expect(result.error.errno).toBe('ENOENT')
         expect(result.error.message).toBe('spawn nonexistentcommand ENOENT')
         expect(result.error.path).toBe('nonexistentcommand')
-        expect(result.exitcode).toBeDefined()
-        expect(result.exitcode).not.toBe(0)
         expect(result.exitcode).toBe(127)
-        expect(result.stdout).toBeDefined()
         expect(result.stdout).toBe('')
         expect(result.stderr).toBeDefined()
         if (os.platform() === 'win32') {
