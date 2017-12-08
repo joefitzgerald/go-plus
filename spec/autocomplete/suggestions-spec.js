@@ -3,7 +3,7 @@
 
 import * as Suggestions from '../../lib/autocomplete/suggestions'
 
-describe('gocodeSuggestions', () => {
+describe('gocodeprovider-suggestions', () => {
   describe('matchFunc', () => {
     let t = (context) => {
       let match = Suggestions.matchFunc(context.input)
@@ -66,398 +66,355 @@ describe('gocodeSuggestions', () => {
       t({
         input: 'func(name string, flag bool) bool',
         args: [{
-          isFunc: false,
           name: 'name string',
           identifier: 'name',
-          type: 'string'
+          type: {name: 'string', isFunc: false}
         }, {
-          isFunc: false,
           name: 'flag bool',
           identifier: 'flag',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }],
         returns: [{
-          isFunc: false,
           name: 'bool',
           identifier: '',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }]
       })
+
       t({
         input: 'func(name string, flag bool) (bool)',
         args: [{
-          isFunc: false,
           name: 'name string',
           identifier: 'name',
-          type: 'string'
+          type: {name: 'string', isFunc: false}
         }, {
-          isFunc: false,
           name: 'flag bool',
           identifier: 'flag',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }],
         returns: [{
-          isFunc: false,
           name: 'bool',
           identifier: '',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }]
       })
+
       t({
         input: 'func(name string, f func(t *testing.T)) bool',
         args: [{
-          isFunc: false,
           name: 'name string',
           identifier: 'name',
-          type: 'string'
+          type: {name: 'string', isFunc: false}
         }, {
-          isFunc: true,
           name: 'f func(t *testing.T)',
           identifier: 'f',
           type: {
             isFunc: true,
             name: 'func(t *testing.T)',
             args: [{
-              isFunc: false,
               name: 't *testing.T',
               identifier: 't',
-              type: '*testing.T'
+              type: {name: '*testing.T', isFunc: false}
             }],
             returns: []
           }
         }],
         returns: [{
-          isFunc: false,
           name: 'bool',
           identifier: '',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }]
       })
+
       t({
         input: 'func(name string, f func(t *testing.T)) (bool)',
         args: [{
-          isFunc: false,
           name: 'name string',
           identifier: 'name',
-          type: 'string'
+          type: {name: 'string', isFunc: false}
         }, {
-          isFunc: true,
           name: 'f func(t *testing.T)',
           identifier: 'f',
           type: {
             isFunc: true,
             name: 'func(t *testing.T)',
             args: [{
-              isFunc: false,
               name: 't *testing.T',
               identifier: 't',
-              type: '*testing.T'
+              type: {name: '*testing.T', isFunc: false}
             }],
             returns: []
           }
         }],
         returns: [{
-          isFunc: false,
           name: 'bool',
           identifier: '',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }]
       })
+
       t({
         input: 'func(pattern string, handler func(http.ResponseWriter, *http.Request))',
         args: [{
-          isFunc: false,
           name: 'pattern string',
           identifier: 'pattern',
-          type: 'string'
+          type: {name: 'string', isFunc: false}
         }, {
-          isFunc: true,
           name: 'handler func(http.ResponseWriter, *http.Request)',
           identifier: 'handler',
           type: {
             isFunc: true,
             name: 'func(http.ResponseWriter, *http.Request)',
             args: [{
-              isFunc: false,
               name: 'http.ResponseWriter',
               identifier: '',
-              type: 'http.ResponseWriter'
+              type: {name: 'http.ResponseWriter', isFunc: false}
             }, {
-              isFunc: false,
               name: '*http.Request',
               identifier: '',
-              type: '*http.Request'
+              type: {name: '*http.Request', isFunc: false}
             }],
             returns: []
           }
         }],
         returns: []
       })
+
       t({
         input: 'func(pattern string, handler func(http.ResponseWriter, *http.Request), otherhandler func(http.ResponseWriter, *http.Request))',
         args: [{
-          isFunc: false,
           name: 'pattern string',
           identifier: 'pattern',
-          type: 'string'
+          type: {name: 'string', isFunc: false}
         }, {
-          isFunc: true,
           name: 'handler func(http.ResponseWriter, *http.Request)',
           identifier: 'handler',
           type: {
             isFunc: true,
             name: 'func(http.ResponseWriter, *http.Request)',
             args: [{
-              isFunc: false,
               name: 'http.ResponseWriter',
               identifier: '',
-              type: 'http.ResponseWriter'
+              type: {name: 'http.ResponseWriter', isFunc: false}
             }, {
-              isFunc: false,
               name: '*http.Request',
               identifier: '',
-              type: '*http.Request'
+              type: {name: '*http.Request', isFunc: false}
             }],
             returns: []
           }
         }, {
-          isFunc: true,
           name: 'otherhandler func(http.ResponseWriter, *http.Request)',
           identifier: 'otherhandler',
           type: {
             isFunc: true,
             name: 'func(http.ResponseWriter, *http.Request)',
             args: [{
-              isFunc: false,
               name: 'http.ResponseWriter',
               identifier: '',
-              type: 'http.ResponseWriter'
+              type: {name: 'http.ResponseWriter', isFunc: false}
             }, {
-              isFunc: false,
               name: '*http.Request',
               identifier: '',
-              type: '*http.Request'
+              type: {name: '*http.Request', isFunc: false}
             }],
             returns: []
           }
         }],
         returns: []
       })
+
       t({
         input: 'func(pattern string, handler func(w http.ResponseWriter, r *http.Request), otherhandler func(w http.ResponseWriter, r *http.Request))',
         args: [{
-          isFunc: false,
           name: 'pattern string',
           identifier: 'pattern',
-          type: 'string'
+          type: {name: 'string', isFunc: false}
         }, {
-          isFunc: true,
           name: 'handler func(w http.ResponseWriter, r *http.Request)',
           identifier: 'handler',
           type: {
             isFunc: true,
             name: 'func(w http.ResponseWriter, r *http.Request)',
             args: [{
-              isFunc: false,
               name: 'w http.ResponseWriter',
               identifier: 'w',
-              type: 'http.ResponseWriter'
+              type: {name: 'http.ResponseWriter', isFunc: false}
             }, {
-              isFunc: false,
               name: 'r *http.Request',
               identifier: 'r',
-              type: '*http.Request'
+              type: {name: '*http.Request', isFunc: false}
             }],
             returns: []
           }
         }, {
-          isFunc: true,
           name: 'otherhandler func(w http.ResponseWriter, r *http.Request)',
           identifier: 'otherhandler',
           type: {
             isFunc: true,
             name: 'func(w http.ResponseWriter, r *http.Request)',
             args: [{
-              isFunc: false,
               name: 'w http.ResponseWriter',
               identifier: 'w',
-              type: 'http.ResponseWriter'
+              type: {name: 'http.ResponseWriter', isFunc: false}
             }, {
-              isFunc: false,
               name: 'r *http.Request',
               identifier: 'r',
-              type: '*http.Request'
+              type: {name: '*http.Request', isFunc: false}
             }],
             returns: []
           }
         }],
         returns: []
       })
+
       t({
         input: 'func()',
         args: [],
         returns: []
       })
+
       t({
         input: 'func(x int) int',
         args: [{
-          isFunc: false,
           name: 'x int',
           identifier: 'x',
-          type: 'int'
+          type: {name: 'int', isFunc: false}
         }],
         returns: [{
-          isFunc: false,
           name: 'int',
           identifier: '',
-          type: 'int'
+          type: {name: 'int', isFunc: false}
         }]
       })
+
       t({
         input: 'func(a, _ int, z float32) bool',
         args: [{
-          isFunc: false,
           name: 'a',
           identifier: '',
-          type: 'a'
+          type: {name: 'a', isFunc: false}
         }, {
-          isFunc: false,
           name: '_ int',
           identifier: '_',
-          type: 'int'
+          type: {name: 'int', isFunc: false}
         }, {
-          isFunc: false,
           name: 'z float32',
           identifier: 'z',
-          type: 'float32'
+          type: {name: 'float32', isFunc: false}
         }],
         returns: [{
-          isFunc: false,
           name: 'bool',
           identifier: '',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }]
       })
+
       t({
         input: 'func(a, b int, z float32) (bool)',
         args: [{
-          isFunc: false,
           name: 'a',
           identifier: '',
-          type: 'a'
+          type: {name: 'a', isFunc: false}
         }, {
-          isFunc: false,
           name: 'b int',
           identifier: 'b',
-          type: 'int'
+          type: {name: 'int', isFunc: false}
         }, {
-          isFunc: false,
           name: 'z float32',
           identifier: 'z',
-          type: 'float32'
+          type: {name: 'float32', isFunc: false}
         }],
         returns: [{
-          isFunc: false,
           name: 'bool',
           identifier: '',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }]
       })
+
       t({
         input: 'func(a, b int, z float64, opt ...interface{}) (success bool)',
         args: [{
-          isFunc: false,
           name: 'a',
           identifier: '',
-          type: 'a'
+          type: {name: 'a', isFunc: false}
         }, {
-          isFunc: false,
           name: 'b int',
           identifier: 'b',
-          type: 'int'
+          type: {name: 'int', isFunc: false}
         }, {
-          isFunc: false,
           name: 'z float64',
           identifier: 'z',
-          type: 'float64'
+          type: {name: 'float64', isFunc: false}
         }, {
-          isFunc: false,
           name: 'opt ...interface{}',
           identifier: 'opt',
-          type: '...interface{}'
+          type: {name: '...interface{}', isFunc: false}
         }],
         returns: [{
-          isFunc: false,
           name: 'success bool',
           identifier: 'success',
-          type: 'bool'
+          type: {name: 'bool', isFunc: false}
         }]
       })
+
       t({
         input: 'func(prefix string, values ...int)',
         args: [{
-          isFunc: false,
           name: 'prefix string',
           identifier: 'prefix',
-          type: 'string'
+          type: {name: 'string', isFunc: false}
         }, {
-          isFunc: false,
           name: 'values ...int',
           identifier: 'values',
-          type: '...int'
+          type: {name: '...int', isFunc: false}
         }],
         returns: []
       })
+
       t({
         input: 'func(int, int, float64) (float64, *[]int)',
         args: [{
-          isFunc: false,
           name: 'int',
           identifier: '',
-          type: 'int'
+          type: {name: 'int', isFunc: false}
         }, {
-          isFunc: false,
           name: 'int',
           identifier: '',
-          type: 'int'
+          type: {name: 'int', isFunc: false}
         }, {
-          isFunc: false,
           name: 'float64',
           identifier: '',
-          type: 'float64'
+          type: {name: 'float64', isFunc: false}
         }],
         returns: [{
-          isFunc: false,
           name: 'float64',
           identifier: '',
-          type: 'float64'
+          type: {name: 'float64', isFunc: false}
         }, {
-          isFunc: false,
           name: '*[]int',
           identifier: '',
-          type: '*[]int'
+          type: {name: '*[]int', isFunc: false}
         }]
       })
+
       t({
         input: 'func(n int) func(p *T)',
         args: [{
-          isFunc: false,
           name: 'n int',
           identifier: 'n',
-          type: 'int'
+          type: {name: 'int', isFunc: false}
         }],
         returns: [{
-          isFunc: true,
           name: 'func(p *T)',
           identifier: '',
           type: {
             isFunc: true,
             name: 'func(p *T)',
             args: [{
-              isFunc: false,
               name: 'p *T',
               identifier: 'p',
-              type: '*T'
+              type: {name: '*T', isFunc: false}
             }],
             returns: []
           }
@@ -468,7 +425,7 @@ describe('gocodeSuggestions', () => {
 
   describe('generateSnippet', () => {
     const t = (context) => {
-      const result = Suggestions.generateSnippet(context.input.name, context.input.type, { snippetMode: 'nameAndType' })
+      const result = Suggestions.generateSnippet({ snipCount: 0, argCount: 0, snippetMode: 'nameAndType' }, context.input.name, context.input.type)
       expect(result).toBeTruthy()
       expect(result.displayText).toEqual(context.result.displayText)
       expect(result.snippet).toEqual(context.result.snippet)
@@ -486,10 +443,11 @@ describe('gocodeSuggestions', () => {
           }
         },
         result: {
-          snippet: 'Print()$0',
+          snippet: 'Print()',
           displayText: 'Print()'
         }
       })
+
       t({
         input: {
           name: 'Print',
@@ -497,24 +455,23 @@ describe('gocodeSuggestions', () => {
             isFunc: true,
             name: 'func(x int) int',
             args: [{
-              isFunc: false,
               name: 'x int',
               identifier: 'x',
-              type: 'int'
+              type: {name: 'int', isFunc: false}
             }],
             returns: [{
-              isFunc: false,
               name: 'int',
               identifier: '',
-              type: 'int'
+              type: {name: 'int', isFunc: false}
             }]
           }
         },
         result: {
-          snippet: 'Print(${1:x int})$0', // eslint-disable-line no-template-curly-in-string
+          snippet: 'Print(${1:x int})', // eslint-disable-line no-template-curly-in-string
           displayText: 'Print(x int)'
         }
       })
+
       t({
         input: {
           name: 'ServeFunc',
@@ -522,27 +479,23 @@ describe('gocodeSuggestions', () => {
             isFunc: true,
             name: 'func(pattern string, func(w http.ResponseWriter, r *http.Request))',
             args: [{
-              isFunc: false,
               name: 'pattern string',
               identifier: 'pattern',
-              type: 'string'
+              type: {name: 'string', isFunc: false}
             }, {
-              isFunc: true,
               name: 'func(w http.ResponseWriter, r *http.Request)',
               identifier: '',
               type: {
                 isFunc: true,
                 name: 'func(w http.ResponseWriter, r *http.Request)',
                 args: [{
-                  isFunc: false,
                   name: 'w http.ResponseWriter',
                   identifier: 'w',
-                  type: 'http.ResponseWriter'
+                  type: {name: 'http.ResponseWriter', isFunc: false}
                 }, {
-                  isFunc: false,
                   name: 'r *http.Request',
                   identifier: 'r',
-                  type: '*http.Request'
+                  type: {name: '*http.Request', isFunc: false}
                 }],
                 returns: []
               }
@@ -551,10 +504,11 @@ describe('gocodeSuggestions', () => {
           }
         },
         result: {
-          snippet: 'ServeFunc(${1:pattern string}, ${2:func(${3:w} http.ResponseWriter, ${4:r} *http.Request) {\n\t$5\n\\}})$0', // eslint-disable-line no-template-curly-in-string
+          snippet: 'ServeFunc(${1:pattern string}, ${2:func(${3:w} http.ResponseWriter, ${4:r} *http.Request) {\n\t$5\n\\}})', // eslint-disable-line no-template-curly-in-string
           displayText: 'ServeFunc(pattern string, func(w http.ResponseWriter, r *http.Request))'
         }
       })
+
       t({
         input: {
           name: 'It',
@@ -563,59 +517,54 @@ describe('gocodeSuggestions', () => {
             name: 'func(text string, body interface{}, timeout ...float64) bool',
             args: [
               {
-                isFunc: false,
                 name: 'text string',
                 identifier: 'text',
-                type: 'string'
+                type: {name: 'string', isFunc: false}
               },
               {
-                isFunc: false,
                 name: 'body interface{}',
                 identifier: 'body',
-                type: 'interface{}'
+                type: {name: 'interface{}', isFunc: false}
               },
               {
-                isFunc: false,
                 name: 'timeout ...float64',
                 identifier: 'timeout',
-                type: '...float64'
+                type: {name: '...float64', isFunc: false}
               }
             ],
             returns: [
               {
-                isFunc: false,
                 name: 'bool',
                 identifier: '',
-                type: 'bool'
+                type: {name: 'bool', isFunc: false}
               }
             ]
           }
         },
         result: {
-          // snippet: 'It(${1:text string}, ${2:body interface{\\}}, ${3:timeout ...float64})$0',
-          snippet: 'It(${1:text string}, ${2:body interface{\\}})$0', // eslint-disable-line no-template-curly-in-string
+          // snippet: 'It(${1:text string}, ${2:body interface{\\}}, ${3:timeout ...float64})',
+          snippet: 'It(${1:text string}, ${2:body interface{\\}})', // eslint-disable-line no-template-curly-in-string
           displayText: 'It(text string, body interface{}, timeout ...float64)'
         }
       })
+
       t({
         input: {
           name: 'Bleh',
           type: {
             isFunc: true,
-            name: 'func(f func() int)',
+            name: 'func(f func() interface{})',
             args: [{
-              isFunc: true,
-              name: 'f func() int',
+              name: 'f func() interface{}',
               identifier: 'f',
               type: {
                 isFunc: true,
-                name: 'func() int',
+                name: 'func() interface{}',
                 args: [],
                 returns: [{
-                  isFunc: false,
-                  name: 'int',
+                  name: 'interface{}',
                   identifier: '',
-                  type: 'int'
+                  type: {name: 'interface{}', isFunc: false}
                 }]
               }
             }],
@@ -623,8 +572,55 @@ describe('gocodeSuggestions', () => {
           }
         },
         result: {
-          snippet: 'Bleh(${1:func() int {\n\t$2\n\\}})$0', // eslint-disable-line no-template-curly-in-string
-          displayText: 'Bleh(func() int)'
+          snippet: 'Bleh(${1:func() interface{\\} {\n\t$2\n\\}})', // eslint-disable-line no-template-curly-in-string
+          displayText: 'Bleh(func() interface{})'
+        }
+      })
+
+      // this is just a ridiculous func to test the limits of the function...
+      t({
+        input: {
+          name: 'Bleh',
+          type: {
+            isFunc: true,
+            name: 'func(f func(i interface{}) func(interface{}) interface{})',
+            args: [{
+              name: 'f func(i interface{}) func(interface{}) interface{}',
+              identifier: 'f',
+              type: {
+                isFunc: true,
+                name: 'func(i interface{}) func(interface{}) interface{}',
+                args: [{
+                  name: 'i interface{}',
+                  identifier: 'i',
+                  type: {name: 'interface{}', isFunc: false}
+                }],
+                returns: [{
+                  name: 'func(interface{}) interface{}',
+                  identifier: '',
+                  type: {
+                    isFunc: true,
+                    name: 'func(interface{}) interface{}',
+                    args: [{
+                      name: 'interface{}',
+                      identifier: 'i',
+                      type: {name: 'interface{}', isFunc: false}
+                    }],
+                    returns: [{
+                      name: 'interface{}',
+                      identifier: '',
+                      type: {name: 'interface{}', isFunc: false}
+                    }]
+                  }
+                }]
+              }
+            }],
+            returns: []
+          }
+        },
+        result: {
+          snippet: 'Bleh(${1:func(${2:i} interface{\\}) func(interface{\\}) interface{\\} {\n\t$3\n\\}})', // eslint-disable-line no-template-curly-in-string
+          displayText: 'Bleh(func(i interface{}) func(interface{}) interface{})'
         }
       })
       /*
@@ -639,7 +635,7 @@ describe('gocodeSuggestions', () => {
     })
   })
 
-  describe('upgradeSuggestion', () => {
+  describe('ensureNextArg', () => {
     it('parses params', () => {
       let result = Suggestions.ensureNextArg(['f func() int'])
       expect(result).toEqual(['f func() int'])
@@ -648,31 +644,69 @@ describe('gocodeSuggestions', () => {
       result = Suggestions.ensureNextArg(['f func(s1 string, i1 int) int, s string'])
       expect(result).toEqual(['f func(s1 string, i1 int) int', 's string'])
     })
+  })
+
+  describe('toSuggestion', () => {
+    const toSuggestion = (candidate, o = {}) => {
+      return Suggestions.toSuggestion(
+        candidate,
+        { prefix: '', suffix: '', snippetMode: 'nameAndType', ...o }
+      )
+    }
+
     it('generates snippets', () => {
-      let result = Suggestions.upgradeSuggestion({}, {
+      let result = toSuggestion({
+        class: 'func',
         name: 'Abc',
         type: 'func(f func() int)'
-      }, { snippetMode: 'nameAndType' })
+      })
       expect(result.displayText).toBe('Abc(func() int)')
       expect(result.snippet).toBe('Abc(${1:func() int {\n\t$2\n\\}})$0') // eslint-disable-line no-template-curly-in-string
-      result = Suggestions.upgradeSuggestion({}, {
+
+      result = toSuggestion({
+        class: 'func',
         name: 'Abc',
         type: 'func(f func() interface{})'
-      }, { snippetMode: 'nameAndType' })
+      })
       expect(result.displayText).toBe('Abc(func() interface{})')
       expect(result.snippet).toBe('Abc(${1:func() interface{\\} {\n\t$2\n\\}})$0') // eslint-disable-line no-template-curly-in-string
-      result = Suggestions.upgradeSuggestion({}, {
+
+      result = toSuggestion({
+        class: 'func',
+        name: 'Abc',
+        type: 'func(f func(int, string, bool) interface{})'
+      })
+      expect(result.displayText).toBe('Abc(func(arg1 int, arg2 string, arg3 bool) interface{})')
+      expect(result.snippet).toBe(
+        'Abc(${1:func(${2:arg1} int, ${3:arg2} string, ${4:arg3} bool) interface{\\} {\n\t$5\n\\}})$0' // eslint-disable-line no-template-curly-in-string
+      )
+
+      result = toSuggestion({
+        class: 'func',
         name: 'Abc',
         type: 'func(f func() (interface{}, interface{}))'
-      }, { snippetMode: 'nameAndType' })
+      })
       expect(result.displayText).toBe('Abc(func() (interface{}, interface{}))')
       expect(result.snippet).toBe('Abc(${1:func() (interface{\\}, interface{\\}) {\n\t$2\n\\}})$0') // eslint-disable-line no-template-curly-in-string
-      result = Suggestions.upgradeSuggestion({}, {
+
+      result = toSuggestion({
+        class: 'func',
         name: 'Abc',
         type: 'func(f interface{})'
-      }, { snippetMode: 'nameAndType' })
+      })
       expect(result.displayText).toBe('Abc(f interface{})')
       expect(result.snippet).toBe('Abc(${1:f interface{\\}})$0') // eslint-disable-line no-template-curly-in-string
+    })
+
+    it('does not add function arguments for ( suffix', () => {
+      let result = toSuggestion({
+        class: 'func',
+        name: 'Abc',
+        type: 'func(f func() int)'
+      }, { suffix: '(' })
+      expect(result.text).toBe('Abc')
+      expect(result.snippet).toBeFalsy()
+      expect(result.displayText).toBeFalsy()
     })
   })
 })
