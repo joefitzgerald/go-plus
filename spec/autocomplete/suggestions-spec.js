@@ -696,6 +696,33 @@ describe('gocodeprovider-suggestions', () => {
       })
       expect(result.displayText).toBe('Abc(f interface{})')
       expect(result.snippet).toBe('Abc(${1:f interface{\\}})$0') // eslint-disable-line no-template-curly-in-string
+
+      // type HandlerFunc func(http.ResponseWriter, *http.Request)
+      result = toSuggestion({
+        class: 'type',
+        name: 'HandlerFunc',
+        type: 'func(http.ResponseWriter, *http.Request)'
+      })
+      expect(result.snippet).toBe('HandlerFunc(func(${1:arg1} http.ResponseWriter, ${2:arg2} *http.Request) {\n\t$3\n\\})$0') // eslint-disable-line no-template-curly-in-string
+      expect(result.displayText).toBe('HandlerFunc')
+
+      // type FooBar func(int, string) string
+      result = toSuggestion({
+        class: 'type',
+        name: 'FooBar',
+        type: 'func(int, string) string'
+      })
+      expect(result.snippet).toBe('FooBar(func(${1:arg1} int, ${2:arg2} string) string {\n\t$3\n\\})$0') // eslint-disable-line no-template-curly-in-string
+      expect(result.displayText).toBe('FooBar')
+
+      // type FooBar func(int, ...string) string
+      result = toSuggestion({
+        class: 'type',
+        name: 'FooBar',
+        type: 'func(int, ...string) string'
+      })
+      expect(result.snippet).toBe('FooBar(func(${1:arg1} int, ${2:arg2} ...string) string {\n\t$3\n\\})$0') // eslint-disable-line no-template-curly-in-string
+      expect(result.displayText).toBe('FooBar')
     })
 
     it('does not add function arguments for ( suffix', () => {
@@ -705,6 +732,16 @@ describe('gocodeprovider-suggestions', () => {
         type: 'func(f func() int)'
       }, { suffix: '(' })
       expect(result.text).toBe('Abc')
+      expect(result.snippet).toBeFalsy()
+      expect(result.displayText).toBeFalsy()
+
+      // type FooBar func(int, string) string
+      result = toSuggestion({
+        class: 'type',
+        name: 'FooBar',
+        type: 'func(int, string) string'
+      }, { suffix: '(' })
+      expect(result.text).toBe('FooBar')
       expect(result.snippet).toBeFalsy()
       expect(result.displayText).toBeFalsy()
     })
