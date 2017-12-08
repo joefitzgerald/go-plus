@@ -72,6 +72,7 @@
   ],
   "dependencies": {
     "ansi-style-parser": "^1.1.0",
+    "atom-select-list": "^0.7.0",
     "etch": "0.12.7",
     "etch-octicon": "^1.0.0",
     "fs-extra": "^4.0.2",
