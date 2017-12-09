@@ -60,7 +60,7 @@
   },
   "atomTranspilers": [
     {
-      "glob": "{lib,test}/**/*.js",
+      "glob": "{lib,spec}/**/*.js",
       "transpiler": "atom-babel6-transpiler",
       "options": {
         "cacheKeyFiles": [
