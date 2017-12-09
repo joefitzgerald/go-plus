@@ -1,6 +1,9 @@
 /* eslint-env jasmine */
 
+import path from 'path'
+
 import {importablePackages} from './../../lib/import/importer'
+import {lifecycle} from './../spec-helpers'
 
 describe('importablePackages', () => {
   const all = [
@@ -35,5 +38,51 @@ describe('importablePackages', () => {
     const nestedVendor = 'github.com/author/lib/subpackage'
     expect(importablePackages('github.com/user2/project2/foo/bar', all)).not.toContain(nestedVendor)
     expect(importablePackages('github.com/user2/project2/subpackage/a/b', all)).toContain(nestedVendor)
+  })
+})
+
+describe('importer', () => {
+  let importer = null
+  let editor = null
+
+  beforeEach(() => {
+    runs(() => {
+      lifecycle.setup()
+      console.log('lifecycle setup complete')
+    })
+
+    waitsForPromise(() => {
+      return lifecycle.activatePackage()
+    })
+
+    runs(() => {
+      const { mainModule } = lifecycle
+      mainModule.provideGoConfig()
+      mainModule.loadImporter()
+    })
+
+    waitsFor(() => {
+      importer = lifecycle.mainModule.importer
+      return importer
+    })
+
+    waitsForPromise(() => {
+      return atom.workspace.open(path.join(__dirname, '..', 'fixtures', 'doc.go')).then(e => { editor = e })
+    })
+  })
+
+  afterEach(() => lifecycle.teardown())
+
+  it('adds imports', () => {
+    let result
+
+    waitsForPromise(() => {
+      return importer.addImport('bufio').then(r => { result = r })
+    })
+
+    runs(() => {
+      expect(result.success).toBe(true)
+      expect(editor.lineTextForBufferRow(3).trim()).toEqual('"bufio"')
+    })
   })
 })
