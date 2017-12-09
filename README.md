@@ -13,8 +13,10 @@ This package includes the following functionality:
 
 * Display information about your current go installation, by running `go version` and `go env`
 * Autocomplete using `gocode`
-* Format your code with `gofmt`, `goimports`, or `goreturns`; optionally run one of these tools on save of any `.go` file
-* Run `go install .` and `go test -c -o {tempdir} .` to verify your code can compile and to keep `gocode` suggestions up to date
+* Format your code with `gofmt`, `goimports`, or `goreturns`;
+  optionally run one of these tools on save of any `.go` file
+* Run `go install .` and `go test -c -o {tempdir} .` to verify your code compiles
+  and to keep `gocode` suggestions up to date
 * Run a variety of linters (e.g. `golint`, `vet`, etc.) against your code using `gometalinter`
 * Run tests, display test output, and display test coverage using `go test -coverprofile`
 * Display documentation for identifiers in source code using
