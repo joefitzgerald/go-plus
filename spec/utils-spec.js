@@ -13,7 +13,7 @@ describe('utils', () => {
     lifecycle.teardown()
   })
 
-  describe('parseGoPosition(identifier)',  () => {
+  describe('parseGoPosition(identifier)', () => {
     it('parses unix paths', () => {
       const parsed = parseGoPosition('/private/temp/src/gopath-11726-3832-1xl0vhg.4128uayvi/src/what/doc.go:23:2')
       expect(parsed).toBeTruthy()
