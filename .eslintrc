@@ -1,0 +1,14 @@
+{
+  "env": {
+    "node": true,
+    "es6": true,
+    "browser": true
+  },
+  "globals": {
+    "advanceClock": true,
+    "atom": true,
+    "waitsForPromise": true
+  },
+  "parser": "babel-eslint",
+  "extends": ["standard", "standard-flow", "standard-jsx"]
+}
