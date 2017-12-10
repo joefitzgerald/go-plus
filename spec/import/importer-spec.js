@@ -48,7 +48,6 @@ describe('importer', () => {
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-      console.log('lifecycle setup complete')
     })
 
     waitsForPromise(() => {
