@@ -74,7 +74,7 @@
     "ansi-style-parser": "^1.1.0",
     "atom-select-list": "^0.7.0",
     "etch": "0.12.7",
-    "etch-octicon": "^1.0.0",
+    "etch-octicon": "^2.0.0",
     "fs-extra": "^5.0.0",
     "fuzzaldrin-plus": "^0.6.0",
     "lodash": "^4.17.4",
