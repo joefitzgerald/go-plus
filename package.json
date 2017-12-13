@@ -73,6 +73,13 @@
   "dependencies": {
     "ansi-style-parser": "^1.1.0",
     "atom-select-list": "^0.7.0",
+    "atom-babel6-transpiler": "^1.1.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
     "etch": "0.12.7",
     "etch-octicon": "^2.0.0",
     "fs-extra": "^5.0.0",
@@ -83,14 +90,7 @@
     "temp": "^0.8.3"
   },
   "devDependencies": {
-    "atom-babel6-transpiler": "^1.1.2",
     "babel-eslint": "^8.0.3",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
     "eslint": "^4.13.1",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-config-standard-flow": "^1.0.1",
