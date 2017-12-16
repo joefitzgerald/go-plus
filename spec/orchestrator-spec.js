@@ -2,7 +2,7 @@
 /* eslint-env jasmine */
 
 import path from 'path'
-import Orchestrator from './../lib/orchestrator'
+import {Orchestrator} from './../lib/orchestrator'
 
 describe('orchestrator', () => {
   let orchestrator = null
