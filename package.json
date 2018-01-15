@@ -87,7 +87,8 @@
     "lodash": "^4.17.4",
     "resize-observer-polyfill": "^1.5.0",
     "semver": "^5.4.1",
-    "temp": "^0.8.3"
+    "temp": "^0.8.3",
+    "yargs-parser": "^8.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
@@ -200,6 +201,20 @@
           "type": "boolean",
           "default": true,
           "order": 2
+        },
+        "additionalBuildArgs": {
+          "title": "Additional build/install args",
+          "description": "Arguments to pass to `go build` and `go install` commands.",
+          "type": "string",
+          "default": "",
+          "order": 3
+        },
+        "additionalTestArgs": {
+          "title": "Additional test args",
+          "description": "Arguments to pass to `go test` commands.",
+          "type": "string",
+          "default": "",
+          "order": 4
         }
       }
     },
