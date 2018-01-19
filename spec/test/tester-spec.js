@@ -121,10 +121,12 @@ describe('tester', () => {
       })
 
       it('handles args with spaces', () => {
-        atom.config.set('go-plus.config.additionalTestArgs', '-myarg="hello world"')
+        atom.config.set('go-plus.config.additionalTestArgs', '-myarg="hello world"  -arg2   3')
         const args = tester.buildGoTestArgs()
-        expect(args.length >= 3).toBeTruthy()
-        expect(args[2]).toBe('-myarg=hello world')
+        expect(args.length).toBeGreaterThan(3)
+        expect(args[1]).toEqual('-myarg=hello world')
+        expect(args[2]).toEqual('-arg2')
+        expect(args[3]).toEqual('3')
       })
     })
   })
