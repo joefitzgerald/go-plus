@@ -76,7 +76,7 @@ describe('tester', () => {
     })
 
     it('uses the specified timeout', () => {
-      const args = tester.buildGoTestArgs(10000)
+      const args = tester.buildGoTestArgs(10000, false)
       let foundTimeout = false
       for (const arg of args) {
         if (arg.startsWith('-timeout')) {
@@ -88,7 +88,7 @@ describe('tester', () => {
     })
 
     it('invokes the go test command with a coverprofile', () => {
-      const args = tester.buildGoTestArgs(10000)
+      const args = tester.buildGoTestArgs(10000, true)
       expect(args[0]).toBe('test')
       expect(args[1].startsWith('-coverprofile=')).toBe(true)
     })
@@ -96,7 +96,7 @@ describe('tester', () => {
     describe('when specifying custom args', () => {
       it('prefers timeout from the custom args (if specified)', () => {
         atom.config.set('go-plus.config.additionalTestArgs', '-timeout=4000ms')
-        const args = tester.buildGoTestArgs(8000)
+        const args = tester.buildGoTestArgs(8000, false)
         let foundTimeout = false
         for (const arg of args) {
           if (arg.startsWith('-timeout')) {
