@@ -210,7 +210,7 @@ describe('gocodeprovider', () => {
         atom.config.set('go-plus.autocomplete.snippetMode', 'nameAndType')
       })
 
-      fit('provides the exported types of the unimported package', () => {
+      it('provides the exported types of the unimported package', () => {
         let suggestions = null
 
         waitsFor(() => provider.allPkgs.size > 0)
