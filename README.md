@@ -61,8 +61,11 @@ go get -u github.com/sqs/goreturns
 go get -u github.com/nsf/gocode
 go get -u github.com/alecthomas/gometalinter
 go get -u github.com/zmb3/gogetdoc
+go get -u github.com/zmb3/goaddimport
 go get -u github.com/rogpeppe/godef
 go get -u golang.org/x/tools/cmd/guru
+go get -u github.com/fatih/gomodifytags
+go get -u github.com/tpng/gopkgs
 ```
 
 ## Having Issues?
