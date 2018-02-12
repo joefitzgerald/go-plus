@@ -226,7 +226,7 @@
           "title": "Scope Blacklist",
           "description": "Suggestions will not be shown when the cursor is inside the following comma-delimited scope(s).",
           "type": "string",
-          "default": ".source.go .comment, .source.go .constant.numeric, .source.go .string.quoted",
+          "default": ".source.go .comment, go source_file comment, .source.go .constant.numeric, go source_file int_literal, .source.go .string.quoted, go source_file block interpreted_string_literal",
           "order": 1
         },
         "suppressBuiltinAutocompleteProvider": {
