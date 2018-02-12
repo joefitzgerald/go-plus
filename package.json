@@ -71,7 +71,7 @@
     }
   ],
   "dependencies": {
-    "ansi-style-parser": "^1.1.0",
+    "ansi-style-parser": "^2.0.0",
     "atom-select-list": "^0.7.0",
     "atom-babel6-transpiler": "^1.1.2",
     "babel-plugin-add-module-exports": "^0.2.1",
