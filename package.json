@@ -71,22 +71,22 @@
     }
   ],
   "dependencies": {
-    "ansi-style-parser": "^1.1.0",
-    "atom-select-list": "^0.7.0",
-    "atom-babel6-transpiler": "^1.1.2",
+    "ansi-style-parser": "^2.0.0",
+    "atom-select-list": "^0.7.1",
+    "atom-babel6-transpiler": "^1.1.3",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
-    "etch": "0.12.7",
+    "etch": "0.14.0",
     "etch-octicon": "^2.0.0",
     "fs-extra": "^5.0.0",
     "fuzzaldrin-plus": "^0.6.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.5",
     "resize-observer-polyfill": "^1.5.0",
-    "semver": "^5.4.1",
+    "semver": "^5.5.0",
     "temp": "^0.8.3",
     "yargs-parser": "^8.1.0"
   },
@@ -102,7 +102,7 @@
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-react": "^7.7.0",
     "eslint-plugin-standard": "^3.0.1",
-    "flow-bin": "^0.61.0"
+    "flow-bin": "^0.69.0"
   },
   "providedServices": {
     "go-config": {
