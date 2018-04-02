@@ -250,6 +250,78 @@ describe('gocodeprovider', () => {
     })
   })
 
+  describe('when the go-plus-issue-745 file is opened', () => {
+    let suggestions = null
+    beforeEach(() => {
+      waitsForPromise(() => {
+        return atom.workspace.open('go-plus-issue-745' + path.sep + 'main.go').then((e) => {
+          editor = e
+          editorView = atom.views.getView(editor)
+        })
+      })
+    })
+
+    it('calculates the prefix correctly', () => {
+      runs(() => {
+        expect(provider).toBeDefined()
+        expect(provider.getSuggestions).not.toHaveBeenCalled()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+        editor.setCursorBufferPosition([4, 10])
+        editor.backspace()
+        editor.backspace()
+        editor.backspace()
+        suggestions = null
+        suggestionsPromise = null
+        advanceClock(completionDelay)
+      })
+
+      runs(() => {
+        expect(provider.getSuggestions.calls.length).toBe(0)
+        expect(suggestionsPromise).toBeFalsy()
+        editor.insertText('t')
+        advanceClock(completionDelay)
+      })
+
+      waitsFor(() => {
+        return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+      })
+
+      waitsForPromise(() => {
+        return suggestionsPromise.then((s) => {
+          suggestions = s
+        })
+      })
+
+      runs(() => {
+        expect(provider.getSuggestions.calls.length).toBe(1)
+        expect(suggestionsPromise).toBeTruthy()
+        suggestionsPromise = null
+        editor.insertText('t')
+        advanceClock(completionDelay)
+      })
+
+      waitsFor(() => {
+        return provider.getSuggestions.calls.length === 2 && suggestionsPromise !== null
+      })
+
+      waitsForPromise(() => {
+        return suggestionsPromise.then((s) => {
+          suggestions = s
+        })
+      })
+
+      runs(() => {
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(2)
+        expect(suggestions).toBeTruthy()
+        expect(suggestions.length).toBeGreaterThan(0)
+        expect(suggestions[0]).toBeTruthy()
+        expect(suggestions[0].text).toBe('net/http')
+        expect(suggestions[0].replacementPrefix).toBe('net/htt')
+      })
+    })
+  })
+
   describe('when the go-plus-issue-307 file is opened', () => {
     let suggestions = null
     beforeEach(() => {
@@ -410,7 +482,6 @@ describe('gocodeprovider', () => {
       runs(() => {
         expect(provider.getSuggestions.calls.length).toBe(0)
         expect(suggestionsPromise).toBeFalsy()
-        console.log('insert .')
 
         editor.insertText('.')
         advanceClock(completionDelay)
