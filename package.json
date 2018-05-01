@@ -82,7 +82,7 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "etch": "0.14.0",
     "etch-octicon": "^2.0.0",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^6.0.0",
     "fuzzaldrin-plus": "^0.6.0",
     "lodash": "^4.17.5",
     "resize-observer-polyfill": "^1.5.0",
