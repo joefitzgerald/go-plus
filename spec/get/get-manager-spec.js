@@ -84,7 +84,7 @@ describe('go-get', () => {
       runs(() => {
         let stat = fs.statSync(gocodebinary)
         expect(stat.size).toBe(0)
-        manager.register('github.com/nsf/gocode')
+        manager.register('github.com/mdempsky/gocode')
         manager.register('golang.org/x/tools/cmd/goimports')
       })
 

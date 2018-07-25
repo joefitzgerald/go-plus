@@ -48,23 +48,23 @@ describe('go-get service provider', () => {
       })
 
       it('registers a package', () => {
-        provider.register('github.com/nsf/gocode')
+        provider.register('github.com/mdempsky/gocode')
         expect(manager.packages.size).toBe(1)
-        provider.register('github.com/nsf/gocode')
+        provider.register('github.com/mdempsky/gocode')
         expect(manager.packages.size).toBe(1)
       })
 
       it('registers the same package multiple times', () => {
-        provider.register('github.com/nsf/gocode')
+        provider.register('github.com/mdempsky/gocode')
         expect(manager.packages.size).toBe(1)
-        provider.register('github.com/nsf/gocode')
+        provider.register('github.com/mdempsky/gocode')
         expect(manager.packages.size).toBe(1)
-        provider.register('github.com/nsf/gocode')
+        provider.register('github.com/mdempsky/gocode')
         expect(manager.packages.size).toBe(1)
       })
 
       it('allows a package registration to be disposed', () => {
-        let registration = provider.register('github.com/nsf/gocode')
+        let registration = provider.register('github.com/mdempsky/gocode')
         expect(registration).toBeTruthy()
         expect(registration.dispose).toBeDefined()
         expect(manager.packages.size).toBe(1)
@@ -73,11 +73,11 @@ describe('go-get service provider', () => {
       })
 
       it('dispose is aware of the number of package registrations', () => {
-        let registration1 = provider.register('github.com/nsf/gocode')
+        let registration1 = provider.register('github.com/mdempsky/gocode')
         expect(registration1).toBeTruthy()
         expect(registration1.dispose).toBeDefined()
         expect(manager.packages.size).toBe(1)
-        let registration2 = provider.register('github.com/nsf/gocode')
+        let registration2 = provider.register('github.com/mdempsky/gocode')
         expect(registration2).toBeTruthy()
         expect(registration2.dispose).toBeDefined()
         expect(manager.packages.size).toBe(1)
