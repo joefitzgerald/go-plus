@@ -92,7 +92,7 @@
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
-    "eslint": "^4.15.0",
+    "eslint": "^5.0.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-config-standard-flow": "^1.0.1",
     "eslint-config-standard-jsx": "^5.0.0",
