@@ -117,9 +117,9 @@ describe('godoc', () => {
 
       waitsForPromise(() => {
         return atom.workspace.open(path.join(target, 'doc.go')).then((e) => {
-          e.setCursorBufferPosition([25, 46])
+          e.setCursorBufferPosition([24, 35])
           e.selectLinesContainingCursors()
-          e.insertText('fmt.Printf("this line has been modified\n")')
+          e.insertText('fmt.Printf("this line has been modified\\n")\n')
           expect(e.isModified()).toBe(true)
           editor = e
         })
@@ -128,7 +128,7 @@ describe('godoc', () => {
 
     it('gets the correct documentation', () => {
       let result = false
-      editor.setCursorBufferPosition([25, 7])
+      editor.setCursorBufferPosition([24, 7])
 
       waitsForPromise(() => {
         return godoc.commandInvoked().then((r) => {
