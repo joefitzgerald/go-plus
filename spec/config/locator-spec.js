@@ -311,12 +311,10 @@ describe('Locator', () => {
       gotooldir = path.join(gorootdir, 'pkg', 'tool', platform + '_' + arch)
       fs.mkdirsSync(gotooldir)
       let fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
-      let gojson = path.join(__dirname, 'fixtures', 'go-' + platform + '.json')
       let fakego = path.join(__dirname, 'tools', 'go', fakeexecutable)
       go = path.join(gorootbindir, 'go' + executableSuffix)
       fs.copySync(fakego, go)
-      fs.copySync(gojson, path.join(gorootbindir, 'go.json'))
-      version = JSON.parse(fs.readFileSync(gojson), 'utf8').VERSION.slice(2)
+
       process.env[pathkey] = godir
       process.env['GOPATH'] = gopathdir
       process.env['GOROOT'] = gorootdir
@@ -349,39 +347,19 @@ describe('Locator', () => {
       runs(() => {
         expect(runtimes).toBeTruthy()
         expect(runtimes.length).toBeGreaterThan(0)
-        expect(runtimes[0].name).toBe('go' + version)
-        expect(runtimes[0].semver).toBe(version)
-        expect(runtimes[0].version).toBe('go version go' + version + ' ' + platform + '/' + arch)
+        expect(runtimes[0].name).toBe('go1.11.1')
+        expect(runtimes[0].semver).toBe('1.11.1')
+        expect(runtimes[0].version).toBe('go version go1.11.1 ' + platform + '/' + arch)
         expect(runtimes[0].path).toBe(go)
         expect(runtimes[0].GOARCH).toBe(arch)
         expect(runtimes[0].GOBIN).toBe('')
-        if (platform === 'windows') {
-          expect(runtimes[0].GOEXE).toBe('.exe')
-        } else {
-          expect(runtimes[0].GOEXE).toBe('')
-        }
+        expect(runtimes[0].GOEXE).toBe(platform === 'windows' ? '.exe' : '')
         expect(runtimes[0].GOHOSTARCH).toBe(arch)
         expect(runtimes[0].GOHOSTOS).toBe(platform)
         expect(runtimes[0].GOOS).toBe(platform)
-        expect(runtimes[0].GOPATH).toBe(gopathdir)
-        expect(runtimes[0].GORACE).toBe('')
         expect(runtimes[0].GOROOT).toBe(gorootdir)
+        expect(runtimes[0].GOPATH).toBe(gopathdir)
         expect(runtimes[0].GOTOOLDIR).toBe(gotooldir)
-        if (platform === 'windows') {
-          expect(runtimes[0].CC).toBe('gcc')
-          expect(runtimes[0].GOGCCFLAGS).toBe('-m64 -mthreads -fmessage-length=0')
-          expect(runtimes[0].CXX).toBe('g++')
-        } else if (platform === 'darwin') {
-          expect(runtimes[0].CC).toBe('clang')
-          expect(runtimes[0].GOGCCFLAGS).toBe('-fPIC -m64 -pthread -fno-caret-diagnostics -Qunused-arguments -fmessage-length=0 -fno-common')
-          expect(runtimes[0].CXX).toBe('clang++')
-        } else if (os.platform() === 'linux') {
-          expect(runtimes[0].CC).toBe('gcc')
-          expect(runtimes[0].GOGCCFLAGS).toBe('-fPIC -m64 -pthread -fmessage-length=0')
-          expect(runtimes[0].CXX).toBe('g++')
-        }
-        expect(runtimes[0].GO15VENDOREXPERIMENT).toBe('')
-        expect(runtimes[0].CGO_ENABLED).toBe('1')
       })
     })
 
@@ -426,7 +404,7 @@ describe('Locator', () => {
     })
 
     it('findTool() finds tools in GOTOOLDIR', () => {
-      let tools = ['addr2line', 'cgo', 'dist', 'link', 'pack', 'trace', 'api', 'compile', 'doc', 'nm', 'pprof', 'vet', 'asm', 'cover', 'fix', 'objdump', 'yacc']
+      let tools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
       let runtime = false
       let done = locator.runtime().then((r) => { runtime = r })
 
