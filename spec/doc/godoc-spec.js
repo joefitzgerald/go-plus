@@ -3,7 +3,7 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('godoc', () => {
   let godoc = null

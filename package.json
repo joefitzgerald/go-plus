@@ -26,7 +26,8 @@
   "main": "./lib/main",
   "scripts": {
     "flow": "flow",
-    "lint": "eslint ./lib ./spec"
+    "lint": "eslint ./lib ./spec",
+    "lintfix": "eslint ./lib ./spec --fix"
   },
   "license": "Apache-2.0",
   "engines": {

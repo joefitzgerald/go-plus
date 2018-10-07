@@ -1,7 +1,7 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {getPackage} from '../../lib/autocomplete/gocodeprovider-helper'
+import { getPackage } from '../../lib/autocomplete/gocodeprovider-helper'
 import * as path from 'path'
 
 describe('gocodeprovider-helper', () => {

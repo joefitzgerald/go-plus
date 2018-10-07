@@ -1,7 +1,7 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 import mainModule from './../../lib/main'
 
 describe('go-get service provider', () => {

@@ -1,8 +1,8 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {lifecycle} from './spec-helpers'
-import {parseGoPosition, stat} from './../lib/utils'
+import { lifecycle } from './spec-helpers'
+import { parseGoPosition, stat } from './../lib/utils'
 
 describe('utils', () => {
   beforeEach(() => {

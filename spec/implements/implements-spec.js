@@ -3,7 +3,7 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('implements', () => {
   let impl
@@ -29,7 +29,7 @@ describe('implements', () => {
     })
 
     runs(() => {
-      const {mainModule} = lifecycle
+      const { mainModule } = lifecycle
       mainModule.provideGoConfig()
       mainModule.loadImplements()
     })

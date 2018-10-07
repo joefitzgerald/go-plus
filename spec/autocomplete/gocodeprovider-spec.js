@@ -2,7 +2,7 @@
 /* eslint-env jasmine */
 
 import path from 'path'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('gocodeprovider', () => {
   let completionDelay = null

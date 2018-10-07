@@ -3,7 +3,7 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('go-get', () => {
   let manager = null
@@ -74,9 +74,9 @@ describe('go-get', () => {
     beforeEach(() => {
       fs.mkdirSync(path.join(gopath, 'bin'))
       gocodebinary = path.join(gopath, 'bin', 'gocode' + executableSuffix)
-      fs.writeFileSync(gocodebinary, '', {encoding: 'utf8', mode: 511})
+      fs.writeFileSync(gocodebinary, '', { encoding: 'utf8', mode: 511 })
       goimportsbinary = path.join(gopath, 'bin', 'goimports' + executableSuffix)
-      fs.writeFileSync(goimportsbinary, '', {encoding: 'utf8', mode: 511})
+      fs.writeFileSync(goimportsbinary, '', { encoding: 'utf8', mode: 511 })
     })
 
     it('updates packages', () => {
@@ -88,7 +88,7 @@ describe('go-get', () => {
         manager.register('golang.org/x/tools/cmd/goimports')
       })
 
-      waitsForPromise({timeout: 30000}, () => {
+      waitsForPromise({ timeout: 30000 }, () => {
         return manager.updateTools().then((o) => {
           outcome = o
         })
@@ -120,7 +120,7 @@ describe('go-get', () => {
         })
       })
 
-      waitsForPromise({timeout: 30000}, () => {
+      waitsForPromise({ timeout: 30000 }, () => {
         return manager.updateTools().then((o) => {
           outcome = o
         })

@@ -68,16 +68,16 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'name string',
           identifier: 'name',
-          type: {name: 'string', isFunc: false}
+          type: { name: 'string', isFunc: false }
         }, {
           name: 'flag bool',
           identifier: 'flag',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }],
         returns: [{
           name: 'bool',
           identifier: '',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }]
       })
 
@@ -86,16 +86,16 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'name string',
           identifier: 'name',
-          type: {name: 'string', isFunc: false}
+          type: { name: 'string', isFunc: false }
         }, {
           name: 'flag bool',
           identifier: 'flag',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }],
         returns: [{
           name: 'bool',
           identifier: '',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }]
       })
 
@@ -104,7 +104,7 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'name string',
           identifier: 'name',
-          type: {name: 'string', isFunc: false}
+          type: { name: 'string', isFunc: false }
         }, {
           name: 'f func(t *testing.T)',
           identifier: 'f',
@@ -114,7 +114,7 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 't *testing.T',
               identifier: 't',
-              type: {name: '*testing.T', isFunc: false}
+              type: { name: '*testing.T', isFunc: false }
             }],
             returns: []
           }
@@ -122,7 +122,7 @@ describe('gocodeprovider-suggestions', () => {
         returns: [{
           name: 'bool',
           identifier: '',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }]
       })
 
@@ -131,7 +131,7 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'name string',
           identifier: 'name',
-          type: {name: 'string', isFunc: false}
+          type: { name: 'string', isFunc: false }
         }, {
           name: 'f func(t *testing.T)',
           identifier: 'f',
@@ -141,7 +141,7 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 't *testing.T',
               identifier: 't',
-              type: {name: '*testing.T', isFunc: false}
+              type: { name: '*testing.T', isFunc: false }
             }],
             returns: []
           }
@@ -149,7 +149,7 @@ describe('gocodeprovider-suggestions', () => {
         returns: [{
           name: 'bool',
           identifier: '',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }]
       })
 
@@ -158,7 +158,7 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'pattern string',
           identifier: 'pattern',
-          type: {name: 'string', isFunc: false}
+          type: { name: 'string', isFunc: false }
         }, {
           name: 'handler func(http.ResponseWriter, *http.Request)',
           identifier: 'handler',
@@ -168,11 +168,11 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 'http.ResponseWriter',
               identifier: '',
-              type: {name: 'http.ResponseWriter', isFunc: false}
+              type: { name: 'http.ResponseWriter', isFunc: false }
             }, {
               name: '*http.Request',
               identifier: '',
-              type: {name: '*http.Request', isFunc: false}
+              type: { name: '*http.Request', isFunc: false }
             }],
             returns: []
           }
@@ -185,7 +185,7 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'pattern string',
           identifier: 'pattern',
-          type: {name: 'string', isFunc: false}
+          type: { name: 'string', isFunc: false }
         }, {
           name: 'handler func(http.ResponseWriter, *http.Request)',
           identifier: 'handler',
@@ -195,11 +195,11 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 'http.ResponseWriter',
               identifier: '',
-              type: {name: 'http.ResponseWriter', isFunc: false}
+              type: { name: 'http.ResponseWriter', isFunc: false }
             }, {
               name: '*http.Request',
               identifier: '',
-              type: {name: '*http.Request', isFunc: false}
+              type: { name: '*http.Request', isFunc: false }
             }],
             returns: []
           }
@@ -212,11 +212,11 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 'http.ResponseWriter',
               identifier: '',
-              type: {name: 'http.ResponseWriter', isFunc: false}
+              type: { name: 'http.ResponseWriter', isFunc: false }
             }, {
               name: '*http.Request',
               identifier: '',
-              type: {name: '*http.Request', isFunc: false}
+              type: { name: '*http.Request', isFunc: false }
             }],
             returns: []
           }
@@ -229,7 +229,7 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'pattern string',
           identifier: 'pattern',
-          type: {name: 'string', isFunc: false}
+          type: { name: 'string', isFunc: false }
         }, {
           name: 'handler func(w http.ResponseWriter, r *http.Request)',
           identifier: 'handler',
@@ -239,11 +239,11 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 'w http.ResponseWriter',
               identifier: 'w',
-              type: {name: 'http.ResponseWriter', isFunc: false}
+              type: { name: 'http.ResponseWriter', isFunc: false }
             }, {
               name: 'r *http.Request',
               identifier: 'r',
-              type: {name: '*http.Request', isFunc: false}
+              type: { name: '*http.Request', isFunc: false }
             }],
             returns: []
           }
@@ -256,11 +256,11 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 'w http.ResponseWriter',
               identifier: 'w',
-              type: {name: 'http.ResponseWriter', isFunc: false}
+              type: { name: 'http.ResponseWriter', isFunc: false }
             }, {
               name: 'r *http.Request',
               identifier: 'r',
-              type: {name: '*http.Request', isFunc: false}
+              type: { name: '*http.Request', isFunc: false }
             }],
             returns: []
           }
@@ -279,12 +279,12 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'x int',
           identifier: 'x',
-          type: {name: 'int', isFunc: false}
+          type: { name: 'int', isFunc: false }
         }],
         returns: [{
           name: 'int',
           identifier: '',
-          type: {name: 'int', isFunc: false}
+          type: { name: 'int', isFunc: false }
         }]
       })
 
@@ -293,20 +293,20 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'a',
           identifier: '',
-          type: {name: 'a', isFunc: false}
+          type: { name: 'a', isFunc: false }
         }, {
           name: '_ int',
           identifier: '_',
-          type: {name: 'int', isFunc: false}
+          type: { name: 'int', isFunc: false }
         }, {
           name: 'z float32',
           identifier: 'z',
-          type: {name: 'float32', isFunc: false}
+          type: { name: 'float32', isFunc: false }
         }],
         returns: [{
           name: 'bool',
           identifier: '',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }]
       })
 
@@ -315,20 +315,20 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'a',
           identifier: '',
-          type: {name: 'a', isFunc: false}
+          type: { name: 'a', isFunc: false }
         }, {
           name: 'b int',
           identifier: 'b',
-          type: {name: 'int', isFunc: false}
+          type: { name: 'int', isFunc: false }
         }, {
           name: 'z float32',
           identifier: 'z',
-          type: {name: 'float32', isFunc: false}
+          type: { name: 'float32', isFunc: false }
         }],
         returns: [{
           name: 'bool',
           identifier: '',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }]
       })
 
@@ -337,24 +337,24 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'a',
           identifier: '',
-          type: {name: 'a', isFunc: false}
+          type: { name: 'a', isFunc: false }
         }, {
           name: 'b int',
           identifier: 'b',
-          type: {name: 'int', isFunc: false}
+          type: { name: 'int', isFunc: false }
         }, {
           name: 'z float64',
           identifier: 'z',
-          type: {name: 'float64', isFunc: false}
+          type: { name: 'float64', isFunc: false }
         }, {
           name: 'opt ...interface{}',
           identifier: 'opt',
-          type: {name: '...interface{}', isFunc: false}
+          type: { name: '...interface{}', isFunc: false }
         }],
         returns: [{
           name: 'success bool',
           identifier: 'success',
-          type: {name: 'bool', isFunc: false}
+          type: { name: 'bool', isFunc: false }
         }]
       })
 
@@ -363,11 +363,11 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'prefix string',
           identifier: 'prefix',
-          type: {name: 'string', isFunc: false}
+          type: { name: 'string', isFunc: false }
         }, {
           name: 'values ...int',
           identifier: 'values',
-          type: {name: '...int', isFunc: false}
+          type: { name: '...int', isFunc: false }
         }],
         returns: []
       })
@@ -377,24 +377,24 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'int',
           identifier: '',
-          type: {name: 'int', isFunc: false}
+          type: { name: 'int', isFunc: false }
         }, {
           name: 'int',
           identifier: '',
-          type: {name: 'int', isFunc: false}
+          type: { name: 'int', isFunc: false }
         }, {
           name: 'float64',
           identifier: '',
-          type: {name: 'float64', isFunc: false}
+          type: { name: 'float64', isFunc: false }
         }],
         returns: [{
           name: 'float64',
           identifier: '',
-          type: {name: 'float64', isFunc: false}
+          type: { name: 'float64', isFunc: false }
         }, {
           name: '*[]int',
           identifier: '',
-          type: {name: '*[]int', isFunc: false}
+          type: { name: '*[]int', isFunc: false }
         }]
       })
 
@@ -403,7 +403,7 @@ describe('gocodeprovider-suggestions', () => {
         args: [{
           name: 'n int',
           identifier: 'n',
-          type: {name: 'int', isFunc: false}
+          type: { name: 'int', isFunc: false }
         }],
         returns: [{
           name: 'func(p *T)',
@@ -414,7 +414,7 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 'p *T',
               identifier: 'p',
-              type: {name: '*T', isFunc: false}
+              type: { name: '*T', isFunc: false }
             }],
             returns: []
           }
@@ -457,12 +457,12 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 'x int',
               identifier: 'x',
-              type: {name: 'int', isFunc: false}
+              type: { name: 'int', isFunc: false }
             }],
             returns: [{
               name: 'int',
               identifier: '',
-              type: {name: 'int', isFunc: false}
+              type: { name: 'int', isFunc: false }
             }]
           }
         },
@@ -481,7 +481,7 @@ describe('gocodeprovider-suggestions', () => {
             args: [{
               name: 'pattern string',
               identifier: 'pattern',
-              type: {name: 'string', isFunc: false}
+              type: { name: 'string', isFunc: false }
             }, {
               name: 'func(w http.ResponseWriter, r *http.Request)',
               identifier: '',
@@ -491,11 +491,11 @@ describe('gocodeprovider-suggestions', () => {
                 args: [{
                   name: 'w http.ResponseWriter',
                   identifier: 'w',
-                  type: {name: 'http.ResponseWriter', isFunc: false}
+                  type: { name: 'http.ResponseWriter', isFunc: false }
                 }, {
                   name: 'r *http.Request',
                   identifier: 'r',
-                  type: {name: '*http.Request', isFunc: false}
+                  type: { name: '*http.Request', isFunc: false }
                 }],
                 returns: []
               }
@@ -519,24 +519,24 @@ describe('gocodeprovider-suggestions', () => {
               {
                 name: 'text string',
                 identifier: 'text',
-                type: {name: 'string', isFunc: false}
+                type: { name: 'string', isFunc: false }
               },
               {
                 name: 'body interface{}',
                 identifier: 'body',
-                type: {name: 'interface{}', isFunc: false}
+                type: { name: 'interface{}', isFunc: false }
               },
               {
                 name: 'timeout ...float64',
                 identifier: 'timeout',
-                type: {name: '...float64', isFunc: false}
+                type: { name: '...float64', isFunc: false }
               }
             ],
             returns: [
               {
                 name: 'bool',
                 identifier: '',
-                type: {name: 'bool', isFunc: false}
+                type: { name: 'bool', isFunc: false }
               }
             ]
           }
@@ -564,7 +564,7 @@ describe('gocodeprovider-suggestions', () => {
                 returns: [{
                   name: 'interface{}',
                   identifier: '',
-                  type: {name: 'interface{}', isFunc: false}
+                  type: { name: 'interface{}', isFunc: false }
                 }]
               }
             }],
@@ -593,7 +593,7 @@ describe('gocodeprovider-suggestions', () => {
                 args: [{
                   name: 'i interface{}',
                   identifier: 'i',
-                  type: {name: 'interface{}', isFunc: false}
+                  type: { name: 'interface{}', isFunc: false }
                 }],
                 returns: [{
                   name: 'func(interface{}) interface{}',
@@ -604,12 +604,12 @@ describe('gocodeprovider-suggestions', () => {
                     args: [{
                       name: 'interface{}',
                       identifier: 'i',
-                      type: {name: 'interface{}', isFunc: false}
+                      type: { name: 'interface{}', isFunc: false }
                     }],
                     returns: [{
                       name: 'interface{}',
                       identifier: '',
-                      type: {name: 'interface{}', isFunc: false}
+                      type: { name: 'interface{}', isFunc: false }
                     }]
                   }
                 }]

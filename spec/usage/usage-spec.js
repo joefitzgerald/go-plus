@@ -1,8 +1,8 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {lifecycle} from './../spec-helpers'
-import {Usage} from './../../lib/usage/usage'
+import { lifecycle } from './../spec-helpers'
+import { Usage } from './../../lib/usage/usage'
 import path from 'path'
 import fs from 'fs'
 
