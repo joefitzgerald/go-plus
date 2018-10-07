@@ -1,13 +1,13 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {Executor} from './../../lib/config/executor'
+import { Executor } from './../../lib/config/executor'
 import pathhelper from './../../lib/config/pathhelper'
-import {Locator} from './../../lib/config/locator'
+import { Locator } from './../../lib/config/locator'
 import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('Locator', () => {
   let executor = null
@@ -73,7 +73,7 @@ describe('Locator', () => {
       expect(locator.findExecutablesInPath(false, false).length).toBe(0)
       expect(locator.findExecutablesInPath('', false).length).toBe(0)
       expect(locator.findExecutablesInPath('abcd', false).length).toBe(0)
-      expect(locator.findExecutablesInPath('abcd', {bleh: 'abcd'}).length).toBe(0)
+      expect(locator.findExecutablesInPath('abcd', { bleh: 'abcd' }).length).toBe(0)
       expect(locator.findExecutablesInPath('abcd', 'abcd').length).toBe(0)
       expect(locator.findExecutablesInPath('abcd', []).length).toBe(0)
       expect(locator.findExecutablesInPath([], []).length).toBe(0)
@@ -203,7 +203,7 @@ describe('Locator', () => {
     beforeEach(() => {
       godir = lifecycle.temp.mkdirSync('go-')
       go = path.join(godir, 'go' + executableSuffix)
-      fs.writeFileSync(go, '.', {encoding: 'utf8', mode: 511})
+      fs.writeFileSync(go, '.', { encoding: 'utf8', mode: 511 })
       process.env[pathkey] = godir
       process.env.GOPATH = path.join('~', 'go')
     })
@@ -231,8 +231,8 @@ describe('Locator', () => {
       gorootgo = path.join(gorootbindir, 'go' + executableSuffix)
       godir = lifecycle.temp.mkdirSync('go-')
       go = path.join(godir, 'go' + executableSuffix)
-      fs.writeFileSync(gorootgo, '.', {encoding: 'utf8', mode: 511})
-      fs.writeFileSync(go, '.', {encoding: 'utf8', mode: 511})
+      fs.writeFileSync(gorootgo, '.', { encoding: 'utf8', mode: 511 })
+      fs.writeFileSync(go, '.', { encoding: 'utf8', mode: 511 })
       process.env[pathkey] = godir
       process.env.GOROOT = gorootdir
       process.env.GOPATH = path.join('~', 'go')
@@ -262,8 +262,8 @@ describe('Locator', () => {
       go1dir = lifecycle.temp.mkdirSync('go1-')
       go = path.join(godir, 'go' + executableSuffix)
       go1 = path.join(go1dir, 'go' + executableSuffix)
-      fs.writeFileSync(go, '.', {encoding: 'utf8', mode: 511})
-      fs.writeFileSync(go1, '.', {encoding: 'utf8', mode: 511})
+      fs.writeFileSync(go, '.', { encoding: 'utf8', mode: 511 })
+      fs.writeFileSync(go1, '.', { encoding: 'utf8', mode: 511 })
       process.env[pathkey] = godir + path.delimiter + go1dir
     })
 
@@ -322,12 +322,12 @@ describe('Locator', () => {
       process.env['GOROOT'] = gorootdir
       for (let tool of gorootbintools) {
         if (tool !== 'go') {
-          fs.writeFileSync(path.join(gorootbindir, tool + executableSuffix), '.', {encoding: 'utf8', mode: 511})
+          fs.writeFileSync(path.join(gorootbindir, tool + executableSuffix), '.', { encoding: 'utf8', mode: 511 })
         }
       }
       for (let tool of gotooldirtools) {
         let toolpath = path.join(gotooldir, tool + executableSuffix)
-        fs.writeFileSync(toolpath, '.', {encoding: 'utf8', mode: 511})
+        fs.writeFileSync(toolpath, '.', { encoding: 'utf8', mode: 511 })
       }
     })
 
@@ -464,10 +464,10 @@ describe('Locator', () => {
       process.env['GOPATH'] = gopathdir
       process.env[pathkey] = pathdir + path.delimiter + process.env[pathkey]
       for (let tool of pathtools) {
-        fs.writeFileSync(path.join(pathdir, tool + executableSuffix), '.', {encoding: 'utf8', mode: 511})
+        fs.writeFileSync(path.join(pathdir, tool + executableSuffix), '.', { encoding: 'utf8', mode: 511 })
       }
       for (let tool of gopathbintools) {
-        fs.writeFileSync(path.join(gopathbindir, tool + executableSuffix), '.', {encoding: 'utf8', mode: 511})
+        fs.writeFileSync(path.join(gopathbindir, tool + executableSuffix), '.', { encoding: 'utf8', mode: 511 })
       }
     })
 

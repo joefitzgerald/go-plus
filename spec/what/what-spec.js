@@ -3,7 +3,7 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('what', () => {
   let what
@@ -18,7 +18,7 @@ describe('what', () => {
     })
 
     runs(() => {
-      const {mainModule} = lifecycle
+      const { mainModule } = lifecycle
       mainModule.provideGoConfig()
       mainModule.loadWhat()
     })

@@ -1,7 +1,7 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('go-plus', () => {
   beforeEach(() => {

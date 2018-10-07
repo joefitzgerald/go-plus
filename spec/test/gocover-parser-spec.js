@@ -1,12 +1,12 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {ranges} from './../../lib/test/gocover-parser'
+import { ranges } from './../../lib/test/gocover-parser'
 import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
 import _ from 'lodash'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('gocover-parser', () => {
   let goconfig = null
@@ -61,7 +61,7 @@ describe('gocover-parser', () => {
     })
 
     runs(() => {
-      let executorOptions = {cwd: cwd, env: env}
+      let executorOptions = { cwd: cwd, env: env }
       p = goconfig.executor.exec(cmd, args, executorOptions).then((r) => {
         expect(r.exitcode).toBe(0)
         expect(r.stderr).toBeFalsy()

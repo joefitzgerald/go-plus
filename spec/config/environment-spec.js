@@ -1,10 +1,10 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {getgopath} from './../../lib/config/environment'
+import { getgopath } from './../../lib/config/environment'
 import pathhelper from './../../lib/config/pathhelper'
 import path from 'path'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 import temp from 'temp'
 
 describe('executor', () => {

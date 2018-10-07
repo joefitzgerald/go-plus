@@ -2,8 +2,8 @@
 
 import path from 'path'
 
-import {importablePackages} from './../../lib/import/importer'
-import {lifecycle} from './../spec-helpers'
+import { importablePackages } from './../../lib/import/importer'
+import { lifecycle } from './../spec-helpers'
 
 describe('importablePackages', () => {
   const all = [

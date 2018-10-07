@@ -3,7 +3,7 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 describe('gomodifytags', () => {
   let gopath = null
@@ -25,7 +25,7 @@ describe('gomodifytags', () => {
     })
 
     runs(() => {
-      const {mainModule} = lifecycle
+      const { mainModule } = lifecycle
       mainModule.provideGoConfig()
       mainModule.loadGoModifyTags()
     })
@@ -62,7 +62,7 @@ describe('gomodifytags', () => {
 
       beforeEach(() => {
         options = {
-          tags: [{tag: 'xml', option: null}, {tag: 'bson', option: null}],
+          tags: [{ tag: 'xml', option: null }, { tag: 'bson', option: null }],
           transform: 'snakecase',
           sortTags: false
         }
@@ -135,7 +135,7 @@ describe('gomodifytags', () => {
 
       it('includes the -add-options flag if options were specified for add', () => {
         editor.setCursorBufferPosition([4, 6])
-        options.tags = [{tag: 'bson', option: 'omitempty'}, {tag: 'xml', option: 'foo'}]
+        options.tags = [{ tag: 'bson', option: 'omitempty' }, { tag: 'xml', option: 'foo' }]
         const args = gomodifytags.buildArgs(editor, options, 'Add')
         let i = args.indexOf('-add-tags')
         expect(i).not.toBe(-1)
@@ -155,7 +155,7 @@ describe('gomodifytags', () => {
 
       it('includes the -remove-tags flag if no options are specified for remove', () => {
         editor.setCursorBufferPosition([4, 6])
-        options.tags = [{tag: 'json', option: null}]
+        options.tags = [{ tag: 'json', option: null }]
         const args = gomodifytags.buildArgs(editor, options, 'Remove')
         expect(args.includes('-remove-options')).toBe(false)
         const i = args.indexOf('-remove-tags')
@@ -165,7 +165,7 @@ describe('gomodifytags', () => {
 
       it('includes the -remove-options flag if options are specified for remove', () => {
         editor.setCursorBufferPosition([4, 6])
-        options.tags = [{tag: 'json', option: 'omitempty'}]
+        options.tags = [{ tag: 'json', option: 'omitempty' }]
         const args = gomodifytags.buildArgs(editor, options, 'Remove')
         expect(args.includes('-remove-tags')).toBe(false)
         const i = args.indexOf('-remove-options')
@@ -192,7 +192,7 @@ describe('gomodifytags', () => {
 
         waitsForPromise(() => {
           return gomodifytags.modifyTags(editor, {
-            tags: [{tag: 'json', option: 'omitempty'}],
+            tags: [{ tag: 'json', option: 'omitempty' }],
             transform: 'snakecase',
             sortTags: false
           }, 'Add', command).then((r) => {
@@ -223,7 +223,7 @@ describe('gomodifytags', () => {
         })
 
         waitsForPromise(() => {
-          return gomodifytags.modifyTags(editor, {tags: []}, 'Add', command).then((r) => {
+          return gomodifytags.modifyTags(editor, { tags: [] }, 'Add', command).then((r) => {
             result = r
           })
         })

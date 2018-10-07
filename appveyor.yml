@@ -11,7 +11,7 @@ skip_tags: true
 
 environment:
   GOPATH: c:\gopath
-  GOVERSION: 1.9
+  GOVERSION: 1.11
   APM_TEST_PACKAGES: linter go-signature-statusbar go-debug hyperclick
 
   matrix:

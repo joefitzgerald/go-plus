@@ -3,7 +3,7 @@
 
 import fs from 'fs'
 import path from 'path'
-import {lifecycle} from './../spec-helpers'
+import { lifecycle } from './../spec-helpers'
 
 function setTextAndSave (editor, text) {
   const buffer = editor.getBuffer()

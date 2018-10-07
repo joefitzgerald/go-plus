@@ -50,4 +50,4 @@ class Lifecycle {
 
 const lifecycle = new Lifecycle()
 
-export {lifecycle}
+export { lifecycle }
