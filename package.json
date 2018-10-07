@@ -300,13 +300,6 @@
           "type": "boolean",
           "default": true,
           "order": 5
-        },
-        "unimportedPackages": {
-          "title": "Unimported Packages",
-          "description": "Provide suggestions for unimported packages. Default: true.",
-          "type": "boolean",
-          "default": true,
-          "order": 6
         }
       }
     },
