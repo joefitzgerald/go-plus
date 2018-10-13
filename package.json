@@ -97,7 +97,7 @@
     "eslint-config-standard": "^12.0.0",
     "eslint-config-standard-flow": "^1.0.1",
     "eslint-config-standard-jsx": "^5.0.0",
-    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-flowtype": "^3.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
