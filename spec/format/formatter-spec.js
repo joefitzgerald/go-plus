@@ -116,6 +116,28 @@ describe('formatter', () => {
             expect(editor.getText()).toBe(formattedText)
           })
         })
+
+        describe('when gofmt writes to stderr, but otherwise succeeds', () => {
+          it('still updates the buffer', () => {
+            runs(() => {
+              spyOn(formatter.goconfig.executor, 'execSync').andReturn({
+                exitcode: 0,
+                stderr: 'warning',
+                stdout: formattedText
+              })
+            })
+
+            waitsForPromise(() => {
+              return setTextAndSave(editor, unformattedText)
+            })
+
+            runs(() => {
+              const target = atom.views.getView(editor)
+              atom.commands.dispatch(target, 'golang:gofmt')
+              expect(editor.getText()).toBe(formattedText)
+            })
+          })
+        })
       })
     })
 
