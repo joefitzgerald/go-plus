@@ -300,6 +300,13 @@
           "type": "boolean",
           "default": true,
           "order": 5
+        },
+        "unimportedPackages": {
+          "title": "Unimported Packages",
+          "description": "Propose completions for standard library packages not explicitly imported. Default: true.",
+          "type": "boolean",
+          "default": true,
+          "order": 6
         }
       }
     },

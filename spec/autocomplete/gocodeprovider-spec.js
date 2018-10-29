@@ -208,10 +208,10 @@ describe('gocodeprovider', () => {
     describe('provides suggestions for unimported packages', () => {
       beforeEach(() => {
         atom.config.set('go-plus.autocomplete.snippetMode', 'nameAndType')
+        atom.config.set('go-plus.autocomplete.unimportedPackages', true)
       })
 
-      // TODO: does mdempsky support this?
-      xit('provides the exported types of the unimported package', () => {
+      it('provides the exported types of the unimported package', () => {
         let suggestions = null
 
         waitsFor(() => provider.allPkgs.size > 0)
@@ -222,8 +222,7 @@ describe('gocodeprovider', () => {
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
           editor.setCursorScreenPosition([7, 0])
 
-          // get suggestions for package 'github.com/sqs/goreturns/returns'
-          editor.insertText('returns')
+          editor.insertText('ioutil')
           advanceClock(completionDelay)
           editor.insertText('.')
           advanceClock(completionDelay)
@@ -245,7 +244,7 @@ describe('gocodeprovider', () => {
           expect(suggestions).toBeTruthy()
           expect(suggestions.length).toBeGreaterThan(0)
           expect(suggestions[0]).toBeTruthy()
-          expect(suggestions[0].displayText).toBe('Process(pkgDir string, filename string, src []byte, opt *returns.Options)')
+          expect(suggestions[0].displayText).toBe('NopCloser(r io.Reader)')
         })
       })
     })
