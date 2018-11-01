@@ -299,7 +299,6 @@ describe('Locator', () => {
     let go = null
     let gorootbintools = null
     let gotooldirtools = null
-    let version = null
     beforeEach(() => {
       gorootbintools = ['go', 'godoc', 'gofmt']
       gotooldirtools = ['addr2line', 'cgo', 'dist', 'link', 'pack', 'trace', 'api', 'compile', 'doc', 'nm', 'pprof', 'vet', 'asm', 'cover', 'fix', 'objdump', 'yacc']
