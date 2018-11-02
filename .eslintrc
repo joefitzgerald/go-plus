@@ -10,13 +10,22 @@
     "waitsForPromise": true
   },
   "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaFeatures": {
+        "jsx": true
+    }
+  },
+  "rules": {
+    "react/jsx-uses-vars": "error",
+    "react/jsx-uses-react": "error"
+  },
   "plugins": [
-    "promise"
+    "promise",
+    "react"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:promise/recommended",
-    "plugin:react/recommended",
     "plugin:prettier/recommended"
   ]
 }
