@@ -5,7 +5,6 @@ import { ranges } from './../../lib/test/gocover-parser'
 import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
-import _ from 'lodash'
 import { lifecycle } from './../spec-helpers'
 
 describe('gocover-parser', () => {
@@ -108,9 +107,7 @@ describe('gocover-parser', () => {
       expect(r).toBeTruthy()
       expect(r.length).toBeGreaterThan(0)
 
-      let result = _.filter(r, r => {
-        return _.endsWith(filePath, r.file)
-      })
+      const result = r.filter(item => filePath.endsWith(item.file))
       expect(result).toBeTruthy()
       expect(result.length).toBe(2)
       expect(result[0]).toBeDefined()
