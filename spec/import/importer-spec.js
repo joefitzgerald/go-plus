@@ -66,7 +66,8 @@ describe('importer', () => {
     })
 
     waitsForPromise(() => {
-      return atom.workspace.open(path.join(__dirname, '..', 'fixtures', 'doc.go')).then(e => { editor = e })
+      return atom.workspace.open(path.join(__dirname, '..', 'fixtures', 'doc.go'))
+        .then(e => { editor = e; return })
     })
   })
 
@@ -76,7 +77,7 @@ describe('importer', () => {
     let result
 
     waitsForPromise(() => {
-      return importer.addImport('bufio').then(r => { result = r })
+      return importer.addImport('bufio').then(r => { result = r; return })
     })
 
     runs(() => {

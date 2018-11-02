@@ -53,6 +53,7 @@ describe('gomodifytags', () => {
       waitsForPromise(() => {
         return atom.workspace.open(tempfile).then((e) => {
           editor = e
+          return
         })
       })
     })
@@ -187,6 +188,7 @@ describe('gomodifytags', () => {
           return lifecycle.mainModule.provideGoConfig().locator.findTool('gomodifytags').then((cmd) => {
             expect(cmd).toBeTruthy()
             command = cmd
+            return
           })
         })
 
@@ -197,6 +199,7 @@ describe('gomodifytags', () => {
             sortTags: false
           }, 'Add', command).then((r) => {
             result = r
+            return
           })
         })
 
@@ -219,12 +222,14 @@ describe('gomodifytags', () => {
           return lifecycle.mainModule.provideGoConfig().locator.findTool('gomodifytags').then((cmd) => {
             expect(cmd).toBeTruthy()
             command = cmd
+            return
           })
         })
 
         waitsForPromise(() => {
           return gomodifytags.modifyTags(editor, { tags: [] }, 'Add', command).then((r) => {
             result = r
+            return
           })
         })
 

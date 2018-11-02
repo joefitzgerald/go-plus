@@ -52,6 +52,7 @@ describe('gorename', () => {
       waitsForPromise(() => {
         return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
           editor = e
+          return
         })
       })
     })
@@ -78,11 +79,13 @@ describe('gorename', () => {
         return lifecycle.mainModule.provideGoConfig().locator.findTool('gorename').then((c) => {
           expect(c).toBeTruthy()
           cmd = c
+          return
         })
       })
       waitsForPromise(() => {
         return gorename.runGorename(file, info.offset, cwd, 'bar', cmd).then((result) => {
           r = result
+          return
         })
       })
       runs(() => {
@@ -95,6 +98,7 @@ describe('gorename', () => {
       waitsForPromise(() => {
         return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
           editor = e
+          return
         })
       })
 

@@ -36,6 +36,7 @@ describe('executor', () => {
       waitsForPromise(() => {
         return executor.exec(command, [], { cwd: prefix }).then((r) => {
           result = r
+          return
         }).catch((e) => { error = e })
       })
 
@@ -62,6 +63,7 @@ describe('executor', () => {
       waitsForPromise(() => {
         return executor.exec(command, [], { cwd: pathhelper.home() }).then((r) => {
           result = r
+          return
         }).catch((e) => { error = e })
       })
 
@@ -89,6 +91,7 @@ describe('executor', () => {
       waitsForPromise(() => {
         return executor.exec(command, [], { env: env }).then((r) => {
           result = r
+          return
         }).catch((e) => { error = e })
       })
 
@@ -110,6 +113,7 @@ describe('executor', () => {
       waitsForPromise(() => {
         return executor.exec('nonexistentcommand', [], executor.getOptions()).then((r) => {
           result = r
+          return
         }).catch((e) => { error = e })
       })
 

@@ -5,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
 
-function setTextAndSave (editor, text) {
+function setTextAndSave (editor) {
   const buffer = editor.getBuffer()
   buffer.setText(unformattedText)
   return Promise.resolve(buffer.save())
@@ -62,6 +62,7 @@ describe('formatter', () => {
           saveSubscription = e.onDidSave(() => {
             actual = e.getText()
           })
+          return
         })
       })
     })

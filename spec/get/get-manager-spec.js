@@ -89,6 +89,7 @@ describe('go-get', () => {
       waitsForPromise({ timeout: 30000 }, () => {
         return manager.updateTools().then((o) => {
           outcome = o
+          return
         })
       })
 
@@ -121,6 +122,7 @@ describe('go-get', () => {
       waitsForPromise({ timeout: 30000 }, () => {
         return manager.updateTools().then((o) => {
           outcome = o
+          return
         })
       })
 

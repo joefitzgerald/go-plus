@@ -78,6 +78,7 @@ describe('godoc', () => {
       waitsForPromise(() => {
         return atom.workspace.open(path.join(target, 'doc.go')).then((e) => {
           editor = e
+          return
         })
       })
 
@@ -87,6 +88,7 @@ describe('godoc', () => {
         waitsForPromise(() => {
           return godoc.commandInvoked().then((r) => {
             result = r
+            return
           })
         })
       })
@@ -122,6 +124,7 @@ describe('godoc', () => {
           e.insertText('fmt.Printf("this line has been modified\\n")\n')
           expect(e.isModified()).toBe(true)
           editor = e
+          return
         })
       })
     })
@@ -133,6 +136,7 @@ describe('godoc', () => {
       waitsForPromise(() => {
         return godoc.commandInvoked().then((r) => {
           result = r
+          return
         })
       })
 

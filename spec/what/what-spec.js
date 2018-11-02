@@ -1,4 +1,4 @@
-'use babel'
+// @flow
 /* eslint-env jasmine */
 
 import fs from 'fs-extra'
@@ -43,7 +43,7 @@ describe('what', () => {
   })
 
   describe('when run on a valid go file', () => {
-    let editor = null
+    let editor: atom$TextEditor
     let gopath = null
     let source = null
     let target = null
@@ -62,8 +62,9 @@ describe('what', () => {
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'doc.go')).then((e) => {
+        return atom.workspace.open(path.join(target || '.', 'doc.go')).then((e) => {
           editor = e
+          return
         })
       })
     })

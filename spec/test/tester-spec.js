@@ -51,12 +51,14 @@ describe('tester', () => {
     waitsForPromise(() => {
       return atom.workspace.open(filePath).then((e) => {
         editor = e
+        return
       })
     })
 
     waitsForPromise(() => {
       return atom.workspace.open(testFilePath).then((e) => {
         testEditor = e
+        return
       })
     })
   })

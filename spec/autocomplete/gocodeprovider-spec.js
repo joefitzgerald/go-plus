@@ -20,8 +20,9 @@ describe('gocodeprovider', () => {
     })
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('autocomplete-plus').then((pack) => {
-        autocompleteplusMain = pack.mainModule
+      return atom.packages.activatePackage('autocomplete-plus').then((pkg) => {
+        autocompleteplusMain = pkg.mainModule
+        return
       })
     })
     waitsFor(() => {
@@ -75,6 +76,7 @@ describe('gocodeprovider', () => {
         return atom.workspace.open('basic' + path.sep + 'main.go').then((e) => {
           editor = e
           editorView = atom.views.getView(editor)
+          return
         })
       })
     })
@@ -102,6 +104,7 @@ describe('gocodeprovider', () => {
         waitsForPromise(() => {
           return suggestionsPromise.then((s) => {
             suggestions = s
+            return
           })
         })
 
@@ -144,6 +147,7 @@ describe('gocodeprovider', () => {
         waitsForPromise(() => {
           return suggestionsPromise.then((s) => {
             suggestions = s
+            return
           })
         })
 
@@ -186,6 +190,7 @@ describe('gocodeprovider', () => {
         waitsForPromise(() => {
           return suggestionsPromise.then((s) => {
             suggestions = s
+            return
           })
         })
 
@@ -235,6 +240,7 @@ describe('gocodeprovider', () => {
         waitsForPromise(() => {
           return suggestionsPromise.then((s) => {
             suggestions = s
+            return
           })
         })
 
@@ -258,6 +264,7 @@ describe('gocodeprovider', () => {
         return atom.workspace.open('go-plus-issue-745' + path.sep + 'main.go').then((e) => {
           editor = e
           editorView = atom.views.getView(editor)
+          return
         })
       })
     })
@@ -290,6 +297,7 @@ describe('gocodeprovider', () => {
       waitsForPromise(() => {
         return suggestionsPromise.then((s) => {
           suggestions = s
+          return
         })
       })
 
@@ -308,6 +316,7 @@ describe('gocodeprovider', () => {
       waitsForPromise(() => {
         return suggestionsPromise.then((s) => {
           suggestions = s
+          return
         })
       })
 
@@ -330,6 +339,7 @@ describe('gocodeprovider', () => {
         return atom.workspace.open('go-plus-issue-307' + path.sep + 'main.go').then((e) => {
           editor = e
           editorView = atom.views.getView(editor)
+          return
         })
       })
     })
@@ -360,6 +370,7 @@ describe('gocodeprovider', () => {
       waitsForPromise(() => {
         return suggestionsPromise.then((s) => {
           suggestions = s
+          return
         })
       })
 
@@ -404,6 +415,7 @@ describe('gocodeprovider', () => {
       waitsForPromise(() => {
         return suggestionsPromise.then((s) => {
           suggestions = s
+          return
         })
       })
 
@@ -448,6 +460,7 @@ describe('gocodeprovider', () => {
       waitsForPromise(() => {
         return suggestionsPromise.then((s) => {
           suggestions = s
+          return
         })
       })
 
@@ -495,6 +508,7 @@ describe('gocodeprovider', () => {
       waitsForPromise(() => {
         return suggestionsPromise.then((s) => {
           suggestions = s
+          return
         })
       })
 

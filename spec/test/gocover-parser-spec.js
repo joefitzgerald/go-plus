@@ -54,6 +54,7 @@ describe('gocover-parser', () => {
     let p = goconfig.locator.findTool('go').then((c) => {
       expect(c).toBeTruthy()
       cmd = c
+      return
     })
 
     waitsForPromise(() => {
@@ -66,6 +67,7 @@ describe('gocover-parser', () => {
         expect(r.exitcode).toBe(0)
         expect(r.stderr).toBeFalsy()
         expect(r.stdout).toBeTruthy()
+        return
       })
     })
 

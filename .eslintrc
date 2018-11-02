@@ -10,5 +10,13 @@
     "waitsForPromise": true
   },
   "parser": "babel-eslint",
-  "extends": ["standard", "standard-flow", "standard-jsx"]
+  "plugins": [
+    "promise"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:flowtype/recommended",
+    "plugin:promise/recommended",
+    "plugin:react/recommended"
+  ]
 }

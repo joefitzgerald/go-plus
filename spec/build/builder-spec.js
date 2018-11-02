@@ -14,7 +14,7 @@ describe('builder', () => {
     // mock the Linter V1 Indie API
     linter = {
       deleteMessages: () => {},
-      setMessages: (messages) => {},
+      setMessages: () => {},
       dispose: () => {}
     }
 

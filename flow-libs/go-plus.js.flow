@@ -1,5 +1,0 @@
-declare var atom: any // TODO
-
-declare module 'atom' {
-  declare module.exports: any;
-}

@@ -37,7 +37,7 @@ describe('utils', () => {
       let err = null
 
       let done = stat('nonexistentthing')
-        .then((s) => { result = s })
+        .then((s) => { result = s; return s })
         .catch((error) => { err = error })
       waitsForPromise(() => { return done })
 

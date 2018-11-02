@@ -32,8 +32,9 @@ class Lifecycle {
 
     return Promise.all([
       atom.packages.activatePackage('language-go'),
-      atom.packages.activatePackage('go-plus').then((pack) => {
-        this.mainModule = pack.mainModule
+      atom.packages.activatePackage('go-plus').then((pkg) => {
+        this.mainModule = pkg.mainModule
+        return
       })
     ])
   }

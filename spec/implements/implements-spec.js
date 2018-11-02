@@ -49,6 +49,7 @@ describe('implements', () => {
     waitsForPromise(() => {
       return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
         editor = e
+        return
       })
     })
   })
