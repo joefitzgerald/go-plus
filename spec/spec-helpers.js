@@ -4,27 +4,27 @@
 import temp from 'temp'
 
 class Lifecycle {
-  constructor () {
+  constructor() {
     this.env = Object.assign({}, process.env)
     this.temp = temp
     this.temp.track()
     this.mainModule = null
   }
 
-  dispose () {
+  dispose() {
     this.env = null
     this.temp = null
     this.mainModule = null
   }
 
-  setup () {
+  setup() {
     this.env = Object.assign({}, process.env)
     atom.config.set('go-plus.disableToolCheck', true)
     atom.config.set('go-plus.testing', true)
     atom.config.set('go-plus.guru.highlightIdentifiers', false)
   }
 
-  activatePackage () {
+  activatePackage() {
     atom.packages.triggerDeferredActivationHooks()
 
     atom.packages.triggerActivationHook('language-go:grammar-used')
@@ -32,14 +32,14 @@ class Lifecycle {
 
     return Promise.all([
       atom.packages.activatePackage('language-go'),
-      atom.packages.activatePackage('go-plus').then((pkg) => {
+      atom.packages.activatePackage('go-plus').then(pkg => {
         this.mainModule = pkg.mainModule
         return
       })
     ])
   }
 
-  teardown () {
+  teardown() {
     if (this.env) {
       process.env = this.env
       this.env = null

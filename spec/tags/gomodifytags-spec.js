@@ -51,7 +51,7 @@ describe('gomodifytags', () => {
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(tempfile).then((e) => {
+        return atom.workspace.open(tempfile).then(e => {
           editor = e
           return
         })
@@ -136,7 +136,10 @@ describe('gomodifytags', () => {
 
       it('includes the -add-options flag if options were specified for add', () => {
         editor.setCursorBufferPosition([4, 6])
-        options.tags = [{ tag: 'bson', option: 'omitempty' }, { tag: 'xml', option: 'foo' }]
+        options.tags = [
+          { tag: 'bson', option: 'omitempty' },
+          { tag: 'xml', option: 'foo' }
+        ]
         const args = gomodifytags.buildArgs(editor, options, 'Add')
         let i = args.indexOf('-add-tags')
         expect(i).not.toBe(-1)
@@ -185,28 +188,40 @@ describe('gomodifytags', () => {
         })
 
         waitsForPromise(() => {
-          return lifecycle.mainModule.provideGoConfig().locator.findTool('gomodifytags').then((cmd) => {
-            expect(cmd).toBeTruthy()
-            command = cmd
-            return
-          })
+          return lifecycle.mainModule
+            .provideGoConfig()
+            .locator.findTool('gomodifytags')
+            .then(cmd => {
+              expect(cmd).toBeTruthy()
+              command = cmd
+              return
+            })
         })
 
         waitsForPromise(() => {
-          return gomodifytags.modifyTags(editor, {
-            tags: [{ tag: 'json', option: 'omitempty' }],
-            transform: 'snakecase',
-            sortTags: false
-          }, 'Add', command).then((r) => {
-            result = r
-            return
-          })
+          return gomodifytags
+            .modifyTags(
+              editor,
+              {
+                tags: [{ tag: 'json', option: 'omitempty' }],
+                transform: 'snakecase',
+                sortTags: false
+              },
+              'Add',
+              command
+            )
+            .then(r => {
+              result = r
+              return
+            })
         })
 
         runs(() => {
           expect(result).toBeTruthy()
           expect(result.success).toBe(true)
-          expect(result.result.stdout).toBe('package foo\n\ntype Bar struct {\n\tQuickBrownFox int    `json:"quick_brown_fox,omitempty"`\n\tLazyDog       string `json:"lazy_dog,omitempty"`\n}\n\n')
+          expect(result.result.stdout).toBe(
+            'package foo\n\ntype Bar struct {\n\tQuickBrownFox int    `json:"quick_brown_fox,omitempty"`\n\tLazyDog       string `json:"lazy_dog,omitempty"`\n}\n\n'
+          )
         })
       })
 
@@ -219,18 +234,23 @@ describe('gomodifytags', () => {
         })
 
         waitsForPromise(() => {
-          return lifecycle.mainModule.provideGoConfig().locator.findTool('gomodifytags').then((cmd) => {
-            expect(cmd).toBeTruthy()
-            command = cmd
-            return
-          })
+          return lifecycle.mainModule
+            .provideGoConfig()
+            .locator.findTool('gomodifytags')
+            .then(cmd => {
+              expect(cmd).toBeTruthy()
+              command = cmd
+              return
+            })
         })
 
         waitsForPromise(() => {
-          return gomodifytags.modifyTags(editor, { tags: [] }, 'Add', command).then((r) => {
-            result = r
-            return
-          })
+          return gomodifytags
+            .modifyTags(editor, { tags: [] }, 'Add', command)
+            .then(r => {
+              result = r
+              return
+            })
         })
 
         runs(() => {

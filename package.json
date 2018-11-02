@@ -27,7 +27,8 @@
   "scripts": {
     "flow": "flow",
     "lint": "eslint ./lib ./spec",
-    "lintfix": "eslint ./lib ./spec --fix"
+    "lintfix": "eslint ./lib ./spec --fix",
+    "fmt": "prettier --write lib/**/*.js spec/**/*.js"
   },
   "license": "Apache-2.0",
   "engines": {
@@ -94,10 +95,12 @@
   "devDependencies": {
     "babel-eslint": "10.0.1",
     "eslint": "^5.8.0",
-    "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-react": "^7.11.1",
-    "flow-bin": "^0.85.0"
+    "flow-bin": "^0.85.0",
+    "prettier": "1.14.3"
   },
   "providedServices": {
     "go-config": {

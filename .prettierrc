@@ -1,0 +1,14 @@
+{
+  "semi": false,
+  "singleQuote": true,
+  "arrowParens": "avoid",
+
+  "overrides": [
+    {
+      "files": "*.js",
+      "options": {
+        "parser": "flow"
+      }
+    }
+  ]
+}

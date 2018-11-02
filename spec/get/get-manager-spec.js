@@ -87,7 +87,7 @@ describe('go-get', () => {
       })
 
       waitsForPromise({ timeout: 30000 }, () => {
-        return manager.updateTools().then((o) => {
+        return manager.updateTools().then(o => {
           outcome = o
           return
         })
@@ -113,14 +113,14 @@ describe('go-get', () => {
       runs(() => {
         let stat = fs.statSync(gocodebinary)
         expect(stat.size).toBe(0)
-        manager.register('golang.org/x/tools/cmd/goimports', (o) => {
+        manager.register('golang.org/x/tools/cmd/goimports', o => {
           callbackCalled = true
           callbackOutcome = o
         })
       })
 
       waitsForPromise({ timeout: 30000 }, () => {
-        return manager.updateTools().then((o) => {
+        return manager.updateTools().then(o => {
           outcome = o
           return
         })

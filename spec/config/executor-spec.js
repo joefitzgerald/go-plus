@@ -30,14 +30,24 @@ describe('executor', () => {
     it('succeeds', () => {
       let command = 'env'
       if (os.platform() === 'win32') {
-        command = path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe')
+        command = path.resolve(
+          __dirname,
+          'tools',
+          'env',
+          'env_windows_amd64.exe'
+        )
       }
 
       waitsForPromise(() => {
-        return executor.exec(command, [], { cwd: prefix }).then((r) => {
-          result = r
-          return
-        }).catch((e) => { error = e })
+        return executor
+          .exec(command, [], { cwd: prefix })
+          .then(r => {
+            result = r
+            return
+          })
+          .catch(e => {
+            error = e
+          })
       })
 
       runs(() => {
@@ -57,14 +67,24 @@ describe('executor', () => {
     it('sets the working directory correctly', () => {
       let command = 'pwd'
       if (os.platform() === 'win32') {
-        command = path.resolve(__dirname, 'tools', 'pwd', 'pwd_windows_amd64.exe')
+        command = path.resolve(
+          __dirname,
+          'tools',
+          'pwd',
+          'pwd_windows_amd64.exe'
+        )
       }
 
       waitsForPromise(() => {
-        return executor.exec(command, [], { cwd: pathhelper.home() }).then((r) => {
-          result = r
-          return
-        }).catch((e) => { error = e })
+        return executor
+          .exec(command, [], { cwd: pathhelper.home() })
+          .then(r => {
+            result = r
+            return
+          })
+          .catch(e => {
+            error = e
+          })
       })
 
       runs(() => {
@@ -84,15 +104,25 @@ describe('executor', () => {
     it('sets the environment correctly', () => {
       let command = 'env'
       if (os.platform() === 'win32') {
-        command = path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe')
+        command = path.resolve(
+          __dirname,
+          'tools',
+          'env',
+          'env_windows_amd64.exe'
+        )
       }
       let env = { testenv: 'testing' }
 
       waitsForPromise(() => {
-        return executor.exec(command, [], { env: env }).then((r) => {
-          result = r
-          return
-        }).catch((e) => { error = e })
+        return executor
+          .exec(command, [], { env: env })
+          .then(r => {
+            result = r
+            return
+          })
+          .catch(e => {
+            error = e
+          })
       })
 
       runs(() => {
@@ -111,10 +141,15 @@ describe('executor', () => {
 
     it('handles and returns an ENOENT error if the command was not found', () => {
       waitsForPromise(() => {
-        return executor.exec('nonexistentcommand', [], executor.getOptions()).then((r) => {
-          result = r
-          return
-        }).catch((e) => { error = e })
+        return executor
+          .exec('nonexistentcommand', [], executor.getOptions())
+          .then(r => {
+            result = r
+            return
+          })
+          .catch(e => {
+            error = e
+          })
       })
 
       runs(() => {
@@ -127,7 +162,9 @@ describe('executor', () => {
         expect(result.stdout).toBe('')
         expect(result.stderr).toBeDefined()
         if (os.platform() === 'win32') {
-          expect(result.stderr).toBe('\'nonexistentcommand\' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n')
+          expect(result.stderr).toBe(
+            "'nonexistentcommand' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+          )
         } else {
           expect(result.stderr).toBe('')
         }
@@ -140,7 +177,12 @@ describe('executor', () => {
     it('succeeds', () => {
       let command = 'env'
       if (os.platform() === 'win32') {
-        command = path.resolve(__dirname, 'tools', 'env', 'env_windows_amd64.exe')
+        command = path.resolve(
+          __dirname,
+          'tools',
+          'env',
+          'env_windows_amd64.exe'
+        )
       }
 
       let result = executor.execSync(command, [], executor.getOptions())
@@ -154,7 +196,11 @@ describe('executor', () => {
     })
 
     it('returns a message if the command was not found', () => {
-      let result = executor.execSync('nonexistentcommand', [], executor.getOptions())
+      let result = executor.execSync(
+        'nonexistentcommand',
+        [],
+        executor.getOptions()
+      )
       expect(result.exitcode).toBeDefined()
       expect(result.exitcode).toBe(127)
       expect(result.stdout).toBeDefined()

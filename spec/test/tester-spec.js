@@ -19,7 +19,10 @@ describe('tester', () => {
       lifecycle.setup()
 
       atom.config.set('go-plus.format.formatOnSave', false)
-      atom.config.set('go-plus.test.coverageHighlightMode', 'covered-and-uncovered')
+      atom.config.set(
+        'go-plus.test.coverageHighlightMode',
+        'covered-and-uncovered'
+      )
       gopath = lifecycle.temp.mkdirSync()
       process.env.GOPATH = gopath
       atom.project.setPaths([gopath])
@@ -40,8 +43,22 @@ describe('tester', () => {
     })
 
     runs(() => {
-      filePath = path.join(gopath, 'src', 'github.com', 'testuser', 'example', 'go-plus.go')
-      testFilePath = path.join(gopath, 'src', 'github.com', 'testuser', 'example', 'go-plus_test.go')
+      filePath = path.join(
+        gopath,
+        'src',
+        'github.com',
+        'testuser',
+        'example',
+        'go-plus.go'
+      )
+      testFilePath = path.join(
+        gopath,
+        'src',
+        'github.com',
+        'testuser',
+        'example',
+        'go-plus_test.go'
+      )
       fs.ensureDirSync(path.dirname(filePath))
       fs.ensureDirSync(path.dirname(testFilePath))
       fs.writeFileSync(filePath, '')
@@ -49,14 +66,14 @@ describe('tester', () => {
     })
 
     waitsForPromise(() => {
-      return atom.workspace.open(filePath).then((e) => {
+      return atom.workspace.open(filePath).then(e => {
         editor = e
         return
       })
     })
 
     waitsForPromise(() => {
-      return atom.workspace.open(testFilePath).then((e) => {
+      return atom.workspace.open(testFilePath).then(e => {
         testEditor = e
         return
       })
@@ -115,15 +132,18 @@ describe('tester', () => {
         atom.config.set('go-plus.config.additionalTestArgs', '-short -verbose')
 
         const args = tester.buildGoTestArgs()
-        const shortFlags = args.filter((a) => a === '-short').length
-        const verboseFlags = args.filter((a) => a === '-v').length
+        const shortFlags = args.filter(a => a === '-short').length
+        const verboseFlags = args.filter(a => a === '-v').length
 
         expect(shortFlags).toBe(1)
         expect(verboseFlags).toBe(1)
       })
 
       it('handles args with spaces', () => {
-        atom.config.set('go-plus.config.additionalTestArgs', '-myarg="hello world"  -arg2   3')
+        atom.config.set(
+          'go-plus.config.additionalTestArgs',
+          '-myarg="hello world"  -arg2   3'
+        )
         const args = tester.buildGoTestArgs()
         expect(args.length).toBeGreaterThan(3)
         expect(args[1]).toEqual('-myarg=hello world')
@@ -143,16 +163,17 @@ describe('tester', () => {
         atom.config.set('go-plus.test.runTestsOnSave', true)
 
         buffer = editor.getBuffer()
-        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
+        buffer.setText(
+          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+        )
         testBuffer = testEditor.getBuffer()
-        testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
+        testBuffer.setText(
+          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+        )
       })
 
       waitsForPromise(() => {
-        return Promise.all([
-          buffer.save(),
-          testBuffer.save()
-        ])
+        return Promise.all([buffer.save(), testBuffer.save()])
       })
 
       waitsForPromise(() => {
@@ -177,16 +198,17 @@ describe('tester', () => {
 
       runs(() => {
         buffer = editor.getBuffer()
-        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
+        buffer.setText(
+          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+        )
         testBuffer = testEditor.getBuffer()
-        testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
+        testBuffer.setText(
+          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+        )
       })
 
       waitsForPromise(() => {
-        return Promise.all([
-          buffer.save(),
-          testBuffer.save()
-        ])
+        return Promise.all([buffer.save(), testBuffer.save()])
       })
 
       waitsForPromise(() => {
@@ -205,19 +227,22 @@ describe('tester', () => {
 
       runs(() => {
         buffer = editor.getBuffer()
-        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
+        buffer.setText(
+          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+        )
         testBuffer = testEditor.getBuffer()
-        testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
+        testBuffer.setText(
+          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+        )
       })
 
       waitsForPromise(() => {
-        return Promise.all([
-          buffer.save(),
-          testBuffer.save()
-        ])
+        return Promise.all([buffer.save(), testBuffer.save()])
       })
 
-      waitsForPromise(() => { return tester.runTests(editor) })
+      waitsForPromise(() => {
+        return tester.runTests(editor)
+      })
 
       runs(() => {
         const layers = tester.markedEditors.get(editor.id)
@@ -257,19 +282,22 @@ describe('tester', () => {
 
       runs(() => {
         buffer = editor.getBuffer()
-        buffer.setText('package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
+        buffer.setText(
+          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+        )
         testBuffer = testEditor.getBuffer()
-        testBuffer.setText('package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
+        testBuffer.setText(
+          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+        )
       })
 
       waitsForPromise(() => {
-        return Promise.all([
-          buffer.save(),
-          testBuffer.save()
-        ])
+        return Promise.all([buffer.save(), testBuffer.save()])
       })
 
-      waitsForPromise(() => { return tester.runTests(editor) })
+      waitsForPromise(() => {
+        return tester.runTests(editor)
+      })
 
       runs(() => {
         let layerids = tester.markedEditors.get(editor.id).split(',')

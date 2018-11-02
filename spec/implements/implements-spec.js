@@ -43,11 +43,13 @@ describe('implements', () => {
       impl.view = {}
       impl.view.update = jasmine.createSpy('update')
 
-      impl.requestFocus = jasmine.createSpy('requestFocus').andReturn(Promise.resolve())
+      impl.requestFocus = jasmine
+        .createSpy('requestFocus')
+        .andReturn(Promise.resolve())
     })
 
     waitsForPromise(() => {
-      return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
+      return atom.workspace.open(path.join(target, 'main.go')).then(e => {
         editor = e
         return
       })
@@ -76,10 +78,14 @@ describe('implements', () => {
     runs(() => {
       expect(impl.view.update).toHaveBeenCalled()
       expect(impl.view.update.calls.length).toBe(2)
-      expect(impl.view.update.calls[0].args[0].startsWith('running guru')).toBe(true)
+      expect(impl.view.update.calls[0].args[0].startsWith('running guru')).toBe(
+        true
+      )
 
       expect(typeof impl.view.update.calls[1].args[0]).toBe('string')
-      expect(impl.view.update.calls[1].args[0].startsWith('guru failed')).toBe(true)
+      expect(impl.view.update.calls[1].args[0].startsWith('guru failed')).toBe(
+        true
+      )
     })
   })
 
@@ -95,7 +101,9 @@ describe('implements', () => {
     runs(() => {
       expect(impl.view.update).toHaveBeenCalled()
       expect(impl.view.update.calls.length).toBe(2)
-      expect(impl.view.update.calls[0].args[0].startsWith('running guru')).toBe(true)
+      expect(impl.view.update.calls[0].args[0].startsWith('running guru')).toBe(
+        true
+      )
 
       const guruResult = impl.view.update.calls[1].args[0]
       expect(typeof guruResult).toBe('object')

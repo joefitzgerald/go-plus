@@ -20,13 +20,16 @@ describe('gocodeprovider', () => {
     })
 
     waitsForPromise(() => {
-      return atom.packages.activatePackage('autocomplete-plus').then((pkg) => {
+      return atom.packages.activatePackage('autocomplete-plus').then(pkg => {
         autocompleteplusMain = pkg.mainModule
         return
       })
     })
     waitsFor(() => {
-      return autocompleteplusMain.autocompleteManager && autocompleteplusMain.autocompleteManager.ready
+      return (
+        autocompleteplusMain.autocompleteManager &&
+        autocompleteplusMain.autocompleteManager.ready
+      )
     })
 
     waitsForPromise(() => {
@@ -56,7 +59,7 @@ describe('gocodeprovider', () => {
       provider = lifecycle.mainModule.provideAutocomplete()
       spyOn(provider, 'getSuggestions').andCallThrough()
       provider.onDidInsertSuggestion = jasmine.createSpy()
-      provider.onDidGetSuggestions((p) => {
+      provider.onDidGetSuggestions(p => {
         suggestionsPromise = p
       })
     })
@@ -73,7 +76,7 @@ describe('gocodeprovider', () => {
   describe('when the basic file is opened', () => {
     beforeEach(() => {
       waitsForPromise(() => {
-        return atom.workspace.open('basic' + path.sep + 'main.go').then((e) => {
+        return atom.workspace.open('basic' + path.sep + 'main.go').then(e => {
           editor = e
           editorView = atom.views.getView(editor)
           return
@@ -98,11 +101,14 @@ describe('gocodeprovider', () => {
         })
 
         waitsFor(() => {
-          return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+          return (
+            provider.getSuggestions.calls.length === 1 &&
+            suggestionsPromise !== null
+          )
         })
 
         waitsForPromise(() => {
-          return suggestionsPromise.then((s) => {
+          return suggestionsPromise.then(s => {
             suggestions = s
             return
           })
@@ -141,11 +147,14 @@ describe('gocodeprovider', () => {
         })
 
         waitsFor(() => {
-          return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+          return (
+            provider.getSuggestions.calls.length === 1 &&
+            suggestionsPromise !== null
+          )
         })
 
         waitsForPromise(() => {
-          return suggestionsPromise.then((s) => {
+          return suggestionsPromise.then(s => {
             suggestions = s
             return
           })
@@ -184,11 +193,14 @@ describe('gocodeprovider', () => {
         })
 
         waitsFor(() => {
-          return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+          return (
+            provider.getSuggestions.calls.length === 1 &&
+            suggestionsPromise !== null
+          )
         })
 
         waitsForPromise(() => {
-          return suggestionsPromise.then((s) => {
+          return suggestionsPromise.then(s => {
             suggestions = s
             return
           })
@@ -234,11 +246,14 @@ describe('gocodeprovider', () => {
         })
 
         waitsFor(() => {
-          return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+          return (
+            provider.getSuggestions.calls.length === 1 &&
+            suggestionsPromise !== null
+          )
         })
 
         waitsForPromise(() => {
-          return suggestionsPromise.then((s) => {
+          return suggestionsPromise.then(s => {
             suggestions = s
             return
           })
@@ -261,11 +276,13 @@ describe('gocodeprovider', () => {
     let suggestions = null
     beforeEach(() => {
       waitsForPromise(() => {
-        return atom.workspace.open('go-plus-issue-745' + path.sep + 'main.go').then((e) => {
-          editor = e
-          editorView = atom.views.getView(editor)
-          return
-        })
+        return atom.workspace
+          .open('go-plus-issue-745' + path.sep + 'main.go')
+          .then(e => {
+            editor = e
+            editorView = atom.views.getView(editor)
+            return
+          })
       })
     })
 
@@ -291,11 +308,14 @@ describe('gocodeprovider', () => {
       })
 
       waitsFor(() => {
-        return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+        return (
+          provider.getSuggestions.calls.length === 1 &&
+          suggestionsPromise !== null
+        )
       })
 
       waitsForPromise(() => {
-        return suggestionsPromise.then((s) => {
+        return suggestionsPromise.then(s => {
           suggestions = s
           return
         })
@@ -310,11 +330,14 @@ describe('gocodeprovider', () => {
       })
 
       waitsFor(() => {
-        return provider.getSuggestions.calls.length === 2 && suggestionsPromise !== null
+        return (
+          provider.getSuggestions.calls.length === 2 &&
+          suggestionsPromise !== null
+        )
       })
 
       waitsForPromise(() => {
-        return suggestionsPromise.then((s) => {
+        return suggestionsPromise.then(s => {
           suggestions = s
           return
         })
@@ -336,11 +359,13 @@ describe('gocodeprovider', () => {
     let suggestions = null
     beforeEach(() => {
       waitsForPromise(() => {
-        return atom.workspace.open('go-plus-issue-307' + path.sep + 'main.go').then((e) => {
-          editor = e
-          editorView = atom.views.getView(editor)
-          return
-        })
+        return atom.workspace
+          .open('go-plus-issue-307' + path.sep + 'main.go')
+          .then(e => {
+            editor = e
+            editorView = atom.views.getView(editor)
+            return
+          })
       })
     })
 
@@ -364,11 +389,14 @@ describe('gocodeprovider', () => {
       })
 
       waitsFor(() => {
-        return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+        return (
+          provider.getSuggestions.calls.length === 1 &&
+          suggestionsPromise !== null
+        )
       })
 
       waitsForPromise(() => {
-        return suggestionsPromise.then((s) => {
+        return suggestionsPromise.then(s => {
           suggestions = s
           return
         })
@@ -409,11 +437,14 @@ describe('gocodeprovider', () => {
       })
 
       waitsFor(() => {
-        return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+        return (
+          provider.getSuggestions.calls.length === 1 &&
+          suggestionsPromise !== null
+        )
       })
 
       waitsForPromise(() => {
-        return suggestionsPromise.then((s) => {
+        return suggestionsPromise.then(s => {
           suggestions = s
           return
         })
@@ -454,11 +485,14 @@ describe('gocodeprovider', () => {
       })
 
       waitsFor(() => {
-        return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+        return (
+          provider.getSuggestions.calls.length === 1 &&
+          suggestionsPromise !== null
+        )
       })
 
       waitsForPromise(() => {
-        return suggestionsPromise.then((s) => {
+        return suggestionsPromise.then(s => {
           suggestions = s
           return
         })
@@ -502,11 +536,14 @@ describe('gocodeprovider', () => {
       })
 
       waitsFor(() => {
-        return provider.getSuggestions.calls.length === 1 && suggestionsPromise !== null
+        return (
+          provider.getSuggestions.calls.length === 1 &&
+          suggestionsPromise !== null
+        )
       })
 
       waitsForPromise(() => {
-        return suggestionsPromise.then((s) => {
+        return suggestionsPromise.then(s => {
           suggestions = s
           return
         })

@@ -32,12 +32,32 @@ describe('gocover-parser', () => {
       directory = lifecycle.temp.mkdirSync()
       env = Object.assign({}, goconfig.environment())
       env['GOPATH'] = directory
-      filePath = path.join(directory, 'src', 'github.com', 'testuser', 'example', 'go-plus.go')
-      testFilePath = path.join(directory, 'src', 'github.com', 'testuser', 'example', 'go-plus_test.go')
+      filePath = path.join(
+        directory,
+        'src',
+        'github.com',
+        'testuser',
+        'example',
+        'go-plus.go'
+      )
+      testFilePath = path.join(
+        directory,
+        'src',
+        'github.com',
+        'testuser',
+        'example',
+        'go-plus_test.go'
+      )
       fs.ensureDirSync(path.dirname(filePath))
       fs.ensureDirSync(path.dirname(testFilePath))
-      fs.writeFileSync(filePath, 'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n')
-      fs.writeFileSync(testFilePath, 'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}')
+      fs.writeFileSync(
+        filePath,
+        'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+      )
+      fs.writeFileSync(
+        testFilePath,
+        'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+      )
     })
   })
 
@@ -51,7 +71,7 @@ describe('gocover-parser', () => {
     let tempFile = path.join(tempDir, 'coverage.out')
     let args = ['test', '-coverprofile=' + tempFile]
     let cwd = path.join(directory, 'src', 'github.com', 'testuser', 'example')
-    let p = goconfig.locator.findTool('go').then((c) => {
+    let p = goconfig.locator.findTool('go').then(c => {
       expect(c).toBeTruthy()
       cmd = c
       return
@@ -63,7 +83,7 @@ describe('gocover-parser', () => {
 
     runs(() => {
       let executorOptions = { cwd: cwd, env: env }
-      p = goconfig.executor.exec(cmd, args, executorOptions).then((r) => {
+      p = goconfig.executor.exec(cmd, args, executorOptions).then(r => {
         expect(r.exitcode).toBe(0)
         expect(r.stderr).toBeFalsy()
         expect(r.stdout).toBeTruthy()
@@ -88,7 +108,9 @@ describe('gocover-parser', () => {
       expect(r).toBeTruthy()
       expect(r.length).toBeGreaterThan(0)
 
-      let result = _.filter(r, (r) => { return _.endsWith(filePath, r.file) })
+      let result = _.filter(r, r => {
+        return _.endsWith(filePath, r.file)
+      })
       expect(result).toBeTruthy()
       expect(result.length).toBe(2)
       expect(result[0]).toBeDefined()

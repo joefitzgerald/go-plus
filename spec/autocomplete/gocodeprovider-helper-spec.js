@@ -6,7 +6,7 @@ import * as path from 'path'
 
 describe('gocodeprovider-helper', () => {
   describe('getPackage', () => {
-    function normalize (v) {
+    function normalize(v) {
       return (process.platform === 'win32' ? 'C:' : '') + path.normalize(v)
     }
     it('returns a non-vendored package if `useVendor` is false', () => {
@@ -78,7 +78,9 @@ describe('gocodeprovider-helper', () => {
     it('returns another vendored package inside a vendored package', () => {
       const pkg = getPackage(
         // a file inside a vendored package ...
-        normalize('/Users/me/go/src/github.com/foo/server/vendor/github.com/bar/lib/lib.go'),
+        normalize(
+          '/Users/me/go/src/github.com/foo/server/vendor/github.com/bar/lib/lib.go'
+        ),
         normalize('/Users/me/go'),
         [
           // ... is allowed to use another vendored package

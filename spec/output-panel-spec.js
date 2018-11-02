@@ -23,7 +23,9 @@ describe('test panel', () => {
       expect(elements[0].tag).toBe('span')
       expect(elements[1].tag).toBe('a')
       expect(elements[0].children[0].text).toBe('')
-      expect(elements[1].children[0].text).toBe('/Users/user/go/src/foo/bar.go:23')
+      expect(elements[1].children[0].text).toBe(
+        '/Users/user/go/src/foo/bar.go:23'
+      )
     })
 
     it('renders a link to a go file (relative path)', () => {
@@ -35,11 +37,15 @@ describe('test panel', () => {
     })
 
     it('renders a link to a go file (absolute path)', () => {
-      const elements = outputPanel.makeLink('failure at /home/user/go/src/foo/bar.go:23')
+      const elements = outputPanel.makeLink(
+        'failure at /home/user/go/src/foo/bar.go:23'
+      )
       expect(elements.length).toBe(2)
       expect(elements[0].tag).toBe('span')
       expect(elements[1].tag).toBe('a')
-      expect(elements[1].children[0].text).toBe('/home/user/go/src/foo/bar.go:23')
+      expect(elements[1].children[0].text).toBe(
+        '/home/user/go/src/foo/bar.go:23'
+      )
     })
 
     it('renders a link to a test go file (relative path)', () => {
@@ -51,23 +57,33 @@ describe('test panel', () => {
     })
 
     it('renders a link to a test go file (absolute path)', () => {
-      const elements = outputPanel.makeLink('failure at /home/user/go/src/foo/bar_test.go:23')
+      const elements = outputPanel.makeLink(
+        'failure at /home/user/go/src/foo/bar_test.go:23'
+      )
       expect(elements.length).toBe(2)
       expect(elements[0].tag).toBe('span')
       expect(elements[1].tag).toBe('a')
-      expect(elements[1].children[0].text).toBe('/home/user/go/src/foo/bar_test.go:23')
+      expect(elements[1].children[0].text).toBe(
+        '/home/user/go/src/foo/bar_test.go:23'
+      )
     })
 
     it('renders links to Windows paths', () => {
-      const elements = outputPanel.makeLink('failure at C:\\Users\\Me\\go\\src\\foo\\bar_test.go:23')
+      const elements = outputPanel.makeLink(
+        'failure at C:\\Users\\Me\\go\\src\\foo\\bar_test.go:23'
+      )
       expect(elements.length).toBe(2)
       expect(elements[0].tag).toBe('span')
       expect(elements[1].tag).toBe('a')
-      expect(elements[1].children[0].text).toBe('C:\\Users\\Me\\go\\src\\foo\\bar_test.go:23')
+      expect(elements[1].children[0].text).toBe(
+        'C:\\Users\\Me\\go\\src\\foo\\bar_test.go:23'
+      )
     })
 
     it('renders multiple links', () => {
-      const elements = outputPanel.makeLink('failures at foo/bar.go:12 and baz/quux.go:34')
+      const elements = outputPanel.makeLink(
+        'failures at foo/bar.go:12 and baz/quux.go:34'
+      )
       expect(elements.length).toBe(4)
       expect(elements[0].tag).toBe('span')
       expect(elements[1].tag).toBe('a')
@@ -91,9 +107,13 @@ describe('test panel', () => {
     })
 
     it('renders links in multi-line text', () => {
-      const elements = outputPanel.makeLink('--- FAIL: TestFail (0.00s)\n\tbar_test.go:23: Error!\nFAIL')
+      const elements = outputPanel.makeLink(
+        '--- FAIL: TestFail (0.00s)\n\tbar_test.go:23: Error!\nFAIL'
+      )
       expect(elements.length).toBe(3)
-      expect(elements[0].children[0].text).toBe('--- FAIL: TestFail (0.00s)\n\t')
+      expect(elements[0].children[0].text).toBe(
+        '--- FAIL: TestFail (0.00s)\n\t'
+      )
       expect(elements[1].children[0].text).toBe('bar_test.go:23')
       expect(elements[2].children[0].text).toBe(': Error!\nFAIL')
     })

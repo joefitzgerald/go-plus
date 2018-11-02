@@ -23,11 +23,15 @@ describe('orchestrator', () => {
 
   describe('register', () => {
     it('throws an error if a callback is not provided', () => {
-      expect(() => { orchestrator.register('test') }).toThrow()
+      expect(() => {
+        orchestrator.register('test')
+      }).toThrow()
     })
 
     it('throws an error if the callback is not a function', () => {
-      expect(() => { orchestrator.register('test', 42) }).toThrow()
+      expect(() => {
+        orchestrator.register('test', 42)
+      }).toThrow()
     })
 
     it('registers a callback that can be unregistered', () => {
@@ -43,13 +47,16 @@ describe('orchestrator', () => {
       let called = false
 
       runs(() => {
-        const callback = () => { called = true; return Promise.resolve(true) }
+        const callback = () => {
+          called = true
+          return Promise.resolve(true)
+        }
         orchestrator.register('test', callback)
       })
 
       waitsForPromise(() => {
         const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then((e) => {
+        return atom.workspace.open(filepath).then(e => {
           return e.save()
         })
       })
@@ -63,22 +70,32 @@ describe('orchestrator', () => {
       let called = [false, false]
 
       runs(() => {
-        const callback0 = () => { called[0] = true; return Promise.resolve(true) }
-        const callback1 = () => { called[1] = true; return Promise.resolve(true) }
+        const callback0 = () => {
+          called[0] = true
+          return Promise.resolve(true)
+        }
+        const callback1 = () => {
+          called[1] = true
+          return Promise.resolve(true)
+        }
         orchestrator.register('callback0', callback0)
         orchestrator.register('callback1', callback1)
       })
 
       waitsForPromise(() => {
         const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then((e) => {
+        return atom.workspace.open(filepath).then(e => {
           return e.save()
         })
       })
 
-      waitsFor(() => {
-        return called[0] === true && called[1] === true
-      }, 'Both callbacks should be called', 1000)
+      waitsFor(
+        () => {
+          return called[0] === true && called[1] === true
+        },
+        'Both callbacks should be called',
+        1000
+      )
 
       runs(() => {
         expect(called[0]).toBe(true)
@@ -90,15 +107,21 @@ describe('orchestrator', () => {
       let called = [false, false]
 
       runs(() => {
-        const callback0 = () => { called[0] = true; return Promise.reject(new Error()) }
-        const callback1 = () => { called[1] = true; return Promise.resolve(true) }
+        const callback0 = () => {
+          called[0] = true
+          return Promise.reject(new Error())
+        }
+        const callback1 = () => {
+          called[1] = true
+          return Promise.resolve(true)
+        }
         orchestrator.register('callback0', callback0)
         orchestrator.register('callback1', callback1)
       })
 
       waitsForPromise(() => {
         const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then((e) => {
+        return atom.workspace.open(filepath).then(e => {
           return e.save()
         })
       })
@@ -112,11 +135,15 @@ describe('orchestrator', () => {
 
   describe('register / onWillSave', () => {
     it('throws an error if a callback is not provided', () => {
-      expect(() => { orchestrator.register('test', undefined, 'willSave') }).toThrow()
+      expect(() => {
+        orchestrator.register('test', undefined, 'willSave')
+      }).toThrow()
     })
 
     it('throws an error if the callback is not a function', () => {
-      expect(() => { orchestrator.register('test', 42, 'willSave') }).toThrow()
+      expect(() => {
+        orchestrator.register('test', 42, 'willSave')
+      }).toThrow()
     })
 
     it('registers a callback that can be unregistered', () => {
@@ -132,13 +159,16 @@ describe('orchestrator', () => {
       let called = false
 
       runs(() => {
-        const callback = () => { called = true; return true }
+        const callback = () => {
+          called = true
+          return true
+        }
         orchestrator.register('test', callback, 'willSave')
       })
 
       waitsForPromise(() => {
         const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then((e) => {
+        return atom.workspace.open(filepath).then(e => {
           return e.save()
         })
       })
@@ -152,15 +182,21 @@ describe('orchestrator', () => {
       let called = [false, false]
 
       runs(() => {
-        const callback0 = () => { called[0] = true; return true }
-        const callback1 = () => { called[1] = true; return true }
+        const callback0 = () => {
+          called[0] = true
+          return true
+        }
+        const callback1 = () => {
+          called[1] = true
+          return true
+        }
         orchestrator.register('test', callback0, 'willSave')
         orchestrator.register('test', callback1, 'willSave')
       })
 
       waitsForPromise(() => {
         const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then((e) => {
+        return atom.workspace.open(filepath).then(e => {
           return e.save()
         })
       })
@@ -175,15 +211,21 @@ describe('orchestrator', () => {
       let called = [false, false]
 
       runs(() => {
-        const callback0 = () => { called[0] = true; return false }
-        const callback1 = () => { called[1] = true; return true }
+        const callback0 = () => {
+          called[0] = true
+          return false
+        }
+        const callback1 = () => {
+          called[1] = true
+          return true
+        }
         orchestrator.register('test', callback0, 'willSave')
         orchestrator.register('test', callback1, 'willSave')
       })
 
       waitsForPromise(() => {
         const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then((e) => {
+        return atom.workspace.open(filepath).then(e => {
           return e.save()
         })
       })

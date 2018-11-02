@@ -25,7 +25,7 @@ describe('executor', () => {
       atom.config.set('go-plus.config.gopath', configDir)
     })
 
-    it('uses the environment\'s gopath', () => {
+    it("uses the environment's gopath", () => {
       expect(getgopath()).toBeTruthy()
       expect(getgopath()).toBe(envDir)
     })
@@ -49,7 +49,7 @@ describe('executor', () => {
       atom.config.set('go-plus.config.gopath', configDir)
     })
 
-    it('uses the config\'s gopath', () => {
+    it("uses the config's gopath", () => {
       expect(getgopath()).toBeTruthy()
       expect(getgopath()).toBe(configDir)
     })

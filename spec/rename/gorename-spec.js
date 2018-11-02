@@ -50,7 +50,7 @@ describe('gorename', () => {
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
+        return atom.workspace.open(path.join(target, 'main.go')).then(e => {
           editor = e
           return
         })
@@ -68,42 +68,56 @@ describe('gorename', () => {
       let r = false
       let cmd
 
-      waitsFor(() => {
-        if (lifecycle.mainModule.provideGoConfig()) {
-          return true
-        }
-        return false
-      }, '', 750)
+      waitsFor(
+        () => {
+          if (lifecycle.mainModule.provideGoConfig()) {
+            return true
+          }
+          return false
+        },
+        '',
+        750
+      )
 
       waitsForPromise(() => {
-        return lifecycle.mainModule.provideGoConfig().locator.findTool('gorename').then((c) => {
-          expect(c).toBeTruthy()
-          cmd = c
-          return
-        })
+        return lifecycle.mainModule
+          .provideGoConfig()
+          .locator.findTool('gorename')
+          .then(c => {
+            expect(c).toBeTruthy()
+            cmd = c
+            return
+          })
       })
       waitsForPromise(() => {
-        return gorename.runGorename(file, info.offset, cwd, 'bar', cmd).then((result) => {
-          r = result
-          return
-        })
+        return gorename
+          .runGorename(file, info.offset, cwd, 'bar', cmd)
+          .then(result => {
+            r = result
+            return
+          })
       })
       runs(() => {
         expect(r).toBeTruthy()
         expect(r.success).toBe(true)
-        expect(r.result.stdout.trim()).toBe('Renamed 2 occurrences in 1 file in 1 package.')
+        expect(r.result.stdout.trim()).toBe(
+          'Renamed 2 occurrences in 1 file in 1 package.'
+        )
         editor.destroy()
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'main.go')).then((e) => {
+        return atom.workspace.open(path.join(target, 'main.go')).then(e => {
           editor = e
           return
         })
       })
 
       runs(() => {
-        let expected = fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'gorename', 'expected'), 'utf8')
+        let expected = fs.readFileSync(
+          path.join(__dirname, '..', 'fixtures', 'gorename', 'expected'),
+          'utf8'
+        )
         let actual = editor.getText()
         expect(actual).toBe(expected)
       })

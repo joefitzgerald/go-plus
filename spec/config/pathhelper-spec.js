@@ -24,15 +24,25 @@ describe('pathhelper', () => {
       let env = Object.assign({}, process.env)
       env.GOPATH = '~' + path.sep + 'go'
 
-      let result = pathhelper.expand(env, path.join('~', 'go', 'go', '..', 'bin', 'goimports'))
+      let result = pathhelper.expand(
+        env,
+        path.join('~', 'go', 'go', '..', 'bin', 'goimports')
+      )
       expect(result).toBeDefined()
       expect(result).toBeTruthy()
-      expect(result).toBe(path.join(pathhelper.home(), 'go', 'bin', 'goimports'))
+      expect(result).toBe(
+        path.join(pathhelper.home(), 'go', 'bin', 'goimports')
+      )
 
-      result = pathhelper.expand(env, path.join(gopathToken, 'go', '..', 'bin', 'goimports'))
+      result = pathhelper.expand(
+        env,
+        path.join(gopathToken, 'go', '..', 'bin', 'goimports')
+      )
       expect(result).toBeDefined()
       expect(result).toBeTruthy()
-      expect(result).toBe(path.join(pathhelper.home(), 'go', 'bin', 'goimports'))
+      expect(result).toBe(
+        path.join(pathhelper.home(), 'go', 'bin', 'goimports')
+      )
 
       let root = path.sep
       let nonexistentKey = '$NONEXISTENT'
@@ -40,7 +50,10 @@ describe('pathhelper', () => {
         root = 'c:' + path.sep
         nonexistentKey = '%NONEXISTENT%'
       }
-      result = pathhelper.expand(env, path.join(root, nonexistentKey, 'go', '..', 'bin', 'goimports'))
+      result = pathhelper.expand(
+        env,
+        path.join(root, nonexistentKey, 'go', '..', 'bin', 'goimports')
+      )
       expect(result).toBeDefined()
       expect(result).toBeTruthy()
       expect(result).toBe(path.join(root, nonexistentKey, 'bin', 'goimports'))
@@ -50,17 +63,28 @@ describe('pathhelper', () => {
   describe('when working with a multi-item path', () => {
     it('expands the path', () => {
       let env = Object.assign({}, process.env)
-      env.GOPATH = '~' + path.sep + 'go' + path.delimiter + '~' + path.sep + 'othergo'
+      env.GOPATH =
+        '~' + path.sep + 'go' + path.delimiter + '~' + path.sep + 'othergo'
 
-      let result = pathhelper.expand(env, path.join('~', 'go', 'go', '..', 'bin', 'goimports'))
+      let result = pathhelper.expand(
+        env,
+        path.join('~', 'go', 'go', '..', 'bin', 'goimports')
+      )
       expect(result).toBeDefined()
       expect(result).toBeTruthy()
-      expect(result).toBe(path.join(pathhelper.home(), 'go', 'bin', 'goimports'))
+      expect(result).toBe(
+        path.join(pathhelper.home(), 'go', 'bin', 'goimports')
+      )
 
-      result = pathhelper.expand(env, path.join(gopathToken, 'go', '..', 'bin', 'goimports'))
+      result = pathhelper.expand(
+        env,
+        path.join(gopathToken, 'go', '..', 'bin', 'goimports')
+      )
       expect(result).toBeDefined()
       expect(result).toBeTruthy()
-      expect(result).toBe(path.join(pathhelper.home(), 'go', 'bin', 'goimports'))
+      expect(result).toBe(
+        path.join(pathhelper.home(), 'go', 'bin', 'goimports')
+      )
     })
   })
 })

@@ -5,14 +5,15 @@ import fs from 'fs'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
 
-function setTextAndSave (editor) {
+function setTextAndSave(editor) {
   const buffer = editor.getBuffer()
   buffer.setText(unformattedText)
   return Promise.resolve(buffer.save())
 }
 
 const nl = '\n'
-const unformattedText = 'package main' + nl + nl + 'func main()  {' + nl + '}' + nl
+const unformattedText =
+  'package main' + nl + nl + 'func main()  {' + nl + '}' + nl
 const formattedText = 'package main' + nl + nl + 'func main() {' + nl + '}' + nl
 
 describe('formatter', () => {
@@ -57,7 +58,7 @@ describe('formatter', () => {
       filePath = path.join(directory, 'gofmt.go')
       fs.writeFileSync(filePath, '')
       waitsForPromise(() => {
-        return atom.workspace.open(filePath).then((e) => {
+        return atom.workspace.open(filePath).then(e => {
           editor = e
           saveSubscription = e.onDidSave(() => {
             actual = e.getText()
@@ -89,7 +90,9 @@ describe('formatter', () => {
             return setTextAndSave(editor, unformattedText)
           })
 
-          waitsFor(() => { return actual })
+          waitsFor(() => {
+            return actual
+          })
 
           runs(() => {
             expect(actual).toBe(unformattedText)

@@ -46,7 +46,7 @@ describe('go to definition', () => {
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(path.join(targetDir, 'foo.go')).then((e) => {
+        return atom.workspace.open(path.join(targetDir, 'foo.go')).then(e => {
           editor = e
           return
         })

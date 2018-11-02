@@ -76,7 +76,7 @@ describe('godoc', () => {
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'doc.go')).then((e) => {
+        return atom.workspace.open(path.join(target, 'doc.go')).then(e => {
           editor = e
           return
         })
@@ -86,7 +86,7 @@ describe('godoc', () => {
         editor.setCursorBufferPosition([24, 10])
 
         waitsForPromise(() => {
-          return godoc.commandInvoked().then((r) => {
+          return godoc.commandInvoked().then(r => {
             result = r
             return
           })
@@ -104,7 +104,9 @@ describe('godoc', () => {
 
     it('returns a godoc.org link', () => {
       runs(() => {
-        expect(result.doc.gddo).toBe('https://godoc.org/godoctest#Foo.ChangeMessage')
+        expect(result.doc.gddo).toBe(
+          'https://godoc.org/godoctest#Foo.ChangeMessage'
+        )
       })
     })
   })
@@ -118,7 +120,7 @@ describe('godoc', () => {
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'doc.go')).then((e) => {
+        return atom.workspace.open(path.join(target, 'doc.go')).then(e => {
           e.setCursorBufferPosition([24, 35])
           e.selectLinesContainingCursors()
           e.insertText('fmt.Printf("this line has been modified\\n")\n')
@@ -134,7 +136,7 @@ describe('godoc', () => {
       editor.setCursorBufferPosition([24, 7])
 
       waitsForPromise(() => {
-        return godoc.commandInvoked().then((r) => {
+        return godoc.commandInvoked().then(r => {
           result = r
           return
         })
@@ -148,7 +150,9 @@ describe('godoc', () => {
 
         expect(result.doc).toBeTruthy()
         expect(result.doc.import).toBe('fmt')
-        expect(result.doc.decl).toBe('func Printf(format string, a ...interface{}) (n int, err error)')
+        expect(result.doc.decl).toBe(
+          'func Printf(format string, a ...interface{}) (n int, err error)'
+        )
         expect(result.doc.gddo).toBe('https://godoc.org/fmt#Printf')
       })
     })

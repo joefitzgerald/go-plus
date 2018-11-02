@@ -15,17 +15,25 @@ describe('utils', () => {
 
   describe('parseGoPosition(identifier)', () => {
     it('parses unix paths', () => {
-      const parsed = parseGoPosition('/private/temp/src/gopath-11726-3832-1xl0vhg.4128uayvi/src/what/doc.go:23:2')
+      const parsed = parseGoPosition(
+        '/private/temp/src/gopath-11726-3832-1xl0vhg.4128uayvi/src/what/doc.go:23:2'
+      )
       expect(parsed).toBeTruthy()
-      expect(parsed.file).toBe('/private/temp/src/gopath-11726-3832-1xl0vhg.4128uayvi/src/what/doc.go')
+      expect(parsed.file).toBe(
+        '/private/temp/src/gopath-11726-3832-1xl0vhg.4128uayvi/src/what/doc.go'
+      )
       expect(parsed.line).toBe(23)
       expect(parsed.column).toBe(2)
     })
 
     it('parses windows paths', () => {
-      const parsed = parseGoPosition('C:\\Users\\vagrant\\AppData\\Local\\Temp\\2\\gopath-11726-3832-1xl0vhg.4128uayvi\\src\\what\\doc.go:23:2')
+      const parsed = parseGoPosition(
+        'C:\\Users\\vagrant\\AppData\\Local\\Temp\\2\\gopath-11726-3832-1xl0vhg.4128uayvi\\src\\what\\doc.go:23:2'
+      )
       expect(parsed).toBeTruthy()
-      expect(parsed.file).toBe('C:\\Users\\vagrant\\AppData\\Local\\Temp\\2\\gopath-11726-3832-1xl0vhg.4128uayvi\\src\\what\\doc.go')
+      expect(parsed.file).toBe(
+        'C:\\Users\\vagrant\\AppData\\Local\\Temp\\2\\gopath-11726-3832-1xl0vhg.4128uayvi\\src\\what\\doc.go'
+      )
       expect(parsed.line).toBe(23)
       expect(parsed.column).toBe(2)
     })
@@ -37,9 +45,16 @@ describe('utils', () => {
       let err = null
 
       let done = stat('nonexistentthing')
-        .then((s) => { result = s; return s })
-        .catch((error) => { err = error })
-      waitsForPromise(() => { return done })
+        .then(s => {
+          result = s
+          return s
+        })
+        .catch(error => {
+          err = error
+        })
+      waitsForPromise(() => {
+        return done
+      })
 
       runs(() => {
         expect(result).not.toBeTruthy()

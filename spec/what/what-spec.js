@@ -43,7 +43,7 @@ describe('what', () => {
   })
 
   describe('when run on a valid go file', () => {
-    let editor: atom$TextEditor
+    let editor
     let gopath = null
     let source = null
     let target = null
@@ -62,10 +62,12 @@ describe('what', () => {
       })
 
       waitsForPromise(() => {
-        return atom.workspace.open(path.join(target || '.', 'doc.go')).then((e) => {
-          editor = e
-          return
-        })
+        return atom.workspace
+          .open(path.join(target || '.', 'doc.go'))
+          .then(e => {
+            editor = e
+            return
+          })
       })
     })
 
@@ -75,7 +77,12 @@ describe('what', () => {
       })
 
       waitsForPromise(() => {
-        return what.run(editor, editor.getCursorBufferPosition(), editor.getCursors()[0], true)
+        return what.run(
+          editor,
+          editor.getCursorBufferPosition(),
+          editor.getCursors()[0],
+          true
+        )
       })
 
       runs(() => {

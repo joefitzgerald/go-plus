@@ -73,7 +73,9 @@ describe('Locator', () => {
       expect(locator.findExecutablesInPath(false, false).length).toBe(0)
       expect(locator.findExecutablesInPath('', false).length).toBe(0)
       expect(locator.findExecutablesInPath('abcd', false).length).toBe(0)
-      expect(locator.findExecutablesInPath('abcd', { bleh: 'abcd' }).length).toBe(0)
+      expect(
+        locator.findExecutablesInPath('abcd', { bleh: 'abcd' }).length
+      ).toBe(0)
       expect(locator.findExecutablesInPath('abcd', 'abcd').length).toBe(0)
       expect(locator.findExecutablesInPath('abcd', []).length).toBe(0)
       expect(locator.findExecutablesInPath([], []).length).toBe(0)
@@ -82,8 +84,13 @@ describe('Locator', () => {
     it('findExecutablesInPath returns an array with elements if its arguments are valid', () => {
       expect(locator.findExecutablesInPath).toBeDefined()
       if (os.platform() === 'win32') {
-        expect(locator.findExecutablesInPath('c:\\windows\\system32', ['cmd.exe']).length).toBe(1)
-        expect(locator.findExecutablesInPath('c:\\windows\\system32', ['cmd.exe'])[0]).toBe('c:\\windows\\system32\\cmd.exe')
+        expect(
+          locator.findExecutablesInPath('c:\\windows\\system32', ['cmd.exe'])
+            .length
+        ).toBe(1)
+        expect(
+          locator.findExecutablesInPath('c:\\windows\\system32', ['cmd.exe'])[0]
+        ).toBe('c:\\windows\\system32\\cmd.exe')
       } else {
         expect(locator.findExecutablesInPath('/bin', ['sh']).length).toBe(1)
         expect(locator.findExecutablesInPath('/bin', ['sh'])[0]).toBe('/bin/sh')
@@ -277,7 +284,8 @@ describe('Locator', () => {
     })
 
     it('runtimeCandidates() returns candidates in the correct order when a candidate occurs multiple times in the path', () => {
-      process.env[pathkey] = godir + path.delimiter + go1dir + path.delimiter + godir
+      process.env[pathkey] =
+        godir + path.delimiter + go1dir + path.delimiter + godir
       expect(locator.runtimeCandidates).toBeDefined()
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
@@ -301,7 +309,25 @@ describe('Locator', () => {
     let gotooldirtools = null
     beforeEach(() => {
       gorootbintools = ['go', 'godoc', 'gofmt']
-      gotooldirtools = ['addr2line', 'cgo', 'dist', 'link', 'pack', 'trace', 'api', 'compile', 'doc', 'nm', 'pprof', 'vet', 'asm', 'cover', 'fix', 'objdump', 'yacc']
+      gotooldirtools = [
+        'addr2line',
+        'cgo',
+        'dist',
+        'link',
+        'pack',
+        'trace',
+        'api',
+        'compile',
+        'doc',
+        'nm',
+        'pprof',
+        'vet',
+        'asm',
+        'cover',
+        'fix',
+        'objdump',
+        'yacc'
+      ]
       godir = lifecycle.temp.mkdirSync('go-')
       gopathdir = lifecycle.temp.mkdirSync('gopath-')
       gorootdir = lifecycle.temp.mkdirSync('goroot-')
@@ -319,7 +345,11 @@ describe('Locator', () => {
       process.env['GOROOT'] = gorootdir
       for (let tool of gorootbintools) {
         if (tool !== 'go') {
-          fs.writeFileSync(path.join(gorootbindir, tool + executableSuffix), '.', { encoding: 'utf8', mode: 511 })
+          fs.writeFileSync(
+            path.join(gorootbindir, tool + executableSuffix),
+            '.',
+            { encoding: 'utf8', mode: 511 }
+          )
         }
       }
       for (let tool of gotooldirtools) {
@@ -339,16 +369,23 @@ describe('Locator', () => {
     it('runtimes() returns the runtime', () => {
       expect(locator.runtimes).toBeDefined()
       let runtimes = null
-      let done = locator.runtimes().then((r) => { runtimes = r; return })
+      let done = locator.runtimes().then(r => {
+        runtimes = r
+        return
+      })
 
-      waitsForPromise(() => { return done })
+      waitsForPromise(() => {
+        return done
+      })
 
       runs(() => {
         expect(runtimes).toBeTruthy()
         expect(runtimes.length).toBeGreaterThan(0)
         expect(runtimes[0].name).toBe('go1.11.1')
         expect(runtimes[0].semver).toBe('1.11.1')
-        expect(runtimes[0].version).toBe('go version go1.11.1 ' + platform + '/' + arch)
+        expect(runtimes[0].version).toBe(
+          'go version go1.11.1 ' + platform + '/' + arch
+        )
         expect(runtimes[0].path).toBe(go)
         expect(runtimes[0].GOARCH).toBe(arch)
         expect(runtimes[0].GOBIN).toBe('')
@@ -366,9 +403,19 @@ describe('Locator', () => {
       expect(locator.findTool).toBeDefined()
       let tool = null
       let err = null
-      let done = locator.findTool('go').then((t) => { tool = t; return }).catch((e) => { err = e })
+      let done = locator
+        .findTool('go')
+        .then(t => {
+          tool = t
+          return
+        })
+        .catch(e => {
+          err = e
+        })
 
-      waitsForPromise(() => { return done })
+      waitsForPromise(() => {
+        return done
+      })
 
       runs(() => {
         expect(err).toBe(null)
@@ -382,17 +429,27 @@ describe('Locator', () => {
       let runtime = false
       let tool = null
       let toolPath = false
-      let done = locator.runtime().then((r) => { runtime = r; return })
+      let done = locator.runtime().then(r => {
+        runtime = r
+        return
+      })
 
-      waitsForPromise(() => { return done })
+      waitsForPromise(() => {
+        return done
+      })
 
       runs(() => {
         for (let toolItem of tools) {
           tool = null
           done = null
           toolPath = path.join(runtime.GOROOT, 'bin', toolItem + runtime.GOEXE)
-          done = locator.findTool(toolItem).then((t) => { tool = t; return })
-          waitsForPromise(() => { return done })
+          done = locator.findTool(toolItem).then(t => {
+            tool = t
+            return
+          })
+          waitsForPromise(() => {
+            return done
+          })
 
           runs(() => {
             expect(tool).toBeTruthy()
@@ -405,16 +462,26 @@ describe('Locator', () => {
     it('findTool() finds tools in GOTOOLDIR', () => {
       let tools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
       let runtime = false
-      let done = locator.runtime().then((r) => { runtime = r; return })
+      let done = locator.runtime().then(r => {
+        runtime = r
+        return
+      })
 
-      waitsForPromise(() => { return done })
+      waitsForPromise(() => {
+        return done
+      })
 
       runs(() => {
         for (let toolItem of tools) {
           let tool = null
           let toolPath = path.join(runtime.GOTOOLDIR, toolItem + runtime.GOEXE)
-          let done = locator.findTool(toolItem).then((t) => { tool = t; return })
-          waitsForPromise(() => { return done })
+          let done = locator.findTool(toolItem).then(t => {
+            tool = t
+            return
+          })
+          waitsForPromise(() => {
+            return done
+          })
 
           runs(() => {
             expect(tool).toBeTruthy()
@@ -441,10 +508,17 @@ describe('Locator', () => {
       process.env['GOPATH'] = gopathdir
       process.env[pathkey] = pathdir + path.delimiter + process.env[pathkey]
       for (let tool of pathtools) {
-        fs.writeFileSync(path.join(pathdir, tool + executableSuffix), '.', { encoding: 'utf8', mode: 511 })
+        fs.writeFileSync(path.join(pathdir, tool + executableSuffix), '.', {
+          encoding: 'utf8',
+          mode: 511
+        })
       }
       for (let tool of gopathbintools) {
-        fs.writeFileSync(path.join(gopathbindir, tool + executableSuffix), '.', { encoding: 'utf8', mode: 511 })
+        fs.writeFileSync(
+          path.join(gopathbindir, tool + executableSuffix),
+          '.',
+          { encoding: 'utf8', mode: 511 }
+        )
       }
     })
 
@@ -461,11 +535,13 @@ describe('Locator', () => {
             toolPath = path.join(pathdir, toolItem + executableSuffix)
           }
 
-          done = locator.findTool(toolItem).then((t) => {
+          done = locator.findTool(toolItem).then(t => {
             tool = t
             return
           })
-          waitsForPromise(() => { return done })
+          waitsForPromise(() => {
+            return done
+          })
           runs(() => {
             done = null
             expect(tool).toBeTruthy()
@@ -475,15 +551,20 @@ describe('Locator', () => {
       })
     })
 
-    it('findTool() finds tools in GOPATH\'s bin directory', () => {
+    it("findTool() finds tools in GOPATH's bin directory", () => {
       runs(() => {
         for (let toolItem of gopathbintools) {
           let tool = null
           let toolPath = false
           let done = null
           toolPath = path.join(gopathbindir, toolItem + executableSuffix)
-          done = locator.findTool(toolItem).then((t) => { tool = t; return })
-          waitsForPromise(() => { return done })
+          done = locator.findTool(toolItem).then(t => {
+            tool = t
+            return
+          })
+          waitsForPromise(() => {
+            return done
+          })
           runs(() => {
             expect(tool).toBeTruthy()
             expect(tool).toBe(toolPath)
