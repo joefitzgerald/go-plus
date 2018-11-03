@@ -17,11 +17,14 @@
   },
   "rules": {
     "react/jsx-uses-vars": "error",
-    "react/jsx-uses-react": "error"
+    "react/jsx-uses-react": "error",
+    "flowtype/define-flow-type": 1,
+    "flowtype/use-flow-type": 1
   },
   "plugins": [
     "promise",
-    "react"
+    "react",
+    "eslint-plugin-flowtype"
   ],
   "extends": [
     "eslint:recommended",

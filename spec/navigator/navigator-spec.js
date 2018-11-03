@@ -6,7 +6,7 @@ import fs from 'fs-extra'
 import { lifecycle } from './../spec-helpers'
 
 describe('go to definition', () => {
-  let godef = null
+  let navigator = null
   let gopath = null
 
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe('go to definition', () => {
       const { mainModule } = lifecycle
       mainModule.provideGoConfig()
       mainModule.provideGoGet()
-      godef = mainModule.getGodef()
+      navigator = mainModule.loadNavigator()
     })
   })
 
@@ -64,7 +64,7 @@ describe('go to definition', () => {
         })
 
         waitsForPromise(() => {
-          return godef.gotoDefinitionForWordAtCursor()
+          return navigator.gotoDefinitionForWordAtCursor()
         })
 
         runs(() => {
@@ -75,7 +75,7 @@ describe('go to definition', () => {
           expect(pos.row).toBe(2)
           expect(pos.column).toBe(5)
 
-          expect(godef.navigationStack.isEmpty()).toBe(false)
+          expect(navigator.navigationStack.isEmpty()).toBe(false)
         })
       })
     })
@@ -91,7 +91,7 @@ describe('go to definition', () => {
         })
 
         waitsForPromise(() => {
-          return godef.gotoDefinitionForWordAtCursor()
+          return navigator.gotoDefinitionForWordAtCursor()
         })
 
         runs(() => {
@@ -102,7 +102,7 @@ describe('go to definition', () => {
           expect(pos.row).toBe(2)
           expect(pos.column).toBe(5)
 
-          expect(godef.navigationStack.isEmpty()).toBe(false)
+          expect(navigator.navigationStack.isEmpty()).toBe(false)
         })
       })
 
@@ -112,7 +112,7 @@ describe('go to definition', () => {
         })
 
         waitsForPromise(() => {
-          return godef.gotoDefinitionForWordAtCursor()
+          return navigator.gotoDefinitionForWordAtCursor()
         })
 
         runs(() => {
@@ -123,7 +123,7 @@ describe('go to definition', () => {
           expect(pos.row).toBe(2)
           expect(pos.column).toBe(5)
 
-          expect(godef.navigationStack.isEmpty()).toBe(false)
+          expect(navigator.navigationStack.isEmpty()).toBe(false)
         })
       })
     })
