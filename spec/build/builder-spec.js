@@ -38,7 +38,6 @@ describe('builder', () => {
         const args = builder.testCompileArgs(setting)
         expect(args[0]).toEqual('test')
         expect(args).toContain('-c')
-        expect(args).toContain('-i')
         expect(args).toContain('-o')
         expect(args.includes('/dev/null') || args.includes('NUL')).toEqual(true)
         expect(args).toContain('.')
@@ -49,7 +48,6 @@ describe('builder', () => {
       const args = builder.testCompileArgs('-foo -bar 5')
       expect(args[0]).toEqual('test')
       expect(args).toContain('-c')
-      expect(args).toContain('-i')
       expect(args).toContain('-o')
       expect(args.includes('/dev/null') || args.includes('NUL')).toEqual(true)
       expect(args).toContain('.')
@@ -68,9 +66,8 @@ describe('builder', () => {
     })
 
     it('does not duplicate args', () => {
-      const args = builder.testCompileArgs('-c -i')
+      const args = builder.testCompileArgs('-c')
       expect(args.filter(x => x === '-c').length).toEqual(1)
-      expect(args.filter(x => x === '-i').length).toEqual(1)
     })
 
     it('does not allow overriding the output file', () => {
