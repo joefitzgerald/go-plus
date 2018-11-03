@@ -6,26 +6,16 @@ import fs from 'fs-extra'
 import { lifecycle } from './../spec-helpers'
 
 describe('tester', () => {
-  let gopath = null
   let tester = null
-
-  let filePath
-  let testFilePath
-  let editor
-  let testEditor
 
   beforeEach(() => {
     runs(() => {
       lifecycle.setup()
-
       atom.config.set('go-plus.format.formatOnSave', false)
       atom.config.set(
         'go-plus.test.coverageHighlightMode',
         'covered-and-uncovered'
       )
-      gopath = lifecycle.temp.mkdirSync()
-      process.env.GOPATH = gopath
-      atom.project.setPaths([gopath])
     })
 
     waitsForPromise(() => {
@@ -40,43 +30,6 @@ describe('tester', () => {
 
     waitsFor(() => {
       return lifecycle.mainModule.provideGoConfig() !== false
-    })
-
-    runs(() => {
-      filePath = path.join(
-        gopath,
-        'src',
-        'github.com',
-        'testuser',
-        'example',
-        'go-plus.go'
-      )
-      testFilePath = path.join(
-        gopath,
-        'src',
-        'github.com',
-        'testuser',
-        'example',
-        'go-plus_test.go'
-      )
-      fs.ensureDirSync(path.dirname(filePath))
-      fs.ensureDirSync(path.dirname(testFilePath))
-      fs.writeFileSync(filePath, '')
-      fs.writeFileSync(testFilePath, '')
-    })
-
-    waitsForPromise(() => {
-      return atom.workspace.open(filePath).then(e => {
-        editor = e
-        return
-      })
-    })
-
-    waitsForPromise(() => {
-      return atom.workspace.open(testFilePath).then(e => {
-        testEditor = e
-        return
-      })
     })
   })
 
@@ -153,183 +106,236 @@ describe('tester', () => {
     })
   })
 
-  describe('when run tests on save is enabled, but compile on save is disabled', () => {
-    it('runs tests', () => {
-      let buffer
-      let testBuffer
+  describe('with a gopath setup', () => {
+    let gopath = null
+    let filePath
+    let testFilePath
+    let editor
+    let testEditor
 
-      runs(() => {
-        atom.config.set('go-plus.config.compileOnSave', false)
-        atom.config.set('go-plus.test.runTestsOnSave', true)
-
-        buffer = editor.getBuffer()
-        buffer.setText(
-          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
-        )
-        testBuffer = testEditor.getBuffer()
-        testBuffer.setText(
-          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
-        )
-      })
-
-      waitsForPromise(() => {
-        return Promise.all([buffer.save(), testBuffer.save()])
-      })
-
-      waitsForPromise(() => {
-        spyOn(tester, 'runTests').andCallThrough()
-        return tester.handleSaveEvent()
-      })
-
-      runs(() => {
-        expect(tester.runTests).toHaveBeenCalled()
-      })
-    })
-  })
-
-  describe('when run tests on save is disabled', () => {
     beforeEach(() => {
-      atom.config.set('go-plus.test.runTestsOnSave', false)
-    })
-
-    it('does not run tests automatically on save', () => {
-      let buffer
-      let testBuffer
-
       runs(() => {
-        buffer = editor.getBuffer()
-        buffer.setText(
-          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+        gopath = lifecycle.temp.mkdirSync()
+        process.env.GOPATH = gopath
+        atom.project.setPaths([gopath])
+
+        filePath = path.join(
+          gopath,
+          'src',
+          'github.com',
+          'testuser',
+          'example',
+          'go-plus.go'
         )
-        testBuffer = testEditor.getBuffer()
-        testBuffer.setText(
-          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+        testFilePath = path.join(
+          gopath,
+          'src',
+          'github.com',
+          'testuser',
+          'example',
+          'go-plus_test.go'
         )
+        fs.ensureDirSync(path.dirname(filePath))
+        fs.ensureDirSync(path.dirname(testFilePath))
+        fs.writeFileSync(filePath, '')
+        fs.writeFileSync(testFilePath, '')
       })
 
       waitsForPromise(() => {
-        return Promise.all([buffer.save(), testBuffer.save()])
+        return atom.workspace.open(filePath).then(e => {
+          editor = e
+          return
+        })
       })
 
       waitsForPromise(() => {
-        spyOn(tester, 'runTests').andCallThrough()
-        return tester.handleSaveEvent()
-      })
-
-      runs(() => {
-        expect(tester.runTests).not.toHaveBeenCalled()
-      })
-    })
-
-    it('displays coverage for go source', () => {
-      let buffer
-      let testBuffer
-
-      runs(() => {
-        buffer = editor.getBuffer()
-        buffer.setText(
-          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
-        )
-        testBuffer = testEditor.getBuffer()
-        testBuffer.setText(
-          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
-        )
-      })
-
-      waitsForPromise(() => {
-        return Promise.all([buffer.save(), testBuffer.save()])
-      })
-
-      waitsForPromise(() => {
-        return tester.runTests(editor)
-      })
-
-      runs(() => {
-        const layers = tester.markedEditors.get(editor.id)
-        expect(layers).toBeTruthy()
-        let layerids = layers.split(',')
-        let coveredLayer = editor.getMarkerLayer(layerids[0])
-        let uncoveredLayer = editor.getMarkerLayer(layerids[1])
-        expect(coveredLayer).toBeTruthy()
-        expect(uncoveredLayer).toBeTruthy()
-
-        let coveredmarkers = coveredLayer.getMarkers()
-        expect(coveredmarkers).toBeDefined()
-        expect(coveredmarkers.length).toBe(1)
-        expect(coveredmarkers[0]).toBeDefined()
-        let range = coveredmarkers[0].getBufferRange()
-        expect(range.start.row).toBe(8)
-        expect(range.start.column).toBe(20)
-        expect(range.end.row).toBe(10)
-        expect(range.end.column).toBe(1)
-
-        let uncoveredmarkers = uncoveredLayer.getMarkers()
-        expect(uncoveredmarkers).toBeDefined()
-        expect(uncoveredmarkers.length).toBe(1)
-        expect(uncoveredmarkers[0]).toBeDefined()
-        range = uncoveredmarkers[0].getBufferRange()
-        expect(range).toBeDefined()
-        expect(range.start.row).toBe(4)
-        expect(range.start.column).toBe(13)
-        expect(range.end.row).toBe(6)
-        expect(range.end.column).toBe(1)
+        return atom.workspace.open(testFilePath).then(e => {
+          testEditor = e
+          return
+        })
       })
     })
 
-    it('clears coverage for go source', () => {
-      let buffer
-      let testBuffer
+    describe('when run tests on save is enabled, but compile on save is disabled', () => {
+      it('runs tests', () => {
+        let buffer
+        let testBuffer
 
-      runs(() => {
-        buffer = editor.getBuffer()
-        buffer.setText(
-          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
-        )
-        testBuffer = testEditor.getBuffer()
-        testBuffer.setText(
-          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
-        )
+        runs(() => {
+          atom.config.set('go-plus.config.compileOnSave', false)
+          atom.config.set('go-plus.test.runTestsOnSave', false)
+          atom.config.set('go-plus.test.runTestsWithCoverage', false)
+
+          buffer = editor.getBuffer()
+          buffer.setText(
+            'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+          )
+          testBuffer = testEditor.getBuffer()
+          testBuffer.setText(
+            'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+          )
+        })
+
+        waitsForPromise(() => {
+          return Promise.all([buffer.save(), testBuffer.save()])
+        })
+
+        waitsForPromise(() => {
+          atom.config.set('go-plus.test.runTestsOnSave', true)
+          spyOn(tester, 'runTests').andCallThrough()
+          return tester.handleSaveEvent()
+        })
+
+        runs(() => {
+          expect(tester.runTests).toHaveBeenCalled()
+        })
+      })
+    })
+
+    describe('when run tests on save is disabled', () => {
+      beforeEach(() => {
+        atom.config.set('go-plus.test.runTestsOnSave', false)
       })
 
-      waitsForPromise(() => {
-        return Promise.all([buffer.save(), testBuffer.save()])
+      it('does not run tests automatically on save', () => {
+        let buffer
+        let testBuffer
+
+        runs(() => {
+          buffer = editor.getBuffer()
+          buffer.setText(
+            'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+          )
+          testBuffer = testEditor.getBuffer()
+          testBuffer.setText(
+            'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+          )
+        })
+
+        waitsForPromise(() => {
+          return Promise.all([buffer.save(), testBuffer.save()])
+        })
+
+        waitsForPromise(() => {
+          spyOn(tester, 'runTests').andCallThrough()
+          return tester.handleSaveEvent()
+        })
+
+        runs(() => {
+          expect(tester.runTests).not.toHaveBeenCalled()
+        })
       })
 
-      waitsForPromise(() => {
-        return tester.runTests(editor)
+      it('displays coverage for go source', () => {
+        let buffer
+        let testBuffer
+
+        runs(() => {
+          buffer = editor.getBuffer()
+          buffer.setText(
+            'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+          )
+          testBuffer = testEditor.getBuffer()
+          testBuffer.setText(
+            'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+          )
+        })
+
+        waitsForPromise(() => {
+          return Promise.all([buffer.save(), testBuffer.save()])
+        })
+
+        waitsForPromise(() => {
+          return tester.runTests(editor)
+        })
+
+        runs(() => {
+          const layers = tester.markedEditors.get(editor.id)
+          expect(layers).toBeTruthy()
+          let layerids = layers.split(',')
+          let coveredLayer = editor.getMarkerLayer(layerids[0])
+          let uncoveredLayer = editor.getMarkerLayer(layerids[1])
+          expect(coveredLayer).toBeTruthy()
+          expect(uncoveredLayer).toBeTruthy()
+
+          let coveredmarkers = coveredLayer.getMarkers()
+          expect(coveredmarkers).toBeDefined()
+          expect(coveredmarkers.length).toBe(1)
+          expect(coveredmarkers[0]).toBeDefined()
+          let range = coveredmarkers[0].getBufferRange()
+          expect(range.start.row).toBe(8)
+          expect(range.start.column).toBe(20)
+          expect(range.end.row).toBe(10)
+          expect(range.end.column).toBe(1)
+
+          let uncoveredmarkers = uncoveredLayer.getMarkers()
+          expect(uncoveredmarkers).toBeDefined()
+          expect(uncoveredmarkers.length).toBe(1)
+          expect(uncoveredmarkers[0]).toBeDefined()
+          range = uncoveredmarkers[0].getBufferRange()
+          expect(range).toBeDefined()
+          expect(range.start.row).toBe(4)
+          expect(range.start.column).toBe(13)
+          expect(range.end.row).toBe(6)
+          expect(range.end.column).toBe(1)
+        })
       })
 
-      runs(() => {
-        let layerids = tester.markedEditors.get(editor.id).split(',')
-        let coveredLayer = editor.getMarkerLayer(layerids[0])
-        let uncoveredLayer = editor.getMarkerLayer(layerids[1])
-        expect(coveredLayer).toBeTruthy()
-        expect(uncoveredLayer).toBeTruthy()
+      it('clears coverage for go source', () => {
+        let buffer
+        let testBuffer
 
-        let coveredmarkers = coveredLayer.getMarkers()
-        expect(coveredmarkers).toBeDefined()
-        expect(coveredmarkers.length).toBe(1)
-        expect(coveredmarkers[0]).toBeDefined()
-        let range = coveredmarkers[0].getBufferRange()
-        expect(range.start.row).toBe(8)
-        expect(range.start.column).toBe(20)
-        expect(range.end.row).toBe(10)
-        expect(range.end.column).toBe(1)
+        runs(() => {
+          buffer = editor.getBuffer()
+          buffer.setText(
+            'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
+          )
+          testBuffer = testEditor.getBuffer()
+          testBuffer.setText(
+            'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
+          )
+        })
 
-        let uncoveredmarkers = uncoveredLayer.getMarkers()
-        expect(uncoveredmarkers).toBeDefined()
-        expect(uncoveredmarkers.length).toBe(1)
-        expect(uncoveredmarkers[0]).toBeDefined()
-        range = uncoveredmarkers[0].getBufferRange()
-        expect(range).toBeDefined()
-        expect(range.start.row).toBe(4)
-        expect(range.start.column).toBe(13)
-        expect(range.end.row).toBe(6)
-        expect(range.end.column).toBe(1)
+        waitsForPromise(() => {
+          return Promise.all([buffer.save(), testBuffer.save()])
+        })
 
-        tester.clearMarkers(editor)
-        expect(coveredLayer.getMarkers().length).toBe(0)
-        expect(uncoveredLayer.getMarkers().length).toBe(0)
+        waitsForPromise(() => {
+          return tester.runTests(editor)
+        })
+
+        runs(() => {
+          let layerids = tester.markedEditors.get(editor.id).split(',')
+          let coveredLayer = editor.getMarkerLayer(layerids[0])
+          let uncoveredLayer = editor.getMarkerLayer(layerids[1])
+          expect(coveredLayer).toBeTruthy()
+          expect(uncoveredLayer).toBeTruthy()
+
+          let coveredmarkers = coveredLayer.getMarkers()
+          expect(coveredmarkers).toBeDefined()
+          expect(coveredmarkers.length).toBe(1)
+          expect(coveredmarkers[0]).toBeDefined()
+          let range = coveredmarkers[0].getBufferRange()
+          expect(range.start.row).toBe(8)
+          expect(range.start.column).toBe(20)
+          expect(range.end.row).toBe(10)
+          expect(range.end.column).toBe(1)
+
+          let uncoveredmarkers = uncoveredLayer.getMarkers()
+          expect(uncoveredmarkers).toBeDefined()
+          expect(uncoveredmarkers.length).toBe(1)
+          expect(uncoveredmarkers[0]).toBeDefined()
+          range = uncoveredmarkers[0].getBufferRange()
+          expect(range).toBeDefined()
+          expect(range.start.row).toBe(4)
+          expect(range.start.column).toBe(13)
+          expect(range.end.row).toBe(6)
+          expect(range.end.column).toBe(1)
+
+          tester.clearMarkers(editor)
+          expect(coveredLayer.getMarkers().length).toBe(0)
+          expect(uncoveredLayer.getMarkers().length).toBe(0)
+        })
       })
     })
   })

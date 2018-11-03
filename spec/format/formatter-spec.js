@@ -23,6 +23,7 @@ describe('formatter', () => {
     runs(() => {
       lifecycle.setup()
       atom.config.set('editor.defaultLineEnding', 'LF')
+      atom.config.set('go-plus.test.runTestsOnSave', false)
     })
 
     waitsForPromise(() => {
