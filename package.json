@@ -213,6 +213,13 @@
           "type": "string",
           "default": "",
           "order": 4
+        },
+        "buildTimeout": {
+          "title": "Build Timeout",
+          "description": "Stop running a build after this number of milliseconds",
+          "type": "integer",
+          "default": 10000,
+          "order": 5
         }
       }
     },
