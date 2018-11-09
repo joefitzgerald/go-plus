@@ -12,6 +12,7 @@ os:
 
 env:
   global:
+    - GO111MODULE=off
     - APM_TEST_PACKAGES="linter go-signature-statusbar go-debug hyperclick"
   matrix:
     - ATOM_CHANNEL=beta
