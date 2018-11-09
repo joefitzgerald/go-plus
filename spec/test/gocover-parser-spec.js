@@ -107,8 +107,8 @@ describe('gocover-parser', () => {
       expect(r).toBeTruthy()
       expect(r.length).toBeGreaterThan(0)
       const result = r.filter(item => filePath.endsWith(item.file))
-      console.log('ranges', r);
-      console.log('filtered for ' + filePath, result);
+      console.log('ranges', r) // eslint-disable-line no-console
+      console.log('filtered for ' + filePath, result) // eslint-disable-line no-console
       expect(result).toBeTruthy()
       expect(result.length).toBe(2)
       expect(result[0]).toBeDefined()
