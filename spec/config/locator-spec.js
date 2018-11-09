@@ -259,7 +259,7 @@ describe('Locator', () => {
       expect(locator.runtimeCandidates).toBeDefined()
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
-      expect(candidates.length).toBeGreaterThan(0)
+      expect(candidates.length).toBeGreaterThan(1)
       expect(candidates[0]).toBe(gorootgo)
       expect(candidates[1]).toBe(go)
     })
@@ -352,7 +352,7 @@ describe('Locator', () => {
       expect(locator.runtimeCandidates).toBeDefined()
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
-      expect(candidates.length).toBeGreaterThan(1)
+      expect(candidates.length).toBeGreaterThan(0)
       expect(candidates[0]).toBe(go)
     })
 
