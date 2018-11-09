@@ -204,7 +204,7 @@ describe('Locator', () => {
     })
   })
 
-  describe('when the PATH has a single directory with a go runtime in it', () => {
+  describe('when the PATH has a single directory with a go executable in it', () => {
     let godir = null
     let go = null
     beforeEach(() => {
@@ -225,8 +225,11 @@ describe('Locator', () => {
   })
 
   describe('when GOROOT is set and the go tool is available within $GOROOT/bin', () => {
+    // a temporary $PATH where we place a fake go executable
     let godir = null
     let go = null
+
+    // a temporary $GOROOT/bin directory where we place a fake go executable
     let gorootgo = null
     let gorootdir = null
     let gorootbindir = null
@@ -236,10 +239,13 @@ describe('Locator', () => {
       gorootbindir = path.join(gorootdir, 'bin')
       fs.mkdirSync(gorootbindir)
       gorootgo = path.join(gorootbindir, 'go' + executableSuffix)
+
       godir = lifecycle.temp.mkdirSync('go-')
       go = path.join(godir, 'go' + executableSuffix)
+
       fs.writeFileSync(gorootgo, '.', { encoding: 'utf8', mode: 511 })
       fs.writeFileSync(go, '.', { encoding: 'utf8', mode: 511 })
+
       process.env[pathkey] = godir
       process.env.GOROOT = gorootdir
       process.env.GOPATH = path.join('~', 'go')
@@ -259,11 +265,12 @@ describe('Locator', () => {
     })
   })
 
-  describe('when the PATH has multiple directories with a go runtime in it', () => {
+  describe('when the PATH has multiple directories with a go executable in it', () => {
     let godir = null
     let go1dir = null
     let go = null
     let go1 = null
+
     beforeEach(() => {
       godir = lifecycle.temp.mkdirSync('go-')
       go1dir = lifecycle.temp.mkdirSync('go1-')
@@ -298,62 +305,45 @@ describe('Locator', () => {
     })
   })
 
-  describe('when the path includes a directory with go executable in it', () => {
+  describe('when the PATH includes a directory with go executable in it', () => {
     let godir = null
+
     let gopathdir = null
     let gorootdir = null
     let gorootbindir = null
     let gotooldir = null
     let go = null
-    let gorootbintools = null
-    let gotooldirtools = null
+    const gorootbintools = ['go', 'godoc', 'gofmt']
+    const gotooldirtools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
+
     beforeEach(() => {
-      gorootbintools = ['go', 'godoc', 'gofmt']
-      gotooldirtools = [
-        'addr2line',
-        'cgo',
-        'dist',
-        'link',
-        'pack',
-        'trace',
-        'api',
-        'compile',
-        'doc',
-        'nm',
-        'pprof',
-        'vet',
-        'asm',
-        'cover',
-        'fix',
-        'objdump',
-        'yacc'
-      ]
       godir = lifecycle.temp.mkdirSync('go-')
       gopathdir = lifecycle.temp.mkdirSync('gopath-')
       gorootdir = lifecycle.temp.mkdirSync('goroot-')
+
       gorootbindir = path.join(gorootdir, 'bin')
-      fs.mkdirSync(gorootbindir)
       gotooldir = path.join(gorootdir, 'pkg', 'tool', platform + '_' + arch)
+
+      fs.mkdirSync(gorootbindir)
       fs.mkdirsSync(gotooldir)
-      let fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
-      let fakego = path.join(__dirname, 'tools', 'go', fakeexecutable)
-      go = path.join(gorootbindir, 'go' + executableSuffix)
+
+      // copy our fake go binary into the fake $GOROOT/bin
+      const fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
+      const fakego = path.join(__dirname, 'tools', 'go', fakeexecutable)
+      go = path.join(godir, 'go' + executableSuffix)
       fs.copySync(fakego, go)
 
       process.env[pathkey] = godir
       process.env['GOPATH'] = gopathdir
       process.env['GOROOT'] = gorootdir
-      for (let tool of gorootbintools) {
+      for (const tool of gorootbintools) {
         if (tool !== 'go') {
-          fs.writeFileSync(
-            path.join(gorootbindir, tool + executableSuffix),
-            '.',
-            { encoding: 'utf8', mode: 511 }
-          )
+          const toolpath = path.join(gorootbindir, tool + executableSuffix)
+          fs.writeFileSync(toolpath, '.', { encoding: 'utf8', mode: 511 })
         }
       }
-      for (let tool of gotooldirtools) {
-        let toolpath = path.join(gotooldir, tool + executableSuffix)
+      for (const tool of gotooldirtools) {
+        const toolpath = path.join(gotooldir, tool + executableSuffix)
         fs.writeFileSync(toolpath, '.', { encoding: 'utf8', mode: 511 })
       }
     })
@@ -362,20 +352,17 @@ describe('Locator', () => {
       expect(locator.runtimeCandidates).toBeDefined()
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
-      expect(candidates.length).toBeGreaterThan(0)
+      expect(candidates.length).toBeGreaterThan(1)
       expect(candidates[0]).toBe(go)
     })
 
     it('runtimes() returns the runtime', () => {
-      expect(locator.runtimes).toBeDefined()
       let runtimes = null
-      let done = locator.runtimes().then(r => {
-        runtimes = r
-        return
-      })
-
       waitsForPromise(() => {
-        return done
+        return locator.runtimes().then(r => {
+          runtimes = r
+          return
+        })
       })
 
       runs(() => {
