@@ -37,6 +37,16 @@ describe('gocodeprovider', () => {
     })
 
     runs(() => {
+      const { mainModule } = lifecycle
+      mainModule.provideAutocomplete()
+    })
+
+    waitsFor(() => {
+      provider = lifecycle.mainModule.autocompleteProvider
+      return provider
+    })
+
+    runs(() => {
       spyOn(lifecycle.mainModule, 'provideAutocomplete').andCallThrough()
     })
 
