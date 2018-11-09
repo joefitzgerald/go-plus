@@ -106,8 +106,9 @@ describe('gocover-parser', () => {
       let r = ranges(tempFile)
       expect(r).toBeTruthy()
       expect(r.length).toBeGreaterThan(0)
-
       const result = r.filter(item => filePath.endsWith(item.file))
+      console.log('ranges', r);
+      console.log('filtered for ' + filePath, result);
       expect(result).toBeTruthy()
       expect(result.length).toBe(2)
       expect(result[0]).toBeDefined()
