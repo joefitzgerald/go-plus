@@ -64,7 +64,7 @@ describe('gocover-parser', () => {
     lifecycle.teardown()
   })
 
-  it('parses the file for a single package correctly', () => {
+  fit('parses the file for a single package', () => {
     let cmd
     let tempDir = lifecycle.temp.mkdirSync()
     let tempFile = path.join(tempDir, 'coverage.out')
