@@ -5,7 +5,7 @@ import { lifecycle } from './../spec-helpers'
 import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 
-fdescribe('gocodeprovider', () => {
+describe('gocodeprovider', () => {
   let completionDelay = null
   let provider = null
   let editor = null
