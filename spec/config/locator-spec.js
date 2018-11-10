@@ -1,4 +1,5 @@
 /* eslint-env jasmine */
+// @flow
 
 import { Executor } from './../../lib/config/executor'
 import pathhelper from './../../lib/config/pathhelper'
@@ -11,11 +12,11 @@ import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disabl
 
 describe('Locator', () => {
   let executor = null
-  let platform = null
-  let arch = null
-  let executableSuffix = null
-  let pathkey = null
-  let locator = null
+  let platform = ''
+  let arch = ''
+  let executableSuffix = ''
+  let pathkey = ''
+  let locator: Locator
 
   beforeEach(() => {
     lifecycle.setup()
@@ -54,31 +55,12 @@ describe('Locator', () => {
       executor = null
     }
 
-    if (locator !== null) {
+    if (locator) {
       locator.dispose()
-      locator = null
     }
-
-    arch = null
-    platform = null
-    executableSuffix = null
-    pathkey = null
   })
 
   describe('when the environment is process.env', () => {
-    it('findExecutablesInPath returns an empty array if its arguments are invalid', () => {
-      expect(locator.findExecutablesInPath).toBeDefined()
-      expect(locator.findExecutablesInPath(false, false).length).toBe(0)
-      expect(locator.findExecutablesInPath('', false).length).toBe(0)
-      expect(locator.findExecutablesInPath('abcd', false).length).toBe(0)
-      expect(
-        locator.findExecutablesInPath('abcd', { bleh: 'abcd' }).length
-      ).toBe(0)
-      expect(locator.findExecutablesInPath('abcd', 'abcd').length).toBe(0)
-      expect(locator.findExecutablesInPath('abcd', []).length).toBe(0)
-      expect(locator.findExecutablesInPath([], []).length).toBe(0)
-    })
-
     it('findExecutablesInPath returns an array with elements if its arguments are valid', () => {
       expect(locator.findExecutablesInPath).toBeDefined()
       if (os.platform() === 'win32') {
@@ -218,7 +200,7 @@ describe('Locator', () => {
       const candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
       expect(candidates.length).toBeGreaterThan(0)
-      expect(candidates[0]).toBe(go)
+      expect(candidates[0].path).toBe(go)
     })
   })
 
@@ -258,16 +240,16 @@ describe('Locator', () => {
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
       expect(candidates.length).toBeGreaterThan(1)
-      expect(candidates[0]).toBe(gorootgo)
-      expect(candidates[1]).toBe(go)
+      expect(candidates[0].path).toBe(gorootgo)
+      expect(candidates[1].path).toBe(go)
     })
   })
 
   describe('when the PATH has multiple directories with a go executable in it', () => {
-    let godir = null
-    let go1dir = null
-    let go = null
-    let go1 = null
+    let godir = ''
+    let go1dir = ''
+    let go = ''
+    let go1 = ''
 
     beforeEach(() => {
       godir = lifecycle.temp.mkdirSync('go-')
@@ -284,8 +266,8 @@ describe('Locator', () => {
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
       expect(candidates.length).toBeGreaterThan(1)
-      expect(candidates[0]).toBe(go)
-      expect(candidates[1]).toBe(go1)
+      expect(candidates[0].path).toBe(go)
+      expect(candidates[1].path).toBe(go1)
     })
 
     it('runtimeCandidates() returns candidates in the correct order when a candidate occurs multiple times in the path', () => {
@@ -295,8 +277,8 @@ describe('Locator', () => {
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
       expect(candidates.length).toBeGreaterThan(1)
-      expect(candidates[0]).toBe(go)
-      expect(candidates[1]).toBe(go1)
+      expect(candidates[0].path).toBe(go)
+      expect(candidates[1].path).toBe(go1)
       if (candidates.length > 2) {
         expect(candidates[2]).not.toBe(go)
       }
@@ -304,13 +286,13 @@ describe('Locator', () => {
   })
 
   describe('when a go executable exists in $PATH and not in $GOROOT/bin', () => {
-    let tempPath = null
-    let tempGoroot = null
-    let tempGopath = null
+    let tempPath = ''
+    let tempGoroot = ''
+    let tempGopath = ''
 
-    let gorootbindir = null
-    let gotooldir = null
-    let goInPath = null
+    let gorootbindir = ''
+    let gotooldir = ''
+    let goInPath = ''
 
     const gorootbintools = ['go', 'godoc', 'gofmt']
     const gotooldirtools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
@@ -355,28 +337,29 @@ describe('Locator', () => {
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
       expect(candidates.length).toBe(2) // the real go, and our fake go
-      expect(candidates[0]).toBe(goInPath)
+      expect(candidates[0].path).toBe(goInPath)
     })
 
     it('runtimes() returns the runtime', async () => {
       const runtimes = await locator.runtimes()
       expect(runtimes).toBeTruthy()
+
+      const rt: any = runtimes[0]
       expect(runtimes.length).toBeGreaterThan(0)
-      expect(runtimes[0].name).toBe('go1.99.1')
-      expect(runtimes[0].semver).toBe('1.99.1')
-      expect(runtimes[0].version).toBe(
-        'go version go1.99.1 ' + platform + '/' + arch
-      )
-      expect(runtimes[0].path).toBe(goInPath)
-      expect(runtimes[0].GOARCH).toBe(arch)
-      expect(runtimes[0].GOBIN).toBe('')
-      expect(runtimes[0].GOEXE).toBe(platform === 'windows' ? '.exe' : '')
-      expect(runtimes[0].GOHOSTARCH).toBe(arch)
-      expect(runtimes[0].GOHOSTOS).toBe(platform)
-      expect(runtimes[0].GOOS).toBe(platform)
-      expect(runtimes[0].GOROOT).toBe(tempGoroot)
-      expect(runtimes[0].GOPATH).toBe(tempGopath)
-      expect(runtimes[0].GOTOOLDIR).toBe(gotooldir)
+      expect(rt.locator).toBe('path-locator')
+      expect(rt.name).toBe('go1.99.1')
+      expect(rt.semver).toBe('1.99.1')
+      expect(rt.version).toBe('go version go1.99.1 ' + platform + '/' + arch)
+      expect(rt.path).toBe(goInPath)
+      expect(rt.GOARCH).toBe(arch)
+      expect(rt.GOBIN).toBe('')
+      expect(rt.GOEXE).toBe(platform === 'windows' ? '.exe' : '')
+      expect(rt.GOHOSTARCH).toBe(arch)
+      expect(rt.GOHOSTOS).toBe(platform)
+      expect(rt.GOOS).toBe(platform)
+      expect(rt.GOROOT).toBe(tempGoroot)
+      expect(rt.GOPATH).toBe(tempGopath)
+      expect(rt.GOTOOLDIR).toBe(gotooldir)
     })
 
     it('findTool() finds the go tool', async () => {
@@ -388,32 +371,41 @@ describe('Locator', () => {
     it('findTool() finds tools in GOROOT', async () => {
       const tools = ['go', 'godoc', 'gofmt']
       const runtime = await locator.runtime()
-      for (const toolItem of tools) {
-        const toolPath = path.join(
-          runtime.GOROOT,
-          'bin',
-          toolItem + runtime.GOEXE
-        )
-        const tool = await locator.findTool(toolItem)
-        expect(tool).toBe(toolPath)
+      expect(runtime).toBeTruthy()
+      if (runtime) {
+        for (const toolItem of tools) {
+          const toolPath = path.join(
+            runtime.GOROOT,
+            'bin',
+            toolItem + runtime.GOEXE
+          )
+          const tool = await locator.findTool(toolItem)
+          expect(tool).toBe(toolPath)
+        }
       }
     })
 
     it('findTool() finds tools in GOTOOLDIR', async () => {
       const tools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
       const runtime = await locator.runtime()
-      for (const toolItem of tools) {
-        const toolPath = path.join(runtime.GOTOOLDIR, toolItem + runtime.GOEXE)
-        const tool = await locator.findTool(toolItem)
-        expect(tool).toBe(toolPath)
+      expect(runtime).toBeTruthy()
+      if (runtime) {
+        for (const toolItem of tools) {
+          const toolPath = path.join(
+            runtime.GOTOOLDIR,
+            toolItem + runtime.GOEXE
+          )
+          const tool = await locator.findTool(toolItem)
+          expect(tool).toBe(toolPath)
+        }
       }
     })
   })
 
   describe('when the path includes a directory with the gometalinter tool in it', () => {
-    let gopathdir = null
-    let gopathbindir = null
-    let pathdir = null
+    let gopathdir = ''
+    let gopathbindir = ''
+    let pathdir = ''
     const pathtools = ['gometalinter', 'gb']
     const gopathbintools = ['somerandomtool', 'gb']
 
@@ -423,7 +415,8 @@ describe('Locator', () => {
       gopathbindir = path.join(gopathdir, 'bin')
       fs.mkdirSync(gopathbindir)
       process.env['GOPATH'] = gopathdir
-      process.env[pathkey] = pathdir + path.delimiter + process.env[pathkey]
+      process.env[pathkey] =
+        pathdir + path.delimiter + (process.env[pathkey] || '')
 
       const opts = { encoding: 'utf8', mode: 511 }
       for (const tool of pathtools) {
