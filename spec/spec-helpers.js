@@ -36,7 +36,10 @@ class Lifecycle {
         this.mainModule = pkg.mainModule
         return
       })
-    ])
+    ]).catch(e => {
+      // eslint-disable-next-line no-console
+      console.error('[lifecycle]: failed to activate packages', e)
+    })
   }
 
   teardown() {
