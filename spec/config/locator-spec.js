@@ -354,7 +354,7 @@ describe('Locator', () => {
       expect(locator.runtimeCandidates).toBeDefined()
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
-      expect(candidates.length).toBeGreaterThan(0)
+      expect(candidates.length).toBe(2) // the real go, and our fake go
       expect(candidates[0]).toBe(goInPath)
     })
 
