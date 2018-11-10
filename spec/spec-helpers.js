@@ -1,9 +1,14 @@
-'use babel'
+// @flow
+
 /* eslint-env jasmine */
 
 import temp from 'temp'
 
 class Lifecycle {
+  env: Object
+  temp: temp
+  mainModule: any
+
   constructor() {
     this.env = Object.assign({}, process.env)
     this.temp = temp
@@ -12,7 +17,6 @@ class Lifecycle {
   }
 
   dispose() {
-    this.env = null
     this.temp = null
     this.mainModule = null
   }
@@ -45,7 +49,6 @@ class Lifecycle {
   teardown() {
     if (this.env) {
       process.env = this.env
-      this.env = null
     }
     this.mainModule = null
     atom.config.set('go-plus.testing', false)
