@@ -1,4 +1,3 @@
-'use babel'
 /* eslint-env jasmine */
 
 import { Executor } from './../../lib/config/executor'
@@ -8,6 +7,7 @@ import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 describe('Locator', () => {
   let executor = null
@@ -44,9 +44,7 @@ describe('Locator', () => {
       pathkey = 'Path'
     }
 
-    locator = new Locator({
-      executor: executor
-    })
+    locator = new Locator({ executor })
   })
 
   afterEach(() => {
@@ -217,7 +215,7 @@ describe('Locator', () => {
 
     it('runtimeCandidates() finds the runtime', () => {
       expect(locator.runtimeCandidates).toBeDefined()
-      let candidates = locator.runtimeCandidates()
+      const candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
       expect(candidates.length).toBeGreaterThan(0)
       expect(candidates[0]).toBe(go)
@@ -305,177 +303,110 @@ describe('Locator', () => {
     })
   })
 
-  describe('when the PATH includes a directory with go executable in it', () => {
-    let godir = null
+  describe('when a go executable exists in $PATH and not in $GOROOT/bin', () => {
+    let tempPath = null
+    let tempGoroot = null
+    let tempGopath = null
 
-    let gopathdir = null
-    let gorootdir = null
     let gorootbindir = null
     let gotooldir = null
-    let go = null
+    let goInPath = null
+
     const gorootbintools = ['go', 'godoc', 'gofmt']
     const gotooldirtools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
 
     beforeEach(() => {
-      godir = lifecycle.temp.mkdirSync('go-')
-      gopathdir = lifecycle.temp.mkdirSync('gopath-')
-      gorootdir = lifecycle.temp.mkdirSync('goroot-')
+      tempPath = lifecycle.temp.mkdirSync('go-')
+      tempGoroot = lifecycle.temp.mkdirSync('goroot-')
+      tempGopath = lifecycle.temp.mkdirSync('gopath-')
 
-      gorootbindir = path.join(gorootdir, 'bin')
-      gotooldir = path.join(gorootdir, 'pkg', 'tool', platform + '_' + arch)
+      gorootbindir = path.join(tempGoroot, 'bin')
+      gotooldir = path.join(tempGoroot, 'pkg', 'tool', platform + '_' + arch)
 
       fs.mkdirSync(gorootbindir)
       fs.mkdirsSync(gotooldir)
 
-      // copy our fake go binary into the fake $GOROOT/bin
+      // copy our fake go binary into our temporary $PATH dir
       const fakeexecutable = 'go_' + platform + '_' + arch + executableSuffix
       const fakego = path.join(__dirname, 'tools', 'go', fakeexecutable)
-      go = path.join(godir, 'go' + executableSuffix)
-      fs.copySync(fakego, go)
+      goInPath = path.join(tempPath, 'go' + executableSuffix)
+      fs.copySync(fakego, goInPath)
 
-      process.env[pathkey] = godir
-      process.env['GOPATH'] = gopathdir
-      process.env['GOROOT'] = gorootdir
+      process.env[pathkey] = tempPath
+      process.env['GOROOT'] = tempGoroot
+      process.env['GOPATH'] = tempGopath
+
+      // write dummy tools to $GOROOT/bin
       for (const tool of gorootbintools) {
         if (tool !== 'go') {
           const toolpath = path.join(gorootbindir, tool + executableSuffix)
           fs.writeFileSync(toolpath, '.', { encoding: 'utf8', mode: 511 })
         }
       }
+      // write dummy tools to $GOROOT/pkg/tool
       for (const tool of gotooldirtools) {
         const toolpath = path.join(gotooldir, tool + executableSuffix)
         fs.writeFileSync(toolpath, '.', { encoding: 'utf8', mode: 511 })
       }
     })
 
-    it('runtimeCandidates() finds the runtime', () => {
+    it('runtimeCandidates() finds go', () => {
       expect(locator.runtimeCandidates).toBeDefined()
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
       expect(candidates.length).toBeGreaterThan(0)
-      expect(candidates[0]).toBe(go)
+      expect(candidates[0]).toBe(goInPath)
     })
 
-    it('runtimes() returns the runtime', () => {
-      let runtimes = null
-      waitsForPromise(() => {
-        return locator.runtimes().then(r => {
-          runtimes = r
-          return
-        })
-      })
-
-      runs(() => {
-        expect(runtimes).toBeTruthy()
-        expect(runtimes.length).toBeGreaterThan(0)
-        expect(runtimes[0].name).toBe('go1.11.1')
-        expect(runtimes[0].semver).toBe('1.11.1')
-        expect(runtimes[0].version).toBe(
-          'go version go1.11.1 ' + platform + '/' + arch
-        )
-        expect(runtimes[0].path).toBe(go)
-        expect(runtimes[0].GOARCH).toBe(arch)
-        expect(runtimes[0].GOBIN).toBe('')
-        expect(runtimes[0].GOEXE).toBe(platform === 'windows' ? '.exe' : '')
-        expect(runtimes[0].GOHOSTARCH).toBe(arch)
-        expect(runtimes[0].GOHOSTOS).toBe(platform)
-        expect(runtimes[0].GOOS).toBe(platform)
-        expect(runtimes[0].GOROOT).toBe(gorootdir)
-        expect(runtimes[0].GOPATH).toBe(gopathdir)
-        expect(runtimes[0].GOTOOLDIR).toBe(gotooldir)
-      })
+    it('runtimes() returns the runtime', async () => {
+      const runtimes = await locator.runtimes()
+      expect(runtimes).toBeTruthy()
+      expect(runtimes.length).toBeGreaterThan(0)
+      expect(runtimes[0].name).toBe('go1.99.1')
+      expect(runtimes[0].semver).toBe('1.99.1')
+      expect(runtimes[0].version).toBe(
+        'go version go1.99.1 ' + platform + '/' + arch
+      )
+      expect(runtimes[0].path).toBe(goInPath)
+      expect(runtimes[0].GOARCH).toBe(arch)
+      expect(runtimes[0].GOBIN).toBe('')
+      expect(runtimes[0].GOEXE).toBe(platform === 'windows' ? '.exe' : '')
+      expect(runtimes[0].GOHOSTARCH).toBe(arch)
+      expect(runtimes[0].GOHOSTOS).toBe(platform)
+      expect(runtimes[0].GOOS).toBe(platform)
+      expect(runtimes[0].GOROOT).toBe(tempGoroot)
+      expect(runtimes[0].GOPATH).toBe(tempGopath)
+      expect(runtimes[0].GOTOOLDIR).toBe(gotooldir)
     })
 
-    it('findTool() finds the go tool', () => {
+    it('findTool() finds the go tool', async () => {
       expect(locator.findTool).toBeDefined()
-      let tool = null
-      let err = null
-      let done = locator
-        .findTool('go')
-        .then(t => {
-          tool = t
-          return
-        })
-        .catch(e => {
-          err = e
-        })
-
-      waitsForPromise(() => {
-        return done
-      })
-
-      runs(() => {
-        expect(err).toBe(null)
-        expect(tool).toBeTruthy()
-        expect(tool).toBe(path.join(gorootbindir, 'go' + executableSuffix))
-      })
+      const tool = await locator.findTool('go')
+      expect(tool).toBe(path.join(gorootbindir, 'go' + executableSuffix))
     })
 
-    it('findTool() finds tools in GOROOT', () => {
-      let tools = ['go', 'godoc', 'gofmt']
-      let runtime = false
-      let tool = null
-      let toolPath = false
-      let done = locator.runtime().then(r => {
-        runtime = r
-        return
-      })
-
-      waitsForPromise(() => {
-        return done
-      })
-
-      runs(() => {
-        for (let toolItem of tools) {
-          tool = null
-          done = null
-          toolPath = path.join(runtime.GOROOT, 'bin', toolItem + runtime.GOEXE)
-          done = locator.findTool(toolItem).then(t => {
-            tool = t
-            return
-          })
-          waitsForPromise(() => {
-            return done
-          })
-
-          runs(() => {
-            expect(tool).toBeTruthy()
-            expect(tool).toBe(toolPath)
-          })
-        }
-      })
+    it('findTool() finds tools in GOROOT', async () => {
+      const tools = ['go', 'godoc', 'gofmt']
+      const runtime = await locator.runtime()
+      for (const toolItem of tools) {
+        const toolPath = path.join(
+          runtime.GOROOT,
+          'bin',
+          toolItem + runtime.GOEXE
+        )
+        const tool = await locator.findTool(toolItem)
+        expect(tool).toBe(toolPath)
+      }
     })
 
-    it('findTool() finds tools in GOTOOLDIR', () => {
-      let tools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
-      let runtime = false
-      let done = locator.runtime().then(r => {
-        runtime = r
-        return
-      })
-
-      waitsForPromise(() => {
-        return done
-      })
-
-      runs(() => {
-        for (let toolItem of tools) {
-          let tool = null
-          let toolPath = path.join(runtime.GOTOOLDIR, toolItem + runtime.GOEXE)
-          let done = locator.findTool(toolItem).then(t => {
-            tool = t
-            return
-          })
-          waitsForPromise(() => {
-            return done
-          })
-
-          runs(() => {
-            expect(tool).toBeTruthy()
-            expect(tool).toBe(toolPath)
-          })
-        }
-      })
+    it('findTool() finds tools in GOTOOLDIR', async () => {
+      const tools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
+      const runtime = await locator.runtime()
+      for (const toolItem of tools) {
+        const toolPath = path.join(runtime.GOTOOLDIR, toolItem + runtime.GOEXE)
+        const tool = await locator.findTool(toolItem)
+        expect(tool).toBe(toolPath)
+      }
     })
   })
 
@@ -483,81 +414,44 @@ describe('Locator', () => {
     let gopathdir = null
     let gopathbindir = null
     let pathdir = null
-    let pathtools = null
-    let gopathbintools = null
+    const pathtools = ['gometalinter', 'gb']
+    const gopathbintools = ['somerandomtool', 'gb']
+
     beforeEach(() => {
-      pathtools = ['gometalinter', 'gb']
-      gopathbintools = ['somerandomtool', 'gb']
       pathdir = lifecycle.temp.mkdirSync('path-')
       gopathdir = lifecycle.temp.mkdirSync('gopath-')
       gopathbindir = path.join(gopathdir, 'bin')
       fs.mkdirSync(gopathbindir)
       process.env['GOPATH'] = gopathdir
       process.env[pathkey] = pathdir + path.delimiter + process.env[pathkey]
-      for (let tool of pathtools) {
-        fs.writeFileSync(path.join(pathdir, tool + executableSuffix), '.', {
-          encoding: 'utf8',
-          mode: 511
-        })
+
+      const opts = { encoding: 'utf8', mode: 511 }
+      for (const tool of pathtools) {
+        const fp = path.join(pathdir, tool + executableSuffix)
+        fs.writeFileSync(fp, '.', opts)
       }
-      for (let tool of gopathbintools) {
-        fs.writeFileSync(
-          path.join(gopathbindir, tool + executableSuffix),
-          '.',
-          { encoding: 'utf8', mode: 511 }
-        )
+      for (const tool of gopathbintools) {
+        const fp = path.join(gopathbindir, tool + executableSuffix)
+        fs.writeFileSync(fp, '.', opts)
       }
     })
 
-    it('findTool() finds tools in PATH', () => {
-      runs(() => {
-        for (let toolItem of pathtools) {
-          let toolPath = false
-          let tool = null
-          let done = null
-
-          if (gopathbintools.indexOf(toolItem) !== -1) {
-            toolPath = path.join(gopathbindir, toolItem + executableSuffix)
-          } else {
-            toolPath = path.join(pathdir, toolItem + executableSuffix)
-          }
-
-          done = locator.findTool(toolItem).then(t => {
-            tool = t
-            return
-          })
-          waitsForPromise(() => {
-            return done
-          })
-          runs(() => {
-            done = null
-            expect(tool).toBeTruthy()
-            expect(tool).toBe(toolPath)
-          })
-        }
-      })
+    it('findTool() finds tools in PATH', async () => {
+      for (const toolItem of pathtools) {
+        const toolPath = gopathbintools.includes(toolItem)
+          ? path.join(gopathbindir, toolItem + executableSuffix)
+          : path.join(pathdir, toolItem + executableSuffix)
+        const tool = await locator.findTool(toolItem)
+        expect(tool).toBe(toolPath)
+      }
     })
 
-    it("findTool() finds tools in GOPATH's bin directory", () => {
-      runs(() => {
-        for (let toolItem of gopathbintools) {
-          let tool = null
-          let toolPath = false
-          let done = null
-          toolPath = path.join(gopathbindir, toolItem + executableSuffix)
-          done = locator.findTool(toolItem).then(t => {
-            tool = t
-            return
-          })
-          waitsForPromise(() => {
-            return done
-          })
-          runs(() => {
-            expect(tool).toBeTruthy()
-            expect(tool).toBe(toolPath)
-          })
-        }
-      })
+    it("findTool() finds tools in GOPATH's bin directory", async () => {
+      for (const toolItem of gopathbintools) {
+        const toolPath = path.join(gopathbindir, toolItem + executableSuffix)
+        const tool = await locator.findTool(toolItem)
+        expect(tool).toBe(toolPath)
+      }
     })
   })
 })

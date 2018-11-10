@@ -20,7 +20,7 @@ func main() {
 	command := os.Args[1]
 	switch command {
 	case "version":
-		fmt.Printf("go version go1.11.1 %s/%s\n", runtime.GOOS, runtime.GOARCH)
+		fmt.Printf("go version go1.99.1 %s/%s\n", runtime.GOOS, runtime.GOARCH)
 		return
 	case "get":
 		if os.Args[2] == "-u" {
