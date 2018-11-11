@@ -345,7 +345,7 @@ describe('Locator', () => {
       expect(runtimes).toBeTruthy()
 
       const rt: any = runtimes[0]
-      expect(runtimes.length).toBeGreaterThan(0)
+      expect(runtimes.length).toBe(2)
       expect(rt.locator).toBe('path-locator')
       expect(rt.name).toBe('go1.99.1')
       expect(rt.semver).toBe('1.99.1')
