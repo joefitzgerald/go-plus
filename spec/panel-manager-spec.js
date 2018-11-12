@@ -3,28 +3,18 @@
 
 import { lifecycle } from './spec-helpers'
 import EmptyTabView from './../lib/panel/empty-tab-view'
+import {it, fit, ffit, beforeEach} from './async-spec-helpers' // eslint-disable-line
 
 describe('panel manager', () => {
   let pm = null
 
-  beforeEach(() => {
-    runs(() => {
-      lifecycle.setup()
-    })
+  beforeEach(async () => {
+    lifecycle.setup()
 
-    waitsForPromise(() => {
-      return lifecycle.activatePackage()
-    })
+    await lifecycle.activatePackage()
 
-    runs(() => {
-      const { mainModule } = lifecycle
-      mainModule.getPanelManager()
-    })
-
-    waitsFor(() => {
-      pm = lifecycle.mainModule.panelManager
-      return pm
-    })
+    const { mainModule } = lifecycle
+    pm = mainModule.getPanelManager()
   })
 
   afterEach(() => {
@@ -39,7 +29,6 @@ describe('panel manager', () => {
     beforeEach(() => {
       view = new EmptyTabView()
       model = { key: 'foo', tab: { name: 'dummy' } }
-
       disp = pm.registerViewProvider(view, model)
     })
 

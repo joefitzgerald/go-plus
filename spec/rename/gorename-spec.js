@@ -4,6 +4,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 describe('gorename', () => {
   let gorename = null
@@ -12,29 +13,15 @@ describe('gorename', () => {
   let source = null
   let target = null
 
-  beforeEach(() => {
-    runs(() => {
-      lifecycle.setup()
-
-      gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
-      process.env.GOPATH = gopath
-    })
-
-    waitsForPromise(() => {
-      return lifecycle.activatePackage()
-    })
-
-    runs(() => {
-      const { mainModule } = lifecycle
-      mainModule.provideGoConfig()
-      mainModule.provideGoGet()
-      mainModule.loadGorename()
-    })
-
-    waitsFor(() => {
-      gorename = lifecycle.mainModule.gorename
-      return gorename
-    })
+  beforeEach(async () => {
+    lifecycle.setup()
+    gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
+    process.env.GOPATH = gopath
+    await lifecycle.activatePackage()
+    const { mainModule } = lifecycle
+    mainModule.provideGoConfig()
+    mainModule.provideGoGet()
+    gorename = mainModule.loadGorename()
   })
 
   afterEach(() => {
@@ -42,85 +29,49 @@ describe('gorename', () => {
   })
 
   describe('when a simple file is open', () => {
-    beforeEach(() => {
-      runs(() => {
-        source = path.join(__dirname, '..', 'fixtures', 'gorename')
-        target = path.join(gopath, 'src', 'basic')
-        fs.copySync(source, target)
-      })
-
-      waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'main.go')).then(e => {
-          editor = e
-          return
-        })
-      })
+    beforeEach(async () => {
+      source = path.join(__dirname, '..', 'fixtures', 'gorename')
+      target = path.join(gopath, 'src', 'basic')
+      fs.copySync(source, target)
+      editor = await atom.workspace.open(path.join(target, 'main.go'))
     })
 
-    it('renames a single token', () => {
+    it('renames a single token', async () => {
       editor.setCursorBufferPosition([4, 5])
-      let info = gorename.wordAndOffset(editor)
+      const info = gorename.wordAndOffset(editor)
       expect(info.word).toBe('foo')
       expect(info.offset).toBe(33)
 
-      let file = editor.getBuffer().getPath()
-      let cwd = path.dirname(file)
-      let r = false
-      let cmd
+      const file = editor.getBuffer().getPath()
+      const cwd = path.dirname(file)
 
-      waitsFor(
-        () => {
-          if (lifecycle.mainModule.provideGoConfig()) {
-            return true
-          }
-          return false
-        },
-        '',
-        750
+      const cmd = await lifecycle.mainModule
+        .provideGoConfig()
+        .locator.findTool('gorename')
+      expect(cmd).toBeTruthy()
+
+      const result = await gorename.runGorename(
+        file,
+        info.offset,
+        cwd,
+        'bar',
+        cmd
+      )
+      expect(result).toBeTruthy()
+      expect(result.success).toBe(true)
+      expect(result.result.stdout.trim()).toBe(
+        'Renamed 2 occurrences in 1 file in 1 package.'
       )
 
-      waitsForPromise(() => {
-        return lifecycle.mainModule
-          .provideGoConfig()
-          .locator.findTool('gorename')
-          .then(c => {
-            expect(c).toBeTruthy()
-            cmd = c
-            return
-          })
-      })
-      waitsForPromise(() => {
-        return gorename
-          .runGorename(file, info.offset, cwd, 'bar', cmd)
-          .then(result => {
-            r = result
-            return
-          })
-      })
-      runs(() => {
-        expect(r).toBeTruthy()
-        expect(r.success).toBe(true)
-        expect(r.result.stdout.trim()).toBe(
-          'Renamed 2 occurrences in 1 file in 1 package.'
-        )
-        editor.destroy()
-      })
+      editor.destroy()
+      editor = await atom.workspace.open(path.join(target, 'main.go'))
 
-      waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'main.go')).then(e => {
-          editor = e
-          return
-        })
-      })
-
-      runs(() => {
-        let expected = fs.readFileSync(
-          path.join(__dirname, '..', 'fixtures', 'gorename', 'expected'),
-          'utf8'
-        )
-        let actual = editor.getText()
-        expect(actual).toBe(expected)
-      })
+      const expected = fs.readFileSync(
+        path.join(__dirname, '..', 'fixtures', 'gorename', 'expected'),
+        'utf8'
+      )
+      const actual = editor.getText()
+      expect(actual).toBe(expected)
     })
   })
 })

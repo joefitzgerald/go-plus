@@ -3,18 +3,14 @@
 
 import path from 'path'
 import { Orchestrator } from './../lib/orchestrator'
+import {it, fit, ffit, beforeEach} from './async-spec-helpers' // eslint-disable-line
 
 describe('orchestrator', () => {
   let orchestrator = null
 
-  beforeEach(() => {
-    runs(() => {
-      orchestrator = new Orchestrator()
-    })
-
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('language-go')
-    })
+  beforeEach(async () => {
+    orchestrator = new Orchestrator()
+    await atom.packages.activatePackage('language-go')
   })
 
   afterEach(() => {
@@ -43,33 +39,24 @@ describe('orchestrator', () => {
       expect(orchestrator.didSaveCallbacks.size).toBe(0)
     })
 
-    it('runs a single callback', () => {
+    it('runs a single callback', async () => {
       let called = false
+      const callback = () => {
+        called = true
+        return Promise.resolve(true)
+      }
+      orchestrator.register('test', callback)
 
-      runs(() => {
-        const callback = () => {
-          called = true
-          return Promise.resolve(true)
-        }
-        orchestrator.register('test', callback)
-      })
-
-      waitsForPromise(() => {
-        const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then(e => {
-          return e.save()
-        })
-      })
-
-      runs(() => {
-        expect(called).toBe(true)
-      })
+      const filepath = path.join(__dirname, 'fixtures', 'main.go')
+      const editor = await atom.workspace.open(filepath)
+      await editor.save()
+      expect(called).toBe(true)
     })
 
     it('runs multiple callbacks', () => {
-      let called = [false, false]
+      const called = [false, false]
 
-      runs(() => {
+      runs(async () => {
         const callback0 = () => {
           called[0] = true
           return Promise.resolve(true)
@@ -80,19 +67,14 @@ describe('orchestrator', () => {
         }
         orchestrator.register('callback0', callback0)
         orchestrator.register('callback1', callback1)
-      })
 
-      waitsForPromise(() => {
         const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then(e => {
-          return e.save()
-        })
+        const editor = await atom.workspace.open(filepath)
+        await editor.save()
       })
 
       waitsFor(
-        () => {
-          return called[0] === true && called[1] === true
-        },
+        () => called[0] === true && called[1] === true,
         'Both callbacks should be called',
         1000
       )
@@ -103,33 +85,25 @@ describe('orchestrator', () => {
       })
     })
 
-    it('stops invoking callbacks when a promise is rejected', () => {
+    it('stops invoking callbacks when a promise is rejected', async () => {
       let called = [false, false]
+      const callback0 = () => {
+        called[0] = true
+        return Promise.reject(new Error())
+      }
+      const callback1 = () => {
+        called[1] = true
+        return Promise.resolve(true)
+      }
+      orchestrator.register('callback0', callback0)
+      orchestrator.register('callback1', callback1)
 
-      runs(() => {
-        const callback0 = () => {
-          called[0] = true
-          return Promise.reject(new Error())
-        }
-        const callback1 = () => {
-          called[1] = true
-          return Promise.resolve(true)
-        }
-        orchestrator.register('callback0', callback0)
-        orchestrator.register('callback1', callback1)
-      })
+      const filepath = path.join(__dirname, 'fixtures', 'main.go')
+      const editor = await atom.workspace.open(filepath)
+      await editor.save()
 
-      waitsForPromise(() => {
-        const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then(e => {
-          return e.save()
-        })
-      })
-
-      runs(() => {
-        expect(called[0]).toBe(true)
-        expect(called[1]).toBe(false)
-      })
+      expect(called[0]).toBe(true)
+      expect(called[1]).toBe(false)
     })
   })
 
@@ -155,85 +129,63 @@ describe('orchestrator', () => {
       expect(orchestrator.willSaveCallbacks.size).toBe(0)
     })
 
-    it('runs a single callback', () => {
+    it('runs a single callback', async () => {
       let called = false
 
-      runs(() => {
-        const callback = () => {
-          called = true
-          return true
-        }
-        orchestrator.register('test', callback, 'willSave')
-      })
+      const callback = () => {
+        called = true
+        return true
+      }
+      orchestrator.register('test', callback, 'willSave')
 
-      waitsForPromise(() => {
-        const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then(e => {
-          return e.save()
-        })
-      })
-
-      runs(() => {
-        expect(called).toBe(true)
-      })
+      const filepath = path.join(__dirname, 'fixtures', 'main.go')
+      const editor = await atom.workspace.open(filepath)
+      await editor.save()
+      expect(called).toBe(true)
     })
 
-    it('runs multiple callbacks', () => {
+    it('runs multiple callbacks', async () => {
       let called = [false, false]
 
-      runs(() => {
-        const callback0 = () => {
-          called[0] = true
-          return true
-        }
-        const callback1 = () => {
-          called[1] = true
-          return true
-        }
-        orchestrator.register('test', callback0, 'willSave')
-        orchestrator.register('test', callback1, 'willSave')
-      })
+      const callback0 = () => {
+        called[0] = true
+        return true
+      }
+      const callback1 = () => {
+        called[1] = true
+        return true
+      }
+      orchestrator.register('test', callback0, 'willSave')
+      orchestrator.register('test', callback1, 'willSave')
 
-      waitsForPromise(() => {
-        const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then(e => {
-          return e.save()
-        })
-      })
+      const filepath = path.join(__dirname, 'fixtures', 'main.go')
+      const editor = await atom.workspace.open(filepath)
+      await editor.save()
 
-      runs(() => {
-        expect(called[0]).toBe(true)
-        expect(called[1]).toBe(true)
-      })
+      expect(called[0]).toBe(true)
+      expect(called[1]).toBe(true)
     })
 
-    it('stops invoking callbacks when encountering a non-true return value', () => {
+    it('stops invoking callbacks when encountering a non-true return value', async () => {
       let called = [false, false]
 
-      runs(() => {
-        const callback0 = () => {
-          called[0] = true
-          return false
-        }
-        const callback1 = () => {
-          called[1] = true
-          return true
-        }
-        orchestrator.register('test', callback0, 'willSave')
-        orchestrator.register('test', callback1, 'willSave')
-      })
+      const callback0 = () => {
+        called[0] = true
+        return false
+      }
+      const callback1 = () => {
+        called[1] = true
+        return true
+      }
+      orchestrator.register('test', callback0, 'willSave')
+      orchestrator.register('test', callback1, 'willSave')
 
-      waitsForPromise(() => {
-        const filepath = path.join(__dirname, 'fixtures', 'main.go')
-        return atom.workspace.open(filepath).then(e => {
-          return e.save()
-        })
-      })
+      const filepath = path.join(__dirname, 'fixtures', 'main.go')
+      const editor = await atom.workspace.open(filepath)
+      await editor.save()
 
-      runs(() => {
-        expect(called[0]).toBe(true)
-        expect(called[1]).toBe(false)
-      })
+      expect(called[0]).toBe(true)
+      expect(called[1]).toBe(false)
     })
   })
 })

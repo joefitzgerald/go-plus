@@ -4,18 +4,18 @@ import path from 'path'
 import { lifecycle } from './../spec-helpers'
 import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
-
 describe('gocodeprovider', () => {
   let completionDelay = null
   let provider = null
   let editor = null
   let editorView = null
   let suggestionsPromise = null
+  let autocompleteplusMain
 
   beforeEach(async () => {
     lifecycle.setup()
     const pkg = await atom.packages.activatePackage('autocomplete-plus')
-    const autocompleteplusMain = pkg.mainModule
+    autocompleteplusMain = pkg.mainModule
 
     waitsFor(() => {
       return (
@@ -63,7 +63,6 @@ describe('gocodeprovider', () => {
       })
 
       it('generates snippets with name and type argument placeholders', async () => {
-        let suggestions = null
         editor.setCursorScreenPosition([5, 6])
         editor.insertText('P')
         advanceClock(completionDelay)
@@ -75,7 +74,7 @@ describe('gocodeprovider', () => {
           )
         })
 
-        suggestions = await suggestionsPromise
+        const suggestions = await suggestionsPromise
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)
         expect(suggestions).toBeTruthy()
@@ -95,7 +94,6 @@ describe('gocodeprovider', () => {
       })
 
       it('generates snippets with name argument placeholders', async () => {
-        let suggestions = null
         editor.setCursorScreenPosition([5, 6])
         editor.insertText('P')
         advanceClock(completionDelay)
@@ -107,7 +105,7 @@ describe('gocodeprovider', () => {
           )
         })
 
-        suggestions = await suggestionsPromise
+        const suggestions = await suggestionsPromise
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)
         expect(suggestions).toBeTruthy()
@@ -127,7 +125,6 @@ describe('gocodeprovider', () => {
       })
 
       it('generates snippets with no args', async () => {
-        let suggestions = null
         editor.setCursorScreenPosition([5, 6])
         editor.insertText('P')
         advanceClock(completionDelay)
@@ -139,7 +136,7 @@ describe('gocodeprovider', () => {
           )
         })
 
-        suggestions = await suggestionsPromise
+        const suggestions = await suggestionsPromise
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)
         expect(suggestions).toBeTruthy()
@@ -159,14 +156,17 @@ describe('gocodeprovider', () => {
         atom.config.set('go-plus.autocomplete.unimportedPackages', true)
       })
 
-      it('provides the exported types of the unimported package', async () => {
+      it('provides the exported types of the unimported package', () => {
         let suggestions = null
         waitsFor(() => provider.allPkgs.size > 0)
-        editor.setCursorScreenPosition([7, 0])
-        editor.insertText('ioutil')
-        advanceClock(completionDelay)
-        editor.insertText('.')
-        advanceClock(completionDelay)
+
+        runs(() => {
+          editor.setCursorScreenPosition([7, 0])
+          editor.insertText('ioutil')
+          advanceClock(completionDelay)
+          editor.insertText('.')
+          advanceClock(completionDelay)
+        })
 
         waitsFor(() => {
           return (
@@ -175,13 +175,15 @@ describe('gocodeprovider', () => {
           )
         })
 
-        suggestions = await suggestionsPromise
-        expect(provider.getSuggestions).toHaveBeenCalled()
-        expect(provider.getSuggestions.calls.length).toBe(1)
-        expect(suggestions).toBeTruthy()
-        expect(suggestions.length).toBeGreaterThan(0)
-        expect(suggestions[0]).toBeTruthy()
-        expect(suggestions[0].displayText).toBe('NopCloser(r io.Reader)')
+        runs(async () => {
+          suggestions = await suggestionsPromise
+          expect(provider.getSuggestions).toHaveBeenCalled()
+          expect(provider.getSuggestions.calls.length).toBe(1)
+          expect(suggestions).toBeTruthy()
+          expect(suggestions.length).toBeGreaterThan(0)
+          expect(suggestions[0]).toBeTruthy()
+          expect(suggestions[0].displayText).toBe('NopCloser(r io.Reader)')
+        })
       })
     })
   })
@@ -196,16 +198,18 @@ describe('gocodeprovider', () => {
       editorView = atom.views.getView(editor)
     })
 
-    it('calculates the prefix correctly', async () => {
-      editor.setCursorBufferPosition([4, 10])
-      suggestions = null
-      suggestionsPromise = null
-      advanceClock(completionDelay)
+    it('calculates the prefix correctly', () => {
+      runs(() => {
+        editor.setCursorBufferPosition([4, 10])
+        suggestions = null
+        suggestionsPromise = null
+        advanceClock(completionDelay)
 
-      expect(provider.getSuggestions.calls.length).toBe(0)
-      expect(suggestionsPromise).toBeFalsy()
-      editor.insertText('t')
-      advanceClock(completionDelay)
+        expect(provider.getSuggestions.calls.length).toBe(0)
+        expect(suggestionsPromise).toBeFalsy()
+        editor.insertText('t')
+        advanceClock(completionDelay)
+      })
 
       waitsFor(() => {
         return (
@@ -214,13 +218,15 @@ describe('gocodeprovider', () => {
         )
       })
 
-      suggestions = await suggestionsPromise
+      runs(async () => {
+        suggestions = await suggestionsPromise
 
-      expect(provider.getSuggestions.calls.length).toBe(1)
-      expect(suggestionsPromise).toBeTruthy()
-      suggestionsPromise = null
-      editor.insertText('t')
-      advanceClock(completionDelay)
+        expect(provider.getSuggestions.calls.length).toBe(1)
+        expect(suggestionsPromise).toBeTruthy()
+        suggestionsPromise = null
+        editor.insertText('t')
+        advanceClock(completionDelay)
+      })
 
       waitsFor(() => {
         return (
@@ -229,15 +235,17 @@ describe('gocodeprovider', () => {
         )
       })
 
-      suggestions = await suggestionsPromise
+      runs(async () => {
+        suggestions = await suggestionsPromise
 
-      expect(provider.getSuggestions).toHaveBeenCalled()
-      expect(provider.getSuggestions.calls.length).toBe(2)
-      expect(suggestions).toBeTruthy()
-      expect(suggestions.length).toBeGreaterThan(0)
-      expect(suggestions[0]).toBeTruthy()
-      expect(suggestions[0].text).toBe('net/http')
-      expect(suggestions[0].replacementPrefix).toBe('net/htt')
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(2)
+        expect(suggestions).toBeTruthy()
+        expect(suggestions.length).toBeGreaterThan(0)
+        expect(suggestions[0]).toBeTruthy()
+        expect(suggestions[0].text).toBe('net/http')
+        expect(suggestions[0].replacementPrefix).toBe('net/htt')
+      })
     })
   })
 
@@ -250,17 +258,19 @@ describe('gocodeprovider', () => {
       editorView = atom.views.getView(editor)
     })
 
-    it('returns suggestions to autocomplete-plus scenario 1', async () => {
-      editor.setCursorScreenPosition([13, 0])
-      editor.insertText('\tSayHello("world")')
-      suggestions = null
-      suggestionsPromise = null
-      advanceClock(completionDelay)
+    it('returns suggestions to autocomplete-plus scenario 1', () => {
+      runs(() => {
+        editor.setCursorScreenPosition([13, 0])
+        editor.insertText('\tSayHello("world")')
+        suggestions = null
+        suggestionsPromise = null
+        advanceClock(completionDelay)
 
-      expect(provider.getSuggestions.calls.length).toBe(0)
-      expect(suggestionsPromise).toBeFalsy()
-      editor.insertText('.')
-      advanceClock(completionDelay)
+        expect(provider.getSuggestions.calls.length).toBe(0)
+        expect(suggestionsPromise).toBeFalsy()
+        editor.insertText('.')
+        advanceClock(completionDelay)
+      })
 
       waitsFor(() => {
         return (
@@ -269,31 +279,35 @@ describe('gocodeprovider', () => {
         )
       })
 
-      suggestions = await suggestionsPromise
+      runs(async () => {
+        suggestions = await suggestionsPromise
 
-      expect(provider.getSuggestions).toHaveBeenCalled()
-      expect(provider.getSuggestions.calls.length).toBe(1)
-      expect(suggestions).toBeTruthy()
-      expect(suggestions.length).toBeGreaterThan(0)
-      expect(suggestions[0]).toBeTruthy()
-      expect(suggestions[0].displayText).toBe('Fatal(v ...interface{})')
-      expect(suggestions[0].snippet).toBe('Fatal()$0')
-      expect(suggestions[0].replacementPrefix).toBe('')
-      expect(suggestions[0].type).toBe('function')
-      expect(suggestions[0].leftLabel).toBe('')
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(1)
+        expect(suggestions).toBeTruthy()
+        expect(suggestions.length).toBeGreaterThan(0)
+        expect(suggestions[0]).toBeTruthy()
+        expect(suggestions[0].displayText).toBe('Fatal(v ...interface{})')
+        expect(suggestions[0].snippet).toBe('Fatal()$0')
+        expect(suggestions[0].replacementPrefix).toBe('')
+        expect(suggestions[0].type).toBe('function')
+        expect(suggestions[0].leftLabel).toBe('')
+      })
     })
 
-    it('returns suggestions to autocomplete-plus scenario 2', async () => {
-      editor.setCursorScreenPosition([13, 0])
-      editor.insertText('\tSayHello("world") ')
-      suggestions = null
-      suggestionsPromise = null
-      advanceClock(completionDelay)
+    it('returns suggestions to autocomplete-plus scenario 2', () => {
+      runs(() => {
+        editor.setCursorScreenPosition([13, 0])
+        editor.insertText('\tSayHello("world") ')
+        suggestions = null
+        suggestionsPromise = null
+        advanceClock(completionDelay)
 
-      expect(provider.getSuggestions.calls.length).toBe(0)
-      expect(suggestionsPromise).toBeFalsy()
-      editor.insertText('.')
-      advanceClock(completionDelay)
+        expect(provider.getSuggestions.calls.length).toBe(0)
+        expect(suggestionsPromise).toBeFalsy()
+        editor.insertText('.')
+        advanceClock(completionDelay)
+      })
 
       waitsFor(() => {
         return (
@@ -302,31 +316,35 @@ describe('gocodeprovider', () => {
         )
       })
 
-      suggestions = await suggestionsPromise
+      runs(async () => {
+        suggestions = await suggestionsPromise
 
-      expect(provider.getSuggestions).toHaveBeenCalled()
-      expect(provider.getSuggestions.calls.length).toBe(1)
-      expect(suggestions).toBeTruthy()
-      expect(suggestions.length).toBeGreaterThan(0)
-      expect(suggestions[0]).toBeTruthy()
-      expect(suggestions[0].displayText).toBe('Fatal(v ...interface{})')
-      expect(suggestions[0].snippet).toBe('Fatal()$0')
-      expect(suggestions[0].replacementPrefix).toBe('')
-      expect(suggestions[0].type).toBe('function')
-      expect(suggestions[0].leftLabel).toBe('')
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(1)
+        expect(suggestions).toBeTruthy()
+        expect(suggestions.length).toBeGreaterThan(0)
+        expect(suggestions[0]).toBeTruthy()
+        expect(suggestions[0].displayText).toBe('Fatal(v ...interface{})')
+        expect(suggestions[0].snippet).toBe('Fatal()$0')
+        expect(suggestions[0].replacementPrefix).toBe('')
+        expect(suggestions[0].type).toBe('function')
+        expect(suggestions[0].leftLabel).toBe('')
+      })
     })
 
-    it('returns suggestions to autocomplete-plus scenario 3', async () => {
-      editor.setCursorScreenPosition([13, 0])
-      editor.insertText('\tSayHello("world")  ')
-      suggestions = null
-      suggestionsPromise = null
-      advanceClock(completionDelay)
+    it('returns suggestions to autocomplete-plus scenario 3', () => {
+      runs(() => {
+        editor.setCursorScreenPosition([13, 0])
+        editor.insertText('\tSayHello("world")  ')
+        suggestions = null
+        suggestionsPromise = null
+        advanceClock(completionDelay)
 
-      expect(provider.getSuggestions.calls.length).toBe(0)
-      expect(suggestionsPromise).toBeFalsy()
-      editor.insertText('.')
-      advanceClock(completionDelay)
+        expect(provider.getSuggestions.calls.length).toBe(0)
+        expect(suggestionsPromise).toBeFalsy()
+        editor.insertText('.')
+        advanceClock(completionDelay)
+      })
 
       waitsFor(() => {
         return (
@@ -335,34 +353,38 @@ describe('gocodeprovider', () => {
         )
       })
 
-      suggestions = await suggestionsPromise
+      runs(async () => {
+        suggestions = await suggestionsPromise
 
-      expect(provider.getSuggestions).toHaveBeenCalled()
-      expect(provider.getSuggestions.calls.length).toBe(1)
-      expect(suggestions).toBeTruthy()
-      expect(suggestions.length).toBeGreaterThan(0)
-      expect(suggestions[0]).toBeTruthy()
-      expect(suggestions[0].displayText).toBe('Fatal(v ...interface{})')
-      expect(suggestions[0].snippet).toBe('Fatal()$0')
-      expect(suggestions[0].replacementPrefix).toBe('')
-      expect(suggestions[0].type).toBe('function')
-      expect(suggestions[0].leftLabel).toBe('')
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(1)
+        expect(suggestions).toBeTruthy()
+        expect(suggestions.length).toBeGreaterThan(0)
+        expect(suggestions[0]).toBeTruthy()
+        expect(suggestions[0].displayText).toBe('Fatal(v ...interface{})')
+        expect(suggestions[0].snippet).toBe('Fatal()$0')
+        expect(suggestions[0].replacementPrefix).toBe('')
+        expect(suggestions[0].type).toBe('function')
+        expect(suggestions[0].leftLabel).toBe('')
+      })
     })
 
     // TODO: Atom's prefix regex of: /(\b|['"~`!@#$%^&*(){}[\]=+,/?>])((\w+[\w-]*)|([.:;[{(< ]+))$/
     // returns an empty prefix when a '.' character is preceded by a \t
-    xit('returns suggestions to autocomplete-plus scenario 4', async () => {
-      editor.setCursorScreenPosition([13, 0])
-      editor.insertText('\tSayHello("world")\t')
-      suggestions = null
-      suggestionsPromise = null
-      advanceClock(completionDelay)
+    xit('returns suggestions to autocomplete-plus scenario 4', () => {
+      runs(() => {
+        editor.setCursorScreenPosition([13, 0])
+        editor.insertText('\tSayHello("world")\t')
+        suggestions = null
+        suggestionsPromise = null
+        advanceClock(completionDelay)
 
-      expect(provider.getSuggestions.calls.length).toBe(0)
-      expect(suggestionsPromise).toBeFalsy()
+        expect(provider.getSuggestions.calls.length).toBe(0)
+        expect(suggestionsPromise).toBeFalsy()
 
-      editor.insertText('.')
-      advanceClock(completionDelay)
+        editor.insertText('.')
+        advanceClock(completionDelay)
+      })
 
       waitsFor(() => {
         return (
@@ -371,18 +393,20 @@ describe('gocodeprovider', () => {
         )
       })
 
-      suggestions = await suggestionsPromise
+      runs(async () => {
+        suggestions = await suggestionsPromise
 
-      expect(provider.getSuggestions).toHaveBeenCalled()
-      expect(provider.getSuggestions.calls.length).toBe(1)
-      expect(suggestions).toBeTruthy()
-      expect(suggestions.length).toBeGreaterThan(0)
-      expect(suggestions[0]).toBeTruthy()
-      expect(suggestions[0].displayText).toBe('Fatal(v ...interface{})')
-      expect(suggestions[0].snippet).toBe('Fatal()$0')
-      expect(suggestions[0].replacementPrefix).toBe('')
-      expect(suggestions[0].type).toBe('function')
-      expect(suggestions[0].leftLabel).toBe('')
+        expect(provider.getSuggestions).toHaveBeenCalled()
+        expect(provider.getSuggestions.calls.length).toBe(1)
+        expect(suggestions).toBeTruthy()
+        expect(suggestions.length).toBeGreaterThan(0)
+        expect(suggestions[0]).toBeTruthy()
+        expect(suggestions[0].displayText).toBe('Fatal(v ...interface{})')
+        expect(suggestions[0].snippet).toBe('Fatal()$0')
+        expect(suggestions[0].replacementPrefix).toBe('')
+        expect(suggestions[0].type).toBe('function')
+        expect(suggestions[0].leftLabel).toBe('')
+      })
     })
   })
 })

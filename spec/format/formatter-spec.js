@@ -4,6 +4,7 @@
 import fs from 'fs'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 function setTextAndSave(editor) {
   const buffer = editor.getBuffer()
@@ -19,28 +20,15 @@ const formattedText = 'package main' + nl + nl + 'func main() {' + nl + '}' + nl
 describe('formatter', () => {
   let formatter = null
 
-  beforeEach(() => {
-    runs(() => {
-      lifecycle.setup()
-      atom.config.set('editor.defaultLineEnding', 'LF')
-      atom.config.set('go-plus.test.runTestsOnSave', false)
-    })
-
-    waitsForPromise(() => {
-      return lifecycle.activatePackage()
-    })
-
-    runs(() => {
-      const { mainModule } = lifecycle
-      mainModule.provideGoConfig()
-      mainModule.provideGoGet()
-      mainModule.loadFormatter()
-    })
-
-    waitsFor(() => {
-      formatter = lifecycle.mainModule.formatter
-      return formatter
-    })
+  beforeEach(async () => {
+    lifecycle.setup()
+    atom.config.set('editor.defaultLineEnding', 'LF')
+    atom.config.set('go-plus.test.runTestsOnSave', false)
+    await lifecycle.activatePackage()
+    const { mainModule } = lifecycle
+    mainModule.provideGoConfig()
+    mainModule.provideGoGet()
+    formatter = mainModule.loadFormatter()
   })
 
   afterEach(() => {
@@ -53,20 +41,16 @@ describe('formatter', () => {
     let saveSubscription
     let actual
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const directory = fs.realpathSync(lifecycle.temp.mkdirSync())
       atom.project.setPaths([directory])
       filePath = path.join(directory, 'gofmt.go')
       fs.writeFileSync(filePath, '')
-      waitsForPromise(() => {
-        return atom.workspace.open(filePath).then(e => {
-          editor = e
-          saveSubscription = e.onDidSave(() => {
-            actual = e.getText()
-          })
-          return
-        })
+      editor = await atom.workspace.open(filePath)
+      saveSubscription = editor.onDidSave(() => {
+        actual = editor.getText()
       })
+      return
     })
 
     afterEach(() => {
@@ -87,60 +71,42 @@ describe('formatter', () => {
         })
 
         it('does not format the file on save', () => {
-          waitsForPromise(() => {
-            return setTextAndSave(editor, unformattedText)
+          runs(async () => {
+            await setTextAndSave(editor, unformattedText)
           })
-
-          waitsFor(() => {
-            return actual
-          })
-
+          waitsFor(() => actual)
           runs(() => {
             expect(actual).toBe(unformattedText)
-            expect(actual).not.toBe(formattedText)
+            expect(actual).not
           })
         })
 
-        it('formats the file on command', () => {
-          waitsForPromise(() => {
-            return setTextAndSave(editor, unformattedText)
+        it('formats the file on command', async () => {
+          runs(async () => {
+            await setTextAndSave(editor, unformattedText)
           })
-
-          waitsFor(() => {
-            return actual
-          })
-
+          waitsFor(() => actual)
           runs(() => {
             expect(actual).toBe(unformattedText)
             expect(actual).not.toBe(formattedText)
             const target = atom.views.getView(editor)
             atom.commands.dispatch(target, 'golang:gofmt')
-          })
-
-          runs(() => {
             expect(editor.getText()).toBe(formattedText)
           })
         })
 
         describe('when gofmt writes to stderr, but otherwise succeeds', () => {
-          it('still updates the buffer', () => {
-            runs(() => {
-              spyOn(formatter.goconfig.executor, 'execSync').andReturn({
-                exitcode: 0,
-                stderr: 'warning',
-                stdout: formattedText
-              })
+          it('still updates the buffer', async () => {
+            spyOn(formatter.goconfig.executor, 'execSync').andReturn({
+              exitcode: 0,
+              stderr: 'warning',
+              stdout: formattedText
             })
 
-            waitsForPromise(() => {
-              return setTextAndSave(editor, unformattedText)
-            })
-
-            runs(() => {
-              const target = atom.views.getView(editor)
-              atom.commands.dispatch(target, 'golang:gofmt')
-              expect(editor.getText()).toBe(formattedText)
-            })
+            await setTextAndSave(editor, unformattedText)
+            const target = atom.views.getView(editor)
+            atom.commands.dispatch(target, 'golang:gofmt')
+            expect(editor.getText()).toBe(formattedText)
           })
         })
       })
@@ -156,14 +122,10 @@ describe('formatter', () => {
           atom.config.set('go-plus.format.tool', tool)
 
           it('formats on save using ' + tool, () => {
-            waitsForPromise(() => {
-              return setTextAndSave(editor, unformattedText)
+            runs(async () => {
+              await setTextAndSave(editor, unformattedText)
             })
-
-            waitsFor(() => {
-              return actual
-            })
-
+            waitsFor(() => actual)
             runs(() => {
               expect(actual).toBe(formattedText)
             })

@@ -3,12 +3,13 @@
 
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 describe('builder', () => {
   let builder = null
   let linter
 
-  beforeEach(() => {
+  beforeEach(async () => {
     lifecycle.setup()
 
     // mock the Linter V1 Indie API
@@ -18,14 +19,8 @@ describe('builder', () => {
       dispose: () => {}
     }
 
-    waitsForPromise(() => {
-      return lifecycle.activatePackage()
-    })
-
-    waitsFor(() => {
-      builder = lifecycle.mainModule.loadBuilder(linter)
-      return builder
-    })
+    await lifecycle.activatePackage()
+    builder = lifecycle.mainModule.loadBuilder(linter)
   })
 
   afterEach(() => {

@@ -6,28 +6,23 @@ import pathhelper from './../../lib/config/pathhelper'
 import os from 'os'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 describe('executor', () => {
   let executor = null
   let prefix = null
-  let result = null
-  let error = null
 
   beforeEach(() => {
     lifecycle.setup()
-    runs(() => {
-      result = null
-      error = null
-      prefix = '/'
-      if (os.platform() === 'win32') {
-        prefix = 'C:\\'
-      }
-      executor = new Executor()
-    })
+    prefix = '/'
+    if (os.platform() === 'win32') {
+      prefix = 'C:\\'
+    }
+    executor = new Executor()
   })
 
   describe('when asynchronously executing a command', () => {
-    it('succeeds', () => {
+    it('succeeds', async () => {
       let command = 'env'
       if (os.platform() === 'win32') {
         command = path.resolve(
@@ -38,33 +33,18 @@ describe('executor', () => {
         )
       }
 
-      waitsForPromise(() => {
-        return executor
-          .exec(command, [], { cwd: prefix })
-          .then(r => {
-            result = r
-            return
-          })
-          .catch(e => {
-            error = e
-          })
-      })
-
-      runs(() => {
-        expect(result).toBeDefined()
-        expect(result.exitcode).toBeDefined()
-        expect(result.exitcode).toBe(0)
-        expect(result.stdout).toBeDefined()
-        expect(result.stdout).not.toBe('')
-        expect(result.stderr).toBeDefined()
-        expect(result.stderr).toBe('')
-
-        expect(result.error).toBeFalsy()
-        expect(error).toBeFalsy()
-      })
+      const result = await executor.exec(command, [], { cwd: prefix })
+      expect(result).toBeDefined()
+      expect(result.exitcode).toBeDefined()
+      expect(result.exitcode).toBe(0)
+      expect(result.stdout).toBeDefined()
+      expect(result.stdout).not.toBe('')
+      expect(result.stderr).toBeDefined()
+      expect(result.stderr).toBe('')
+      expect(result.error).toBeFalsy()
     })
 
-    it('sets the working directory correctly', () => {
+    it('sets the working directory correctly', async () => {
       let command = 'pwd'
       if (os.platform() === 'win32') {
         command = path.resolve(
@@ -75,33 +55,20 @@ describe('executor', () => {
         )
       }
 
-      waitsForPromise(() => {
-        return executor
-          .exec(command, [], { cwd: pathhelper.home() })
-          .then(r => {
-            result = r
-            return
-          })
-          .catch(e => {
-            error = e
-          })
+      const result = await executor.exec(command, [], {
+        cwd: pathhelper.home()
       })
-
-      runs(() => {
-        expect(result).toBeDefined()
-        expect(result.exitcode).toBeDefined()
-        expect(result.exitcode).toBe(0)
-        expect(result.stdout).toBeDefined()
-        expect(result.stdout).toBe(pathhelper.home() + '\n')
-        expect(result.stderr).toBeDefined()
-        expect(result.stderr).toBe('')
-
-        expect(result.error).toBeFalsy()
-        expect(error).toBeFalsy()
-      })
+      expect(result).toBeDefined()
+      expect(result.exitcode).toBeDefined()
+      expect(result.exitcode).toBe(0)
+      expect(result.stdout).toBeDefined()
+      expect(result.stdout).toBe(pathhelper.home() + '\n')
+      expect(result.stderr).toBeDefined()
+      expect(result.stderr).toBe('')
+      expect(result.error).toBeFalsy()
     })
 
-    it('sets the environment correctly', () => {
+    it('sets the environment correctly', async () => {
       let command = 'env'
       if (os.platform() === 'win32') {
         command = path.resolve(
@@ -112,64 +79,39 @@ describe('executor', () => {
         )
       }
       let env = { testenv: 'testing' }
+      const result = await executor.exec(command, [], { env })
 
-      waitsForPromise(() => {
-        return executor
-          .exec(command, [], { env: env })
-          .then(r => {
-            result = r
-            return
-          })
-          .catch(e => {
-            error = e
-          })
-      })
-
-      runs(() => {
-        expect(result).toBeDefined()
-        expect(result.exitcode).toBeDefined()
-        expect(result.exitcode).toBe(0)
-        expect(result.stdout).toBeDefined()
-        expect(result.stdout).toContain('testenv=testing\n')
-        expect(result.stderr).toBeDefined()
-        expect(result.stderr).toBe('')
-
-        expect(result.error).toBeFalsy()
-        expect(error).toBeFalsy()
-      })
+      expect(result).toBeDefined()
+      expect(result.exitcode).toBeDefined()
+      expect(result.exitcode).toBe(0)
+      expect(result.stdout).toBeDefined()
+      expect(result.stdout).toContain('testenv=testing\n')
+      expect(result.stderr).toBeDefined()
+      expect(result.stderr).toBe('')
+      expect(result.error).toBeFalsy()
     })
 
-    it('handles and returns an ENOENT error if the command was not found', () => {
-      waitsForPromise(() => {
-        return executor
-          .exec('nonexistentcommand', [], executor.getOptions())
-          .then(r => {
-            result = r
-            return
-          })
-          .catch(e => {
-            error = e
-          })
-      })
-
-      runs(() => {
-        expect(result).toBeTruthy()
-        expect(result.error).toBeTruthy()
-        expect(result.error.errno).toBe('ENOENT')
-        expect(result.error.message).toBe('spawn nonexistentcommand ENOENT')
-        expect(result.error.path).toBe('nonexistentcommand')
-        expect(result.exitcode).toBe(127)
-        expect(result.stdout).toBe('')
-        expect(result.stderr).toBeDefined()
-        if (os.platform() === 'win32') {
-          expect(result.stderr).toBe(
-            "'nonexistentcommand' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
-          )
-        } else {
-          expect(result.stderr).toBe('')
-        }
-        expect(error).toBeFalsy()
-      })
+    it('handles and returns an ENOENT error if the command was not found', async () => {
+      const result = await executor.exec(
+        'nonexistentcommand',
+        [],
+        executor.getOptions()
+      )
+      expect(result).toBeTruthy()
+      expect(result.error).toBeTruthy()
+      expect(result.error.errno).toBe('ENOENT')
+      expect(result.error.message).toBe('spawn nonexistentcommand ENOENT')
+      expect(result.error.path).toBe('nonexistentcommand')
+      expect(result.exitcode).toBe(127)
+      expect(result.stdout).toBe('')
+      expect(result.stderr).toBeDefined()
+      if (os.platform() === 'win32') {
+        expect(result.stderr).toBe(
+          "'nonexistentcommand' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+        )
+      } else {
+        expect(result.stderr).toBe('')
+      }
     })
   })
 

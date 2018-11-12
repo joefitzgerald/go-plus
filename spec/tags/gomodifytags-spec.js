@@ -4,6 +4,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 describe('gomodifytags', () => {
   let gopath = null
@@ -12,50 +13,28 @@ describe('gomodifytags', () => {
   let source = null
   let target = null
 
-  beforeEach(() => {
-    runs(() => {
-      lifecycle.setup()
+  beforeEach(async () => {
+    lifecycle.setup()
+    gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
+    process.env.GOPATH = gopath
+    await lifecycle.activatePackage()
+    const { mainModule } = lifecycle
+    mainModule.provideGoConfig()
+    gomodifytags = mainModule.loadGoModifyTags()
+  })
 
-      gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
-      process.env.GOPATH = gopath
-    })
-
-    waitsForPromise(() => {
-      return lifecycle.activatePackage()
-    })
-
-    runs(() => {
-      const { mainModule } = lifecycle
-      mainModule.provideGoConfig()
-      mainModule.loadGoModifyTags()
-    })
-
-    waitsFor(() => {
-      gomodifytags = lifecycle.mainModule.gomodifytags
-      return gomodifytags
-    })
-
-    afterEach(() => {
-      lifecycle.teardown()
-    })
+  afterEach(() => {
+    lifecycle.teardown()
   })
 
   describe('when a file is open', () => {
     let tempfile
-    beforeEach(() => {
-      runs(() => {
-        source = path.join(__dirname, '..', 'fixtures', 'gomodifytags')
-        target = path.join(gopath, 'src', 'gomodifytags')
-        fs.copySync(source, target)
-        tempfile = path.join(target, 'foo.go')
-      })
-
-      waitsForPromise(() => {
-        return atom.workspace.open(tempfile).then(e => {
-          editor = e
-          return
-        })
-      })
+    beforeEach(async () => {
+      source = path.join(__dirname, '..', 'fixtures', 'gomodifytags')
+      target = path.join(gopath, 'src', 'gomodifytags')
+      fs.copySync(source, target)
+      tempfile = path.join(target, 'foo.go')
+      editor = await atom.workspace.open(tempfile)
     })
 
     describe('argument builder', () => {
@@ -179,84 +158,44 @@ describe('gomodifytags', () => {
     })
 
     describe('when modifying tags', () => {
-      it('adds json tags with options', () => {
-        let result = null
-        let command = null
+      it('adds json tags with options', async () => {
+        editor.setCursorBufferPosition([4, 6])
+        const command = await lifecycle.mainModule
+          .provideGoConfig()
+          .locator.findTool('gomodifytags')
+        expect(command).toBeTruthy()
 
-        runs(() => {
-          editor.setCursorBufferPosition([4, 6])
-        })
+        const result = await gomodifytags.modifyTags(
+          editor,
+          {
+            tags: [{ tag: 'json', option: 'omitempty' }],
+            transform: 'snakecase',
+            sortTags: false
+          },
+          'Add',
+          command
+        )
 
-        waitsForPromise(() => {
-          return lifecycle.mainModule
-            .provideGoConfig()
-            .locator.findTool('gomodifytags')
-            .then(cmd => {
-              expect(cmd).toBeTruthy()
-              command = cmd
-              return
-            })
-        })
-
-        waitsForPromise(() => {
-          return gomodifytags
-            .modifyTags(
-              editor,
-              {
-                tags: [{ tag: 'json', option: 'omitempty' }],
-                transform: 'snakecase',
-                sortTags: false
-              },
-              'Add',
-              command
-            )
-            .then(r => {
-              result = r
-              return
-            })
-        })
-
-        runs(() => {
-          expect(result).toBeTruthy()
-          expect(result.success).toBe(true)
-          expect(result.result.stdout).toBe(
-            'package foo\n\ntype Bar struct {\n\tQuickBrownFox int    `json:"quick_brown_fox,omitempty"`\n\tLazyDog       string `json:"lazy_dog,omitempty"`\n}\n\n'
-          )
-        })
+        expect(result).toBeTruthy()
+        expect(result.success).toBe(true)
+        expect(result.result.stdout).toBe(
+          'package foo\n\ntype Bar struct {\n\tQuickBrownFox int    `json:"quick_brown_fox,omitempty"`\n\tLazyDog       string `json:"lazy_dog,omitempty"`\n}\n\n'
+        )
       })
 
-      it('returns an error if the cursor is not inside a struct declaration', () => {
-        let result = null
-        let command = null
-
-        runs(() => {
-          editor.setCursorBufferPosition([0, 2])
-        })
-
-        waitsForPromise(() => {
-          return lifecycle.mainModule
-            .provideGoConfig()
-            .locator.findTool('gomodifytags')
-            .then(cmd => {
-              expect(cmd).toBeTruthy()
-              command = cmd
-              return
-            })
-        })
-
-        waitsForPromise(() => {
-          return gomodifytags
-            .modifyTags(editor, { tags: [] }, 'Add', command)
-            .then(r => {
-              result = r
-              return
-            })
-        })
-
-        runs(() => {
-          expect(result).toBeTruthy()
-          expect(result.success).toBe(false)
-        })
+      it('returns an error if the cursor is not inside a struct declaration', async () => {
+        editor.setCursorBufferPosition([0, 2])
+        const command = await lifecycle.mainModule
+          .provideGoConfig()
+          .locator.findTool('gomodifytags')
+        const result = await gomodifytags.modifyTags(
+          editor,
+          { tags: [] },
+          'Add',
+          command
+        )
+        expect(result).toBeTruthy()
+        expect(result.success).toBe(false)
       })
     })
   })

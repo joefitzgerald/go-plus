@@ -4,6 +4,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 describe('godoc', () => {
   let godoc = null
@@ -12,29 +13,15 @@ describe('godoc', () => {
   let source = null
   let target = null
 
-  beforeEach(() => {
-    runs(() => {
-      lifecycle.setup()
-
-      gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
-      process.env.GOPATH = gopath
-    })
-
-    waitsForPromise(() => {
-      return lifecycle.activatePackage()
-    })
-
-    runs(() => {
-      const { mainModule } = lifecycle
-      mainModule.provideGoConfig()
-      mainModule.provideGoGet()
-      mainModule.loadDoc()
-    })
-
-    waitsFor(() => {
-      godoc = lifecycle.mainModule.godoc
-      return godoc
-    })
+  beforeEach(async () => {
+    lifecycle.setup()
+    gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
+    process.env.GOPATH = gopath
+    await lifecycle.activatePackage()
+    const { mainModule } = lifecycle
+    mainModule.provideGoConfig()
+    mainModule.provideGoGet()
+    godoc = mainModule.loadDoc()
   })
 
   afterEach(() => {
@@ -68,30 +55,13 @@ describe('godoc', () => {
 
   describe('when the godoc command is invoked on a valid go file', () => {
     let result = false
-    beforeEach(() => {
-      runs(() => {
-        source = path.join(__dirname, '..', 'fixtures')
-        target = path.join(gopath, 'src', 'godoctest')
-        fs.copySync(source, target)
-      })
-
-      waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'doc.go')).then(e => {
-          editor = e
-          return
-        })
-      })
-
-      runs(() => {
-        editor.setCursorBufferPosition([24, 10])
-
-        waitsForPromise(() => {
-          return godoc.commandInvoked().then(r => {
-            result = r
-            return
-          })
-        })
-      })
+    beforeEach(async () => {
+      source = path.join(__dirname, '..', 'fixtures')
+      target = path.join(gopath, 'src', 'godoctest')
+      fs.copySync(source, target)
+      editor = await atom.workspace.open(path.join(target, 'doc.go'))
+      editor.setCursorBufferPosition([24, 10])
+      result = await godoc.commandInvoked()
     })
 
     it('executes gogetdoc successfully', () => {
@@ -103,58 +73,39 @@ describe('godoc', () => {
     })
 
     it('returns a godoc.org link', () => {
-      runs(() => {
-        expect(result.doc.gddo).toBe(
-          'https://godoc.org/godoctest#Foo.ChangeMessage'
-        )
-      })
+      expect(result.doc.gddo).toBe(
+        'https://godoc.org/godoctest#Foo.ChangeMessage'
+      )
     })
   })
 
   describe('when the godoc command is invoked on an unsaved go file', () => {
-    beforeEach(() => {
-      runs(() => {
-        source = path.join(__dirname, '..', 'fixtures')
-        target = path.join(gopath, 'src', 'godoctest')
-        fs.copySync(source, target)
-      })
-
-      waitsForPromise(() => {
-        return atom.workspace.open(path.join(target, 'doc.go')).then(e => {
-          e.setCursorBufferPosition([24, 35])
-          e.selectLinesContainingCursors()
-          e.insertText('fmt.Printf("this line has been modified\\n")\n')
-          expect(e.isModified()).toBe(true)
-          editor = e
-          return
-        })
-      })
+    beforeEach(async () => {
+      source = path.join(__dirname, '..', 'fixtures')
+      target = path.join(gopath, 'src', 'godoctest')
+      fs.copySync(source, target)
+      editor = await atom.workspace.open(path.join(target, 'doc.go'))
+      editor.setCursorBufferPosition([24, 35])
+      editor.selectLinesContainingCursors()
+      editor.insertText('fmt.Printf("this line has been modified\\n")\n')
+      expect(editor.isModified()).toBe(true)
     })
 
-    it('gets the correct documentation', () => {
+    it('gets the correct documentation', async () => {
       let result = false
       editor.setCursorBufferPosition([24, 7])
+      result = await godoc.commandInvoked()
+      expect(result).toBeTruthy()
+      expect(result.success).toBe(true)
+      expect(result.result.exitcode).toBe(0)
+      expect(result.result.stdout).toBeTruthy()
 
-      waitsForPromise(() => {
-        return godoc.commandInvoked().then(r => {
-          result = r
-          return
-        })
-      })
-
-      runs(() => {
-        expect(result).toBeTruthy()
-        expect(result.success).toBe(true)
-        expect(result.result.exitcode).toBe(0)
-        expect(result.result.stdout).toBeTruthy()
-
-        expect(result.doc).toBeTruthy()
-        expect(result.doc.import).toBe('fmt')
-        expect(result.doc.decl).toBe(
-          'func Printf(format string, a ...interface{}) (n int, err error)'
-        )
-        expect(result.doc.gddo).toBe('https://godoc.org/fmt#Printf')
-      })
+      expect(result.doc).toBeTruthy()
+      expect(result.doc.import).toBe('fmt')
+      expect(result.doc.decl).toBe(
+        'func Printf(format string, a ...interface{}) (n int, err error)'
+      )
+      expect(result.doc.gddo).toBe('https://godoc.org/fmt#Printf')
     })
   })
 })

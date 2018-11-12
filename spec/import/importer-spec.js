@@ -4,6 +4,7 @@ import path from 'path'
 
 import { importablePackages } from './../../lib/import/importer'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 describe('importablePackages', () => {
   const all = [
@@ -50,51 +51,22 @@ describe('importer', () => {
   let importer = null
   let editor = null
 
-  beforeEach(() => {
-    runs(() => {
-      lifecycle.setup()
-    })
-
-    waitsForPromise(() => {
-      return lifecycle.activatePackage()
-    })
-
-    runs(() => {
-      const { mainModule } = lifecycle
-      mainModule.provideGoConfig()
-      mainModule.loadImporter()
-    })
-
-    waitsFor(() => {
-      importer = lifecycle.mainModule.importer
-      return importer
-    })
-
-    waitsForPromise(() => {
-      return atom.workspace
-        .open(path.join(__dirname, '..', 'fixtures', 'doc.go'))
-        .then(e => {
-          editor = e
-          return
-        })
-    })
+  beforeEach(async () => {
+    lifecycle.setup()
+    await lifecycle.activatePackage()
+    const { mainModule } = lifecycle
+    mainModule.provideGoConfig()
+    importer = mainModule.loadImporter()
+    editor = await atom.workspace.open(
+      path.join(__dirname, '..', 'fixtures', 'doc.go')
+    )
   })
 
   afterEach(() => lifecycle.teardown())
 
-  it('adds imports', () => {
-    let result
-
-    waitsForPromise(() => {
-      return importer.addImport('bufio').then(r => {
-        result = r
-        return
-      })
-    })
-
-    runs(() => {
-      expect(result.success).toBe(true)
-      expect(editor.lineTextForBufferRow(3).trim()).toEqual('"bufio"')
-    })
+  it('adds imports', async () => {
+    const result = await importer.addImport('bufio')
+    expect(result.success).toBe(true)
+    expect(editor.lineTextForBufferRow(3).trim()).toEqual('"bufio"')
   })
 })

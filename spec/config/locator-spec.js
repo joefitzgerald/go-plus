@@ -336,16 +336,16 @@ describe('Locator', () => {
       expect(locator.runtimeCandidates).toBeDefined()
       let candidates = locator.runtimeCandidates()
       expect(candidates).toBeTruthy()
-      expect(candidates.length).toBe(2) // the real go, and our fake go
+      expect(candidates.length).toBeGreaterThan(0)
       expect(candidates[0].path).toBe(goInPath)
     })
 
     it('runtimes() returns the runtime', async () => {
       const runtimes = await locator.runtimes()
       expect(runtimes).toBeTruthy()
+      expect(runtimes.length).toBeGreaterThan(0)
 
       const rt: any = runtimes[0]
-      expect(runtimes.length).toBe(2)
       expect(rt.locator).toBe('path-locator')
       expect(rt.name).toBe('go1.99.1')
       expect(rt.semver).toBe('1.99.1')

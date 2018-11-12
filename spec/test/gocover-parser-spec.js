@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
+import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
 describe('gocover-parser', () => {
   let goconfig = null
