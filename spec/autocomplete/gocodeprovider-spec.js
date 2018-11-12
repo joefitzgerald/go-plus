@@ -157,7 +157,6 @@ describe('gocodeprovider', () => {
       })
 
       it('provides the exported types of the unimported package', () => {
-        let suggestions = null
         waitsFor(() => provider.allPkgs.size > 0)
 
         runs(() => {
@@ -176,9 +175,10 @@ describe('gocodeprovider', () => {
         })
 
         runs(async () => {
-          suggestions = await suggestionsPromise
           expect(provider.getSuggestions).toHaveBeenCalled()
           expect(provider.getSuggestions.calls.length).toBe(1)
+
+          const suggestions = await suggestionsPromise
           expect(suggestions).toBeTruthy()
           expect(suggestions.length).toBeGreaterThan(0)
           expect(suggestions[0]).toBeTruthy()
@@ -250,7 +250,6 @@ describe('gocodeprovider', () => {
   })
 
   describe('when the go-plus-issue-307 file is opened', () => {
-    let suggestions = null
     beforeEach(async () => {
       editor = await atom.workspace.open(
         'go-plus-issue-307' + path.sep + 'main.go'
@@ -262,7 +261,6 @@ describe('gocodeprovider', () => {
       runs(() => {
         editor.setCursorScreenPosition([13, 0])
         editor.insertText('\tSayHello("world")')
-        suggestions = null
         suggestionsPromise = null
         advanceClock(completionDelay)
 
@@ -280,10 +278,10 @@ describe('gocodeprovider', () => {
       })
 
       runs(async () => {
-        suggestions = await suggestionsPromise
-
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)
+
+        const suggestions = await suggestionsPromise
         expect(suggestions).toBeTruthy()
         expect(suggestions.length).toBeGreaterThan(0)
         expect(suggestions[0]).toBeTruthy()
@@ -299,7 +297,6 @@ describe('gocodeprovider', () => {
       runs(() => {
         editor.setCursorScreenPosition([13, 0])
         editor.insertText('\tSayHello("world") ')
-        suggestions = null
         suggestionsPromise = null
         advanceClock(completionDelay)
 
@@ -317,10 +314,10 @@ describe('gocodeprovider', () => {
       })
 
       runs(async () => {
-        suggestions = await suggestionsPromise
-
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)
+
+        const suggestions = await suggestionsPromise
         expect(suggestions).toBeTruthy()
         expect(suggestions.length).toBeGreaterThan(0)
         expect(suggestions[0]).toBeTruthy()
@@ -336,7 +333,6 @@ describe('gocodeprovider', () => {
       runs(() => {
         editor.setCursorScreenPosition([13, 0])
         editor.insertText('\tSayHello("world")  ')
-        suggestions = null
         suggestionsPromise = null
         advanceClock(completionDelay)
 
@@ -354,10 +350,10 @@ describe('gocodeprovider', () => {
       })
 
       runs(async () => {
-        suggestions = await suggestionsPromise
-
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)
+
+        const suggestions = await suggestionsPromise
         expect(suggestions).toBeTruthy()
         expect(suggestions.length).toBeGreaterThan(0)
         expect(suggestions[0]).toBeTruthy()
@@ -375,7 +371,6 @@ describe('gocodeprovider', () => {
       runs(() => {
         editor.setCursorScreenPosition([13, 0])
         editor.insertText('\tSayHello("world")\t')
-        suggestions = null
         suggestionsPromise = null
         advanceClock(completionDelay)
 
@@ -394,7 +389,7 @@ describe('gocodeprovider', () => {
       })
 
       runs(async () => {
-        suggestions = await suggestionsPromise
+        const suggestions = await suggestionsPromise
 
         expect(provider.getSuggestions).toHaveBeenCalled()
         expect(provider.getSuggestions.calls.length).toBe(1)

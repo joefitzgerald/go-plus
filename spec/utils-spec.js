@@ -40,13 +40,19 @@ describe('utils', () => {
   })
 
   describe('stat', () => {
-    it('is rejected for nonexistent files', async () => {
-      const fn = async () => {
-        result = await stat('nonexistentthing')
-      }
-      let result = await fn()
-      expect(result).toBeFalsy()
-      expect(fn).toThrow()
+    it('is rejected for nonexistent files', () => {
+      let result, err
+
+      waitsForPromise(() => {
+        return stat('nonexistentthing')
+          .then(r => (result = r))
+          .catch(e => (err = e))
+      })
+
+      runs(() => {
+        expect(result).toBeFalsy()
+        expect(err).toBeTruthy()
+      })
     })
   })
 })
