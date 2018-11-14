@@ -55,15 +55,15 @@ describe('gocover-parser', () => {
   })
 
   it('parses the file for a single package', async () => {
-    let cmd
-    let tempDir = lifecycle.temp.mkdirSync()
-    let tempFile = path.join(tempDir, 'coverage.out')
-    let args = ['test', '-coverprofile=' + tempFile]
-    let cwd = path.join(directory, 'src', 'github.com', 'testuser', 'example')
-    cmd = await goconfig.locator.findTool('go')
+    const tempDir = lifecycle.temp.mkdirSync()
+    const tempFile = path.join(tempDir, 'coverage.out')
+    const args = ['test', '-coverprofile=' + tempFile]
+
+    const cmd = await goconfig.locator.findTool('go')
     expect(cmd).toBeTruthy()
 
-    let executorOptions = { cwd: cwd, env: env }
+    const cwd = path.join(directory, 'src', 'github.com', 'testuser', 'example')
+    const executorOptions = { cwd, env }
     const execResult = await goconfig.executor.exec(cmd, args, executorOptions)
     expect(execResult.exitcode).toBe(0)
     expect(execResult.stderr).toBeFalsy()
@@ -77,9 +77,10 @@ describe('gocover-parser', () => {
     let re = new RegExp(retext)
     let packagePath = filePath.replace(re, '')
 
-    let r = ranges(tempFile)
+    const r = ranges(tempFile)
     expect(r).toBeTruthy()
     expect(r.length).toBeGreaterThan(0)
+
     const result = r.filter(item => filePath.endsWith(item.file))
     expect(result).toBeTruthy()
     expect(result.length).toBe(2)

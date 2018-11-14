@@ -2,7 +2,6 @@
 /* eslint-env jasmine */
 
 import path from 'path'
-import fs from 'fs-extra'
 import { lifecycle } from './../spec-helpers'
 import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
@@ -97,12 +96,10 @@ describe('tester', () => {
   describe('with a gopath setup', () => {
     let gopath = null
     let filePath
-    let testFilePath
     let editor
-    let testEditor
 
     beforeEach(async () => {
-      gopath = lifecycle.temp.mkdirSync()
+      gopath = path.join(__dirname, '..', 'fixtures', 'test')
       process.env.GOPATH = gopath
       atom.project.setPaths([gopath])
 
@@ -114,40 +111,16 @@ describe('tester', () => {
         'example',
         'go-plus.go'
       )
-      testFilePath = path.join(
-        gopath,
-        'src',
-        'github.com',
-        'testuser',
-        'example',
-        'go-plus_test.go'
-      )
-      fs.ensureDirSync(path.dirname(filePath))
-      fs.ensureDirSync(path.dirname(testFilePath))
-      fs.writeFileSync(filePath, '')
-      fs.writeFileSync(testFilePath, '')
 
       editor = await atom.workspace.open(filePath)
-      testEditor = await atom.workspace.open(testFilePath)
     })
 
     describe('when run tests on save is enabled, but compile on save is disabled', () => {
       it('runs tests', async () => {
         atom.config.set('go-plus.config.compileOnSave', false)
-        atom.config.set('go-plus.test.runTestsOnSave', false)
+        atom.config.set('go-plus.test.runTestsOnSave', true)
         atom.config.set('go-plus.test.runTestsWithCoverage', false)
 
-        const buffer = editor.getBuffer()
-        buffer.setText(
-          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
-        )
-        const testBuffer = testEditor.getBuffer()
-        testBuffer.setText(
-          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
-        )
-
-        await Promise.all([buffer.save(), testBuffer.save()])
-        atom.config.set('go-plus.test.runTestsOnSave', true)
         spyOn(tester, 'runTests').andCallThrough()
         await tester.handleSaveEvent()
         expect(tester.runTests).toHaveBeenCalled()
@@ -160,32 +133,12 @@ describe('tester', () => {
       })
 
       it('does not run tests automatically on save', async () => {
-        const buffer = editor.getBuffer()
-        buffer.setText(
-          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
-        )
-        const testBuffer = testEditor.getBuffer()
-        testBuffer.setText(
-          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
-        )
-
-        await Promise.all([buffer.save(), testBuffer.save()])
-        spyOn(tester, 'runTests').andCallThrough()
+        spyOn(tester, 'runTests')
         await tester.handleSaveEvent()
         expect(tester.runTests).not.toHaveBeenCalled()
       })
 
       it('displays coverage for go source', async () => {
-        const buffer = editor.getBuffer()
-        buffer.setText(
-          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
-        )
-        const testBuffer = testEditor.getBuffer()
-        testBuffer.setText(
-          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
-        )
-
-        await Promise.all([buffer.save(), testBuffer.save()])
         await tester.runTests(editor)
 
         const layers = tester.markedEditors.get(editor.id)
@@ -213,21 +166,12 @@ describe('tester', () => {
         range = uncoveredmarkers[0].getBufferRange()
         expect(range).toBeDefined()
         expect(range.start.row).toBe(4)
-        expect(range.start.column).toBe(13)
+        expect(range.start.column).toBe(12)
         expect(range.end.row).toBe(6)
         expect(range.end.column).toBe(1)
       })
 
       it('clears coverage for go source', async () => {
-        const buffer = editor.getBuffer()
-        buffer.setText(
-          'package main\n\nimport "fmt"\n\nfunc main()  {\n\tfmt.Println(Hello())\n}\n\nfunc Hello() string {\n\treturn "Hello, 世界"\n}\n'
-        )
-        const testBuffer = testEditor.getBuffer()
-        testBuffer.setText(
-          'package main\n\nimport "testing"\n\nfunc TestHello(t *testing.T) {\n\tresult := Hello()\n\tif result != "Hello, 世界" {\n\t\tt.Errorf("Expected %s - got %s", "Hello, 世界", result)\n\t}\n}'
-        )
-        await Promise.all([buffer.save(), testBuffer.save()])
         await tester.runTests(editor)
 
         let layerids = tester.markedEditors.get(editor.id).split(',')
@@ -253,7 +197,7 @@ describe('tester', () => {
         range = uncoveredmarkers[0].getBufferRange()
         expect(range).toBeDefined()
         expect(range.start.row).toBe(4)
-        expect(range.start.column).toBe(13)
+        expect(range.start.column).toBe(12)
         expect(range.end.row).toBe(6)
         expect(range.end.column).toBe(1)
 
