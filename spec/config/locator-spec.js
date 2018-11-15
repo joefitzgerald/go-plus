@@ -64,16 +64,15 @@ describe('Locator', () => {
     it('findExecutablesInPath returns an array with elements if its arguments are valid', () => {
       expect(locator.findExecutablesInPath).toBeDefined()
       if (os.platform() === 'win32') {
-        expect(
-          locator.findExecutablesInPath('c:\\windows\\system32', ['cmd.exe'])
-            .length
-        ).toBe(1)
-        expect(
-          locator.findExecutablesInPath('c:\\windows\\system32', ['cmd.exe'])[0]
-        ).toBe('c:\\windows\\system32\\cmd.exe')
+        const r = locator.findExecutablesInPath('c:\\windows\\system32', [
+          'cmd.exe'
+        ])
+        expect(r.length).toBe(1)
+        expect(r[0]).toBe('c:\\windows\\system32\\cmd.exe')
       } else {
-        expect(locator.findExecutablesInPath('/bin', ['sh']).length).toBe(1)
-        expect(locator.findExecutablesInPath('/bin', ['sh'])[0]).toBe('/bin/sh')
+        const r = locator.findExecutablesInPath('/bin', ['sh'])
+        expect(r.length).toBe(1)
+        expect(r[0]).toBe('/bin/sh')
       }
     })
   })
@@ -83,25 +82,9 @@ describe('Locator', () => {
       process.env.GOPATH = path.join('~', 'go')
     })
 
-    it('is defined', () => {
-      expect(locator).toBeDefined()
-      expect(locator).toBeTruthy()
-    })
-
     it('gopath() returns a path with the home directory expanded', () => {
       expect(locator.gopath).toBeDefined()
       expect(locator.gopath()).toBe(path.join(pathhelper.home(), 'go'))
-    })
-
-    describe('when there is atom config for go-plus.config.gopath', () => {
-      beforeEach(() => {
-        atom.config.set('go-plus.config.gopath', '~/go2')
-      })
-
-      it('gopath() prioritizes the environment over the config', () => {
-        expect(locator.gopath).toBeDefined()
-        expect(locator.gopath()).toBe(path.join(pathhelper.home(), 'go'))
-      })
     })
 
     describe('when there is atom config for go-plus.config.gopath', () => {

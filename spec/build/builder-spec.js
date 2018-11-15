@@ -2,6 +2,8 @@
 /* eslint-env jasmine */
 
 import path from 'path'
+import { Builder } from '../../lib/build/builder'
+import { ConfigService } from '../../lib/config/service'
 import { lifecycle } from './../spec-helpers'
 import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
 
@@ -18,13 +20,8 @@ describe('builder', () => {
       setMessages: () => {},
       dispose: () => {}
     }
-
-    await lifecycle.activatePackage()
-    builder = lifecycle.mainModule.loadBuilder(linter)
-  })
-
-  afterEach(() => {
-    lifecycle.teardown()
+    const goconfig = new ConfigService().provide()
+    builder = new Builder(goconfig, linter, null)
   })
 
   describe('test executable', () => {
@@ -146,7 +143,7 @@ describe('builder', () => {
       ]
 
       // WHEN I get the messages for these outputs
-      let messages = builder.getMessages(
+      const messages = builder.getMessages(
         outputs,
         path.join('src', 'github.com', 'anonymous', 'sample-project')
       )
@@ -154,7 +151,7 @@ describe('builder', () => {
       // THEN I expect only one message to be returned because they are the same
       expect(messages.length).toEqual(1)
 
-      let message = messages[0]
+      const message = messages[0]
       expect(message.name).toEqual('build')
       expect(
         message.excerpt.indexOf(
