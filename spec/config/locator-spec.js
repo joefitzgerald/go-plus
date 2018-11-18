@@ -281,7 +281,7 @@ describe('Locator', () => {
     const gotooldirtools = ['addr2line', 'cgo', 'cover', 'doc', 'vet']
 
     beforeEach(() => {
-      tempPath = lifecycle.temp.mkdirSync('go-')
+      tempPath = lifecycle.temp.mkdirSync('path-')
       tempGoroot = lifecycle.temp.mkdirSync('goroot-')
       tempGopath = lifecycle.temp.mkdirSync('gopath-')
 
@@ -348,11 +348,11 @@ describe('Locator', () => {
     it('findTool() finds the go tool', async () => {
       expect(locator.findTool).toBeDefined()
       const tool = await locator.findTool('go')
-      expect(tool).toBe(path.join(gorootbindir, 'go' + executableSuffix))
+      expect(tool).toBe(path.join(tempPath, 'go' + executableSuffix))
     })
 
     it('findTool() finds tools in GOROOT', async () => {
-      const tools = ['go', 'godoc', 'gofmt']
+      const tools = ['godoc', 'gofmt']
       const runtime = await locator.runtime()
       expect(runtime).toBeTruthy()
       if (runtime) {
