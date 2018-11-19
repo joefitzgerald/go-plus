@@ -5,7 +5,7 @@ import { getgopath } from './../../lib/config/environment'
 import pathhelper from './../../lib/config/pathhelper'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
-import temp from 'temp'
+import temp from '@atom/temp'
 
 describe('executor', () => {
   let [envDir, configDir] = []

@@ -2,7 +2,7 @@
 
 /* eslint-env jasmine */
 
-import temp from 'temp'
+import temp from '@atom/temp'
 
 class Lifecycle {
   env: Object
