@@ -3,7 +3,7 @@
 
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
-import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
+import { it, fit, ffit, beforeEach, runs } from '../async-spec-helpers' // eslint-disable-line
 
 describe('tester', () => {
   let tester = null

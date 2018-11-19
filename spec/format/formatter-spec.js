@@ -4,7 +4,7 @@
 import path from 'path'
 import { ConfigService } from '../../lib/config/service'
 import { Formatter } from '../../lib/format/formatter'
-import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
+import { it, fit, ffit, beforeEach, runs } from '../async-spec-helpers' // eslint-disable-line
 
 const nl = '\n'
 const formattedText = 'package main' + nl + nl + 'func main() {' + nl + '}' + nl

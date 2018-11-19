@@ -2,7 +2,7 @@
 
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
-import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
+import { it, fit, ffit, beforeEach, runs } from '../async-spec-helpers' // eslint-disable-line
 
 describe('gocodeprovider', () => {
   let completionDelay = null
@@ -12,38 +12,47 @@ describe('gocodeprovider', () => {
   let suggestionsPromise = null
   let autocompleteplusMain
 
-  beforeEach(async () => {
-    lifecycle.setup()
-    const pkg = await atom.packages.activatePackage('autocomplete-plus')
-    autocompleteplusMain = pkg.mainModule
+  beforeEach(() => {
+    runs(async () => {
+      lifecycle.setup()
+      const pkg = await atom.packages.activatePackage('autocomplete-plus')
+      autocompleteplusMain = pkg.mainModule
+    })
 
     waitsFor(() => {
       return (
+        autocompleteplusMain &&
         autocompleteplusMain.autocompleteManager &&
         autocompleteplusMain.autocompleteManager.ready
       )
     })
 
-    await lifecycle.activatePackage()
-    const { mainModule } = lifecycle
-    provider = mainModule.provideAutocomplete()
-
-    const workspaceElement = atom.views.getView(atom.workspace)
-    jasmine.attachToDOM(workspaceElement)
-
-    atom.config.set('autocomplete-plus.enableAutoActivation', true)
-    completionDelay = 100
-    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-    completionDelay += 100 // Rendering delay
-
-    atom.config.set('go-plus.autocomplete.snippetMode', 'nameAndType')
-    spyOn(provider, 'getSuggestions').andCallThrough()
-    provider.onDidGetSuggestions(p => {
-      suggestionsPromise = p
+    runs(async () => {
+      const r = await lifecycle.activatePackage()
+      const { mainModule } = r[1]
+      provider = mainModule.provideAutocomplete()
     })
 
-    expect(provider).toBeDefined()
-    expect(provider.getSuggestions).not.toHaveBeenCalled()
+    waitsFor(() => provider)
+
+    runs(() => {
+      const workspaceElement = atom.views.getView(atom.workspace)
+      jasmine.attachToDOM(workspaceElement)
+
+      atom.config.set('autocomplete-plus.enableAutoActivation', true)
+      completionDelay = 100
+      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
+      completionDelay += 100 // Rendering delay
+
+      atom.config.set('go-plus.autocomplete.snippetMode', 'nameAndType')
+      spyOn(provider, 'getSuggestions').andCallThrough()
+      provider.onDidGetSuggestions(p => {
+        suggestionsPromise = p
+      })
+
+      expect(provider).toBeDefined()
+      expect(provider.getSuggestions).not.toHaveBeenCalled()
+    })
   })
 
   afterEach(() => {

@@ -2,7 +2,7 @@
 
 import { ranges } from './../../lib/test/gocover-parser'
 import path from 'path'
-import {it, fit, ffit, beforeEach} from '../async-spec-helpers' // eslint-disable-line
+import { it, fit, ffit, beforeEach, runs } from '../async-spec-helpers' // eslint-disable-line
 
 describe('gocover-parser', () => {
   it('parses the file for a single package', async () => {

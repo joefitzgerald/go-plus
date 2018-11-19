@@ -12,6 +12,15 @@ exports.beforeEach = function beforeEach(fn) {
   })
 }
 
+exports.runs = function runs(fn) {
+  global.runs(function() {
+    const result = fn()
+    if (result instanceof Promise) {
+      waitsForPromise(() => result)
+    }
+  })
+}
+
 exports.afterEach = function afterEach(fn) {
   global.afterEach(function() {
     const result = fn()

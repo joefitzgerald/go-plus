@@ -30,7 +30,6 @@ class Lifecycle {
 
   activatePackage() {
     atom.packages.triggerDeferredActivationHooks()
-
     atom.packages.triggerActivationHook('language-go:grammar-used')
     atom.packages.triggerActivationHook('core:loaded-shell-environment')
 
@@ -38,7 +37,7 @@ class Lifecycle {
       atom.packages.activatePackage('language-go'),
       atom.packages.activatePackage('go-plus').then(pkg => {
         this.mainModule = pkg.mainModule
-        return
+        return pkg
       })
     ]).catch(e => {
       // eslint-disable-next-line no-console
@@ -50,6 +49,7 @@ class Lifecycle {
     if (this.env) {
       process.env = this.env
     }
+    if (this.mainModule) this.mainModule.dispose()
     this.mainModule = null
     atom.config.set('go-plus.testing', false)
   }
