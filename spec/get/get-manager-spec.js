@@ -77,9 +77,7 @@ describe('go-get', () => {
       manager.register('github.com/mdempsky/gocode')
       manager.register('golang.org/x/tools/cmd/goimports')
       const outcome = await manager.updateTools()
-      expect(outcome).toBeTruthy()
-      expect(outcome.success).toBe(true)
-      expect(outcome.results).toBeTruthy()
+      expect(outcome.success).toEqual(true, 'outcome is ', outcome)
       expect(outcome.results.length).toBe(2)
 
       stat = fs.statSync(gocodebinary)
