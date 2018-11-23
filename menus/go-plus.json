@@ -9,10 +9,6 @@
             "command": "golang:godef"
           },
           {
-            "label": "Find Usage",
-            "command": "golang:find-usage"
-          },
-          {
             "label": "Implements",
             "command": "golang:implements"
           },
@@ -70,10 +66,6 @@
             {
               "label": "Go To Definition",
               "command": "golang:godef"
-            },
-            {
-              "label": "Find Usage",
-              "command": "golang:find-usage"
             },
             {
               "label": "Return From Definition",
