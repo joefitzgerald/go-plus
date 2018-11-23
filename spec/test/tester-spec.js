@@ -10,7 +10,6 @@ describe('tester', () => {
 
   beforeEach(async () => {
     lifecycle.setup()
-    atom.config.set('go-plus.format.formatOnSave', false)
     atom.config.set(
       'go-plus.test.coverageHighlightMode',
       'covered-and-uncovered'

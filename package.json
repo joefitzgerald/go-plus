@@ -132,6 +132,11 @@
       "versions": {
         "0.1.0": "provideCodeHighlight"
       }
+    },
+    "code-format.file": {
+      "versions": {
+        "0.1.0": "provideCodeFormatter"
+      }
     }
   },
   "consumedServices": {
@@ -328,13 +333,6 @@
       "title": "Format",
       "type": "object",
       "properties": {
-        "formatOnSave": {
-          "title": "Run Format Tool On Save",
-          "description": "Run the configured format tool each time a file is saved",
-          "type": "boolean",
-          "default": true,
-          "order": 1
-        },
         "tool": {
           "title": "Format Tool",
           "description": "Choose one: goimports, goreturns, or gofmt",
@@ -345,7 +343,7 @@
             "goreturns",
             "gofmt"
           ],
-          "order": 2
+          "order": 1
         }
       }
     },

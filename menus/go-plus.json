@@ -17,18 +17,6 @@
             "command": "golang:godef-return"
           },
           {
-            "label": "Run gofmt",
-            "command": "golang:gofmt"
-          },
-          {
-            "label": "Run goimports",
-            "command": "golang:goimports"
-          },
-          {
-            "label": "Run goreturns",
-            "command": "golang:goreturns"
-          },
-          {
             "label": "Run Tests",
             "command": "golang:run-tests"
           },
