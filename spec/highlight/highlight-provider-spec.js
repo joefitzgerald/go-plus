@@ -6,8 +6,8 @@ import path from 'path'
 import { lifecycle } from './../spec-helpers'
 import { it, fit, ffit, beforeEach, runs } from '../async-spec-helpers' // eslint-disable-line
 
-describe('what', () => {
-  let what
+describe('Highlight Provider', () => {
+  let highlight
 
   beforeEach(async () => {
     lifecycle.setup()
@@ -15,7 +15,7 @@ describe('what', () => {
 
     const { mainModule } = lifecycle
     mainModule.provideGoConfig()
-    what = mainModule.loadWhat()
+    highlight = mainModule.provideCodeHighlight()
   })
 
   afterEach(() => {
@@ -24,11 +24,11 @@ describe('what', () => {
 
   it('monitors the config', () => {
     atom.config.set('go-plus.guru.highlightIdentifiers', false)
-    expect(what.shouldDecorate).toBe(false)
+    expect(highlight.shouldDecorate).toBe(false)
     atom.config.set('go-plus.guru.highlightIdentifiers', true)
-    expect(what.shouldDecorate).toBe(true)
+    expect(highlight.shouldDecorate).toBe(true)
     atom.config.set('go-plus.guru.highlightIdentifiers', false)
-    expect(what.shouldDecorate).toBe(false)
+    expect(highlight.shouldDecorate).toBe(false)
   })
 
   describe('when run on a valid go file', () => {
@@ -45,28 +45,22 @@ describe('what', () => {
       target = path.join(gopath, 'src', 'what')
       fs.copySync(source, target)
 
-      // we'll manually invoke guru for easier testing
-      atom.config.set('go-plus.guru.highlightIdentifiers', false)
+      atom.config.set('go-plus.guru.highlightIdentifiers', true)
 
       editor = await atom.workspace.open(path.join(target || '.', 'doc.go'))
     })
 
-    it('highlights identifiers', async () => {
+    it('returns the appropriate ranges', async () => {
       editor.setCursorBufferPosition([22, 1])
 
-      await what.run(
+      const ranges = await highlight.highlight(
         editor,
-        editor.getCursorBufferPosition(),
-        editor.getCursors()[0],
-        true
+        editor.getCursorBufferPosition()
       )
-
-      expect(what.currentEditorLayer).toBeTruthy()
-      const markers = what.currentEditorLayer.getMarkers()
-      expect(markers.length).toBe(3)
-      expect(markers[0].getBufferRange().start.row).toBe(22)
-      expect(markers[1].getBufferRange().start.row).toBe(23)
-      expect(markers[2].getBufferRange().start.row).toBe(24)
+      expect(ranges.length).toBe(3)
+      expect(ranges[0].start.row).toBe(22)
+      expect(ranges[1].start.row).toBe(23)
+      expect(ranges[2].start.row).toBe(24)
     })
   })
 })

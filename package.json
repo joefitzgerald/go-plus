@@ -127,6 +127,11 @@
       "versions": {
         "0.1.0": "provideReferences"
       }
+    },
+    "code-highlight": {
+      "versions": {
+        "0.1.0": "provideCodeHighlight"
+      }
     }
   },
   "consumedServices": {
