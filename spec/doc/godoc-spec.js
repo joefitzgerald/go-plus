@@ -64,6 +64,15 @@ describe('godoc', () => {
       result = await godoc.commandInvoked()
     })
 
+    it('provides tooltips', async () => {
+      const pos = editor.getCursorBufferPosition()
+      const tip = await godoc.datatip(editor, pos)
+      expect(tip).toBeDefined()
+      expect(tip.range.start).toBe(pos)
+      expect(tip.range.end).toBe(pos)
+      expect(tip.markedStrings.length).toEqual(1)
+    })
+
     it('executes gogetdoc successfully', () => {
       runs(() => {
         expect(result).toBeTruthy()

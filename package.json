@@ -154,6 +154,11 @@
       "versions": {
         "2.0.0": "consumeLinter"
       }
+    },
+    "datatip": {
+      "versions": {
+        "0.1.0": "consumeDatatipService"
+      }
     }
   },
   "configSchema": {
