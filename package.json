@@ -22,7 +22,7 @@
     "hyperclick",
     "guru"
   ],
-  "version": "6.0.0",
+  "version": "6.0.1",
   "main": "./lib/main",
   "scripts": {
     "flow": "flow",
