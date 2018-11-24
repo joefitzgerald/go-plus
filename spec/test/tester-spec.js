@@ -115,14 +115,28 @@ describe('tester', () => {
     })
 
     describe('when run tests on save is enabled, but compile on save is disabled', () => {
-      it('runs tests', async () => {
+      beforeEach(() => {
         atom.config.set('go-plus.config.compileOnSave', false)
         atom.config.set('go-plus.test.runTestsOnSave', true)
         atom.config.set('go-plus.test.runTestsWithCoverage', false)
+      })
 
+      it('runs tests', async () => {
         spyOn(tester, 'runTests').andCallThrough()
         await tester.handleSaveEvent()
         expect(tester.runTests).toHaveBeenCalled()
+      })
+
+      it('updates the busy signal', async () => {
+        const fake = (title, promiseFunc) => promiseFunc()
+        const reportBusySpy = jasmine
+          .createSpy('reportBusyWhile')
+          .andCallFake(fake)
+        spyOn(tester, 'busySignal').andReturn({
+          reportBusyWhile: reportBusySpy
+        })
+        await tester.handleSaveEvent(editor)
+        expect(reportBusySpy.calls.length).toEqual(1)
       })
     })
 

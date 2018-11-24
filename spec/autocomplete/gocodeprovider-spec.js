@@ -29,7 +29,7 @@ describe('gocodeprovider', () => {
 
     runs(async () => {
       const r = await lifecycle.activatePackage()
-      const { mainModule } = r[1]
+      const { mainModule } = r[r.length - 1]
       provider = mainModule.provideAutocomplete()
     })
 
