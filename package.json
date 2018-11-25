@@ -137,6 +137,11 @@
       "versions": {
         "0.1.0": "provideCodeFormatter"
       }
+    },
+    "outline-view": {
+      "versions": {
+        "0.1.0": "provideOutlines"
+      }
     }
   },
   "consumedServices": {

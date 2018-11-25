@@ -35,6 +35,7 @@ install:
   - go get -u github.com/rogpeppe/godef
   - go get -u github.com/fatih/gomodifytags
   - go get -u golang.org/x/tools/cmd/guru
+  - go get -u github.com/ramya-rao-a/go-outline
   - go get -u github.com/tpng/gopkgs
 
 script:
