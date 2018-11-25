@@ -51,16 +51,23 @@ describe('Highlight Provider', () => {
     })
 
     it('returns the appropriate ranges', async () => {
-      editor.setCursorBufferPosition([22, 1])
+      editor.setCursorBufferPosition([22, 2])
 
       const ranges = await highlight.highlight(
         editor,
         editor.getCursorBufferPosition()
       )
-      expect(ranges.length).toBe(3)
-      expect(ranges[0].start.row).toBe(22)
-      expect(ranges[1].start.row).toBe(23)
-      expect(ranges[2].start.row).toBe(24)
+      expect(ranges.length).toEqual(3)
+      expect(ranges[0].start.row).toEqual(22)
+      expect(ranges[0].start.column).toEqual(1)
+      expect(ranges[1].start.row).toEqual(23)
+      expect(ranges[1].start.column).toEqual(38)
+      expect(ranges[2].start.row).toEqual(24)
+      expect(ranges[2].start.column).toEqual(1)
+
+      ranges.forEach(r => {
+        expect(editor.getTextInBufferRange(r)).toEqual('f')
+      })
     })
   })
 })
