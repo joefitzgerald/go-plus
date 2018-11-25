@@ -4,6 +4,8 @@
 
 > An Improved [Go](https://www.golang.org) Experience For The [Atom Editor](https://atom.io)
 
+![image](https://user-images.githubusercontent.com/7527103/48982584-cd537600-f0a1-11e8-9101-e43dc2064223.png)
+
 - Github: https://github.com/joefitzgerald/go-plus
 - Atom: https://atom.io/packages/go-plus
 
