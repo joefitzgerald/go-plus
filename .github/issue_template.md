@@ -1,3 +1,9 @@
+### Help, format on save stopped working when I upgraded to v6.0.0+
+
+Format on save must now be enabled in the settings for `atom-ide-ui`.
+See the [release notes](https://github.com/joefitzgerald/go-plus/releases/tag/v6.0.0)
+for how to enable this.
+
 ### Prerequisites
 
 * [ ] Have you tried launching `atom .` from the terminal in your project's directory?
