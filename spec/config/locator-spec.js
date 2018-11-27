@@ -36,7 +36,7 @@ describe('Locator', () => {
     } else {
       arch = 'amd64'
     }
-    executor = new Executor()
+    executor = new Executor(() => null)
     executableSuffix = ''
     pathkey = 'PATH'
     if (process.platform === 'win32') {

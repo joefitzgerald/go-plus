@@ -169,6 +169,11 @@
       "versions": {
         "0.1.0": "consumeBusySignal"
       }
+    },
+    "console": {
+      "versions": {
+        "0.1.0": "consumeConsole"
+      }
     }
   },
   "configSchema": {

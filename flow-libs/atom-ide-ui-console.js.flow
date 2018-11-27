@@ -1,0 +1,30 @@
+/**
+ * Copyright (c) 2017-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @flow
+ * @format
+ */
+
+export type ConsoleApi = {
+  // The primary means of interacting with the console.
+  // TODO: Update these to be `(object: any, ...objects: Array<any>): void` to allow for logging objects.
+  log(object: string, _: void): ?RecordToken,
+  error(object: string, _: void): ?RecordToken,
+  warn(object: string, _: void): ?RecordToken,
+  info(object: string, _: void): ?RecordToken,
+  success(object: string, _: void): ?RecordToken,
+
+  // A generic API for sending a message of any level (log, error, etc.).
+  append(message: Message): ?RecordToken,
+
+  // Dispose of the console. Invoke this when your package is disabled.
+  dispose(): void,
+
+  // Set the status of the source. See "Stoppable Sources" below.
+  setStatus(status: ConsoleSourceStatus): void,
+};
