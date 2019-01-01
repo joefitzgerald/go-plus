@@ -996,6 +996,7 @@ declare class atom$TextEditor extends atom$Model {
     },
   ): void,
   selectWordsContainingCursors(): void,
+  selectLinesContainingCursors(): void,
 
   // Folds
   unfoldAll(): void,

@@ -1,5 +1,5 @@
-'use babel'
 /* eslint-env jasmine */
+// @flow
 
 import path from 'path'
 import fs from 'fs-extra'
@@ -7,9 +7,9 @@ import { lifecycle } from './../spec-helpers'
 import { it, fit, ffit, beforeEach, runs } from '../async-spec-helpers' // eslint-disable-line
 
 describe('godoc', () => {
-  let godoc = null
-  let editor = null
-  let gopath = null
+  let godoc
+  let editor
+  let gopath
   let source = null
   let target = null
 
@@ -54,30 +54,30 @@ describe('godoc', () => {
   })
 
   describe('when the godoc command is invoked on a valid go file', () => {
-    let result = false
+    let result
     beforeEach(async () => {
       source = path.join(__dirname, '..', 'fixtures')
       target = path.join(gopath, 'src', 'godoctest')
       fs.copySync(source, target)
+      atom.project.setPaths([target])
       editor = await atom.workspace.open(path.join(target, 'doc.go'))
       editor.setCursorBufferPosition([24, 10])
-      result = await godoc.commandInvoked()
     })
 
     it('provides tooltips', async () => {
       const pos = editor.getCursorBufferPosition()
       const tip = await godoc.datatip(editor, pos)
-      expect(tip).toBeDefined()
+      expect(tip).toBeTruthy()
       expect(tip.range.start).toBe(pos)
       expect(tip.range.end).toBe(pos)
       expect(tip.markedStrings.length).toEqual(1)
     })
 
     it('executes gogetdoc successfully', () => {
-      runs(() => {
+      runs(async () => {
+        result = await godoc.commandInvoked()
         expect(result).toBeTruthy()
         expect(result.success).toBe(true)
-        expect(result.result.exitcode).toBe(0)
       })
     })
 
@@ -93,7 +93,9 @@ describe('godoc', () => {
       source = path.join(__dirname, '..', 'fixtures')
       target = path.join(gopath, 'src', 'godoctest')
       fs.copySync(source, target)
+      atom.project.setPaths([target])
       editor = await atom.workspace.open(path.join(target, 'doc.go'))
+      expect(editor).toBeDefined()
       editor.setCursorBufferPosition([24, 35])
       editor.selectLinesContainingCursors()
       editor.insertText('fmt.Printf("this line has been modified\\n")\n')
@@ -106,9 +108,6 @@ describe('godoc', () => {
       result = await godoc.commandInvoked()
       expect(result).toBeTruthy()
       expect(result.success).toBe(true)
-      expect(result.result.exitcode).toBe(0)
-      expect(result.result.stdout).toBeTruthy()
-
       expect(result.doc).toBeTruthy()
       expect(result.doc.import).toBe('fmt')
       expect(result.doc.decl).toBe(
