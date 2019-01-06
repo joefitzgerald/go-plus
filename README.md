@@ -19,7 +19,7 @@ This package includes the following functionality:
   optionally run one of these tools on save of any `.go` file
 - Run `go install .` and `go test -c -o {tempdir} .` to verify your code compiles
   and to keep `gocode` suggestions up to date
-- Run a variety of linters (e.g. `golint`, `vet`, etc.) against your code using `gometalinter`
+- Run a variety of linters (e.g. `golint`, `vet`, etc.) against your code using [`gometalinter`](https://github.com/alecthomas/gometalinter), [`revive`](https://github.com/mgechev/revive) or [`golangci-lint`](https://github.com/golangci/golangci-lint)
 - Run tests, display test output, and display test coverage using `go test -coverprofile`
 - Display documentation for identifiers in source code using
   [`gogetdoc`](https://github.com/zmb3/gogetdoc)
@@ -59,6 +59,8 @@ go get -u golang.org/x/tools/cmd/gorename
 go get -u github.com/sqs/goreturns
 go get -u github.com/mdempsky/gocode
 go get -u github.com/alecthomas/gometalinter
+go get -u github.com/mgechev/revive
+go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 go get -u github.com/zmb3/gogetdoc
 go get -u github.com/zmb3/goaddimport
 go get -u github.com/rogpeppe/godef
