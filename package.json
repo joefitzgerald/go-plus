@@ -411,23 +411,9 @@
         },
         "args": {
           "title": "Linter Arguments",
-          "description": "Arguments to be passed when invoking the provided linter. Arguments are comma-separated.",
-          "type": "array",
-          "default": [
-            "--vendor",
-            "--disable-all",
-            "--enable=vet",
-            "--enable=vetshadow",
-            "--enable=golint",
-            "--enable=ineffassign",
-            "--enable=goconst",
-            "--tests",
-            "--json",
-            "."
-          ],
-          "items": {
-            "type": "string"
-          },
+          "description": "Arguments to be passed when invoking the provided linter.",
+          "type": "any",
+          "default": "",
           "order": 2
         }
       }
