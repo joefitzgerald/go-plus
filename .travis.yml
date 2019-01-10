@@ -10,10 +10,13 @@ os:
   - linux
   - osx
 
+osx_image: xcode8.3
+
 env:
   global:
     - GO111MODULE=off
     - APM_TEST_PACKAGES="go-signature-statusbar go-debug"
+    - FSEVENTS_BUILD_FROM_SOURCE=true
   matrix:
     - ATOM_CHANNEL=beta
     - ATOM_CHANNEL=stable
@@ -49,10 +52,10 @@ git:
 addons:
   apt:
     packages:
-    - build-essential
-    - git
-    - libgnome-keyring-dev
-    - fakeroot
+      - build-essential
+      - git
+      - libgnome-keyring-dev
+      - fakeroot
 
 branches:
   only:

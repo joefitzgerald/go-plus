@@ -71,6 +71,7 @@ declare class atom$Package {
   activateTime: number,
   mainModule: any,
   mainModulePath: string,
+  mainModuleRequired: any,
   metadata: Object,
   name: string,
   loadTime: number,
@@ -84,6 +85,11 @@ declare class atom$Package {
   bundledPackage: boolean,
   getCanDeferMainModuleRequireStorageKey(): string,
   initializeIfNeeded(): void,
+
+  activate(): Promise<void>,
+  isCompatible(): boolean,
+  getBuildFailureOutput(): ?string,
+  getIncompatibleNativeModules(): Object[],
 }
 
 /**
@@ -362,6 +368,10 @@ type atom$PackageMetadata = {
 
 declare class atom$PackageManager {
   +initialPackagesActivated: boolean,
+  +deferredActivationHooks: ?Array<string>,
+  +triggeredActivationHooks: Set<string>,
+  +loadedPackages: Object,
+  +activePackages: Object,
 
   // Event Subscription
   onDidLoadInitialPackages(callback: () => void): IDisposable,
