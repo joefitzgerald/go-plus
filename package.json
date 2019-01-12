@@ -397,26 +397,24 @@
       "title": "Lint",
       "type": "object",
       "properties": {
-        "args": {
-          "title": "gometalinter Arguments",
-          "description": "Arguments to be passed when invoking `gometalinter`. Please ensure the `--json` argument is always included. Arguments are comma-separated.",
-          "type": "array",
-          "default": [
-            "--vendor",
-            "--disable-all",
-            "--enable=vet",
-            "--enable=vetshadow",
-            "--enable=golint",
-            "--enable=ineffassign",
-            "--enable=goconst",
-            "--tests",
-            "--json",
-            "."
+        "tool": {
+          "title": "Linter",
+          "description": "The linter that is used to lint your code",
+          "type": "string",
+          "default": "gometalinter",
+          "enum": [
+            "gometalinter",
+            "revive",
+            "golangci-lint"
           ],
-          "items": {
-            "type": "string"
-          },
           "order": 1
+        },
+        "args": {
+          "title": "Linter Arguments",
+          "description": "Arguments to be passed when invoking the provided linter.",
+          "type": "any",
+          "default": "",
+          "order": 2
         }
       }
     },
