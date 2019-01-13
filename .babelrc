@@ -1,7 +1,6 @@
 {
   "sourceMap": "inline",
   "plugins": [
-    ["add-module-exports", {}],
     ["transform-class-properties", {}],
     ["transform-es2015-modules-commonjs", {"strictMode": false}],
     ["transform-object-rest-spread", {}],

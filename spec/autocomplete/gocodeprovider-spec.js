@@ -98,7 +98,6 @@ describe('gocodeprovider', () => {
       })
     })
 
-    /*
     describe('when snippetMode is name', () => {
       beforeEach(() => {
         atom.config.set('go-plus.autocomplete.snippetMode', 'name')
@@ -197,7 +196,6 @@ describe('gocodeprovider', () => {
         })
       })
     })
-    */
   })
 
   // TODO revisit
@@ -261,7 +259,6 @@ describe('gocodeprovider', () => {
     })
   })
 
-  /*
   describe('when the go-plus-issue-307 file is opened', () => {
     beforeEach(async () => {
       editor = await atom.workspace.open(
@@ -417,5 +414,4 @@ describe('gocodeprovider', () => {
       })
     })
   })
-  */
 })

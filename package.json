@@ -73,10 +73,10 @@
     }
   ],
   "dependencies": {
+    "@atom/temp": "^0.8.4",
     "ansi-style-parser": "^2.0.0",
-    "atom-select-list": "^0.7.2",
     "atom-babel6-transpiler": "^1.2.0",
-    "babel-plugin-add-module-exports": "^1.0.0",
+    "atom-select-list": "^0.7.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
@@ -88,7 +88,6 @@
     "fuzzaldrin-plus": "^0.6.0",
     "resize-observer-polyfill": "^1.5.0",
     "semver": "^5.6.0",
-    "@atom/temp": "^0.8.4",
     "yargs-parser": "^10.1.0"
   },
   "devDependencies": {
