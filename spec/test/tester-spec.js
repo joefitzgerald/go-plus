@@ -123,7 +123,7 @@ describe('tester', () => {
 
       it('runs tests', async () => {
         spyOn(tester, 'runTests').andCallThrough()
-        await tester.handleSaveEvent()
+        await tester.handleSaveEvent(editor)
         expect(tester.runTests).toHaveBeenCalled()
       })
 
@@ -147,7 +147,7 @@ describe('tester', () => {
 
       it('does not run tests automatically on save', async () => {
         spyOn(tester, 'runTests')
-        await tester.handleSaveEvent()
+        await tester.handleSaveEvent(editor)
         expect(tester.runTests).not.toHaveBeenCalled()
       })
 

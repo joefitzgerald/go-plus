@@ -274,7 +274,7 @@ declare class atom$Decoration {
 }
 
 declare class atom$DisplayMarkerLayer {
-  id: number,
+  id: string,
   destroy(): void,
   clear(): void,
   isDestroyed(): boolean,
@@ -663,6 +663,7 @@ declare class atom$Range {
   end: atom$Point,
   isEmpty(): boolean,
   isEqual(otherRange: atom$RangeLike): boolean,
+  isSingleLine(): boolean,
   intersectsWith(otherRange: atom$RangeLike, exclusive?: boolean): boolean,
   containsPoint(point: atom$PointLike, exclusive?: boolean): boolean,
   containsRange(other: atom$Range, exclusive?: boolean): boolean,
@@ -686,6 +687,7 @@ type atom$StatusBarTile = {
 
 declare class atom$ScopeDescriptor {
   constructor(object: {scopes: Array<string>}): void,
+  scopes: Array<string>,
   getScopesArray(): Array<string>,
 }
 
@@ -957,7 +959,7 @@ declare class atom$TextEditor extends atom$Model {
   // Markers
   addMarkerLayer(): atom$DisplayMarkerLayer,
   getDefaultMarkerLayer(): atom$DisplayMarkerLayer,
-  getMarkerLayer(id: number): atom$DisplayMarkerLayer,
+  getMarkerLayer(id: string): atom$DisplayMarkerLayer,
   markBufferPosition(position: atom$PointLike, options?: MarkerOptions): atom$Marker,
   markBufferRange(range: atom$RangeLike, options?: MarkerOptions): atom$Marker,
   markScreenRange(range: atom$RangeLike, options?: MarkerOptions): atom$Marker,
@@ -1768,6 +1770,7 @@ declare class atom$Project {
 }
 
 type TextBufferScanIterator = (arg: {
+  row: number,
   match: Array<string>,
   matchText: string,
   range: atom$Range,
