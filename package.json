@@ -144,11 +144,6 @@
     }
   },
   "consumedServices": {
-    "status-bar": {
-      "versions": {
-        "^1.0.0": "consumeStatusBar"
-      }
-    },
     "go-plus.view": {
       "versions": {
         "0.1.0": "consumeViewProvider"
