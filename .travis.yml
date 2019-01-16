@@ -49,10 +49,10 @@ git:
 addons:
   apt:
     packages:
-      - build-essential
-      - git
-      - libgnome-keyring-dev
-      - fakeroot
+    - build-essential
+    - git
+    - libgnome-keyring-dev
+    - fakeroot
 
 branches:
   only:
