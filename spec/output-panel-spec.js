@@ -1,7 +1,7 @@
 /** @babel */
 /* eslint-env jasmine */
 
-import OutputPanel from './../lib/output-panel'
+import { OutputPanel } from './../lib/output-panel'
 
 describe('test panel', () => {
   let outputPanel

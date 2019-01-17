@@ -2,7 +2,7 @@
 /* eslint-env jasmine */
 
 import { lifecycle } from './spec-helpers'
-import EmptyTabView from './../lib/panel/empty-tab-view'
+import { EmptyTabView } from './../lib/panel/empty-tab-view'
 import { it, fit, ffit, beforeEach, runs } from './async-spec-helpers' // eslint-disable-line
 
 describe('panel manager', () => {

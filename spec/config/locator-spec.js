@@ -2,7 +2,7 @@
 // @flow
 
 import { Executor } from './../../lib/config/executor'
-import pathhelper from './../../lib/config/pathhelper'
+import * as pathhelper from './../../lib/config/pathhelper'
 import { Locator } from './../../lib/config/locator'
 import fs from 'fs-extra'
 import os from 'os'

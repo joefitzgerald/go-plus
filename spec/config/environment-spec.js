@@ -2,7 +2,7 @@
 /* eslint-env jasmine */
 
 import { getgopath } from './../../lib/config/environment'
-import pathhelper from './../../lib/config/pathhelper'
+import * as pathhelper from './../../lib/config/pathhelper'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'
 import temp from '@atom/temp'

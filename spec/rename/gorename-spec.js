@@ -3,6 +3,7 @@
 
 import path from 'path'
 import fs from 'fs-extra'
+import { wordAndOffset } from './../../lib/utils'
 import { lifecycle } from './../spec-helpers'
 import { it, fit, ffit, beforeEach, runs } from '../async-spec-helpers' // eslint-disable-line
 
@@ -38,7 +39,7 @@ describe('gorename', () => {
 
     it('renames a single token', async () => {
       editor.setCursorBufferPosition([4, 5])
-      const info = gorename.wordAndOffset(editor)
+      const info = wordAndOffset(editor)
       expect(info.word).toBe('foo')
       expect(info.offset).toBe(33)
 

@@ -71,6 +71,7 @@ declare class atom$Package {
   activateTime: number,
   mainModule: any,
   mainModulePath: string,
+  mainModuleRequired: any,
   metadata: Object,
   name: string,
   loadTime: number,
@@ -84,6 +85,11 @@ declare class atom$Package {
   bundledPackage: boolean,
   getCanDeferMainModuleRequireStorageKey(): string,
   initializeIfNeeded(): void,
+
+  activate(): Promise<void>,
+  isCompatible(): boolean,
+  getBuildFailureOutput(): ?string,
+  getIncompatibleNativeModules(): Object[],
 }
 
 /**
@@ -268,6 +274,7 @@ declare class atom$Decoration {
 }
 
 declare class atom$DisplayMarkerLayer {
+  id: string,
   destroy(): void,
   clear(): void,
   isDestroyed(): boolean,
@@ -362,6 +369,10 @@ type atom$PackageMetadata = {
 
 declare class atom$PackageManager {
   +initialPackagesActivated: boolean,
+  +deferredActivationHooks: ?Array<string>,
+  +triggeredActivationHooks: Set<string>,
+  +loadedPackages: Object,
+  +activePackages: Object,
 
   // Event Subscription
   onDidLoadInitialPackages(callback: () => void): IDisposable,
@@ -652,6 +663,7 @@ declare class atom$Range {
   end: atom$Point,
   isEmpty(): boolean,
   isEqual(otherRange: atom$RangeLike): boolean,
+  isSingleLine(): boolean,
   intersectsWith(otherRange: atom$RangeLike, exclusive?: boolean): boolean,
   containsPoint(point: atom$PointLike, exclusive?: boolean): boolean,
   containsRange(other: atom$Range, exclusive?: boolean): boolean,
@@ -675,6 +687,7 @@ type atom$StatusBarTile = {
 
 declare class atom$ScopeDescriptor {
   constructor(object: {scopes: Array<string>}): void,
+  scopes: Array<string>,
   getScopesArray(): Array<string>,
 }
 
@@ -775,6 +788,12 @@ type InsertTextOptions = {
 
 type DecorateMarkerParams = {
   type: 'line',
+  class: string,
+  onlyHead?: boolean,
+  onlyEmpty?: boolean,
+  onlyNonEmpty?: boolean,
+} | {
+  type: 'line-number',
   class: string,
   onlyHead?: boolean,
   onlyEmpty?: boolean,
@@ -940,6 +959,7 @@ declare class atom$TextEditor extends atom$Model {
   // Markers
   addMarkerLayer(): atom$DisplayMarkerLayer,
   getDefaultMarkerLayer(): atom$DisplayMarkerLayer,
+  getMarkerLayer(id: string): atom$DisplayMarkerLayer,
   markBufferPosition(position: atom$PointLike, options?: MarkerOptions): atom$Marker,
   markBufferRange(range: atom$RangeLike, options?: MarkerOptions): atom$Marker,
   markScreenRange(range: atom$RangeLike, options?: MarkerOptions): atom$Marker,
@@ -1750,6 +1770,7 @@ declare class atom$Project {
 }
 
 type TextBufferScanIterator = (arg: {
+  row: number,
   match: Array<string>,
   matchText: string,
   range: atom$Range,

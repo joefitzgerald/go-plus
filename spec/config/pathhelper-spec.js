@@ -1,7 +1,7 @@
 'use babel'
 /* eslint-env jasmine */
 
-import pathhelper from './../../lib/config/pathhelper'
+import * as pathhelper from './../../lib/config/pathhelper'
 import os from 'os'
 import path from 'path'
 import { lifecycle } from './../spec-helpers'

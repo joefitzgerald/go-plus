@@ -30,10 +30,11 @@ describe('gocodeprovider', () => {
     runs(async () => {
       const r = await lifecycle.activatePackage()
       const { mainModule } = r[r.length - 1]
+      expect(mainModule).toBeTruthy()
       provider = mainModule.provideAutocomplete()
     })
 
-    waitsFor(() => provider)
+    waitsFor(() => provider, 'provider', 5000)
 
     runs(() => {
       const workspaceElement = atom.views.getView(atom.workspace)
