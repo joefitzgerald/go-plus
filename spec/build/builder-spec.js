@@ -1,7 +1,6 @@
 'use babel'
 /* eslint-env jasmine */
 
-import path from 'path'
 import { Builder } from '../../lib/build/builder'
 import { ConfigService } from '../../lib/config/service'
 import { lifecycle } from './../spec-helpers'
@@ -123,44 +122,6 @@ describe('builder', () => {
       ].forEach(({ gopath, cwd, sep }) => {
         expect(builder.buildCommand(gopath, cwd, sep)).toBe('install', cwd)
       })
-    })
-  })
-
-  describe('getMessages', () => {
-    it('ignores duplicate errors', () => {
-      // GIVEN the same results from both 'go install' and 'go test'
-      let outputs = [
-        {
-          output:
-            '# github.com/anonymous/sample-project\n.\\the-file.go:12: syntax error: unexpected semicolon or newline, expecting comma or }',
-          linterName: 'build'
-        },
-        {
-          output:
-            '# github.com/anonymous/sample-project\n.\\the-file.go:12: syntax error: unexpected semicolon or newline, expecting comma or }',
-          linterName: 'test'
-        }
-      ]
-
-      // WHEN I get the messages for these outputs
-      const messages = builder.getMessages(
-        outputs,
-        path.join('src', 'github.com', 'anonymous', 'sample-project')
-      )
-
-      // THEN I expect only one message to be returned because they are the same
-      expect(messages.length).toEqual(1)
-
-      const message = messages[0]
-      expect(message.name).toEqual('build')
-      expect(
-        message.excerpt.indexOf(
-          'syntax error: unexpected semicolon or newline, expecting comma or }'
-        ) === 0
-      ).toBeTruthy()
-      expect(message.location.file.indexOf('the-file.go') > 0).toBeTruthy() // file is in the path
-      expect(message.location.file.indexOf('sample-project') > 0).toBeTruthy() // cwd is in the path
-      expect(message.location.position.start.row).toEqual(11)
     })
   })
 })
