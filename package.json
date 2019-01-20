@@ -84,22 +84,22 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "etch": "0.14.0",
     "etch-octicon": "^2.0.0",
-    "fs-extra": "^7.0.0",
+    "fs-extra": "^7.0.1",
     "fuzzaldrin-plus": "^0.6.0",
-    "resize-observer-polyfill": "^1.5.0",
+    "resize-observer-polyfill": "^1.5.1",
     "semver": "^5.6.0",
-    "yargs-parser": "^10.1.0"
+    "yargs-parser": "^11.1.1"
   },
   "devDependencies": {
     "babel-eslint": "10.0.1",
-    "eslint": "^5.8.0",
-    "eslint-config-prettier": "^3.1.0",
-    "eslint-plugin-flowtype": "^3.2.0",
-    "eslint-plugin-prettier": "^3.0.0",
+    "eslint": "^5.12.1",
+    "eslint-config-prettier": "^3.6.0",
+    "eslint-plugin-flowtype": "^3.2.1",
+    "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react": "^7.12.4",
     "flow-bin": "^0.91.0",
-    "prettier": "1.14.3"
+    "prettier": "^1.15.3"
   },
   "providedServices": {
     "go-config": {
