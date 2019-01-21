@@ -1631,6 +1631,7 @@ declare class atom$GrammarRegistry {
   // Extended
   getGrammarScore(grammar: atom$Grammar, filePath: string, contents?: string): number,
   forEachGrammar(callback: (grammar: atom$Grammar) => mixed): void,
+  grammarForId(languageId: string): atom$Grammar,
 
   // Private API
   clear(): IDisposable,

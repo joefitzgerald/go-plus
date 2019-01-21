@@ -70,7 +70,7 @@ describe('godoc', () => {
       expect(tip).toBeTruthy()
       expect(tip.range.start).toBe(pos)
       expect(tip.range.end).toBe(pos)
-      expect(tip.markedStrings.length).toEqual(1)
+      expect(tip.markedStrings.length).toEqual(3)
     })
 
     it('executes gogetdoc successfully', () => {
