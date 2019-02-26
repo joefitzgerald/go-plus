@@ -93,7 +93,7 @@
   "devDependencies": {
     "babel-eslint": "10.0.1",
     "eslint": "^5.12.1",
-    "eslint-config-prettier": "^3.6.0",
+    "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-flowtype": "^3.2.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-promise": "^4.0.1",
