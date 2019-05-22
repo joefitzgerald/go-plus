@@ -371,6 +371,13 @@
           "type": "integer",
           "default": 60000,
           "order": 1
+        },
+        "retries": {
+          "title": "Retries",
+          "description": "How many times to retry when the previous update command has failed. Retry can't resolve all the problem, so choose wisely",
+          "type": "integer",
+          "default": 1,
+          "order": 2
         }
       }
     },
