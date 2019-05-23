@@ -97,7 +97,7 @@
     "eslint-plugin-flowtype": "^3.2.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react": "^7.13.0",
     "flow-bin": "^0.95.0",
     "prettier": "^1.15.3"
   },
