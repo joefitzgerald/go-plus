@@ -1,4 +1,4 @@
-version: "{build}"
+version: '{build}'
 
 platform: x64
 
@@ -16,8 +16,8 @@ environment:
   APM_TEST_PACKAGES: go-signature-statusbar go-debug
 
   matrix:
-  - ATOM_CHANNEL: stable
-  - ATOM_CHANNEL: beta
+    - ATOM_CHANNEL: stable
+    - ATOM_CHANNEL: beta
 
 install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
@@ -30,7 +30,6 @@ install:
   - go get -u golang.org/x/tools/cmd/goimports
   - go get -u golang.org/x/tools/cmd/gorename
   - go get -u github.com/sqs/goreturns
-  - go get -u github.com/mdempsky/gocode
   - go get -u github.com/alecthomas/gometalinter
   - go get -u github.com/zmb3/gogetdoc
   - go get -u github.com/zmb3/goaddimport
