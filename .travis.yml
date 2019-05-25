@@ -1,7 +1,7 @@
 language: go
 
 go:
-  - 1.11.4
+  - 1.12.x
 
 matrix:
   fast_finish: true
@@ -49,10 +49,10 @@ git:
 addons:
   apt:
     packages:
-    - build-essential
-    - git
-    - libgnome-keyring-dev
-    - fakeroot
+      - build-essential
+      - git
+      - libgnome-keyring-dev
+      - fakeroot
 
 branches:
   only:

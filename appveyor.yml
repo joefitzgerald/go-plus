@@ -1,4 +1,4 @@
-version: "{build}"
+version: '{build}'
 
 platform: x64
 
@@ -11,13 +11,13 @@ skip_tags: true
 
 environment:
   GOPATH: c:\gopath
-  GOVERSION: 1.11.4
+  GOVERSION: 1.12.5
   GO111MODULE: off
   APM_TEST_PACKAGES: go-signature-statusbar go-debug
 
   matrix:
-  - ATOM_CHANNEL: stable
-  - ATOM_CHANNEL: beta
+    - ATOM_CHANNEL: stable
+    - ATOM_CHANNEL: beta
 
 install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
