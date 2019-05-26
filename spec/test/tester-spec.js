@@ -85,7 +85,7 @@ describe('tester', () => {
         )
         const args = tester.buildGoTestArgs()
         expect(args.length).toBeGreaterThan(3)
-        expect(args[1]).toEqual('-myarg=hello world')
+        expect(args[1]).toEqual('-myarg="hello world"')
         expect(args[2]).toEqual('-arg2')
         expect(args[3]).toEqual('3')
       })
