@@ -50,8 +50,6 @@ describe('go-get service provider', () => {
       it('registers a package', () => {
         provider.register('github.com/mdempsky/gocode')
         expect(manager.packages.size).toBe(1)
-        provider.register('github.com/mdempsky/gocode')
-        expect(manager.packages.size).toBe(1)
       })
 
       it('registers the same package multiple times', () => {

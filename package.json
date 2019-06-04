@@ -23,7 +23,7 @@
     "guru"
   ],
   "version": "6.1.0",
-  "main": "./lib/main",
+  "main": "./lib/languageclient",
   "scripts": {
     "flow": "flow",
     "lint": "eslint ./lib ./spec",
@@ -76,6 +76,7 @@
     "@atom/temp": "^0.8.4",
     "ansi-style-parser": "^2.0.0",
     "atom-babel6-transpiler": "^1.2.0",
+    "atom-languageclient": "^0.9.9",
     "atom-select-list": "^0.7.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
@@ -112,6 +113,11 @@
         "2.0.0": "provideGoGet"
       }
     },
+    "code-actions": {
+      "versions": {
+        "0.1.0": "provideCodeActions"
+      }
+    },
     "autocomplete.provider": {
       "versions": {
         "2.0.0": "provideAutocomplete"
@@ -124,7 +130,7 @@
     },
     "find-references": {
       "versions": {
-        "0.1.0": "provideReferences"
+        "0.1.0": "provideFindReferences"
       }
     },
     "code-highlight": {
@@ -132,9 +138,9 @@
         "0.1.0": "provideCodeHighlight"
       }
     },
-    "code-format.file": {
+    "code-format.range": {
       "versions": {
-        "0.1.0": "provideCodeFormatter"
+        "0.1.0": "provideCodeFormat"
       }
     },
     "outline-view": {
@@ -151,12 +157,17 @@
     },
     "linter-indie": {
       "versions": {
-        "2.0.0": "consumeLinter"
+        "2.0.0": "consumeLinterV2"
+      }
+    },
+    "signature-help": {
+      "versions": {
+        "0.1.0": "consumeSignatureHelp"
       }
     },
     "datatip": {
       "versions": {
-        "0.1.0": "consumeDatatipService"
+        "0.1.0": "consumeDatatip"
       }
     },
     "atom-ide-busy-signal": {
