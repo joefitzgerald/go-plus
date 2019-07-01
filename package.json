@@ -87,7 +87,7 @@
     "fs-extra": "^8.0.1",
     "fuzzaldrin-plus": "^0.6.0",
     "resize-observer-polyfill": "^1.5.1",
-    "semver": "^6.1.0",
+    "semver": "^6.1.3",
     "yargs-parser": "^13.1.0"
   },
   "devDependencies": {
