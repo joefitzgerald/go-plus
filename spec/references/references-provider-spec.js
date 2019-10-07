@@ -4,7 +4,8 @@
 import { lifecycle } from './../spec-helpers'
 import { ReferencesProvider } from './../../lib/references/references-provider'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
+import { it, beforeEach } from '../async-spec-helpers' // eslint-disable-line
 
 describe('References Provider', () => {
   let references
@@ -58,6 +59,43 @@ describe('References Provider', () => {
       expect(result[0].name).toBe(
         'func decoderFrom(field reflect.Value) (d Decoder) {'
       )
+    })
+  })
+
+  describe('findReferences', () => {
+    let editor
+    let gopath = null
+    let source = null
+    let target = null
+
+    beforeEach(async () => {
+      gopath = fs.realpathSync(lifecycle.temp.mkdirSync('gopath-'))
+      process.env.GOPATH = gopath
+
+      await lifecycle.activatePackage()
+      const { mainModule } = lifecycle
+      references = mainModule.provideReferences()
+
+      source = path.join(__dirname, '..', 'fixtures')
+      target = path.join(gopath, 'src', 'references')
+      fs.copySync(source, target)
+      editor = await atom.workspace.open(path.join(target || '.', 'doc.go'))
+    })
+    afterEach(() => {
+      lifecycle.teardown()
+    })
+
+    it('times out according to the configured Guru timeout', async () => {
+      const testTimeout = 1
+      atom.config.set('go-plus.guru.timeout', testTimeout)
+      editor.setCursorBufferPosition([22, 2])
+      const refs = await references.findReferences(
+        editor,
+        editor.getCursorBufferPosition()
+      )
+      expect(typeof refs).toBe('object')
+      expect(refs.type).toBe('error')
+      expect(refs.message.endsWith(testTimeout + 'ms')).toBe(true)
     })
   })
 })
