@@ -384,6 +384,13 @@
           "type": "boolean",
           "default": true,
           "order": 1
+        },
+        "timeout": {
+          "title": "Timeout",
+          "description": "Stop Guru commands from runnning after this number of milliseconds",
+          "type": "integer",
+          "default": 30000,
+          "order": 2
         }
       }
     },

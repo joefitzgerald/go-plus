@@ -72,4 +72,20 @@ describe('implements', () => {
     expect(args1.from[0].name).toBe('implements.Fooer')
     expect(args1.from[1].name).toBe('io.Reader')
   })
+
+  it('times out according to the configured guru timeout', async () => {
+    const testTimeout = 1
+    atom.config.set('go-plus.guru.timeout', testTimeout)
+    editor.setCursorBufferPosition([4, 9])
+    await impl.handleCommand()
+    expect(impl.view.update).toHaveBeenCalled()
+    expect(impl.view.update.calls.length).toBe(2)
+
+    const args0 = impl.view.update.calls[0].args[0]
+    const args1 = impl.view.update.calls[1].args[0]
+    expect(args0.startsWith('running guru')).toBe(true)
+    expect(typeof args1).toBe('string')
+    expect(args1.startsWith('guru failed')).toBe(true)
+    expect(args1.endsWith(testTimeout + ' ms')).toBe(true)
+  })
 })
