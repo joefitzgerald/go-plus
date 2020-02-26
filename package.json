@@ -91,7 +91,7 @@
     "yargs-parser": "^13.1.0"
   },
   "devDependencies": {
-    "babel-eslint": "10.0.1",
+    "babel-eslint": "10.1.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-flowtype": "^3.9.1",
