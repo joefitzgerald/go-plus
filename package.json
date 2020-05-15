@@ -82,6 +82,7 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
+    "core-js": "^3.6.5",
     "etch": "0.14.0",
     "etch-octicon": "^2.0.0",
     "fs-extra": "^8.0.1",
