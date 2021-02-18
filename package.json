@@ -16,7 +16,6 @@
     "goreturns",
     "lint",
     "vet",
-    "gometalinter",
     "go-debug",
     "delve",
     "hyperclick",
@@ -395,11 +394,10 @@
           "title": "Linter",
           "description": "The linter that is used to lint your code",
           "type": "string",
-          "default": "gometalinter",
+          "default": "golangci-lint",
           "enum": [
-            "gometalinter",
-            "revive",
-            "golangci-lint"
+            "golangci-lint",
+            "revive"
           ],
           "order": 1
         },
